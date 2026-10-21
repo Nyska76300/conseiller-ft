@@ -7588,53 +7588,106 @@ function handleGlobalHeaderSearch(val) {
   }
   renderHome(val);
 }
-    function renderHome(q) {
+    function renderHome(query = '') {
+      const q = (query || '').toLowerCase().trim();
       const grid = document.getElementById('home-grid');
       if (!grid) return;
-      q = (typeof q === 'string' ? q : (document.getElementById('home-search')?.value || '')).trim().toLowerCase();
-      const stats = document.getElementById('home-stats');
-      if (stats) {
-        const st = (v, l) => `<div class="rounded-xl bg-slate-900/90 border border-slate-800 px-3 py-2"><div class="text-lg font-extrabold text-white">${v}</div><div class="text-[11px] text-slate-400">${l}</div></div>`;
-        stats.innerHTML = st(NAV_TABS_CONFIG.length - 1, 'Outils') + st('100 %', 'Local') + st('0', 'Donnée transmise');
-      }
-      const html = HOME_GROUPS.map(g => {
-        const tabs = g.ids.map(id => NAV_TABS_CONFIG.find(t => String(t.id) === String(id)))
-          .filter(t => t && (!q || (t.name + ' ' + t.desc + ' ' + t.badge).toLowerCase().includes(q)));
-        if (!tabs.length) return '';
-        return `<section>
-          <h2 class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-300 mb-3"><i data-lucide="${g.icon}" class="w-4 h-4 text-cyan-400"></i>${g.title}<span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">${tabs.length}</span></h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">${tabs.map(t => `
-            <button onclick="switchNavTab('${t.id}')" class="group text-left rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 p-4 transition-all hover:-translate-y-0.5 flex flex-col gap-3">
-              <div class="flex items-start justify-between gap-2">
-                <div class="w-10 h-10 rounded-lg border flex items-center justify-center ${t.color}"><i data-lucide="${t.icon}" class="w-5 h-5"></i></div>
-                <i data-lucide="arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-cyan-300 transition-colors"></i>
+
+      const homeTools = [
+        { id: 'cvm', name: 'CVM Direct (Modèles de Mails)', desc: 'Messagerie officielle, modèles et variables dynamiques', cat: 'Communication', icon: 'mail', color: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30' },
+        { id: '1', name: "Conditions d'Ouverture de Droit (OD)", desc: "Simulateur d'éligibilité et calcul de l'ARE selon le règlement Unédic", cat: 'Indemnisation', icon: 'clipboard-check', color: 'bg-blue-500/15 text-blue-400 border-blue-500/30' },
+        { id: '2', name: "Référentiel des Démissions & Licenciements", desc: "Catalogue de 18 motifs légitimes et voies de rattrapage (65j / IPR)", cat: 'Règlementation', icon: 'scale', color: 'bg-purple-500/15 text-purple-400 border-purple-500/30' },
+        { id: '3', name: "Aide à la Reprise ou Création d'Entreprise (ANS)", desc: "Simulateur comparatif ARCE (capital 60%) vs Maintien mensuel de l'ARE", cat: 'Création d\'entreprise', icon: 'calculator', color: 'bg-teal-500/15 text-teal-400 border-teal-500/30' },
+        { id: '4', name: "Contrat de Sécurisation Professionnelle (CSP)", desc: "ASP à 75%, délai de 21 jours et simulateur IDR / Prime de reclassement", cat: 'Licenciement éco', icon: 'shield', color: 'bg-amber-500/15 text-amber-400 border-amber-500/30' },
+        { id: '5', name: "Cumul ARE & Activité Reprise", desc: "Calculateur de la règle des 70% et report automatique des jours", cat: 'Indemnisation', icon: 'trending-up', color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' },
+        { id: '6', name: "Indus & Échéanciers de Remboursement", desc: "Plan d'apurement amiable par durée (seuil 24 mois) ou par mensualité", cat: 'Recouvrement', icon: 'receipt', color: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30' },
+        { id: '7', name: "Simulateur ICCP & Différé Congés BTP", desc: "Calcul du différé congés payés et prise en compte de l'attestation CIBTP", cat: 'BTP', icon: 'calendar-clock', color: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30' },
+        { id: '8', name: "Retraite & Maintien de Droit (Art. 9 § 3)", desc: "Vérification des 5 conditions cumulatives et calcul des trimestres restants", cat: 'Seniors', icon: 'landmark', color: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30' },
+        { id: '9', name: "Ruptures Conventionnelles Individuelles (RCI)", desc: "Réforme 2026 : plafonnement de la durée maximale d'indemnisation à 15/20,5 mois", cat: 'Règlementation', icon: 'handshake', color: 'bg-rose-500/15 text-rose-400 border-rose-500/30' }
+      ];
+
+      // Filtrage des outils du portail
+      const filteredTools = homeTools.filter(t => 
+        t.name.toLowerCase().includes(q) || 
+        t.desc.toLowerCase().includes(q) || 
+        t.cat.toLowerCase().includes(q)
+      );
+
+      // Filtrage dynamique de TOUS les modèles de mails CVM
+      const filteredMails = (typeof templates !== 'undefined' ? templates : []).filter(m => 
+        m.title.toLowerCase().includes(q) || 
+        m.category.toLowerCase().includes(q) || 
+        m.body.toLowerCase().includes(q)
+      );
+
+      let html = '';
+
+      // Affichage des Outils & Simulateurs correspondants
+      if (filteredTools.length > 0) {
+        html += `
+          <div class="space-y-3">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="compass" class="w-3.5 h-3.5 text-cyan-400"></i> Outils et Simulateurs (${filteredTools.length})
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        `;
+        filteredTools.forEach(tool => {
+          html += `
+            <button onclick="switchNavTab('${tool.id}')" class="p-4 rounded-xl bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-cyan-500/50 text-left transition-all group flex items-start gap-3.5 shadow-md">
+              <div class="w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${tool.color}">
+                <i data-lucide="${tool.icon}" class="w-5 h-5"></i>
               </div>
-              <div><div class="text-sm font-bold text-white">${t.name}</div><div class="text-[11px] text-slate-400 mt-0.5 leading-snug">${t.desc}</div></div>
-              <span class="self-start text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">${t.badge}</span>
-            </button>`).join('')}</div></section>`;
-      }).join('');
-      grid.innerHTML = html || '<div class="text-sm text-slate-400 text-center py-10">Aucun outil ne correspond à cette recherche.</div>';
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-xs font-bold text-white group-hover:text-cyan-300 transition-colors truncate">${escapeHtml(tool.name)}</span>
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 shrink-0">${escapeHtml(tool.cat)}</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed">${escapeHtml(tool.desc)}</p>
+              </div>
+            </button>
+          `;
+        });
+        html += `</div></div>`;
+      }
+
+      // Affichage direct des Modèles de Mails CVM dès qu'il y a du texte ou une correspondance
+      if (filteredMails.length > 0) {
+        html += `
+          <div class="space-y-3 pt-6">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="mail" class="w-3.5 h-3.5 text-blue-400"></i> Modèles de Courriels CVM (${filteredMails.length})
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+        `;
+        filteredMails.forEach(mail => {
+          html += `
+            <button onclick="switchNavTab('cvm'); selectTemplate('${escapeHtml(mail.id)}');" class="p-3 rounded-xl bg-slate-900/60 hover:bg-slate-900 border border-slate-800/80 hover:border-blue-500/50 text-left transition-all group flex items-center justify-between gap-3 shadow-sm">
+              <div class="min-w-0 flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-lg bg-blue-500/15 text-blue-400 flex items-center justify-center shrink-0"><i data-lucide="file-text" class="w-3.5 h-3.5"></i></span>
+                <div class="min-w-0">
+                  <span class="block text-xs font-bold text-white group-hover:text-cyan-300 truncate">${escapeHtml(mail.title)}</span>
+                  <span class="block text-[10px] text-slate-400 truncate">${escapeHtml(mail.category)}</span>
+                </div>
+              </div>
+              <span class="text-[10px] font-mono text-cyan-400 group-hover:underline shrink-0">Ouvrir →</span>
+            </button>
+          `;
+        });
+        html += `</div></div>`;
+      }
+
+      if (filteredTools.length === 0 && filteredMails.length === 0) {
+        html = `
+          <div class="py-12 text-center text-slate-500 text-xs space-y-2">
+            <i data-lucide="search-x" class="w-8 h-8 mx-auto text-slate-600"></i>
+            <p>Aucun résultat ne correspond à « ${escapeHtml(q)} ».</p>
+          </div>
+        `;
+      }
+
+      grid.innerHTML = html;
       refreshIcons();
     }
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === '/' && String(activeNavTab) === 'home' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) {
-        e.preventDefault();
-        document.getElementById('home-search')?.focus();
-      }
-    });
-document.addEventListener('keydown', (e) => {
-  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-    e.preventDefault();
-    const homeInput = document.getElementById('home-search');
-    const headerInput = document.getElementById('global-header-search');
-    if (activeNavTab === 'home' && homeInput) {
-      homeInput.focus();
-    } else if (headerInput) {
-      headerInput.focus();
-    }
-  }
-});
     // ===== Page CFD =====
     const CFD_TABS = [['sim', 'Simulateur CFD', 'calculator'], ['cond', 'Conditions', 'list-checks'], ['conj', 'Conjoncture', 'trending-down'], ['cff', 'CFF & seniors', 'users'], ['faq', 'FAQ', 'help-circle']];
     let cfdTab = 'sim', cfdDays = '';
