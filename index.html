@@ -317,8 +317,8 @@
       <span class="text-xs font-bold hidden sm:inline">Menu Outils</span>
     </button>
 
-    <!-- NOUVEAU BOUTON ACCUEIL CORRIGÉ -->
-<button onclick="document.getElementById('view-cvm').classList.remove('flex'); document.getElementById('view-cvm').classList.add('hidden'); document.getElementById('view-home').classList.remove('hidden');" class="p-2 rounded-lg text-slate-400 hover:text-white bg-slate-800/90 hover:bg-slate-700 border border-slate-700 transition-all flex items-center justify-center shadow-sm" title="Retour à l'accueil">
+    <!-- NOUVEAU BOUTON ACCUEIL FORCÉ -->
+<button onclick="document.querySelectorAll('div[id^=\'view-\']').forEach(el => el.style.display = 'none'); document.getElementById('view-home').style.display = 'block'; document.getElementById('header-active-tab-name').textContent = 'Accueil';" class="p-2 rounded-lg text-slate-400 hover:text-white bg-slate-800/90 hover:bg-slate-700 border border-slate-700 transition-all flex items-center justify-center shadow-sm" title="Retour à l'accueil">
   <i data-lucide="home" class="w-4 h-4"></i>
 </button>
 
