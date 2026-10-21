@@ -467,12 +467,17 @@
           </div>
 
           <div class="flex items-center justify-between px-1 text-[10px]">
-            <span class="text-slate-400 flex items-center gap-1 font-medium truncate max-w-[130px]">
-              <i data-lucide="filter" class="w-2.5 h-2.5 text-cyan-400 shrink-0"></i>
-              <span id="current-filter-badge" class="text-slate-300 font-semibold truncate">Tous les modèles</span>
-            </span>
-            <span id="filtered-count-badge" class="text-slate-400 font-mono text-[9px] shrink-0">13 résultats</span>
-          </div>
+  <span class="text-slate-400 flex items-center gap-1 font-medium truncate max-w-[130px]">
+    <i data-lucide="filter" class="w-2.5 h-2.5 text-cyan-400 shrink-0"></i>
+    <span id="current-filter-badge" class="text-slate-300 font-semibold truncate">Tous les modèles</span>
+  </span>
+  <div class="flex items-center gap-1.5 shrink-0">
+    <span id="filtered-count-badge" class="text-slate-400 font-mono text-[9px]">13 résultats</span>
+    <button type="button" onclick="toggleTplSort()" id="tpl-sort-btn" class="px-1.5 py-0.5 rounded text-[9px] font-mono text-slate-400 hover:text-cyan-300 hover:bg-slate-800 transition-colors" title="Trier les modèles A-Z">
+      A-Z
+    </button>
+  </div>
+</div>
         </div>
 
         <div id="templates-list" class="flex-1 overflow-y-auto p-2 space-y-1">
@@ -4128,7 +4133,20 @@ Votre conseiller France Travail
 
     let modelIdToDelete = null;
     let categoryNameToDelete = null;
+let sortCatAsc = false;
+let sortTplAsc = false;
 
+function toggleCatSort() {
+  sortCatAsc = !sortCatAsc;
+  renderCategoryPills();
+  showToast(sortCatAsc ? "Catégories triées (A-Z)" : "Ordre initial des catégories", "info");
+}
+
+function toggleTplSort() {
+  sortTplAsc = !sortTplAsc;
+  renderTemplatesList();
+  showToast(sortTplAsc ? "Modèles triés (A-Z)" : "Ordre initial des modèles", "info");
+}
     function saveState() {
       try {
         safeLS.setItem('ft_templates', JSON.stringify(templates));
@@ -4233,15 +4251,24 @@ Votre conseiller France Travail
         </button>
 
         <!-- Séparateur Dossiers -->
-        <div class="pt-2 pb-1 px-1 flex items-center justify-between ${isSidebarCollapsed ? 'hidden' : ''}">
-          <span class="sidebar-label text-[10px] font-bold text-slate-400 uppercase tracking-wider">Catégories</span>
-          <button onclick="openModal('new-category-modal')" class="p-0.5 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded transition-colors" title="Ajouter une catégorie">
-            <i data-lucide="plus" class="w-3 h-3"></i>
-          </button>
-        </div>
+<div class="pt-2 pb-1 px-1 flex items-center justify-between ${isSidebarCollapsed ? 'hidden' : ''}">
+  <span class="sidebar-label text-[10px] font-bold text-slate-400 uppercase tracking-wider">Catégories</span>
+  <div class="flex items-center gap-1">
+    <button onclick="toggleCatSort()" class="px-1.5 py-0.5 rounded text-[9px] font-mono ${sortCatAsc ? 'text-cyan-300 bg-cyan-500/20' : 'text-slate-400 hover:text-white hover:bg-slate-800'}" title="Trier A-Z">
+      A-Z
+    </button>
+    <button onclick="openModal('new-category-modal')" class="p-0.5 text-slate-400 hover:text-cyan-400 hover:bg-slate-800 rounded transition-colors" title="Ajouter une catégorie">
+      <i data-lucide="plus" class="w-3 h-3"></i>
+    </button>
+  </div>
+</div>
       `;
 
-      categoryList.forEach(cat => {
+      const listToDisplay = sortCatAsc 
+  ? [...categoryList].sort((a, b) => a.name.localeCompare(b.name, 'fr')) 
+  : categoryList;
+
+listToDisplay.forEach(cat => {
         const isActive = currentCategory === cat.name;
         const count = counts[cat.name] || 0;
         const st = catStyle(cat.name);
@@ -4526,7 +4553,14 @@ Votre conseiller France Travail
         }
         return true;
       });
+if (sortTplAsc) {
+  filtered.sort((a, b) => a.title.localeCompare(b.title, 'fr'));
+}
 
+const sortBtn = document.getElementById('tpl-sort-btn');
+if (sortBtn) {
+  sortBtn.className = `px-1.5 py-0.5 rounded text-[9px] font-mono transition-colors ${sortTplAsc ? 'text-cyan-300 bg-cyan-500/20 font-bold' : 'text-slate-400 hover:text-cyan-300 hover:bg-slate-800'}`;
+}
       const countBadge = document.getElementById('filtered-count-badge');
       if (countBadge) countBadge.textContent = `${filtered.length} résultat(s)`;
 
