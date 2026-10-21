@@ -7840,17 +7840,95 @@ function handleGlobalHeaderSearch(val) {
       if (changed) saveState();
     }
 
+    // --- GESTION DE LA CONNEXION CONSEILLER ---
+    let currentAdvisor = safeLS.getItem('ft_current_advisor') || null;
+
+    function handleAdvisorLogin(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById('advisor-name-input');
+      const name = input ? input.value.trim() : '';
+      if (!name) return;
+
+      currentAdvisor = name;
+      safeLS.setItem('ft_current_advisor', name);
+      
+      // Charger les données spécifiques à ce conseiller
+      loadAdvisorData();
+      
+      // Masquer l'écran de connexion et afficher l'application
+      const loginScreen = document.getElementById('login-screen');
+      if (loginScreen) loginScreen.classList.add('hidden');
+
+      const nameDisplay = document.getElementById('current-advisor-name');
+      if (nameDisplay) nameDisplay.textContent = currentAdvisor;
+
+      showToast(`Bienvenue, ${currentAdvisor} !`, "success");
+      switchNavTab('home');
+    }
+
+    function logoutAdvisor() {
+      if (confirm("Voulez-vous vous déconnecter de cet espace conseiller ?")) {
+        safeLS.removeItem('ft_current_advisor');
+        location.reload(); // Recharge la page pour afficher l'écran de connexion
+      }
+    }
+
+    // Clés de stockage isolées par conseiller
+    function getStorageKey(key) {
+      return `ft_${currentAdvisor}_${key}`;
+    }
+
+    function saveState() {
+      if (!currentAdvisor) return;
+      try {
+        safeLS.setItem(getStorageKey('templates'), JSON.stringify(templates));
+        safeLS.setItem(getStorageKey('favorites'), JSON.stringify(favorites));
+        safeLS.setItem(getStorageKey('user_vars'), JSON.stringify(userVariables));
+        safeLS.setItem(getStorageKey('categories_list'), JSON.stringify(categoryList));
+      } catch (err) {
+        console.warn("Erreur sauvegarde:", err);
+      }
+    }
+
+    function loadAdvisorData() {
+      if (!currentAdvisor) return;
+      try {
+        const savedTemplates = safeLS.getItem(getStorageKey('templates'));
+        templates = savedTemplates ? JSON.parse(savedTemplates) : [...OFFICIAL_TEMPLATES];
+
+        const savedFavs = safeLS.getItem(getStorageKey('favorites'));
+        favorites = savedFavs ? JSON.parse(savedFavs) : ['ft-fin-droit-benj', 'ft-dpae-benj'];
+
+        const savedCats = safeLS.getItem(getStorageKey('categories_list'));
+        categoryList = savedCats ? JSON.parse(savedCats) : [...DEFAULT_CATEGORIES];
+      } catch (err) {
+        templates = [...OFFICIAL_TEMPLATES];
+        categoryList = [...DEFAULT_CATEGORIES];
+      }
+      populateCategorySelect();
+      renderCategoryPills();
+      renderTemplatesList();
+    }
+
+    function checkLoginStatus() {
+      const loginScreen = document.getElementById('login-screen');
+      if (currentAdvisor) {
+        if (loginScreen) loginScreen.classList.add('hidden');
+        const nameDisplay = document.getElementById('current-advisor-name');
+        if (nameDisplay) nameDisplay.textContent = currentAdvisor;
+        loadAdvisorData();
+      } else {
+        if (loginScreen) loginScreen.classList.remove('hidden');
+      }
+    }
+
+    // --- INITIALISATION DE L'APPLICATION ---
     function initApp() {
       applyTheme(currentTheme);
-      loadState();
-      importBiblioMails();
-      applyCategoryStyles();
-      applySidebarLayout();
+      checkLoginStatus();
       initSidebarResizer();
       renderBurgerTabs();
       switchNavTab(activeNavTab);
-      initDateCalc();
-      renderCalcHistory();
       refreshIcons();
     }
 
