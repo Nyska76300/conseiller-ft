@@ -401,7 +401,7 @@
     <div id="view-cvm" class="flex-1 flex overflow-hidden">
 
       <!-- LEFT PANEL: Vertical Filters & Navigation Menu -->
-      <nav id="left-nav-menu" class="relative bg-slate-950/90 border-r border-slate-800 flex flex-col shrink-0 transition-[width] duration-150 select-none overflow-hidden" style="width: 200px;">
+      <nav id="left-nav-menu" class="relative bg-slate-950/90 border-r border-slate-800 flex flex-col shrink-0 transition-[width] duration-150 select-none overflow-hidden" style="width: max-content; min-width: 245px;">
         <!-- Left Panel Header -->
         <div class="h-10 px-2.5 border-b border-slate-800/80 flex items-center justify-between bg-slate-900/40 shrink-0">
           <div id="sidebar-header-title" class="flex items-center gap-1.5 text-xs font-bold text-slate-300 tracking-tight truncate">
@@ -4427,6 +4427,30 @@ Votre conseiller France Travail
       const labels = document.querySelectorAll('.sidebar-label');
       const title = document.getElementById('sidebar-header-title');
       const resetBtn = document.getElementById('sidebar-reset-btn');
+
+      if (!sidebar) return;
+
+      if (isSidebarCollapsed) {
+        sidebar.style.width = '56px';
+        sidebar.style.minWidth = '56px';
+        labels.forEach(el => el.classList.add('hidden'));
+        if (title) title.classList.add('hidden');
+        if (resetBtn) resetBtn.classList.add('hidden');
+        if (chevron) chevron.setAttribute('data-lucide', 'chevrons-right');
+        if (toggleIcon) toggleIcon.setAttribute('data-lucide', 'panel-left-open');
+      } else {
+        sidebar.style.width = 'max-content';
+        sidebar.style.minWidth = '245px';
+        labels.forEach(el => el.classList.remove('hidden'));
+        if (title) title.classList.remove('hidden');
+        if (resetBtn) resetBtn.classList.remove('hidden');
+        if (chevron) chevron.setAttribute('data-lucide', 'chevrons-left');
+        if (toggleIcon) toggleIcon.setAttribute('data-lucide', 'panel-left-close');
+      }
+
+      renderCategoryPills();
+      refreshIcons();
+    }
 
       if (!sidebar) return;
 
