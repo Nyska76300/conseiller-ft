@@ -7606,14 +7606,12 @@ function handleGlobalHeaderSearch(val) {
         { id: '9', name: "Ruptures Conventionnelles Individuelles (RCI)", desc: "Réforme 2026 : plafonnement de la durée maximale d'indemnisation à 15/20,5 mois", cat: 'Règlementation', icon: 'handshake', color: 'bg-rose-500/15 text-rose-400 border-rose-500/30' }
       ];
 
-      // Filtrage des outils du portail
       const filteredTools = homeTools.filter(t => 
         t.name.toLowerCase().includes(q) || 
         t.desc.toLowerCase().includes(q) || 
         t.cat.toLowerCase().includes(q)
       );
 
-      // Filtrage dynamique de TOUS les modèles de mails CVM
       const filteredMails = (typeof templates !== 'undefined' ? templates : []).filter(m => 
         m.title.toLowerCase().includes(q) || 
         m.category.toLowerCase().includes(q) || 
@@ -7622,7 +7620,6 @@ function handleGlobalHeaderSearch(val) {
 
       let html = '';
 
-      // Affichage des Outils & Simulateurs correspondants
       if (filteredTools.length > 0) {
         html += `
           <div class="space-y-3">
@@ -7650,18 +7647,17 @@ function handleGlobalHeaderSearch(val) {
         html += `</div></div>`;
       }
 
-      // Affichage direct des Modèles de Mails CVM dès qu'il y a du texte ou une correspondance
-      if (filteredMails.length > 0) {
+      if (filteredMails.length > 0 && q.length > 0) {
         html += `
-          <div class="space-y-3 pt-6">
+          <div class="space-y-3 pt-4">
             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-              <i data-lucide="mail" class="w-3.5 h-3.5 text-blue-400"></i> Modèles de Courriels CVM (${filteredMails.length})
+              <i data-lucide="mail" class="w-3.5 h-3.5 text-blue-400"></i> Modèles de Courriels CVM correspondants (${filteredMails.length})
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
         `;
         filteredMails.forEach(mail => {
           html += `
-            <button onclick="switchNavTab('cvm'); selectTemplate('${escapeHtml(mail.id)}');" class="p-3 rounded-xl bg-slate-900/60 hover:bg-slate-900 border border-slate-800/80 hover:border-blue-500/50 text-left transition-all group flex items-center justify-between gap-3 shadow-sm">
+            <button onclick="switchNavTab('cvm'); selectTemplate('${escapeHtml(mail.id)}');" class="p-3 rounded-xl bg-slate-900/60 hover:bg-slate-900 border border-slate-800/80 hover:border-blue-500/50 text-left transition-all group flex items-center justify-between gap-3">
               <div class="min-w-0 flex items-center gap-2.5">
                 <span class="w-7 h-7 rounded-lg bg-blue-500/15 text-blue-400 flex items-center justify-center shrink-0"><i data-lucide="file-text" class="w-3.5 h-3.5"></i></span>
                 <div class="min-w-0">
@@ -7680,7 +7676,7 @@ function handleGlobalHeaderSearch(val) {
         html = `
           <div class="py-12 text-center text-slate-500 text-xs space-y-2">
             <i data-lucide="search-x" class="w-8 h-8 mx-auto text-slate-600"></i>
-            <p>Aucun résultat ne correspond à « ${escapeHtml(q)} ».</p>
+            <p>Aucun outil ni modèle de mail ne correspond à « ${escapeHtml(q)} ».</p>
           </div>
         `;
       }
@@ -7688,6 +7684,44 @@ function handleGlobalHeaderSearch(val) {
       grid.innerHTML = html;
       refreshIcons();
     }
+      const html = HOME_GROUPS.map(g => {
+        const tabs = g.ids.map(id => NAV_TABS_CONFIG.find(t => String(t.id) === String(id)))
+          .filter(t => t && (!q || (t.name + ' ' + t.desc + ' ' + t.badge).toLowerCase().includes(q)));
+        if (!tabs.length) return '';
+        return `<section>
+          <h2 class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-300 mb-3"><i data-lucide="${g.icon}" class="w-4 h-4 text-cyan-400"></i>${g.title}<span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">${tabs.length}</span></h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">${tabs.map(t => `
+            <button onclick="switchNavTab('${t.id}')" class="group text-left rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 p-4 transition-all hover:-translate-y-0.5 flex flex-col gap-3">
+              <div class="flex items-start justify-between gap-2">
+                <div class="w-10 h-10 rounded-lg border flex items-center justify-center ${t.color}"><i data-lucide="${t.icon}" class="w-5 h-5"></i></div>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-cyan-300 transition-colors"></i>
+              </div>
+              <div><div class="text-sm font-bold text-white">${t.name}</div><div class="text-[11px] text-slate-400 mt-0.5 leading-snug">${t.desc}</div></div>
+              <span class="self-start text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">${t.badge}</span>
+            </button>`).join('')}</div></section>`;
+      }).join('');
+      grid.innerHTML = html || '<div class="text-sm text-slate-400 text-center py-10">Aucun outil ne correspond à cette recherche.</div>';
+      refreshIcons();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === '/' && String(activeNavTab) === 'home' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) {
+        e.preventDefault();
+        document.getElementById('home-search')?.focus();
+      }
+    });
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+    e.preventDefault();
+    const homeInput = document.getElementById('home-search');
+    const headerInput = document.getElementById('global-header-search');
+    if (activeNavTab === 'home' && homeInput) {
+      homeInput.focus();
+    } else if (headerInput) {
+      headerInput.focus();
+    }
+  }
+});
     // ===== Page CFD =====
     const CFD_TABS = [['sim', 'Simulateur CFD', 'calculator'], ['cond', 'Conditions', 'list-checks'], ['conj', 'Conjoncture', 'trending-down'], ['cff', 'CFF & seniors', 'users'], ['faq', 'FAQ', 'help-circle']];
     let cfdTab = 'sim', cfdDays = '';
