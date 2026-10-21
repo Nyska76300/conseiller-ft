@@ -284,14 +284,18 @@
     </div>
 
     <!-- Quick tip -->
-    <div class="px-3 pt-3 pb-1 shrink-0">
-      <div class="p-2 rounded-lg bg-slate-900/80 border border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
-        <span class="flex items-center gap-1.5">
-          <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i> Raccourci clavier
-        </span>
-        <span class="font-mono text-[10px] text-cyan-400 bg-slate-800 px-1.5 py-0.5 rounded">Ctrl+M</span>
-      </div>
-    </div>
+    <div class="flex items-center justify-between px-1 text-[10px]">
+  <span class="text-slate-400 flex items-center gap-1 font-medium truncate max-w-[130px]">
+    <i data-lucide="filter" class="w-2.5 h-2.5 text-cyan-400 shrink-0"></i>
+    <span id="current-filter-badge" class="text-slate-300 font-semibold truncate">Tous les modèles</span>
+  </span>
+  <div class="flex items-center gap-1.5 shrink-0">
+    <span id="filtered-count-badge" class="text-slate-400 font-mono text-[9px]">13 résultats</span>
+    <button type="button" onclick="toggleTplSort()" id="tpl-sort-btn" class="px-1.5 py-0.5 rounded text-[9px] font-mono text-slate-400 hover:text-cyan-300 hover:bg-slate-800 transition-colors" title="Trier les modèles A-Z">
+      A-Z
+    </button>
+  </div>
+</div>
 
     <!-- Drawer Tabs List (Scrollable) -->
     <div id="burger-tabs-list" class="flex-1 overflow-y-auto p-3 space-y-1.5">
