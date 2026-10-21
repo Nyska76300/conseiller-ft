@@ -358,17 +358,19 @@
       </div>
     </div>
 
-    <!-- Center Quick Stat / Status -->
-    <div class="hidden md:flex items-center gap-4 text-xs">
-      <div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span class="font-medium text-[11px]">Réglementation Unédic 2026 à jour</span>
-      </div>
-      <div class="text-slate-400 text-[11px] flex items-center gap-1.5">
-        <i data-lucide="database" class="w-3.5 h-3.5 text-slate-500"></i>
-        <span id="model-count-badge" class="font-medium text-slate-300">13 modèles prêts</span>
-      </div>
-    </div>
+<!-- Barre de recherche globale dans le header -->
+<div class="hidden md:flex flex-1 max-w-md mx-2">
+  <div class="relative w-full">
+    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+    <input 
+      type="text" 
+      id="global-header-search" 
+      placeholder="Rechercher un outil, simulateur, modèle... (/)" 
+      oninput="handleGlobalHeaderSearch(this.value)"
+      class="w-full pl-9 pr-3 py-1.5 rounded-lg bg-slate-950/80 border border-slate-700/80 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 text-xs text-white placeholder-slate-400 outline-none transition-all shadow-inner"
+    >
+  </div>
+</div>
 
     <!-- Right Header Actions -->
     <div class="flex items-center gap-2">
@@ -599,10 +601,20 @@
           <p class="text-sm text-slate-300 mt-2 max-w-2xl">Modèles de mails, simulateurs et fiches réglementaires pour accompagner les demandeurs d'emploi : calculer, comparer et expliquer leurs droits.</p>
           <div id="home-stats" class="grid grid-cols-3 gap-3 mt-5 max-w-xl"></div>
         </div>
-        <div class="relative max-w-xl">
-          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-          <input id="home-search" type="text" placeholder="Rechercher un outil… ( / )" oninput="renderHome(this.value)" class="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-900 border border-slate-700 focus:border-cyan-400 text-sm text-white outline-none">
-        </div>
+        <!-- Barre de recherche centrale ultra-visible -->
+<div class="relative max-w-2xl mx-auto my-6 z-20">
+  <div class="relative flex items-center shadow-2xl shadow-cyan-950/30">
+    <i data-lucide="search" class="w-5 h-5 text-cyan-400 absolute left-4 pointer-events-none"></i>
+    <input 
+      id="home-search" 
+      type="text" 
+      placeholder="Rechercher un outil, un barème ou un simulateur... (touche /)" 
+      oninput="renderHome(this.value)" 
+      class="w-full pl-12 pr-12 py-4 rounded-2xl bg-slate-900/95 border-2 border-cyan-500/50 hover:border-cyan-400 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/20 text-base text-white placeholder-slate-400 outline-none transition-all shadow-inner"
+    >
+    <span class="absolute right-4 hidden sm:inline-block font-mono text-xs px-2 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-400">/</span>
+  </div>
+</div>
         <div id="home-grid" class="space-y-6"></div>
         <p class="text-[11px] text-slate-400 text-center pb-4">Sources : Unédic · France Travail — contenu indicatif, à confirmer auprès de l'organisme.</p>
       </div>
@@ -7566,7 +7578,16 @@ if (sortBtn) {
       { title: 'Simulateurs & calculateurs', icon: 'calculator', ids: [3, 5, 6, 7, 9] },
       { title: 'Droits & réglementation', icon: 'scale', ids: [1, 2, 4, 8, 'cfd'] }
     ];
-
+function handleGlobalHeaderSearch(val) {
+  if (activeNavTab !== 'home') {
+    switchNavTab('home');
+  }
+  const homeInput = document.getElementById('home-search');
+  if (homeInput) {
+    homeInput.value = val;
+  }
+  renderHome(val);
+}
     function renderHome(q) {
       const grid = document.getElementById('home-grid');
       if (!grid) return;
@@ -7602,7 +7623,18 @@ if (sortBtn) {
         document.getElementById('home-search')?.focus();
       }
     });
-
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+    e.preventDefault();
+    const homeInput = document.getElementById('home-search');
+    const headerInput = document.getElementById('global-header-search');
+    if (activeNavTab === 'home' && homeInput) {
+      homeInput.focus();
+    } else if (headerInput) {
+      headerInput.focus();
+    }
+  }
+});
     // ===== Page CFD =====
     const CFD_TABS = [['sim', 'Simulateur CFD', 'calculator'], ['cond', 'Conditions', 'list-checks'], ['conj', 'Conjoncture', 'trending-down'], ['cff', 'CFF & seniors', 'users'], ['faq', 'FAQ', 'help-circle']];
     let cfdTab = 'sim', cfdDays = '';
