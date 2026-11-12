@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.20">
+  <meta name="ft-version" content="2026-11-12.21">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -13540,8 +13540,8 @@ html.theme-light .inv-card a{color:#1d4ed8}
       '<div class="inv-note">Calcul indicatif sur 30 jours (mensualisation), avant retenues sociales sur l’ARE. Vérifiez le montant et la catégorie sur la notification de la CPAM.</div>';
   }
 
-  const TABS = [['regles', 'Règles et conditions', tabRegles], ['sim', 'Cumul avec l’ARE : calcul', tabSim]];
-  let cur = 'regles';
+  const TABS = [['sim', 'Cumul avec l’ARE : calcul', tabSim], ['regles', 'Règles et conditions', tabRegles]];
+  let cur = 'sim';
   const v = document.createElement('div');
   v.id = 'view-invalidite'; v.className = 'hidden flex-1 overflow-y-auto';
   v.innerHTML = '<div class="reg-wrap"><div class="reg-head"><div><h2>Pension d’invalidité</h2><p>Conditions d’attribution, catégories et montants, règles de cumul avec l’ARE.</p></div></div><div class="rg-tabs" id="inv-tabs" role="tablist"></div><div id="inv-body"></div></div>';
@@ -13629,6 +13629,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.21', date: '12/11/2026', items: [
+      'Pension d’invalidité : le calcul du cumul avec l’ARE s’ouvre en premier, avant les règles.'
+    ] },
     { v: '2026-11-12.20', date: '12/11/2026', items: [
       'Accueil : les Repères sont regroupés en 4 blocs successifs : Ouverture de droits, Allocation, Différés, Cumul et autres.'
     ] },
