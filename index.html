@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.14">
+  <meta name="ft-version" content="2026-11-12.15">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12821,8 +12821,8 @@ html.theme-light .fh-L .hm-key>div{border-color:#e2e8f0!important}
 .fh-dos dl div{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid #24345f;font-size:13px}
 .fh-dos dt{color:#a3b3d1}.fh-dos dd{margin:0;color:#fff;font-weight:600;text-align:right}
 .fh-btns{display:flex;gap:8px;flex-wrap:wrap}
-.fh-btn{flex:1 1 auto;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 14px;border-radius:11px;border:0;background:#e1000f;color:#fff;font:700 14px/1 inherit;font-family:inherit;cursor:pointer}
-.fh-btn:hover{background:#b8000c}
+.fh-btn{flex:1 1 auto;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 14px;border-radius:11px;border:0;background:#2563eb;color:#fff;font:700 14px/1 inherit;font-family:inherit;cursor:pointer}
+.fh-btn:hover{background:#1d4ed8}
 .fh-btn2{flex:1 1 auto;display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 12px;border-radius:11px;border:1px solid #24345f;background:transparent;color:#e8eef9;font-weight:600;font-size:13.5px;font-family:inherit;cursor:pointer}
 .fh-btn2:hover{border-color:#67e8f9}
 .fh-btn svg{width:17px;height:17px}
@@ -13189,6 +13189,17 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
       document.querySelectorAll('.hub-bar .hub-tab[data-lb-orig]').forEach(b => { const k = 't:' + b.dataset.t; if (L[k] && t.indexOf(b.dataset.lbOrig) > -1) t = t.split(b.dataset.lbOrig).join(L[k]); });
       if (n.textContent !== t) n.textContent = t; }
   }
+  function sortHubTabs() {
+    document.querySelectorAll('.hub-bar').forEach(bar => {
+      const tabs = [...bar.querySelectorAll(':scope > .hub-tab')]; if (tabs.length < 2) return;
+      const sorted = tabs.slice().sort((a, b) => a.textContent.trim().localeCompare(b.textContent.trim(), 'fr', { sensitivity: 'base' }));
+      if (sorted.every((t, i) => t === tabs[i])) return;
+      const anchor = bar.querySelector(':scope > .hub-sub');
+      sorted.forEach(t => bar.insertBefore(t, anchor));
+    });
+  }
+  const _al = applyLabels;
+  applyLabels = function () { _al(); try { sortHubTabs(); } catch (e) {} };
   window.ftApplyLabels = function () { applyLabels(); try { const tw = document.querySelector('.fh-tools'); if (tw) tw._h = ''; if (String(activeNavTab) === 'home') layout(); } catch (e) {} };
   // Crayon de renommage à côté de chaque outil et rubrique (administrateur uniquement)
   const PEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
@@ -13278,6 +13289,10 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.15', date: '12/11/2026', items: [
+      'Accueil : le bouton « Nouveau dossier » passe en bleu.',
+      'Les onglets en haut de chaque rubrique sont classés par ordre alphabétique, comme le menu Outils.'
+    ] },
     { v: '2026-11-12.14', date: '12/11/2026', items: [
       'Administrateur : un crayon à côté de chaque outil et de chaque rubrique du menu Outils permet de les renommer directement.'
     ] },
