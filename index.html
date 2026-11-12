@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-12.41">
+  <meta name="ft-version" content="2026-11-12.42">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -11309,7 +11309,7 @@ Votre conseiller France Travail
       ['3. Tribunal', 'Tribunal judiciaire ou administratif selon le type de décision. Les délais sont ceux de la notification émise par France Travail (courrier dans l’espace personnel, « Mes courriers reçus »).', ''],
       ['Poursuite exceptionnelle (IPR)', 'Plafond de 60 % atteint : demande auprès de l’instance paritaire régionale pour obtenir les 40 % de droits restants, avec les justifications citées dans « Démarches ».', ''],
       ['Indu consécutif à une régularisation', 'Recours gracieux préalable dans un délai de 2 mois à compter de la notification de l’indu, adressé au directeur général (décret n° 2016-1592, publié au Journal officiel du 26/11/2016). Source ancienne : vérifier le texte en vigueur.', '']
-    ]) + note('Aucune des pages consultées ne chiffre le délai de saisine du médiateur ou du tribunal : se reporter à la notification de la décision.') + h('Modèles CVM associés') + cvmLinks();
+    ]) + note('Aucune des pages consultées ne chiffre le délai de saisine du médiateur ou du tribunal : se reporter à la notification de la décision.');
   }
   const CATS = ['Créateurs d\'entreprise', 'Modification AE', 'Complément ARE', 'Trop-perçu', 'Recours IPR'];
   function cvmLinks() {
@@ -11743,6 +11743,7 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
     cfd: 'CFD dégressivité', delais: 'différé délai congés payés', droits: 'rechargement fin de droit ASS', cns: 'création entreprise cumul activité', dossier: 'admission ARE notification'
   };
   function strip(tab) {
+    document.querySelectorAll('.mt-strip').forEach(x => x.remove()); return; /* liens « Modèles CVM associés » retirés à la demande */
     const kw = KW[String(tab)]; if (!kw || !window.__ftScore) return;
     const v = document.querySelector('[id^="view-"]:not(.hidden)'); if (!v) return;
     const box = v.querySelector(':scope > .reg-wrap') || v;
@@ -15077,6 +15078,7 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+.mt-strip{display:none!important}
 .hdr-logo.ft-logo-plate{height:40px;padding:3px 12px}
 .hdr-logo .ft-logo-img{height:34px!important}
 body>header{overflow:visible!important}
@@ -15202,6 +15204,7 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.42', date: '12/11/2026', items: ['Les liens « Modèles CVM associés » ont été retirés des rubriques.'] },
     { v: '2026-11-12.41', date: '12/11/2026', items: [
       'Logo France Travail officiel dans la barre du haut, et sur l’icône de l’appli (à réinstaller sur l’écran d’accueil pour voir la nouvelle icône).'
     ] },
