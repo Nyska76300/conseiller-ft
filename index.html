@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.27">
+  <meta name="ft-version" content="2026-11-12.28">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -13150,6 +13150,15 @@ html.theme-light .ft-ds-k{color:#1d4ed8}html.theme-light .ft-ds-new{border-color
   .ft-split > .ft-mail{grid-column:2;grid-row:1 / span 40;position:sticky;top:12px;margin:0}
   .ft-split > .ft-mail textarea{min-height:360px;max-height:calc(100vh - 240px)}
 }
+/* ---------- Boutons Précédent / Suivant ---------- */
+.ft-nav{display:flex;align-items:center;gap:4px}
+.ft-nav button{width:36px;height:36px;border-radius:10px;border:1px solid #334155;background:rgba(30,41,59,.9);color:#cbd5e1;display:grid;place-items:center;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.ft-nav button svg{width:17px;height:17px}
+.ft-nav button:hover:not(:disabled){background:#334155;color:#fff;border-color:#67e8f9}
+.ft-nav button:disabled{opacity:.35;cursor:default}
+html.theme-light .ft-nav button{background:#fff;border-color:#cbd5e1;color:#334155}
+html.theme-light .ft-nav button:hover:not(:disabled){background:#eff6ff;color:#1d4ed8;border-color:#2563eb}
+@media print{.ft-nav{display:none!important}}
 /* ---------- Liens cliquables dans les mails ---------- */
 #preview-body a.ft-link{color:#67e8f9;text-decoration:underline;text-underline-offset:3px;word-break:break-all;cursor:pointer}
 #preview-body a.ft-link:hover{color:#a5f3fc}
@@ -13344,7 +13353,7 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
   function watch() { const m = $('home-main'); if (m) mo.observe(m, { childList: true }); }
   const _sw = switchNavTab;
   const markTab = () => { try { document.documentElement.dataset.tab = String(activeNavTab); } catch (e) {} };
-  switchNavTab = function () { const r = _sw.apply(this, arguments); markTab(); try { applyLabels(); } catch (e) {} try { if (String(activeNavTab) === 'home') layout(); } catch (e) {} return r; };
+  switchNavTab = function () { const r = _sw.apply(this, arguments); markTab(); try { navRecord(); } catch (e) {} try { applyLabels(); } catch (e) {} try { if (String(activeNavTab) === 'home') layout(); } catch (e) {} return r; };
 
   /* ---------- Liens cliquables dans les mails ---------- */
   const URL_RE = /(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+|[\w.+-]+@[\w-]+(?:\.[\w-]+)+|\b(?:[a-z0-9-]+\.)+(?:gouv\.fr|fr|com|org|net|eu)\b(?:\/[^\s<>"']*)?)/gi;
@@ -13531,8 +13540,48 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
       if (panel) view.insertBefore(panel, bar.nextSibling);
     });
   }
+
+  /* ---------- Précédent / Suivant : historique des écrans visités ---------- */
+  const NAVH = { list: [], i: -1, moving: false };
+  function navRecord() {
+    if (NAVH.moving) return;
+    let t; try { t = String(activeNavTab); } catch (e) { return; }
+    if (NAVH.list[NAVH.i] === t) return;
+    NAVH.list = NAVH.list.slice(0, NAVH.i + 1); NAVH.list.push(t);
+    if (NAVH.list.length > 50) NAVH.list.shift();
+    NAVH.i = NAVH.list.length - 1; navUi();
+  }
+  function navGo(d) {
+    const j = NAVH.i + d; if (j < 0 || j >= NAVH.list.length) return;
+    NAVH.i = j; NAVH.moving = true;
+    try { switchNavTab(NAVH.list[j]); } finally { NAVH.moving = false; }
+    navUi();
+  }
+  window.ftNavBack = () => navGo(-1); window.ftNavFwd = () => navGo(1);
+  const nameOf = t => { try { const c = NAV_TABS_CONFIG.find(x => String(x.id) === t); return c ? c.name : (t === 'home' ? 'Accueil' : t); } catch (e) { return t; } };
+  function navUi() {
+    const b = $('ft-nav-back'), f = $('ft-nav-fwd'); if (!b || !f) return;
+    b.disabled = NAVH.i <= 0; f.disabled = NAVH.i >= NAVH.list.length - 1;
+    b.title = b.disabled ? 'Page précédente' : 'Revenir à : ' + nameOf(NAVH.list[NAVH.i - 1]) + ' (Alt + ←)';
+    f.title = f.disabled ? 'Page suivante' : 'Aller à : ' + nameOf(NAVH.list[NAVH.i + 1]) + ' (Alt + →)';
+    b.setAttribute('aria-label', b.title); f.setAttribute('aria-label', f.title);
+  }
+  function navBuild() {
+    const home = $('home-btn'); if (!home || $('ft-nav-back')) return;
+    const w = document.createElement('div'); w.className = 'ft-nav';
+    w.innerHTML = '<button type="button" id="ft-nav-back" onclick="ftNavBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><button type="button" id="ft-nav-fwd" onclick="ftNavFwd()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>';
+    home.parentNode.insertBefore(w, home);
+    navRecord(); navUi();
+  }
+  document.addEventListener('keydown', e => {
+    if (!e.altKey || e.ctrlKey || e.metaKey) return;
+    const tg = e.target; if (tg && (tg.isContentEditable || /INPUT|TEXTAREA|SELECT/.test(tg.tagName))) return;
+    if (e.key === 'ArrowLeft') { e.preventDefault(); navGo(-1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); navGo(1); }
+  });
   function start() {
     markTab();
+    try { navBuild(); } catch (e) {}
     try { hoistBars(); } catch (e) {}
     try { moveMsgActions(); } catch (e) {}
     try { applyLabels(); sortMenu(); watchMenu(); adminBar(); } catch (e) {}
@@ -13984,6 +14033,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.28', date: '12/11/2026', items: [
+      'Barre du haut : boutons Précédent et Suivant (flèches à gauche de « Accueil ») pour revenir à l’écran précédent ou repartir vers le suivant. Raccourcis : Alt + ← et Alt + →.'
+    ] },
     { v: '2026-11-12.27', date: '12/11/2026', items: [
       'Démission : nouveau seuil affiché pour l’emploi repris en cours de droits (88 jours ou 610 heures au plus, depuis le 1er avril 2025), à côté du seuil de 65 jours ou 455 heures (Repères de l’accueil, simulateur Démission, Sources).',
       'Mails automatiques : sans formules de politesse.',
