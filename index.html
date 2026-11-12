@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-12.44">
+  <meta name="ft-version" content="2026-11-12.45">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -13529,8 +13529,12 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
     document.querySelectorAll('.hub-bar .hub-name').forEach(h => { const o = h.dataset.lbOrig || h.textContent.trim(); setTxt(h, 'r:' + o, o); });
     // Nom affiché dans l'en-tête
     const n = $('header-active-tab-name');
-    if (n) { let t = n.textContent; Object.keys(L).forEach(k => { const o = k.charAt(0) === 'r' ? k.slice(2) : (ORIG[k] || ''); if (o && L[k] && t.indexOf(o) > -1) t = t.split(o).join(L[k]); });
-      document.querySelectorAll('.hub-bar .hub-tab[data-lb-orig]').forEach(b => { const k = 't:' + b.dataset.t; if (L[k] && t.indexOf(b.dataset.lbOrig) > -1) t = t.split(b.dataset.lbOrig).join(L[k]); });
+    if (n) {
+      /* Remplacement par segments exacts (« Rubrique · Outil ») : jamais de remplacement dans un libellé déjà renommé */
+      const map = {};
+      Object.keys(L).forEach(k => { const o = k.charAt(0) === 'r' ? k.slice(2) : (ORIG[k] || ''); if (o && L[k]) map[o] = L[k]; });
+      document.querySelectorAll('.hub-bar .hub-tab[data-lb-orig]').forEach(b => { const k = 't:' + b.dataset.t; if (L[k]) map[b.dataset.lbOrig] = L[k]; });
+      const t = n.textContent.split(' · ').map(p => map[p.trim()] || p).join(' · ');
       if (n.textContent !== t) n.textContent = t; }
   }
   function sortHubTabs() {
@@ -15078,6 +15082,7 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+#header-active-tab-name{display:inline-block;max-width:min(46vw,640px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
 #ft-auth .fa-logo.fa-logo-img{display:inline-flex;align-items:center;justify-content:center;background:#fff;border-radius:12px;padding:8px 16px;margin-bottom:14px}
 #ft-auth .fa-logo.fa-logo-img img{height:52px;width:auto;display:block}
 .mt-strip{display:none!important}
@@ -15208,6 +15213,7 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.45', date: '12/11/2026', items: ['Correction : le nom de l’outil en haut de l’écran ne se répète plus après un renommage, et la barre du haut garde ses boutons à droite.'] },
     { v: '2026-11-12.44', date: '12/11/2026', items: ['Logo France Travail officiel sur l’écran de connexion.'] },
     { v: '2026-11-12.43', date: '12/11/2026', items: ['Sur ordinateur, Dates, Calculatrice, Repères, thème et rechargement sont de retour dans la barre du haut ; le menu « ⋯ » reste sur téléphone.'] },
     { v: '2026-11-12.42', date: '12/11/2026', items: ['Les liens « Modèles CVM associés » ont été retirés des rubriques.'] },
