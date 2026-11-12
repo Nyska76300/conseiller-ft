@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.8">
+  <meta name="ft-version" content="2026-11-12.9">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -1675,7 +1675,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         <i data-lucide="database-backup" class="w-4 h-4 text-cyan-400"></i>
       </button>
 
-      <button onclick="resetDefaults()" title="Réinitialiser les modèles officiels" class="hidden sm:block p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-md transition-colors">
+      <button type="button" onclick="location.reload()" title="Recharger la page" aria-label="Recharger la page" class="hidden sm:block p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-md transition-colors">
         <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
       </button>
     </div>
@@ -12850,6 +12850,16 @@ html.theme-light .fh-tool{background:#f8fafc;border-color:#e2e8f0;color:#0f172a}
 html.theme-light .fh-btn2{color:#0f172a;border-color:#cbd5e1}
 html.theme-light .fh-dico{background:#ecfeff;color:#0e7490}
 html.theme-light .fh-c1{--c:#1d4ed8;--b:#dbeafe}html.theme-light .fh-c2{--c:#0f766e;--b:#ccfbf1}html.theme-light .fh-c3{--c:#be123c;--b:#ffe4e6}html.theme-light .fh-c4{--c:#b45309;--b:#fef3c7}html.theme-light .fh-c5{--c:#6d28d9;--b:#ede9fe}
+/* ---------- Carte « Quoi de neuf ? » et barre du haut ---------- */
+@media (min-width:640px){#toggle-sidebar-btn{display:none!important}}
+.fh-news{padding:16px 18px;display:flex;flex-direction:column;gap:10px;border-color:rgba(225,0,15,.35)}
+.fh-news .fh-dico{background:rgba(225,0,15,.14);color:#fca5a5}
+.fh-news ul{margin:0;padding-left:18px;list-style:disc;display:flex;flex-direction:column;gap:5px}
+.fh-news li{font-size:13px;color:#cbd5e1;line-height:1.45}
+.fh-news .fh-ndate{margin-left:auto;font-size:12px;color:#a3b3d1;white-space:nowrap}
+html.theme-light .fh-news{border-color:#fecaca}
+html.theme-light .fh-news .fh-dico{background:#fee2e2;color:#b91c1c}
+html.theme-light .fh-news li{color:#334155}
 /* ---------- Liens cliquables dans les mails ---------- */
 #preview-body a.ft-link{color:#67e8f9;text-decoration:underline;text-underline-offset:3px;word-break:break-all;cursor:pointer}
 #preview-body a.ft-link:hover{color:#a5f3fc}
@@ -12924,6 +12934,17 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
     return '<section class="fh-card fh-dos" aria-label="Dossier en cours">' + head + '<p>Aucun dossier ouvert. Démarrez un parcours guidé : droits, ARE, durée et texte du mail.</p><div class="fh-btns"><button type="button" class="fh-btn" onclick="ftHomeNewDossier()">' + SVG(IC.plus) + 'Nouveau dossier</button></div></section>';
   }
 
+  /* ---------- Carte « Quoi de neuf ? » ---------- */
+  function newsHtml() {
+    const N = window.FT_NEWS; if (!N || !N.length) return '';
+    const last = N[0], short = t => { t = String(t); const i = t.indexOf(' : '); if (i > 0 && i < 40) t = t.slice(i + 3); t = t.charAt(0).toUpperCase() + t.slice(1); const c = t.search(/[.(]/); if (c > 30) t = t.slice(0, c); return t.length > 80 ? t.slice(0, 78).replace(/\s\S*$/, '') + '…' : t; };
+    const sameDay = N.filter(e => e.date === last.date).reduce((a, e) => a.concat(e.items), []);
+    const items = sameDay.slice(0, 4).map(short);
+    return '<section class="fh-card fh-news fh-dos" aria-label="Quoi de neuf ?"><div class="fh-dh"><span class="fh-dico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3-1.9 5.8L4 10l5 3.6L7.6 20 12 16.4 16.4 20 15 13.6l5-3.6-6.1-1.2z"/></svg></span><h2>Quoi de neuf ?</h2><span class="fh-ndate">' + esc(last.date) + '</span></div>' +
+      '<ul>' + items.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>' +
+      '<div class="fh-btns"><button type="button" class="fh-btn2" onclick="ftShowNews()">Voir toutes les nouveautés</button></div></section>';
+  }
+
   /* ---------- Mise en page ---------- */
   let busy = false;
   function layout() {
@@ -12959,6 +12980,9 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
       if (foot) C.appendChild(foot); else { const f = C.querySelector(':scope > .home-foot'); if (f) C.appendChild(f); }
       // Droite : favoris et reprendre
       take('.home-top', R);
+      // Droite : carte « Quoi de neuf ? »
+      let nw = R.querySelector(':scope > .fh-news'); const nh = newsHtml();
+      if (nh) { if (nw) nw.outerHTML = nh; else R.insertAdjacentHTML('beforeend', nh); }
     } catch (e) { console.warn('Accueil :', e); }
     busy = false;
   }
@@ -13050,6 +13074,11 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.9', date: '12/11/2026', items: [
+      'Accueil : nouvelle carte « Quoi de neuf ? » pour retrouver les dernières nouveautés à tout moment.',
+      'Barre du haut : la flèche circulaire recharge maintenant la page (la réinitialisation des modèles reste accessible avec Ctrl+K, « Réinitialiser les modèles officiels »).',
+      'Barre du haut : le bouton du volet latéral est retiré, il reste disponible dans le volet lui-même.'
+    ] },
     { v: '2026-11-12.8', date: '12/11/2026', items: [
       'Nouvel accueil sur toute la largeur de l’écran : dossier en cours et repères à gauche, recherche et simulateurs au centre, CVM favoris et « Reprendre » à droite.',
       'Les bulles sont remplacées par des cartes par rubrique : chaque outil a son icône, son nom et une courte description.',
@@ -13100,7 +13129,7 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
     w.id = 'ft-news';
     w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-labelledby', 'ftn-title');
     w.innerHTML = '<div class="ftn-box"><header><div class="ftn-ico" aria-hidden="true">✨</div><div>' +
-      '<h2 id="ftn-title">Quoi de neuf ?</h2><p class="ftn-sub">' + (list.length > 1 ? list.length + ' mises à jour depuis votre dernière visite' : 'Mise à jour du ' + esc(list[0].date)) + '</p></div></header>' +
+      '<h2 id="ftn-title">Quoi de neuf ?</h2><p class="ftn-sub">' + (open.manual ? 'Les dernières mises à jour du site' : list.length > 1 ? list.length + ' mises à jour depuis votre dernière visite' : 'Mise à jour du ' + esc(list[0].date)) + '</p></div></header>' +
       '<div class="ftn-body">' + list.map(function (e) {
         return (list.length > 1 ? '<h3>' + esc(e.date) + '</h3>' : '') + '<ul>' + e.items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
       }).join('') + '</div>' +
@@ -13125,8 +13154,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   }
 
   // Ouvrir à la demande (Ctrl+K → « Nouveautés »)
-  window.ftShowNews = function () { open(NEWS.slice(0, 3)); };
+  window.ftShowNews = function () { var byDate = []; NEWS.slice(0, 12).forEach(function (e) { var g = byDate.filter(function (x) { return x.date === e.date; })[0]; if (g) g.items = g.items.concat(e.items); else byDate.push({ v: e.v, date: e.date, items: e.items.slice() }); }); open.manual = true; open(byDate.slice(0, 4)); open.manual = false; };
   window.FT_ACTIONS = window.FT_ACTIONS || [];
+  window.FT_ACTIONS.push({ t: 'Réinitialiser les modèles officiels', s: 'Remettre les modèles CVM d’origine', kw: 'réinitialiser reset modèles officiels origine restaurer', run: function () { try { resetDefaults(); } catch (e) {} } });
   window.FT_ACTIONS.push({ t: 'Nouveautés', s: 'Voir les dernières modifications du site', kw: 'nouveautés quoi de neuf mise à jour version changements', run: function () { window.ftShowNews(); } });
 
   function auto() {
