@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-12.48">
+  <meta name="ft-version" content="2026-11-12.49">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12563,7 +12563,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
       if (!rows || !rows.length || typeof templates === 'undefined') return;
       var add = 0, upd = 0, dead = parse(LSraw.get('ft_deleted_tpl'), []);
       rows.forEach(function (r) {
-        if (String(r.id).indexOf('__') === 0) { if (r.id === '__ft_labels' && r.template && r.template.labels) { try { localStorage.setItem('ft_labels', JSON.stringify(r.template.labels)); if (window.ftApplyLabels) window.ftApplyLabels(); } catch (e) {} } return; }
+        if (String(r.id).indexOf('__') === 0) { if (r.id === '__ft_faq' && r.template && r.template.items) { try { localStorage.setItem('ft_faq', JSON.stringify(r.template.items)); document.dispatchEvent(new Event('ft-faq')); } catch (e) {} return; } if (r.id === '__ft_labels' && r.template && r.template.labels) { try { localStorage.setItem('ft_labels', JSON.stringify(r.template.labels)); if (window.ftApplyLabels) window.ftApplyLabels(); } catch (e) {} } return; }
         var t = r.template; if (!t || t.id == null || dead.indexOf(String(t.id)) > -1 || dead.indexOf(t.id) > -1) return;
         t.shared = true;
         var i = templates.findIndex(function (x) { return x.id === t.id; });
@@ -12623,6 +12623,13 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   setInterval(function () { if (sess && isAdmin && !document.hidden) loadProps().catch(function () {}); }, 120000);
   window.ftPropCount = function () { return propCount; };
   document.addEventListener('ft-admin', function () { if (isAdmin) loadProps().catch(function () {}); });
+  window.__ftRest = function (path, opts) { if (!sess) return Promise.reject(new Error('non connecté')); return ensureToken().then(function () { return api(path, opts || {}); }); };
+  window.__ftUser = function () { return sess && sess.user ? { id: sess.user.id, email: sess.user.email } : null; };
+  window.__ftSaveShared = function (id, payload) {
+    if (!sess || !isAdmin) return Promise.reject(new Error('Réservé à l’administrateur'));
+    var tpl = Object.assign({ id: id }, payload);
+    return ensureToken().then(function () { return api('/rest/v1/shared_templates?on_conflict=id', { method: 'POST', prefer: 'resolution=merge-duplicates', body: { id: id, template: tpl, updated_at: new Date().toISOString(), updated_by: sess.user.id } }); });
+  };
   window.__ftRpc = function (name, body) { if (!sess) return Promise.reject(new Error('non connecté')); return ensureToken().then(function () { return api('/rest/v1/rpc/' + name, { method: 'POST', body: body || {} }); }); };
   window.ftPropose = function () {
     var t = currentTpl();
@@ -12685,7 +12692,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
       '<label for="fa-pass">Mot de passe</label><input id="fa-pass" type="password" autocomplete="current-password" required>' +
       '<button class="fa-go" type="submit">Se connecter</button></form><div class="fa-msg"></div>' +
       '<div class="fa-links"><button type="button" data-a="forgot">Mot de passe oublié ?</button><button type="button" data-a="signup">Créer un compte</button><button type="button" data-a="skip">Continuer sans compte</button></div>' +
-      '<p class="fa-note">Sans compte, les modèles restent enregistrés sur ce poste uniquement. Aucune donnée d’allocataire n’est synchronisée.</p>');
+      '<p class="fa-note">Sans compte, les modèles restent enregistrés sur ce poste uniquement. Aucune donnée d’allocataire n’est synchronisée. Avec un compte, l’ouverture des outils est comptabilisée pour améliorer le site ; ces statistiques sont visibles par l’administrateur.</p>');
     if (note) msg(w, note);
     (meta.email ? w.querySelector('#fa-pass') : w.querySelector('#fa-mail')).focus();
     w.querySelector('form').onsubmit = function (ev) {
@@ -15465,15 +15472,16 @@ html.theme-light .ad-btn{background:#fff;border-color:#cbd5e1;color:#0f172a} htm
     let L = {}; try { L = JSON.parse(localStorage.getItem('ft_labels') || '{}') || {}; } catch (e) {}
     const lab = Object.keys(L).map(k => '<tr><td>' + esc(k.charAt(0) === 'r' ? 'Rubrique « ' + k.slice(2) + ' »' : 'Outil « ' + name(k.slice(2)) + ' »') + '</td><td>' + esc(L[k]) + '</td></tr>').join('');
     const ver = (document.querySelector('meta[name="ft-version"]') || {}).content || '';
-    body.innerHTML = '<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5"><div class="lg:col-span-6 space-y-4">' +
-      card('1', 'Statistiques d’équipe', 'Anonymes', '<div id="ad-stats" class="ad-empty">Chargement…</div>') +
+    body.innerHTML = '<div class="max-w-7xl mx-auto space-y-4 mb-5"><div id="ad-usage"></div></div><div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5"><div class="lg:col-span-6 space-y-4">' +
+      card('1', 'Statistiques cumulées', 'Depuis le début', '<div id="ad-stats" class="ad-empty">Chargement…</div>') + '<div id="ad-users"></div><div id="ad-ideas"></div>' +
       card('2', 'Propositions de modèles', 'Collègues', '<div class="ad-row"><span class="ad-empty" id="ad-props-n">…</span><button type="button" class="ad-btn pri" onclick="ftProposals()">Voir et valider</button></div>') +
       '</div><div class="lg:col-span-6 space-y-4">' +
       card('3', 'Barème', due ? 'À vérifier' : 'À jour', '<table class="ad-tbl"><tr><td>Montants vérifiés le</td><td class="n">' + esc(B.verifie || '—') + '</td></tr><tr><td>Dernière échéance de revalorisation</td><td class="n">' + cp.toLocaleDateString('fr-FR') + '</td></tr><tr><td>Prochaine échéance</td><td class="n">' + next.toLocaleDateString('fr-FR') + '</td></tr><tr><td>État</td><td class="n" style="color:' + (due ? '#fbbf24' : '#34d399') + '">' + (due ? 'À contrôler' : 'Rien à faire') + '</td></tr></table><div class="ad-row">' + (due ? '<button type="button" class="ad-btn pri" id="ad-ack">C’est vérifié</button>' : '') + '<a class="ad-btn" href="https://www.unedic.org/publications" target="_blank" rel="noopener">Paramètres Unédic</a><button type="button" class="ad-btn" onclick="switchNavTab(\'echeances\')">Échéances</button></div>') +
       card('4', 'Modèles communs', shared + ' publié(s)', '<p class="ad-empty">Pour publier un modèle pour tous : ouvrez-le dans la page Mails, puis l’icône « équipe » ou le menu du compte. Pour en retirer un : menu du compte → « Retirer le modèle ouvert des communs ».</p><div class="ad-row"><button type="button" class="ad-btn" onclick="switchNavTab(\'cvm\')">Ouvrir la page Mails</button></div>') +
       card('5', 'Noms renommés', Object.keys(L).length + ' changement(s)', (lab ? '<table class="ad-tbl"><tr><th>Élément</th><th>Nom affiché</th></tr>' + lab + '</table>' : '<p class="ad-empty">Aucun renommage.</p>') + '<p class="ad-empty">Pour renommer : survolez un nom dans le menu Outils et cliquez sur le crayon.</p>') +
       card('6', 'Site', 'Version ' + esc(ver), '<table class="ad-tbl"><tr><td>Version en ligne</td><td class="n">' + esc(ver) + '</td></tr><tr><td>Cas de contrôle des calculs</td><td class="n" id="ad-cases">…</td></tr></table><div class="ad-row"><button type="button" class="ad-btn" onclick="switchNavTab(\'sources\')">Sources et vérification</button><button type="button" class="ad-btn" onclick="window.ftShowNews && ftShowNews()">Quoi de neuf ?</button></div>') +
-      '</div></div>';
+      '<div id="ad-faq"></div></div></div>';
+    try { window.ftAdminFill && window.ftAdminFill(card); } catch (e) { console.warn(e); }
     const a = $('ad-ack'); if (a) a.onclick = () => { try { localStorage.setItem('ft_bareme_ack', new Date().toISOString()); } catch (e) {} toast('Rappel barème masqué jusqu’à la prochaine échéance', 'success'); render(); };
     try { const ko = FT_CASES.filter(c => { let g; try { g = c.run(); } catch (e) { return true; } return !(Math.abs(g - c.exp) < Math.pow(10, -c.d) / 2 + 1e-9); }).length; $('ad-cases').innerHTML = ko ? '<span style="color:#f87171">' + ko + ' écart(s)</span>' : '<span style="color:#34d399">' + FT_CASES.length + ' / ' + FT_CASES.length + ' conformes</span>'; } catch (e) {}
     const pc = window.ftPropCount ? window.ftPropCount() : null; $('ad-props-n').textContent = pc == null ? 'Nombre inconnu' : pc ? pc + ' proposition(s) en attente' : 'Aucune proposition en attente';
@@ -15499,6 +15507,257 @@ html.theme-light .ad-btn{background:#fff;border-color:#cbd5e1;color:#0f172a} htm
   document.addEventListener('ft-props', () => { if (!V.classList.contains('hidden')) { const e = $('ad-props-n'); if (e) { const n = window.ftPropCount(); e.textContent = n ? n + ' proposition(s) en attente' : 'Aucune proposition en attente'; } } });
   window.FT_ACTIONS = window.FT_ACTIONS || [];
   window.FT_ACTIONS.push({ t: 'Espace administrateur', s: 'Statistiques, propositions, barème (administrateur)', kw: 'admin administrateur statistiques gestion', when: isAdmin, run: () => switchNavTab('admin') });
+})();
+</script>
+<!-- ================= Extension 32 : journal d'utilisation, statistiques détaillées, FAQ, boîte à idées ================= -->
+<style>
+.au-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:767px){.au-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.au-k{padding:12px;border-radius:12px;background:rgba(2,6,23,.6);border:1px solid rgba(51,65,85,.8);text-align:center}
+.au-k span{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8}
+.au-k b{display:block;font-size:22px;font-weight:900;color:#fff;margin-top:2px}
+.au-k em{display:block;font-style:normal;font-size:10.5px;color:#67e8f9;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.au-chart{display:flex;align-items:flex-end;gap:3px;height:90px;padding:6px 2px 0;border-bottom:1px solid rgba(148,163,184,.25)}
+.au-chart i{flex:1;min-width:3px;border-radius:3px 3px 0 0;background:linear-gradient(180deg,#22d3ee,#2563eb);position:relative}
+.au-chart i:hover::after{content:attr(data-t);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:10.5px;font-style:normal;background:#0b1530;color:#e2e8f0;padding:3px 6px;border-radius:6px;margin-bottom:4px;z-index:2}
+.au-axis{display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;margin-top:3px}
+.au-per{display:inline-flex;gap:4px;padding:3px;border-radius:9px;background:rgba(2,6,23,.6);border:1px solid #334155}
+.au-per button{border:0;background:none;color:#94a3b8;font-family:inherit;font-weight:700;font-size:11.5px;padding:5px 10px;border-radius:7px;cursor:pointer}
+.au-per button.on{background:#2563eb;color:#fff}
+.au-user{cursor:pointer}
+.au-user:hover td{background:rgba(59,130,246,.06)}
+.au-det td{background:rgba(2,6,23,.45);font-size:11.5px;color:#cbd5e1}
+.au-pill{display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;border-radius:999px;background:rgba(59,130,246,.15);color:#93c5fd;font-size:10.5px;font-weight:700}
+.id-it{padding:10px 12px;border-radius:10px;border:1px solid rgba(51,65,85,.8);background:rgba(2,6,23,.5);margin-bottom:8px}
+.id-it.done{opacity:.55}
+.id-h{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#94a3b8}
+.id-k{font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#fbbf24}
+.id-m{font-size:13px;color:#e2e8f0;margin:6px 0;white-space:pre-wrap}
+.faq-q{border:1px solid rgba(51,65,85,.8);border-radius:12px;background:rgba(15,23,42,.6);margin-bottom:8px}
+.faq-q summary{cursor:pointer;padding:12px 14px;font-weight:700;font-size:13.5px;color:#fff;list-style:none;display:flex;justify-content:space-between;gap:10px}
+.faq-q summary::-webkit-details-marker{display:none}
+.faq-q summary::after{content:'+';color:#67e8f9;font-weight:900}
+.faq-q[open] summary::after{content:'–'}
+.faq-q div{padding:0 14px 12px;font-size:13px;line-height:1.6;color:#cbd5e1;white-space:pre-wrap}
+.faq-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.faq-tools input{flex:1;min-width:200px;padding:9px 12px;border-radius:10px;border:1px solid #334155;background:#020617;color:#fff;font-family:inherit;font-size:13px}
+.fq-ed textarea,.fq-ed input,#ft-fb textarea,#ft-fb select{width:100%;box-sizing:border-box;padding:8px 10px;border-radius:9px;border:1px solid #334155;background:#020617;color:#fff;font-family:inherit;font-size:12.5px}
+.fq-ed textarea{min-height:70px;margin-top:6px}
+.fq-row{padding:8px 0;border-bottom:1px solid rgba(148,163,184,.12)}
+#ft-fb{position:fixed;inset:0;z-index:99990;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.65);padding:16px}
+#ft-fb.on{display:flex}
+#ft-fb .fb-box{width:min(480px,100%);border-radius:18px;border:1px solid #24345f;background:#081028;color:#e8eef9;padding:18px;display:grid;gap:10px}
+#ft-fb h3{margin:0;font-size:16px;font-weight:800}
+#ft-fb p{margin:0;font-size:12px;color:#94a3b8}
+#ft-fb textarea{min-height:120px}
+html.theme-light .au-k{background:#f8fafc;border-color:#e2e8f0} html.theme-light .au-k b{color:#0f172a} html.theme-light .au-k em{color:#0369a1}
+html.theme-light .au-per{background:#f1f5f9;border-color:#cbd5e1}
+html.theme-light .au-det td{background:#f8fafc;color:#334155}
+html.theme-light .id-it{background:#f8fafc;border-color:#e2e8f0} html.theme-light .id-m{color:#0f172a}
+html.theme-light .faq-q{background:#fff;border-color:#e2e8f0} html.theme-light .faq-q summary{color:#0f172a} html.theme-light .faq-q div{color:#334155}
+html.theme-light .faq-tools input,html.theme-light .fq-ed textarea,html.theme-light .fq-ed input,html.theme-light #ft-fb textarea,html.theme-light #ft-fb select{background:#fff;color:#0f172a;border-color:#cbd5e1}
+html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5e1}
+</style>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const tab = () => { try { return String(activeNavTab); } catch (e) { return ''; } };
+  const toast = (m, t) => { try { showToast(m, t || 'info'); } catch (e) {} };
+  const isAdmin = () => !!(window.__ftIsAdmin && window.__ftIsAdmin());
+  const user = () => window.__ftUser && window.__ftUser();
+  const name = id => { if (String(id).indexOf('mail:') === 0) return '✉ ' + String(id).slice(5); try { return (NAV_TABS_CONFIG.find(t => String(t.id) === String(id)) || {}).name || id; } catch (e) { return id; } };
+  const dt = d => d ? new Date(d).toLocaleDateString('fr-FR') : '—';
+  const dtt = d => d ? new Date(d).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
+  const missing = e => /PGRST20[25]|42883|42P01|does not exist|HTTP 404/.test(String(e && (e.message || e.code) || ''));
+
+  /* ================= Journal d’utilisation (comptes connectés) ================= */
+  let Q = [], ft = null, last = '';
+  function log(tool) {
+    if (!user() || !tool || tool === last) return; last = tool;
+    if (/^(home|admin)$/.test(tool) || tool.indexOf('hub:') === 0) return;
+    Q.push({ tool: tool.slice(0, 120), at: new Date().toISOString() });
+    clearTimeout(ft); ft = setTimeout(flush, Q.length >= 8 ? 200 : 20000);
+  }
+  function flush(keep) {
+    if (!Q.length || !window.__ftRest || !user()) return;
+    const rows = Q.splice(0, Q.length);
+    window.__ftRest('/rest/v1/usage_events', { method: 'POST', prefer: 'return=minimal', keepalive: !!keep, body: rows }).catch(e => { if (!missing(e)) Q = rows.concat(Q).slice(-200); });
+  }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) flush(true); });
+  window.addEventListener('pagehide', () => flush(true));
+  const _sw = switchNavTab;
+  switchNavTab = function (t) { const r = _sw.apply(this, arguments); try { log(String(t)); } catch (e) {} setTimeout(faqRender, 30); return r; };
+  if (typeof selectTemplate === 'function') {
+    const _st = selectTemplate;
+    selectTemplate = function (id) { const r = _st.apply(this, arguments); try { const t = templates.find(x => x.id === id); if (t) { last = ''; log('mail:' + t.title); } } catch (e) {} return r; };
+  }
+
+  /* ================= Boîte à idées ================= */
+  window.ftFeedback = function () {
+    let w = $('ft-fb'); if (!w) { w = document.createElement('div'); w.id = 'ft-fb'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); document.body.appendChild(w); }
+    const page = (($('header-active-tab-name') || {}).textContent || '').trim();
+    w.innerHTML = '<div class="fb-box"><h3>Suggérer une amélioration</h3><p>Votre message est transmis à l’administrateur du site' + (user() ? ' avec votre e-mail, pour pouvoir vous répondre' : '') + '. N’y mettez aucune donnée d’allocataire.</p>' +
+      '<select id="fb-k"><option value="idee">Idée d’amélioration</option><option value="erreur">Erreur dans un calcul ou un texte</option><option value="question">Question</option></select>' +
+      '<textarea id="fb-m" placeholder="Votre message"></textarea><div class="ad-row" style="justify-content:flex-end"><button type="button" class="ad-btn" data-x>Annuler</button><button type="button" class="ad-btn pri" data-s>Envoyer</button></div></div>';
+    w.classList.add('on'); setTimeout(() => $('fb-m').focus(), 50);
+    w.onclick = e => {
+      if (e.target === w || e.target.closest('[data-x]')) { w.classList.remove('on'); return; }
+      if (!e.target.closest('[data-s]')) return;
+      const m = $('fb-m').value.trim(); if (!m) { $('fb-m').focus(); return; }
+      if (!user()) { toast('Connectez-vous pour envoyer une suggestion', 'info'); return; }
+      window.__ftRest('/rest/v1/site_feedback', { method: 'POST', prefer: 'return=minimal', body: { user_id: user().id, email: user().email, kind: $('fb-k').value, message: m.slice(0, 4000), page: page } })
+        .then(() => { w.classList.remove('on'); toast('Merci ! Votre message a été transmis', 'success'); })
+        .catch(e => toast(missing(e) ? 'La boîte à idées n’est pas encore activée par l’administrateur' : 'Envoi impossible pour le moment', 'error'));
+    };
+  };
+
+  /* ================= FAQ ================= */
+  const FAQ0 = [
+    ['Comment installer le site comme une application sur mon téléphone ?', 'Sur iPhone, ouvrez le site dans Safari, touchez Partager puis « Sur l’écran d’accueil ». Sur Android, menu ⋮ puis « Installer l’application ». Le mode d’emploi est aussi dans le menu « ⋯ » du téléphone.'],
+    ['Pourquoi créer un compte ?', 'Vos modèles de mail, favoris et réglages vous suivent sur tous vos postes et votre téléphone. Sans compte, ils restent sur l’appareil utilisé.'],
+    ['Mes données d’allocataires sont-elles enregistrées ?', 'Non. Les simulateurs calculent sur votre poste ; rien de ce que vous saisissez dans un simulateur n’est envoyé. Seuls vos modèles, favoris et réglages sont synchronisés avec votre compte.'],
+    ['Quelles statistiques sont collectées ?', 'Avec un compte, le site enregistre quel outil ou quel modèle est ouvert, et quand. Ces chiffres servent à améliorer le site et sont visibles par l’administrateur. Aucune donnée d’allocataire n’est collectée.'],
+    ['Comment proposer un modèle de mail à toute l’équipe ?', 'Ouvrez le modèle dans la page Mails, puis cliquez sur l’icône « équipe » à côté du titre. L’administrateur le valide avant qu’il soit publié pour tous.'],
+    ['Comment garder une trace d’une simulation ?', 'Sous chaque mail généré par un simulateur : « Fiche PDF » pour imprimer ou enregistrer les résultats, « En faire un modèle » pour l’ajouter à vos modèles, « Copier le mail » pour le coller dans le dossier.'],
+    ['Les montants sont-ils à jour ?', 'La date de vérification du barème est indiquée dans les Repères de l’accueil. Les sources de chaque règle sont dans « Sources et vérification ». En cas de doute, la décision notifiée fait foi.'],
+    ['J’ai trouvé une erreur ou j’ai une idée', 'Utilisez « Suggérer une amélioration » (bouton ci-dessus, ou Ctrl+K). Votre message arrive directement à l’administrateur.']
+  ];
+  const faq = () => { try { const f = JSON.parse(localStorage.getItem('ft_faq') || 'null'); return Array.isArray(f) && f.length ? f : FAQ0; } catch (e) { return FAQ0; } };
+  const FV = document.createElement('div');
+  FV.id = 'view-faq'; FV.className = 'hidden flex-1 flex flex-col overflow-hidden bg-slate-950 fr-view';
+  FV.innerHTML = '<div class="rg-panel" hidden></div><div class="h-12 border-b border-slate-800 bg-slate-900/90 px-4 md:px-6 flex items-center justify-between shrink-0 z-10"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center font-bold text-xs shrink-0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg></div><div><h2 class="text-xs md:text-sm font-bold text-white tracking-tight flex items-center gap-2"><span>Questions fréquentes</span><span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/30 font-normal">FAQ</span></h2></div></div></div><div class="flex-1 overflow-y-auto p-4 md:p-6"><div class="max-w-4xl mx-auto"><div class="faq-tools"><input id="faq-q" type="search" placeholder="Rechercher une question" aria-label="Rechercher dans la FAQ"><button type="button" class="ad-btn pri" onclick="ftFeedback()">Suggérer une amélioration</button></div><div id="faq-list"></div></div></div>';
+  const anc = $('view-delais'); if (anc) anc.parentElement.appendChild(FV);
+  NAV_TABS_CONFIG.push({ id: 'faq', name: 'Questions fréquentes', desc: 'Utiliser le site, compte, données, suggestions', icon: 'help-circle', color: 'bg-sky-500/15 text-sky-400 border-sky-500/30', badge: 'FAQ' });
+  try { FT_KW.faq = 'faq question aide utiliser site compte installer données suggestion'; } catch (e) {}
+  function faqRender() {
+    const on = tab() === 'faq'; FV.classList.toggle('hidden', !on); if (!on) return;
+    const n = $('header-active-tab-name'); if (n) n.textContent = 'Références et calculs · Questions fréquentes';
+    const q = (($('faq-q') || {}).value || '').toLowerCase();
+    const it = faq().filter(x => !q || (x[0] + ' ' + x[1]).toLowerCase().indexOf(q) > -1);
+    $('faq-list').innerHTML = it.length ? it.map(x => '<details class="faq-q"><summary>' + esc(x[0]) + '</summary><div>' + esc(x[1]) + '</div></details>').join('') : '<p class="ad-empty">Aucune question ne correspond. Posez-la avec « Suggérer une amélioration ».</p>';
+  }
+  document.addEventListener('input', e => { if (e.target && e.target.id === 'faq-q') faqRender(); });
+  document.addEventListener('ft-faq', faqRender);
+  /* Menu et barre de rubrique : Références et calculs */
+  const isRef = el => /référence|calcul/i.test((el && (el.dataset.lbOrig || el.textContent)) || '');
+  if (typeof renderBurgerTabs === 'function') {
+    const _rb = renderBurgerTabs;
+    renderBurgerTabs = function () {
+      const r = _rb.apply(this, arguments);
+      const c = $('burger-tabs-list'); if (!c || c.querySelector('button[onclick="switchNavTab(\'faq\')"]')) return r;
+      const s = [...c.querySelectorAll(':scope > .menu-sec')].find(x => isRef(x.querySelector('.menu-sec-h'))); if (!s) return r;
+      const model = [...s.querySelectorAll('button[onclick^="switchNavTab"]')].find(b => !/from-blue-900/.test(b.className)); if (!model) return r;
+      const b = model.cloneNode(true); b.setAttribute('onclick', "switchNavTab('faq')");
+      const lb = b.querySelector('.text-xs'), d = b.querySelector('p'), ic = b.querySelector('svg');
+      if (lb) { lb.textContent = 'Questions fréquentes'; delete lb.dataset.lbOrig; } if (d) d.textContent = 'Utiliser le site, compte, données, suggestions';
+      if (ic) { const n = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); n.setAttribute('viewBox', '0 0 24 24'); n.setAttribute('fill', 'none'); n.setAttribute('stroke', 'currentColor'); n.setAttribute('stroke-width', '2'); n.setAttribute('stroke-linecap', 'round'); n.setAttribute('stroke-linejoin', 'round'); n.setAttribute('class', ic.getAttribute('class') || ''); n.innerHTML = '<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/>'; ic.replaceWith(n); }
+      b.querySelectorAll('.ft-pen-wrap,.ft-pen').forEach(x => x.remove());
+      model.parentElement.appendChild(b); return r;
+    };
+    try { renderBurgerTabs(); } catch (e) {}
+  }
+  function hubFaq() {
+    document.querySelectorAll('.hub-bar').forEach(bar => {
+      if (!isRef(bar.querySelector('.hub-name')) || bar.querySelector('.hub-tab[data-t="faq"]')) return;
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'hub-tab'; b.dataset.t = 'faq'; b.setAttribute('onclick', "switchNavTab('faq')"); b.textContent = 'Questions fréquentes';
+      bar.insertBefore(b, bar.querySelector(':scope > .hub-sub'));
+    });
+    if (!FV.querySelector(':scope > .hub-bar')) { const src = [...document.querySelectorAll('.hub-bar')].find(x => isRef(x.querySelector('.hub-name')) && !x.closest('#view-faq')); if (src) { const cl = src.cloneNode(true); const sub = cl.querySelector('.hub-sub'); if (sub) sub.remove(); FV.insertBefore(cl, FV.firstChild); } }
+    const on = tab() === 'faq';
+    document.querySelectorAll('.hub-bar .hub-tab').forEach(b => { if (b.dataset.t === 'faq') b.classList.toggle('is-on', on); else if (on && b.closest('#view-faq')) b.classList.remove('is-on'); });
+  }
+  if (window.ftOnDom) window.ftOnDom(hubFaq);
+  window.FT_ACTIONS = window.FT_ACTIONS || [];
+  window.FT_ACTIONS.push(
+    { t: 'Suggérer une amélioration', s: 'Idée, erreur ou question pour l’administrateur', kw: 'suggestion idée erreur bug amélioration avis remarque', run: () => window.ftFeedback() },
+    { t: 'Questions fréquentes', s: 'Aide à l’utilisation du site', kw: 'faq aide question', run: () => switchNavTab('faq') }
+  );
+  /* Entrée dans le menu « ⋯ » du téléphone */
+  function moreItem() {
+    const m = $('ft-more'); if (!m || m.querySelector('[data-k="fb"]')) return;
+    const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'menuitem'); b.dataset.k = 'fb';
+    b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Suggérer une amélioration</span>';
+    b.addEventListener('click', ev => { ev.stopPropagation(); document.documentElement.classList.remove('ft-more-on'); setTimeout(window.ftFeedback, 30); });
+    const hr = m.querySelector('hr'); m.insertBefore(b, hr || null);
+  }
+  if (window.ftOnDom) window.ftOnDom(moreItem);
+
+  /* ================= Espace administrateur : cartes supplémentaires ================= */
+  let per = 30;
+  window.ftAdminFill = function (card) {
+    usage(card); users(card); ideas(card); faqAdmin(card);
+  };
+  function usage(card) {
+    const host = $('ad-usage'); if (!host) return;
+    host.innerHTML = card('★', 'Utilisation par conseiller', '<span class="au-per">' + [7, 30, 90].map(d => '<button type="button" data-d="' + d + '" class="' + (d === per ? 'on' : '') + '">' + d + ' j</button>').join('') + '</span>', '<div id="au-body" class="ad-empty">Chargement…</div>');
+    host.querySelector('.au-per').onclick = e => { const b = e.target.closest('[data-d]'); if (b) { per = +b.dataset.d; usage(card); } };
+    Promise.all([window.__ftRpc('admin_usage', { days: per }), window.__ftRpc('admin_daily', { days: per })]).then(([rows, daily]) => {
+      rows = rows || []; daily = daily || [];
+      const b = $('au-body');
+      if (!rows.length) { b.innerHTML = '<p class="ad-empty">Pas encore d’activité enregistrée sur cette période. Le journal démarre avec cette version : les chiffres apparaîtront au fil des connexions.</p>'; return; }
+      const byU = {}; rows.forEach(r => { const u = byU[r.email] = byU[r.email] || { email: r.email, uses: 0, tools: [], last: null }; u.uses += +r.uses; u.tools.push(r); if (!u.last || r.last_at > u.last) u.last = r.last_at; });
+      const U = Object.values(byU).sort((a, c) => c.uses - a.uses);
+      const byT = {}; rows.forEach(r => { byT[r.tool] = (byT[r.tool] || 0) + +r.uses; });
+      const topT = Object.entries(byT).sort((a, c) => c[1] - a[1]);
+      const tot = rows.reduce((s, r) => s + +r.uses, 0);
+      // graphique jour par jour
+      const days = []; const map = {}; daily.forEach(d => { map[String(d.day).slice(0, 10)] = d; });
+      for (let i = per - 1; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const k = d.toISOString().slice(0, 10); days.push([k, map[k] ? +map[k].uses : 0, map[k] ? +map[k].users : 0]); }
+      const mx = Math.max(1, ...days.map(d => d[1]));
+      b.className = '';
+      b.innerHTML = '<div class="au-kpis"><div class="au-k"><span>Conseillers actifs</span><b>' + U.length + '</b><em>sur ' + per + ' jours</em></div><div class="au-k"><span>Ouvertures</span><b>' + tot + '</b><em>' + (tot / per).toFixed(1).replace('.', ',') + ' par jour</em></div><div class="au-k"><span>Outil n° 1</span><b>' + (topT[0] ? topT[0][1] : 0) + '</b><em>' + esc(topT[0] ? name(topT[0][0]) : '—') + '</em></div><div class="au-k"><span>Le plus actif</span><b>' + U[0].uses + '</b><em>' + esc(U[0].email) + '</em></div></div>' +
+        '<div style="margin-top:14px"><div class="au-chart">' + days.map(d => '<i style="height:' + Math.max(2, Math.round(d[1] / mx * 100)) + '%" data-t="' + new Date(d[0] + 'T12:00').toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) + ' : ' + d[1] + ' ouverture(s), ' + d[2] + ' conseiller(s)"></i>').join('') + '</div><div class="au-axis"><span>' + new Date(days[0][0] + 'T12:00').toLocaleDateString('fr-FR') + '</span><span>aujourd’hui</span></div></div>' +
+        '<table class="ad-tbl" style="margin-top:14px"><tr><th>Conseiller</th><th style="text-align:right">Ouvertures</th><th style="text-align:right">Outils</th><th>Plus utilisés</th><th style="text-align:right">Dernière activité</th></tr>' +
+        U.map((u, i) => { const tl = u.tools.slice().sort((a, c) => c.uses - a.uses); return '<tr class="au-user" data-i="' + i + '"><td><b>' + esc(u.email) + '</b></td><td class="n">' + u.uses + '</td><td class="n">' + tl.length + '</td><td>' + tl.slice(0, 3).map(t => '<span class="au-pill">' + esc(name(t.tool)) + ' · ' + t.uses + '</span>').join('') + '</td><td class="n">' + dtt(u.last) + '</td></tr><tr class="au-det" data-for="' + i + '" hidden><td colspan="5">' + tl.map(t => '<span class="au-pill">' + esc(name(t.tool)) + ' · ' + t.uses + ' · ' + dt(t.last_at) + '</span>').join('') + '</td></tr>'; }).join('') + '</table>' +
+        '<p class="ad-empty" style="margin-top:8px">Cliquez sur un conseiller pour voir le détail de tous ses outils et modèles. Les lignes « ✉ » sont des modèles de mail ouverts.</p>' +
+        '<table class="ad-tbl" style="margin-top:12px"><tr><th>Outil ou modèle</th><th style="text-align:right">Ouvertures</th><th style="text-align:right">Conseillers</th></tr>' + topT.slice(0, 15).map(([t, n]) => '<tr><td>' + esc(name(t)) + '<div class="ad-bar" style="width:' + Math.max(4, Math.round(n / topT[0][1] * 100)) + '%"></div></td><td class="n">' + n + '</td><td class="n">' + rows.filter(r => r.tool === t).length + '</td></tr>').join('') + '</table>';
+      b.onclick = e => { const tr = e.target.closest('.au-user'); if (!tr) return; const d = b.querySelector('.au-det[data-for="' + tr.dataset.i + '"]'); if (d) d.hidden = !d.hidden; };
+    }).catch(e => { $('au-body').textContent = missing(e) ? 'Statistiques détaillées non installées : exécutez le script supabase/admin_stats.sql dans Supabase.' : 'Chargement impossible : ' + (e && e.message || e); });
+  }
+  function users(card) {
+    const host = $('ad-users'); if (!host) return;
+    host.innerHTML = card('👤', 'Comptes', '', '<div id="us-body" class="ad-empty">Chargement…</div>');
+    window.__ftRpc('admin_users').then(rows => {
+      rows = rows || []; const b = $('us-body'); b.className = '';
+      b.innerHTML = '<table class="ad-tbl"><tr><th>Conseiller</th><th style="text-align:right">Inscrit</th><th style="text-align:right">Connexion</th><th style="text-align:right">Modèles perso</th></tr>' + rows.map(r => '<tr><td>' + esc(r.email) + '</td><td class="n">' + dt(r.created_at) + '</td><td class="n">' + dtt(r.last_sign_in) + '</td><td class="n">' + (r.own_templates || 0) + '</td></tr>').join('') + '</table><p class="ad-empty" style="margin-top:6px">' + rows.length + ' compte(s).</p>';
+    }).catch(e => { $('us-body').textContent = missing(e) ? 'Non installé : script supabase/admin_stats.sql.' : 'Chargement impossible.'; });
+  }
+  function ideas(card) {
+    const host = $('ad-ideas'); if (!host) return;
+    host.innerHTML = card('💡', 'Boîte à idées', '', '<div id="id-body" class="ad-empty">Chargement…</div>');
+    const K = { idee: 'Idée', erreur: 'Erreur signalée', question: 'Question' };
+    window.__ftRest('/rest/v1/site_feedback?select=*&order=done.asc,created_at.desc&limit=100').then(rows => {
+      rows = rows || []; const b = $('id-body'); b.className = '';
+      const open = rows.filter(r => !r.done).length;
+      host.querySelector('.text-cyan-400').textContent = open + ' à traiter';
+      b.innerHTML = rows.length ? rows.map(r => '<div class="id-it' + (r.done ? ' done' : '') + '" data-id="' + esc(r.id) + '"><div class="id-h"><span class="id-k">' + esc(K[r.kind] || r.kind) + '</span><span>' + esc(r.email || '') + ' · ' + dtt(r.created_at) + '</span></div><div class="id-m">' + esc(r.message) + '</div>' + (r.page ? '<div class="id-h"><span>Page : ' + esc(r.page) + '</span></div>' : '') + '<div class="ad-row" style="margin-top:6px">' + (r.email ? '<a class="ad-btn" href="mailto:' + esc(r.email) + '?subject=' + encodeURIComponent('Votre suggestion sur l’Espace Conseiller') + '">Répondre</a>' : '') + '<button type="button" class="ad-btn" data-a="done">' + (r.done ? 'Rouvrir' : 'Marquer traité') + '</button><button type="button" class="ad-btn" data-a="del">Supprimer</button></div></div>').join('') : '<p class="ad-empty">Aucun message pour l’instant. Les conseillers écrivent via « Suggérer une amélioration » (FAQ, recherche, menu « ⋯ »).</p>';
+      b.onclick = e => {
+        const btn = e.target.closest('button[data-a]'); if (!btn) return; const it = btn.closest('.id-it'), id = it.dataset.id, r = rows.find(x => String(x.id) === id);
+        const p = btn.dataset.a === 'del' ? window.__ftRest('/rest/v1/site_feedback?id=eq.' + encodeURIComponent(id), { method: 'DELETE' }) : window.__ftRest('/rest/v1/site_feedback?id=eq.' + encodeURIComponent(id), { method: 'PATCH', prefer: 'return=minimal', body: { done: !r.done } });
+        p.then(() => ideas(card)).catch(() => toast('Action impossible', 'error'));
+      };
+    }).catch(e => { $('id-body').textContent = missing(e) ? 'Non installée : script supabase/admin_stats.sql.' : 'Chargement impossible.'; });
+  }
+  function faqAdmin(card) {
+    const host = $('ad-faq'); if (!host) return;
+    let items = faq().map(x => x.slice());
+    const draw = () => {
+      host.innerHTML = card('?', 'FAQ du site', items.length + ' question(s)', '<div class="fq-ed">' + items.map((x, i) => '<div class="fq-row" data-i="' + i + '"><input value="' + esc(x[0]) + '" data-f="0" aria-label="Question"><textarea data-f="1" aria-label="Réponse">' + esc(x[1]) + '</textarea><div class="ad-row" style="margin-top:6px"><button type="button" class="ad-btn" data-a="up">Monter</button><button type="button" class="ad-btn" data-a="del">Supprimer</button></div></div>').join('') + '</div><div class="ad-row"><button type="button" class="ad-btn" data-a="add">Ajouter une question</button><button type="button" class="ad-btn pri" data-a="save">Publier la FAQ</button><button type="button" class="ad-btn" onclick="switchNavTab(\'faq\')">Voir la page</button></div>');
+      host.oninput = e => { const r = e.target.closest('.fq-row'); if (r && e.target.dataset.f) items[+r.dataset.i][+e.target.dataset.f] = e.target.value; };
+      host.onclick = e => {
+        const b = e.target.closest('button[data-a]'); if (!b) return; const r = b.closest('.fq-row'), i = r ? +r.dataset.i : -1;
+        if (b.dataset.a === 'add') { items.push(['Nouvelle question', 'Réponse']); draw(); }
+        if (b.dataset.a === 'del') { items.splice(i, 1); draw(); }
+        if (b.dataset.a === 'up' && i > 0) { const t = items[i]; items[i] = items[i - 1]; items[i - 1] = t; draw(); }
+        if (b.dataset.a === 'save') {
+          const clean = items.filter(x => x[0].trim() && x[1].trim());
+          window.__ftSaveShared('__ft_faq', { items: clean }).then(() => { localStorage.setItem('ft_faq', JSON.stringify(clean)); toast('FAQ publiée pour tous les conseillers', 'success'); }).catch(() => toast('Publication impossible', 'error'));
+        }
+      };
+    };
+    draw();
+  }
 })();
 </script>
 <!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
@@ -15533,6 +15792,11 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.49', date: '12/11/2026', items: [
+      'Nouvelle page « Questions fréquentes » (rubrique Références et calculs) : installer l’appli, compte, données, modèles communs, fiches PDF.',
+      'Bouton « Suggérer une amélioration » (FAQ, recherche Ctrl+K, menu « ⋯ » du téléphone) : idées, erreurs et questions arrivent directement à l’administrateur.',
+      'Avec un compte, l’ouverture des outils et des modèles est désormais comptabilisée pour améliorer le site (aucune donnée d’allocataire).'
+    ] },
     { v: '2026-11-12.46', date: '12/11/2026', items: [
       'Nouvel outil « Échéances réglementaires » (rubrique Références et calculs) : ce qui vient de changer et ce qui va bouger, avec la prochaine revalorisation.',
       'Parcours dossier : raccourcis vers l’outil adapté (ATI, formation, trop-perçu, invalidité, retraite, frontaliers, sanctions).',
