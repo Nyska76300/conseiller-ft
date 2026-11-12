@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.16">
+  <meta name="ft-version" content="2026-11-12.17">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12982,14 +12982,29 @@ html.theme-light .lk-form input{background:#fff;border-color:#cbd5e1;color:#0f17
 html.theme-light #floating-calculator .grid.grid-cols-4>button:not([class*="bg-"]){background:#f1f5f9}
 /* ---------- Accueil : simulateurs synthétisés ---------- */
 .fh-C .home-section{display:none!important}
-.fh-sum{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
-.fh-sum .fh-grp{padding:14px;gap:10px}
-.fh-sum .fh-gh h3{font-size:14.5px}
-.fh-chips{display:flex;flex-wrap:wrap;gap:6px}
-.fh-chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:9px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.035);color:#e2e8f0;font-family:inherit;font-weight:600;font-size:13px;line-height:1;cursor:pointer;white-space:nowrap}
-.fh-chip svg{width:14px;height:14px;color:var(--c)}
-.fh-chip:hover{border-color:var(--c);background:var(--b)}
-html.theme-light .fh-chip{background:#f8fafc;border-color:#e2e8f0;color:#0f172a}
+.fh-sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.fh-sum>.fh-grp:first-child{grid-column:1/-1}
+.fh-sum>.fh-grp:first-child .fh-chips{grid-template-columns:repeat(3,minmax(0,1fr))}
+.fh-sum>.fh-grp:not(:first-child) .fh-chips{grid-template-columns:minmax(0,1fr)}
+@media (max-width:1100px){.fh-sum{grid-template-columns:minmax(0,1fr)}.fh-sum>.fh-grp:first-child .fh-chips{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.fh-sum .fh-grp{padding:16px;gap:12px;background:linear-gradient(180deg,var(--b) 0,rgba(17,29,61,0) 70px),#111d3d;transition:border-color .2s}
+.fh-sum .fh-grp:hover{border-color:color-mix(in srgb,var(--c) 45%,#24345f)}
+.fh-sum .fh-gh h3{font-size:15px}
+.fh-sum .fh-gh small{margin-left:auto;min-width:24px;height:22px;padding:0 7px;border-radius:999px;display:inline-grid;place-items:center;background:var(--b);color:var(--c);font-size:11.5px;font-weight:700}
+.fh-chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.fh-chip{position:relative;display:flex;align-items:center;gap:10px;min-height:46px;padding:6px 28px 6px 7px;border-radius:12px;white-space:nowrap;border:1px solid color-mix(in srgb,var(--c) 16%,transparent);background:color-mix(in srgb,var(--c) 6%,rgba(255,255,255,.02));color:#e8eef9;font-family:inherit;font-weight:600;font-size:13.5px;line-height:1.25;text-align:left;cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease,background .15s ease}
+.fh-chip .fh-ci{flex:none;width:32px;height:32px;border-radius:9px;display:grid;place-items:center;background:var(--b);color:var(--c)}
+.fh-chip .fh-ci svg{width:16px;height:16px}
+.fh-chip .fh-cl{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.fh-chip .fh-ca{position:absolute;right:10px;top:50%;width:15px;height:15px;color:var(--c);opacity:0;transform:translate(-4px,-50%);transition:opacity .15s ease,transform .15s ease}
+.fh-chip:hover,.fh-chip:focus-visible{transform:translateY(-1px);border-color:color-mix(in srgb,var(--c) 60%,transparent);background:color-mix(in srgb,var(--c) 12%,rgba(255,255,255,.02));box-shadow:0 8px 22px -10px var(--c);outline:0}
+.fh-chip:hover .fh-ca,.fh-chip:focus-visible .fh-ca{opacity:1;transform:translate(0,-50%)}
+.fh-chip:hover .fh-ci{background:var(--c);color:#0b1530}
+@media (max-width:640px){.fh-chips{grid-template-columns:minmax(0,1fr)}}
+@media (prefers-reduced-motion:reduce){.fh-chip,.fh-chip .fh-ca{transition:none}.fh-chip:hover{transform:none}}
+html.theme-light .fh-sum .fh-grp{background:linear-gradient(180deg,var(--b) 0,rgba(255,255,255,0) 70px),#fff}
+html.theme-light .fh-chip{color:#0f172a;background:color-mix(in srgb,var(--c) 5%,#fff);border-color:color-mix(in srgb,var(--c) 18%,#e2e8f0)}
+html.theme-light .fh-chip:hover .fh-ci{color:#fff}
 /* ---------- Sources et vérification : cartes compactes, détails au survol ---------- */
 #view-sources .sv-list{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))!important;gap:10px!important}
 #view-sources .sv-row{position:relative;display:flex!important;flex-direction:column;gap:6px;padding:12px 14px!important;margin:0!important;min-height:0!important;border-radius:12px!important;cursor:help;outline:0}
@@ -13049,7 +13064,7 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
     }).filter(g => g.items.length);
   }
   function toolsHtml() {
-    const gs = groups(); if (!gs.length) return '';
+    const gs = groups().filter(g => !/référence|calcul/i.test(g.title)); if (!gs.length) return '';
     const ref = gs.find(g => /référence|calcul/i.test(g.title));
     if (ref) ref.items.push(
       { act: "document.getElementById('datecalc-toggle').click()", label: 'Dates', desc: 'Nombre de jours entre deux dates', icon: SVG(IC.cal) },
@@ -13057,8 +13072,8 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
     gs.forEach(g => g.items.sort((a, b) => a.label.localeCompare(b.label, 'fr', { sensitivity: 'base' })));
     const card = g => {
       const L = look(g.title);
-      return '<section class="fh-card fh-grp ' + L[2] + '"><div class="fh-gh"><span class="fh-gi">' + SVG(IC[L[1]]) + '</span><h3>' + esc(g.title) + '</h3></div><div class="fh-chips">' +
-        g.items.map(i => '<button type="button" class="fh-chip" onclick="' + esc(i.act) + '" title="' + esc(i.desc) + '">' + i.icon + esc(i.label) + '</button>').join('') + '</div></section>';
+      return '<section class="fh-card fh-grp ' + L[2] + '"><div class="fh-gh"><span class="fh-gi">' + SVG(IC[L[1]]) + '</span><h3>' + esc(g.title) + '</h3><small>' + g.items.length + '</small></div><div class="fh-chips">' +
+        g.items.map(i => '<button type="button" class="fh-chip" onclick="' + esc(i.act) + '" title="' + esc(i.desc) + '"><span class="fh-ci">' + i.icon + '</span><span class="fh-cl">' + esc(i.label) + '</span><svg class="fh-ca" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>').join('') + '</div></section>';
     };
     return '<div class="fh-th"><h2>Simulateurs et outils</h2></div><div class="fh-sum">' + gs.map(card).join('') + '</div>';
   }
@@ -13389,6 +13404,10 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.17', date: '12/11/2026', items: [
+      'Accueil : la carte « Références et calculs » est retirée (toujours accessible par le menu Outils).',
+      'Accueil : nouveaux boutons de simulateurs, plus modernes : icône colorée, effet au survol et flèche d’accès.'
+    ] },
     { v: '2026-11-12.16', date: '12/11/2026', items: [
       'Calculatrice agrandie : grandes touches et affichage plus lisible.',
       'Conditions et ARE : le référentiel affiche bien les 6 conditions (affiliation, privation involontaire, inscription dans les 12 mois, recherche active, âge, aptitude et résidence).',
