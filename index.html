@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.10">
+  <meta name="ft-version" content="2026-11-12.11">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12863,6 +12863,10 @@ html.theme-light .fh-c1{--c:#1d4ed8;--b:#dbeafe}html.theme-light .fh-c2{--c:#0f7
 html.theme-light .fh-news{border-color:#fecaca}
 html.theme-light .fh-news .fh-dico{background:#fee2e2;color:#b91c1c}
 html.theme-light .fh-news li{color:#334155}
+/* ---------- Catégories de mails : boutons modifier et supprimer toujours visibles ---------- */
+#vertical-filters-container button[title="Modifier la catégorie"],#vertical-filters-container button[title="Supprimer la catégorie"]{opacity:.55!important;padding:4px!important;border-radius:6px}
+#vertical-filters-container button[title="Modifier la catégorie"]:hover,#vertical-filters-container button[title="Supprimer la catégorie"]:hover{opacity:1!important;background:rgba(255,255,255,.08)}
+#vertical-filters-container button[title="Modifier la catégorie"] svg,#vertical-filters-container button[title="Supprimer la catégorie"] svg{width:13px!important;height:13px!important}
 /* ---------- Liens cliquables dans les mails ---------- */
 #preview-body a.ft-link{color:#67e8f9;text-decoration:underline;text-underline-offset:3px;word-break:break-all;cursor:pointer}
 #preview-body a.ft-link:hover{color:#a5f3fc}
@@ -12909,6 +12913,7 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
     if (ref) ref.items.push(
       { act: "document.getElementById('datecalc-toggle').click()", label: 'Dates', desc: 'Nombre de jours entre deux dates', icon: SVG(IC.cal) },
       { act: "document.getElementById('header-calc-btn').click()", label: 'Calculatrice', desc: 'Calcul rapide', icon: SVG(IC.calc) });
+    gs.forEach(g => g.items.sort((a, b) => a.label.localeCompare(b.label, 'fr', { sensitivity: 'base' })));
     const card = g => {
       const L = look(g.title);
       return '<section class="fh-card fh-grp ' + L[2] + '"><div class="fh-gh"><span class="fh-gi">' + SVG(IC[L[1]]) + '</span><h3>' + esc(g.title) + '</h3><small>' + g.items.length + ' outil' + (g.items.length > 1 ? 's' : '') + '</small></div><div class="fh-items">' +
@@ -12978,7 +12983,7 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
       take('.hm-extra', L);
       // Centre : outils groupés puis sections secondaires
       let tw = C.querySelector(':scope > .fh-tools'); if (!tw) { tw = document.createElement('div'); tw.className = 'fh-col fh-tools'; C.appendChild(tw); }
-      const th = toolsHtml(); if (th && tw.dataset.h !== String(th.length)) { tw.innerHTML = th; tw.dataset.h = String(th.length); }
+      const th = toolsHtml(); if (th && tw._h !== th) { tw.innerHTML = th; tw._h = th; }
       [...main.querySelectorAll(':scope > .home-section')].forEach((sec, i, arr) => { if (i === 0) C.querySelectorAll(':scope > .home-section').forEach(x => x.remove()); C.appendChild(sec); });
       if (foot) C.appendChild(foot); else { const f = C.querySelector(':scope > .home-foot'); if (f) C.appendChild(f); }
       // Droite : favoris et reprendre
@@ -13037,7 +13042,35 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
     };
   }
 
+
+  /* ---------- Menu Outils : rubriques dans l'ordre voulu, outils par ordre alphabétique ---------- */
+  const SEC_ORDER = [/ouverture/i, /ans|création/i, /situation/i, /fin de droits/i, /référence|calcul/i];
+  const secRank = t => { const i = SEC_ORDER.findIndex(r => r.test(t)); return i < 0 ? 99 : i; };
+  const lbl = b => ((b.querySelector('.text-xs') || b).textContent || '').trim();
+  function sortMenu() {
+    const list = $('burger-tabs-list'); if (!list) return;
+    const secs = [...list.querySelectorAll(':scope > .menu-sec')];
+    if (!secs.length) return;
+    let changed = false;
+    secs.forEach(sec => {
+      const box = sec.querySelector('.menu-sec-h') ? sec.querySelector('.menu-sec-h').nextElementSibling : null;
+      const host = box && box.querySelector('button[onclick]') ? box : sec;
+      const btns = [...host.querySelectorAll(':scope > button[onclick]')];
+      const sorted = btns.slice().sort((a, b) => lbl(a).localeCompare(lbl(b), 'fr', { sensitivity: 'base' }));
+      if (sorted.some((b, i) => b !== btns[i])) { sorted.forEach(b => host.appendChild(b)); changed = true; }
+    });
+    const ordered = secs.slice().sort((a, b) => secRank((a.querySelector('.menu-sec-h') || a).textContent) - secRank((b.querySelector('.menu-sec-h') || b).textContent));
+    if (ordered.some((x, i) => x !== secs[i])) {
+      const anchor = secs[secs.length - 1].nextSibling;
+      ordered.forEach(x => list.insertBefore(x, anchor));
+      changed = true;
+    }
+    return changed;
+  }
+  const mmo = new MutationObserver(() => { mmo.disconnect(); try { if (sortMenu()) { const tw = document.querySelector('.fh-tools'); if (tw) tw._h = ''; if (String(activeNavTab) === 'home') layout(); } } catch (e) {} watchMenu(); });
+  function watchMenu() { const l = $('burger-tabs-list'); if (l) mmo.observe(l, { childList: true, subtree: true }); }
   function start() {
+    try { sortMenu(); watchMenu(); } catch (e) {}
     try { populateCategorySelect(); } catch (e) {}
     try { linkify($('preview-body')); } catch (e) {}
     watch(); layout();
@@ -13077,6 +13110,10 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.11', date: '12/11/2026', items: [
+      'Menu Outils : les outils de chaque rubrique sont classés par ordre alphabétique, et « Situations particulières » passe au-dessus de « Fin de droits et passages ». L’accueil suit le même ordre.',
+      'Mails : le crayon (renommer) et la corbeille (supprimer) de chaque catégorie sont maintenant toujours visibles dans le volet des catégories.'
+    ] },
     { v: '2026-11-12.10', date: '12/11/2026', items: [
       'Complément ARE : calcul vérifié sur 30 jours quel que soit le mois (mensualisation), net après retraite complémentaire (3 % du SJR). Exemple : AJ 66,30 €, SJR 116,31 €, brut 2 000 € → 565,29 €.',
       'Cumul CNS et maintien ANS : l’allocation mensuelle est aussi calculée sur 30 jours, quel que soit le mois.'
