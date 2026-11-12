@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-12.42">
+  <meta name="ft-version" content="2026-11-12.43">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -15103,8 +15103,10 @@ body>header{overflow:visible!important}
 .hub-bar.fr-more-l.fr-more-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 44px,#000 calc(100% - 44px),transparent);mask-image:linear-gradient(90deg,transparent,#000 44px,#000 calc(100% - 44px),transparent)}
 .hub-bar.fr-more-l:not(.fr-more-r){-webkit-mask-image:linear-gradient(90deg,transparent,#000 44px);mask-image:linear-gradient(90deg,transparent,#000 44px)}
 /* 5. Barre du haut allégée : outils secondaires dans « ⋯ » sur tous les écrans */
-#datecalc-toggle,#header-calc-btn,#rp-btn,#theme-toggle-btn,body>header button[title*="echarger"],body>header button[aria-label*="echarger"]{display:none!important}
-#ft-more-btn{display:inline-flex!important;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid rgba(71,85,105,.8);background:rgba(30,41,59,.9);color:#67e8f9;flex:none;cursor:pointer}
+@media (max-width:640px){#datecalc-toggle,#header-calc-btn,#rp-btn,#theme-toggle-btn,body>header button[title*="echarger"],body>header button[aria-label*="echarger"]{display:none!important}}
+@media (max-width:640px){#ft-more-btn{display:inline-flex!important}}
+@media (min-width:641px) and (max-width:1439px){#datecalc-toggle span,#header-calc-btn span{display:none!important}#datecalc-toggle,#header-calc-btn{padding-left:9px!important;padding-right:9px!important}}
+#ft-more-btn{align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid rgba(71,85,105,.8);background:rgba(30,41,59,.9);color:#67e8f9;flex:none;cursor:pointer}
 #ft-more-btn:hover{border-color:#67e8f9}
 #ft-more-btn svg{width:18px;height:18px}
 #ft-more{position:fixed;z-index:90;top:calc(60px + env(safe-area-inset-top));right:8px;width:min(290px,calc(100vw - 16px));padding:6px;border-radius:14px;border:1px solid #24345f;background:rgba(8,16,40,.98);box-shadow:0 20px 50px rgba(0,0,0,.55)}
@@ -15204,6 +15206,7 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.43', date: '12/11/2026', items: ['Sur ordinateur, Dates, Calculatrice, Repères, thème et rechargement sont de retour dans la barre du haut ; le menu « ⋯ » reste sur téléphone.'] },
     { v: '2026-11-12.42', date: '12/11/2026', items: ['Les liens « Modèles CVM associés » ont été retirés des rubriques.'] },
     { v: '2026-11-12.41', date: '12/11/2026', items: [
       'Logo France Travail officiel dans la barre du haut, et sur l’icône de l’appli (à réinstaller sur l’écran d’accueil pour voir la nouvelle icône).'
