@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-12.50">
+  <meta name="ft-version" content="2026-11-12.51">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -15633,41 +15633,32 @@ html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5
   try { FT_KW.faq = 'faq question aide utiliser site compte installer données suggestion'; } catch (e) {}
   function faqRender() {
     const on = tab() === 'faq'; FV.classList.toggle('hidden', !on); if (!on) return;
-    const n = $('header-active-tab-name'); if (n) n.textContent = 'Références et calculs · Questions fréquentes';
+    const n = $('header-active-tab-name'); if (n) n.textContent = 'Autres outils · Questions fréquentes';
     const q = (($('faq-q') || {}).value || '').toLowerCase();
     const it = faq().filter(x => !q || (x[0] + ' ' + x[1]).toLowerCase().indexOf(q) > -1);
     $('faq-list').innerHTML = it.length ? it.map(x => '<details class="faq-q"><summary>' + esc(x[0]) + '</summary><div>' + esc(x[1]) + '</div></details>').join('') : '<p class="ad-empty">Aucune question ne correspond. Posez-la avec « Suggérer une amélioration ».</p>';
   }
   document.addEventListener('input', e => { if (e.target && e.target.id === 'faq-q') faqRender(); });
   document.addEventListener('ft-faq', faqRender);
-  /* Menu et barre de rubrique : Références et calculs */
-  const isRef = el => /référence|calcul/i.test((el && (el.dataset.lbOrig || el.textContent)) || '');
+  /* Menu Outils : rubrique « Autres outils », sous « Ma journée » */
   if (typeof renderBurgerTabs === 'function') {
     const _rb = renderBurgerTabs;
     renderBurgerTabs = function () {
       const r = _rb.apply(this, arguments);
       const c = $('burger-tabs-list'); if (!c || c.querySelector('button[onclick="switchNavTab(\'faq\')"]')) return r;
-      const s = [...c.querySelectorAll(':scope > .menu-sec')].find(x => isRef(x.querySelector('.menu-sec-h'))); if (!s) return r;
-      const model = [...s.querySelectorAll('button[onclick^="switchNavTab"]')].find(b => !/from-blue-900/.test(b.className)); if (!model) return r;
+      const model = c.querySelector('button[onclick="switchNavTab(\'jour\')"]'); if (!model) return r;
       const b = model.cloneNode(true); b.setAttribute('onclick', "switchNavTab('faq')");
+      const on = tab() === 'faq';
+      if (on) { b.className = model.className.replace(/bg-gradient[^ ]*|from-[^ ]*|to-[^ ]*|border-cyan[^ ]*|shadow[^ ]*/g, ''); }
       const lb = b.querySelector('.text-xs'), d = b.querySelector('p'), ic = b.querySelector('svg');
       if (lb) { lb.textContent = 'Questions fréquentes'; delete lb.dataset.lbOrig; } if (d) d.textContent = 'Utiliser le site, compte, données, suggestions';
       if (ic) { const n = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); n.setAttribute('viewBox', '0 0 24 24'); n.setAttribute('fill', 'none'); n.setAttribute('stroke', 'currentColor'); n.setAttribute('stroke-width', '2'); n.setAttribute('stroke-linecap', 'round'); n.setAttribute('stroke-linejoin', 'round'); n.setAttribute('class', ic.getAttribute('class') || ''); n.innerHTML = '<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/>'; ic.replaceWith(n); }
       b.querySelectorAll('.ft-pen-wrap,.ft-pen').forEach(x => x.remove());
-      model.parentElement.appendChild(b); return r;
+      model.parentNode.insertBefore(b, model.nextSibling); return r;
     };
     try { renderBurgerTabs(); } catch (e) {}
   }
-  function hubFaq() {
-    document.querySelectorAll('.hub-bar').forEach(bar => {
-      if (!isRef(bar.querySelector('.hub-name')) || bar.querySelector('.hub-tab[data-t="faq"]')) return;
-      const b = document.createElement('button'); b.type = 'button'; b.className = 'hub-tab'; b.dataset.t = 'faq'; b.setAttribute('onclick', "switchNavTab('faq')"); b.textContent = 'Questions fréquentes';
-      bar.insertBefore(b, bar.querySelector(':scope > .hub-sub'));
-    });
-    if (!FV.querySelector(':scope > .hub-bar')) { const src = [...document.querySelectorAll('.hub-bar')].find(x => isRef(x.querySelector('.hub-name')) && !x.closest('#view-faq')); if (src) { const cl = src.cloneNode(true); const sub = cl.querySelector('.hub-sub'); if (sub) sub.remove(); FV.insertBefore(cl, FV.firstChild); } }
-    const on = tab() === 'faq';
-    document.querySelectorAll('.hub-bar .hub-tab').forEach(b => { if (b.dataset.t === 'faq') b.classList.toggle('is-on', on); else if (on && b.closest('#view-faq')) b.classList.remove('is-on'); });
-  }
+  function hubFaq() {}
   if (window.ftOnDom) window.ftOnDom(hubFaq);
   window.FT_ACTIONS = window.FT_ACTIONS || [];
   window.FT_ACTIONS.push(
@@ -15794,7 +15785,7 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
      (v = même valeur que la balise ft-version). */
   var NEWS = [
     { v: '2026-11-12.49', date: '12/11/2026', items: [
-      'Nouvelle page « Questions fréquentes » (rubrique Références et calculs) : installer l’appli, compte, données, modèles communs, fiches PDF.',
+      'Nouvelle page « Questions fréquentes » (menu Outils, « Autres outils ») : installer l’appli, compte, données, modèles communs, fiches PDF.',
       'Bouton « Suggérer une amélioration » (FAQ, recherche Ctrl+K, menu « ⋯ » du téléphone) : idées, erreurs et questions arrivent directement à l’administrateur.',
       'Avec un compte, l’ouverture des outils et des modèles est désormais comptabilisée pour améliorer le site (aucune donnée d’allocataire).'
     ] },
