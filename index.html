@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-12.47">
+  <meta name="ft-version" content="2026-11-12.48">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -15450,7 +15450,7 @@ html.theme-light .ad-btn{background:#fff;border-color:#cbd5e1;color:#0f172a} htm
   V.id = 'view-admin'; V.className = 'hidden flex-1 flex flex-col overflow-hidden bg-slate-950 fr-view';
   V.innerHTML = '<div class="rg-panel" hidden></div><div class="h-12 border-b border-slate-800 bg-slate-900/90 px-4 md:px-6 flex items-center justify-between shrink-0 z-10"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center font-bold text-xs shrink-0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div><div><h2 class="text-xs md:text-sm font-bold text-white tracking-tight flex items-center gap-2"><span>Espace administrateur</span><span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/30 font-normal">Visible par vous seul</span></h2></div></div><div class="ad-row"><button type="button" class="ad-btn" id="ad-refresh">Actualiser</button></div></div><div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4"><div id="ad-body"></div></div>';
   const anc = $('view-delais'); if (anc) anc.parentElement.appendChild(V);
-  NAV_TABS_CONFIG.push({ id: 'admin', name: 'Espace administrateur', desc: 'Statistiques, propositions, barème, modèles communs', icon: 'shield-check', color: 'bg-rose-500/15 text-rose-400 border-rose-500/30', badge: 'Admin' });
+  /* Volontairement absent de la liste des outils : rien n’apparaît pour les collègues (recherche, menus, accueil) */
 
   function render() {
     const body = $('ad-body'); if (!body) return;
@@ -15533,13 +15533,11 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
-    { v: '2026-11-12.47', date: '12/11/2026', items: ['Administrateur : nouvel « Espace administrateur » (menu du compte) avec les statistiques d’équipe, les propositions de modèles, l’état du barème, les modèles communs, les noms renommés et le contrôle des calculs.'] },
     { v: '2026-11-12.46', date: '12/11/2026', items: [
       'Nouvel outil « Échéances réglementaires » (rubrique Références et calculs) : ce qui vient de changer et ce qui va bouger, avec la prochaine revalorisation.',
       'Parcours dossier : raccourcis vers l’outil adapté (ATI, formation, trop-perçu, invalidité, retraite, frontaliers, sanctions).',
       'Bouton « En faire un modèle » sous chaque mail de simulateur : le texte est enregistré dans vos modèles CVM (catégorie « Simulateurs »).',
       'Recherche (Ctrl+K) dans le contenu des outils : tapez au moins 3 lettres (« médiateur », « 77 € »…) pour trouver la règle et y aller directement.',
-      'Administrateur : « Statistiques d’équipe » dans la recherche (outils les plus utilisés, chiffres anonymes).',
       'Thème clair vérifié sur tous les outils ; correction d’un bandeau resté sombre.'
     ] },
     { v: '2026-11-12.45', date: '12/11/2026', items: ['Correction : le nom de l’outil en haut de l’écran ne se répète plus après un renommage, et la barre du haut garde ses boutons à droite.'] },
