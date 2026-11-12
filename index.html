@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.19">
+  <meta name="ft-version" content="2026-11-12.20">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12936,7 +12936,7 @@ html.theme-light #burger-tabs-list .ft-pen{background:#fff;border-color:#cbd5e1;
 html.theme-light #burger-tabs-list .ft-pen.ft-pen-h{background:transparent;border-color:transparent}
 /* ---------- Liens utiles ---------- */
 .fh-links{padding:16px 18px;display:flex;flex-direction:column;gap:10px}
-.fh-links .lk-manage{margin-left:auto;background:none;border:1px solid #24345f;color:#93c5fd;border-radius:8px;padding:6px 10px;font:600 12px/1 inherit;font-family:inherit;cursor:pointer}
+.fh-links .lk-manage{margin-left:auto;background:none;border:1px solid #24345f;color:#93c5fd;border-radius:8px;padding:6px 10px;font-family:inherit;font-weight:600;font-size:12px;line-height:1;cursor:pointer}
 .fh-links .lk-manage:hover{border-color:#67e8f9;color:#fff}
 .lk-list{display:flex;flex-direction:column;gap:6px}
 .lk-row{display:flex;align-items:center;gap:6px}
@@ -13030,6 +13030,17 @@ html.theme-light #view-sources .sv-src{color:#64748b}
 .ft-msg-actions{display:flex;align-items:center;gap:8px}
 .ft-msg-actions #btn-copy-raw{padding:6px 12px!important}
 @media print{.ft-msg-actions #btn-copy-raw,.ft-msg-actions #btn-star-active{display:none!important}}
+/* ---------- Repères en 4 blocs ---------- */
+.fh-L .hm-extra:not(:has(.hm-card)){display:none!important}
+.fh-rep{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.fh-rep .fh-dico{background:rgba(251,191,36,.14);color:#fcd34d}
+.fh-rg{border-radius:12px;padding:10px 12px;background:color-mix(in srgb,var(--c) 6%,transparent);border:1px solid color-mix(in srgb,var(--c) 22%,transparent)}
+.fh-rg h3{margin:0 0 4px;font-size:11.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--c)}
+.fh-rr{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 0;border-bottom:1px solid color-mix(in srgb,var(--c) 14%,transparent);font-size:12.5px}
+.fh-rr:last-child{border-bottom:0}
+.fh-rr span{color:#b8c5de}.fh-rr b{color:#fff;font-weight:700;white-space:nowrap;text-align:right}
+html.theme-light .fh-rr span{color:#475569}html.theme-light .fh-rr b{color:#0f172a}
+html.theme-light .fh-rep .fh-dico{background:#fef3c7;color:#b45309}
 /* ---------- Liens cliquables dans les mails ---------- */
 #preview-body a.ft-link{color:#67e8f9;text-decoration:underline;text-underline-offset:3px;word-break:break-all;cursor:pointer}
 #preview-body a.ft-link:hover{color:#a5f3fc}
@@ -13157,6 +13168,24 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
     setLinks(L); lkForm = null; renderLinks();
     try { showToast('Lien enregistré', 'success'); } catch (er) {}
   });
+
+  /* Repères de l’accueil en 4 blocs : ouverture, allocation, différés, cumul et autres */
+  function repHtml() {
+    let B = null; try { B = BAREME; } catch (e) {}
+    const n = v => String(v).replace('.', ',');
+    const e2 = v => Number(v).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+    const G = B ? [
+      ['Ouverture de droits', 'fh-c1', [['Affiliation', B.affiliation.jours + ' j / ' + B.affiliation.heures + ' h'], ['Saisonniers, primo-entrants', B.affiliation.joursSais + ' j / ' + B.affiliation.heuresSais + ' h'], ['Après démission', '65 j / 455 h'], ['Réexamen démission', '121 jours'], ['Délai d’inscription', '12 mois']]],
+      ['Allocation', 'fh-c2', [['ARE par jour', e2(B.are.min) + ' à ' + e2(B.are.max)], ['Partie fixe', e2(B.are.partieFixe)], ['Durée max. (< 55 / 55-56 / 57 ans et +)', B.duree.max.u55 + ' / ' + B.duree.max.a55 + ' / ' + B.duree.max.a57 + ' j'], ['Rupture conventionnelle', B.duree.rci.u55 + ' / ' + B.duree.rci.a55 + ' j'], ['Dégressivité', '−' + Math.round((1 - B.degr.coef) * 100) + ' % dès le ' + B.degr.moisDebut + 'e mois']]],
+      ['Différés', 'fh-c4', [['Délai d’attente', B.differe.attente + ' jours'], ['Congés payés', B.differe.cpMax + ' j maximum'], ['Supra-légal', 'max. ' + B.differe.specMax + ' j (' + B.differe.specMaxEco + ' j éco)'], ['Diviseur supra-légal', n(B.differe.diviseur)]]],
+      ['Cumul et autres', 'fh-c6', [['Cumul avec un salaire', Math.round(B.cumul.remun * 100) + ' % du brut déduit'], ['Mois indemnisé', B.cumul.base + ' jours'], ['Plafond du cumul', 'SJR × 30,42'], ['Retraite complémentaire', n(Math.round(B.retenues.retraiteCompl * 1000) / 10) + ' % du SJR'], ['ARCE', Math.round(B.cumul.arce * 100) + ' % du reliquat']]]
+    ] : [];
+    if (!G.length) return '';
+    return '<section class="fh-card fh-rep" aria-label="Repères"><div class="fh-dh"><span class="fh-dico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg></span><h2>Repères</h2></div>' +
+      G.map(g => '<div class="fh-rg ' + g[1] + '"><h3>' + g[0] + '</h3>' + g[2].map(r => '<div class="fh-rr"><span>' + r[0] + '</span><b>' + r[1] + '</b></div>').join('') + '</div>').join('') +
+      '<div class="fh-btns"><button type="button" class="fh-btn2" onclick="try{ftRpToggle(true)}catch(e){}">Tous les repères</button></div></section>';
+  }
+
   /* ---------- Mise en page ---------- */
   let busy = false;
   function layout() {
@@ -13185,7 +13214,8 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
       let dos = L.querySelector(':scope > .fh-dos'); const dh = dossierHtml();
       if (!dos) { L.insertAdjacentHTML('afterbegin', dh); } else { dos.outerHTML = dh; }
       take('.hm-extra', L);
-      L.querySelectorAll(':scope > .hm-extra .hm-card').forEach(c => { const h = c.querySelector('h3'); if (h && /^(Derniers outils|Dossier en cours)/.test(h.textContent.trim())) c.remove(); });
+      L.querySelectorAll(':scope > .hm-extra .hm-card').forEach(c => { const h = c.querySelector('h3'); if (h && /^(Derniers outils|Dossier en cours|Repères)/.test(h.textContent.trim())) c.remove(); });
+      if (!L.querySelector(':scope > .fh-rep')) { const rh = repHtml(); if (rh) L.insertAdjacentHTML('beforeend', rh); } else L.appendChild(L.querySelector(':scope > .fh-rep'));
       if (!L.querySelector(':scope > .fh-links')) { const ex = L.querySelector(':scope > .hm-extra'); const tmp = document.createElement('div'); tmp.innerHTML = linksHtml(); if (ex) L.insertBefore(tmp.firstChild, ex); else L.appendChild(tmp.firstChild); }
       else { const ex = L.querySelector(':scope > .hm-extra'), lk = L.querySelector(':scope > .fh-links'); if (ex && lk.nextElementSibling !== ex) L.insertBefore(lk, ex); }
       // Centre : outils groupés puis sections secondaires
@@ -13599,6 +13629,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.20', date: '12/11/2026', items: [
+      'Accueil : les Repères sont regroupés en 4 blocs successifs : Ouverture de droits, Allocation, Différés, Cumul et autres.'
+    ] },
     { v: '2026-11-12.19', date: '12/11/2026', items: [
       'Nouvelle rubrique « Pension d’invalidité » : conditions d’attribution, les 3 catégories et leurs montants, règles de cumul avec l’ARE et calcul rapide du cumul.',
       'Mails : « Copier le texte » et l’étoile des favoris sont maintenant à droite de « Contenu du message ».',
