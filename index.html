@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="ft-version" content="2026-11-12.1">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12351,6 +12352,67 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
   ].forEach(c => FT_CASES.push(c));
 })();
 
+</script>
+<!-- Bandeau « Nouvelle version disponible » (version en ligne uniquement) -->
+<style>
+#ft-update{position:fixed;left:50%;bottom:20px;transform:translate(-50%,140%);z-index:99999;display:flex;align-items:center;gap:12px;max-width:calc(100vw - 24px);padding:12px 14px 12px 16px;border-radius:14px;background:linear-gradient(135deg,#1e3a8a,#0f172a);color:#f1f5f9;border:1px solid rgba(147,197,253,.35);box-shadow:0 12px 32px rgba(0,0,0,.35);font:500 14px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;transition:transform .35s ease}
+#ft-update.show{transform:translate(-50%,0)}
+#ft-update button{border:0;border-radius:10px;cursor:pointer;font:inherit}
+#ft-update .ftu-go{background:#e1000f;color:#fff;padding:8px 14px;font-weight:700;white-space:nowrap}
+#ft-update .ftu-go:hover{background:#b8000c}
+#ft-update .ftu-x{background:transparent;color:#cbd5e1;padding:6px 8px;font-size:18px;line-height:1}
+html.theme-light #ft-update{background:linear-gradient(135deg,#ffffff,#e0f2fe);color:#0f172a;border-color:#93c5fd;box-shadow:0 12px 32px rgba(15,23,42,.18)}
+html.theme-light #ft-update .ftu-x{color:#475569}
+@media (prefers-reduced-motion:reduce){#ft-update{transition:none}}
+@media print{#ft-update{display:none!important}}
+</style>
+<div id="ft-update" role="status" aria-live="polite" hidden>
+  <span>🔄 Une nouvelle version du site est disponible.</span>
+  <button type="button" class="ftu-go">Recharger</button>
+  <button type="button" class="ftu-x" aria-label="Masquer">×</button>
+</div>
+<script>
+(function () {
+  if (!/^https?:$/.test(location.protocol)) return; // fichier local : pas de vérification
+  var meta = document.querySelector('meta[name="ft-version"]');
+  var current = meta ? meta.content : '';
+  var bar = document.getElementById('ft-update');
+  var dismissed = '', latest = '', last = 0;
+
+  // Après un rechargement forcé, on nettoie l'adresse (?v=...)
+  try {
+    var u = new URL(location.href);
+    if (u.searchParams.has('v')) { u.searchParams.delete('v'); history.replaceState(null, '', u.pathname + u.search + u.hash); }
+  } catch (e) {}
+
+  function show() { bar.hidden = false; requestAnimationFrame(function () { bar.classList.add('show'); }); }
+  function hide() { bar.classList.remove('show'); setTimeout(function () { bar.hidden = true; }, 400); }
+
+  function check() {
+    if (Date.now() - last < 60000) return;
+    last = Date.now();
+    fetch(location.pathname + '?check=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.text() : ''; })
+      .then(function (html) {
+        var m = html.match(/<meta name="ft-version" content="([^"]+)"/);
+        if (!m || !current || m[1] === current || m[1] === dismissed) return;
+        latest = m[1];
+        show();
+      })
+      .catch(function () {}); // hors ligne : on réessaiera plus tard
+  }
+
+  bar.querySelector('.ftu-go').addEventListener('click', function () {
+    // L'adresse change pour éviter que le navigateur ressorte l'ancienne copie
+    location.replace(location.pathname + '?v=' + encodeURIComponent(latest || Date.now()) + location.hash);
+  });
+  bar.querySelector('.ftu-x').addEventListener('click', function () { dismissed = latest; hide(); });
+
+  setTimeout(check, 4000);
+  setInterval(check, 10 * 60 * 1000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) check(); });
+  window.addEventListener('online', check);
+})();
 </script>
 </body>
 </html>
