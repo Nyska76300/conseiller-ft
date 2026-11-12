@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.24">
+  <meta name="ft-version" content="2026-11-12.25">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12984,12 +12984,9 @@ html[data-tab]:not([data-tab="cvm"]) #data-btn{display:none!important}
 html.theme-light #floating-calculator .grid.grid-cols-4>button:not([class*="bg-"]){background:#f1f5f9}
 /* ---------- Accueil : simulateurs synthétisés ---------- */
 .fh-C .home-section{display:none!important}
-.fh-sum{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-@media (min-width:1800px){.fh-sum{grid-template-columns:repeat(4,minmax(0,1fr))}}
-.fh-sum>.fh-grp:first-child{grid-column:1/-1}
-.fh-sum>.fh-grp:first-child .fh-chips{grid-template-columns:repeat(3,minmax(0,1fr))}
-.fh-sum>.fh-grp:not(:first-child) .fh-chips{grid-template-columns:minmax(0,1fr)}
-@media (max-width:1100px){.fh-sum{grid-template-columns:minmax(0,1fr)}.fh-sum>.fh-grp:first-child .fh-chips{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.fh-sum{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.fh-sum>.fh-grp .fh-chips{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+@media (max-width:1100px){.fh-sum>.fh-grp .fh-chips{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 .fh-sum .fh-grp{padding:16px;gap:12px;background:linear-gradient(180deg,var(--b) 0,rgba(17,29,61,0) 70px),#111d3d;transition:border-color .2s}
 .fh-sum .fh-grp:hover{border-color:color-mix(in srgb,var(--c) 45%,#24345f)}
 .fh-sum .fh-gh h3{font-size:15px}
@@ -13691,6 +13688,206 @@ html.theme-light .inv-card a{color:#1d4ed8}
   window.FT_ACTIONS = window.FT_ACTIONS || [];
 })();
 </script>
+<!-- ================= Extension 28 : mail automatique pour chaque simulateur ================= -->
+<style>
+.ft-mail{margin:18px 0 8px;padding:16px 18px;border-radius:14px;border:1px solid #24345f;background:rgba(12,24,60,.78)}
+.ft-mail-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.ft-mail-h h3{margin:0;font-size:15px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.ft-mail-h h3 svg{width:18px;height:18px;color:#93c5fd}
+.ft-mail-h .ft-mail-tag{font-size:11.5px;font-weight:600;color:#a3b3d1}
+.ft-mail-h .ft-mail-btns{margin-left:auto;display:flex;gap:8px}
+.ft-mail-btns button{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:10px;border:1px solid #24345f;background:transparent;color:#e8eef9;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer}
+.ft-mail-btns button:hover{border-color:#67e8f9}
+.ft-mail-btns .ft-mail-copy{background:#2563eb;border-color:#2563eb;color:#fff}
+.ft-mail-btns .ft-mail-copy:hover{background:#1d4ed8}
+.ft-mail-btns .ft-mail-regen.is-warn{border-color:#fbbf24;color:#fcd34d}
+.ft-mail textarea{width:100%;box-sizing:border-box;min-height:220px;resize:vertical;padding:14px 16px!important;line-height:1.6;font-size:14px!important;white-space:pre-wrap;user-select:text}
+.ft-mail-empty{margin:0;padding:14px;border-radius:10px;border:1px dashed #33467a;color:#a3b3d1;font-size:13px}
+html.theme-light .ft-mail{background:rgba(255,255,255,.92);border-color:#d6e2f0}
+html.theme-light .ft-mail-h h3{color:#0f172a}html.theme-light .ft-mail-h .ft-mail-tag,html.theme-light .ft-mail-empty{color:#475569}
+html.theme-light .ft-mail-btns button{color:#0f172a;border-color:#cbd5e1}
+html.theme-light .ft-mail-btns .ft-mail-copy{color:#fff}
+@media print{.ft-mail{display:none!important}}
+</style>
+<script>
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const T = id => { const e = $(id); return e ? (('value' in e && e.tagName !== 'DIV' && e.tagName !== 'SPAN') ? e.value : e.textContent).trim() : ''; };
+  const num = v => { const n = parseFloat(String(v || '').replace(/\s/g, '').replace(',', '.')); return isNaN(n) ? 0 : n; };
+  const eur = n => (Math.round(n * 100) / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+  const vis = el => !!(el && el.offsetParent);
+  const HELLO = 'Madame, Monsieur,\n\n';
+  const BYE = '\n\nCes éléments vous sont communiqués à titre indicatif : seule la notification de vos droits fait foi.\n\nCordialement,\nVotre conseiller France Travail';
+  const fd = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return m ? m[3] + '/' + m[2] + '/' + m[1] : iso; };
+  const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+  const moisLbl = v => { const m = /^(\d{4})-(\d{2})/.exec(v || ''); return m ? MOIS[+m[2] - 1] + ' ' + m[1] : ''; };
+  const duMois = v => { const l = moisLbl(v); return l ? (/^[aeiouyéèh]/i.test(l) ? ' d’' : ' de ') + l : ''; };
+
+  /* ---------- Rédaction par simulateur ---------- */
+  const GEN = {
+    od() {
+      if (!num(T('sim-affiliation-val')) && !T('sim-date-fct')) return '';
+      const verdict = T('sim-verdict-title'), desc = T('sim-verdict-desc');
+      if (/non/i.test(verdict)) {
+        return HELLO + 'Après étude de votre dossier, nous ne pouvons pas, en l’état, vous ouvrir un droit à l’allocation d’aide au retour à l’emploi (ARE).\n\n' + (desc ? 'Motif : ' + desc.replace(/\.$/, '') + '.\n\n' : '') +
+          'Si votre situation évolue (nouvelle période d’emploi, justificatif complémentaire), informez-nous afin que votre dossier soit réexaminé.' + BYE;
+      }
+      const aj = T('calc-are-jour'), duree = T('calc-duree-max'), diff = T('calc-total-differe');
+      const rows = [...document.querySelectorAll('#sim-calc-detail .sim-d-row')]; const last = rows[rows.length - 1];
+      const premier = last ? (last.querySelector('.sim-d-v') || {}).textContent || '' : '';
+      let t = HELLO + 'Après étude de votre dossier, vous remplissez les conditions d’ouverture d’un droit à l’allocation d’aide au retour à l’emploi (ARE).\n\n';
+      if (/\d/.test(aj)) t += 'Votre allocation journalière brute est estimée à ' + aj + (/\d/.test(duree) ? ', pour une durée d’indemnisation maximale de ' + duree : '') + '.\n';
+      if (/\d/.test(diff)) t += 'Un délai de ' + diff + ' s’applique avant le premier versement (délai d’attente et, le cas échéant, différés liés à vos indemnités de fin de contrat).\n';
+      if (/\d{2}\/\d{2}\/\d{4}/.test(premier)) t += 'Votre premier jour indemnisable est estimé au ' + premier.trim() + '.\n';
+      return t.trimEnd() + BYE;
+    },
+    delais() {
+      const out = $('dl-result'); const hero = out && out.querySelector('.dl-hero strong'); if (!hero) return '';
+      const fct = fd(T('dl-fct'));
+      const ev = [...out.querySelectorAll('.tl-ev')].map(e => ({ k: (e.querySelector('.tl-ev-k') || {}).textContent || '', d: (e.querySelector('.tl-ev-d') || {}).textContent || '', n: (e.querySelector('.tl-ev-n') || {}).textContent || '' })).filter(e => e.k && !/fin de contrat/i.test(e.k));
+      const all = [...out.querySelectorAll('.dl-row')].map(r => [((r.querySelector('.dl-k') || {}).textContent || '').trim(), ((r.querySelector('.dl-v') || {}).textContent || '').trim().replace(/(\d+) j\b/g, '$1 jours')]);
+      const rows = all.filter(r => /différé|attente/i.test(r[0]) && !/^0 jours/.test(r[1]));
+      const get = re => (all.find(r => re.test(r[0])) || [])[1] || '';
+      let t = HELLO + (fct ? 'Suite à la fin de votre contrat de travail le ' + fct + ', v' : 'V') + 'otre premier jour indemnisable est fixé au ' + hero.textContent.trim() + '.\n';
+      if (rows.length) t += '\nCe délai se décompose ainsi :\n' + rows.map(r => '- ' + r[0] + ' : ' + r[1]).join('\n') + '\n';
+      if (get(/durée/i)) t += '\nVotre droit est ouvert pour une durée maximale de ' + get(/durée/i) + (get(/fin de droits/i) ? ', soit jusqu’au ' + get(/fin de droits/i) + ' au plus tard en cas d’indemnisation continue' : '') + '.\n';
+      else if (ev.length) t += '\nÉtapes :\n' + ev.map(e => '- ' + e.k.trim() + ' : ' + e.d.trim() + (e.n ? ' (' + e.n.trim() + ')' : '')).join('\n') + '\n';
+      return t.trimEnd() + BYE;
+    },
+    complement() {
+      const W = (typeof FT_WIZ !== 'undefined') ? FT_WIZ : (window.FT_WIZ || {}); const w = W.cumul; if (!w) return '';
+      const a = w.answers || {}; if (a.type !== 'salarie' || !num(a.aj) || a.brut === undefined || a.brut === '') return '';
+      let r; try { r = cumulCompute(a); } catch (e) { return ''; }
+      const mois = moisLbl(a.mois);
+      let t = HELLO + 'Vous avez déclaré' + (mois ? ' pour le mois' + duMois(a.mois) : '') + ' un salaire brut de ' + eur(r.brut) + '.\n\n';
+      if (r.j === 0) t += 'Ce salaire est trop élevé pour qu’un complément d’allocation soit versé ce mois-ci. Les ' + r.jm + ' jours non indemnisés ne sont pas perdus : ils sont reportés et prolongent votre droit.';
+      else t += 'Votre allocation mensuelle est calculée sur 30 jours (' + eur(r.areM) + '). Après déduction de 70 % de votre salaire brut (' + eur(r.deduit) + '), ' + r.j + ' jour' + (r.j > 1 ? 's sont indemnisés' : ' est indemnisé') + ' ce mois-ci, soit un complément de ' + eur(r.complement) + ' brut, ' + eur(r.net) + ' net après retenues sociales.\n\n' +
+        (r.reportes ? 'Les ' + r.reportes + ' jours non indemnisés ne sont pas perdus : ils sont reportés et prolongent la durée de votre droit.' : '');
+      return t.trimEnd() + BYE;
+    },
+    invalidite() {
+      const aj = num(T('inv-aj')), pen = num(T('inv-pension')); if (!aj || !pen || typeof ftInvCompute !== 'function') return '';
+      const cat = T('inv-cat') || '2', r = ftInvCompute({ aj: aj, pension: pen, cat: cat, cumulee: T('inv-cum') });
+      const c = cat === '1' ? '1re' : cat + 'e';
+      let t = HELLO + 'Vous percevez une pension d’invalidité de ' + c + ' catégorie d’un montant mensuel net de ' + eur(pen) + '.\n\n';
+      if (r.integral) t += (cat === '1' ? 'Une pension d’invalidité de 1re catégorie est entièrement cumulable avec l’allocation d’aide au retour à l’emploi (ARE).' : 'Cette pension étant déjà perçue pendant l’activité qui a permis l’ouverture de votre droit, elle est intégralement cumulable avec votre ARE.') +
+        ' Votre allocation n’est donc pas réduite : elle s’élève à ' + eur(r.verse) + ' pour un mois de 30 jours.';
+      else t += 'Cette pension n’ayant pas été perçue pendant l’activité qui a permis l’ouverture de votre droit, son montant est déduit de votre allocation, conformément à la réglementation de l’assurance chômage.\n\n' +
+        (r.verse > 0 ? 'Pour un mois de 30 jours, votre ARE de ' + eur(r.areM) + ' est réduite de ' + eur(r.deduction) + ' : le montant versé est de ' + eur(r.verse) + '.' : 'Le montant de votre pension étant supérieur ou égal à celui de votre allocation mensuelle (' + eur(r.areM) + '), aucune ARE ne peut vous être versée.');
+      t += '\n\nMerci de nous transmettre la notification de votre CPAM (catégorie, montant, date d’effet) et de nous signaler tout changement de votre pension.';
+      return t + BYE;
+    },
+    ans() {
+      const aj = num(T('arce-input-are-jour')), j = num(T('arce-input-jours')); if (!aj || !j) return '';
+      let t = HELLO + 'Vous envisagez de créer ou de reprendre une entreprise. Deux possibilités s’offrent à vous pour votre allocation :\n\n';
+      t += '1. L’aide à la reprise ou à la création d’entreprise (ARCE) : un capital estimé à ' + T('arce-res-total') + ', versé en deux fois (' + T('arce-res-v1') + ' au démarrage de l’activité, puis ' + T('arce-res-v2') + ' six mois plus tard si l’activité se poursuit).\n';
+      if (num(T('maint-input-are-jour'))) t += '2. Le maintien de votre ARE chaque mois : environ ' + T('maint-res-are-versee') + ' par mois (' + T('maint-res-jours-payes') + ', ' + T('maint-res-jours-reportes').replace(/^\+\s*/, '') + ' en fin de droit), selon les revenus de votre activité.\n';
+      else t += '2. Le maintien de votre ARE chaque mois, réduit selon les revenus de votre activité ; les jours non indemnisés sont reportés en fin de droit.\n';
+      t += '\nLe choix se fait au démarrage de votre activité. N’hésitez pas à nous contacter pour en échanger avant de vous décider.';
+      return t + BYE;
+    },
+    cns() {
+      const out = $('cns-out'); const hero = out && out.querySelector('.wiz-hero strong'); if (!hero || !num(T('cns-aj'))) return '';
+      const em = (out.querySelector('.wiz-hero em') || {}).textContent || '';
+      const tile = lbl => { const t = [...out.querySelectorAll('.wiz-tile')].find(x => new RegExp(lbl, 'i').test(x.textContent)); return t ? (t.querySelector('strong') || {}).textContent || '' : ''; };
+      const mois = moisLbl(T('cns-mois'));
+      let t = HELLO + 'Au vu des revenus de votre activité non salariée' + (mois ? ' pour le mois' + duMois(T('cns-mois')) : '') + (tile('Revenu retenu') ? ' (revenu retenu après abattement : ' + tile('Revenu retenu') + ')' : '') + ', votre complément d’allocation s’élève à ' + hero.textContent.trim() + '.\n';
+      const m = /(\d+)\s*jour\(s\) indemnisé\(s\),\s*(\d+)/.exec(em);
+      if (m) t += '\n' + m[1] + ' jour(s) sont indemnisés ce mois-ci. Les ' + m[2] + ' jour(s) non indemnisés ne sont pas perdus : ils sont reportés et prolongent votre droit.\n';
+      t += '\nCe montant est établi d’après les revenus déclarés et pourra être régularisé au vu de vos revenus définitifs.';
+      return t + BYE;
+    },
+    cspSim() {
+      if (!vis($('csp-subview-sim')) || !num(T('csp-sim-salaire'))) return '';
+      return HELLO + 'Dans le cadre du contrat de sécurisation professionnelle (CSP), votre allocation de sécurisation professionnelle (ASP) est estimée à ' + T('csp-res-asp-mensuelle') + ' par mois, contre ' + T('csp-res-are-mensuelle') + ' au titre de l’ARE.' +
+        (/\d/.test(T('csp-res-gain-total')) ? '\nSur la durée du contrat, l’écart est estimé à ' + T('csp-res-gain-total') + '.' : '') + '\n\nLe CSP vous apporte également un accompagnement renforcé dans votre recherche d’emploi pendant 12 mois.' + BYE;
+    },
+    cspRec() {
+      if (!vis($('csp-subview-reclass'))) return '';
+      const n = T('csp-rec-adviser-note'); if (!n || !num(T('csp-rec-nouveau-salaire'))) return '';
+      return HELLO + n.replace(/^Madame, Monsieur,?\s*/i, '') + BYE;
+    },
+    droits() {
+      const rc = $('rc-out'), as = $('as-out'); const parts = [];
+      const al = el => { const s = el && el.querySelector('.wiz-alert span'); return s ? s.textContent.trim() : ''; };
+      if (num(T('rc-vol')) && al(rc)) parts.push('Concernant le rechargement de vos droits, ' + al(rc).replace(/sans démarche de l.usager/i, 'sans démarche de votre part').replace(/^Conditions de rechargement réunies\s*:\s*/i, 'les conditions sont réunies : ').replace(/^Conditions de rechargement non réunies\s*:\s*/i, 'les conditions ne sont pas réunies : '));
+      if (num(T('as-ans')) && al(as)) parts.push('Concernant l’allocation de solidarité spécifique (ASS), ' + al(as).replace(/^Conditions de l.ASS réunies sur ces éléments\s*:\s*/i, 'les conditions sont réunies : ').replace(/^Conditions de l.ASS non réunies\s*:?\s*/i, 'les conditions ne sont pas réunies : '));
+      if (!parts.length) return '';
+      return HELLO + parts.join('\n\n') + BYE;
+    },
+    cfd() {
+      const out = $('cfd-result'); if (!out || !num(T('cfd-days'))) return '';
+      const big = out.querySelector('.text-2xl'); const j = big ? big.textContent.trim() : ''; if (!/\d/.test(j)) return '';
+      return HELLO + 'Votre droit à l’allocation d’aide au retour à l’emploi (ARE) a été calculé avec un coefficient de réduction de durée de 0,75.\n\nLorsque la conjoncture le prévoit à la date de fin de vos droits, un complément de fin de droits (CFD) de ' + j + ' est estimé : il prolongerait alors votre indemnisation, sans démarche de votre part.' + BYE;
+    },
+    sjr() {
+      const out = $('sj-out'); const hero = out && out.querySelector('.wiz-hero strong'); if (!hero || !num(T('sj-sr'))) return '';
+      const row = lbl => { const r = [...out.querySelectorAll('.rg-row')].find(x => new RegExp(lbl, 'i').test(x.textContent)); return r ? (r.querySelector('.rg-f') || {}).textContent || '' : ''; };
+      return HELLO + 'Votre salaire journalier de référence (SJR), qui sert de base au calcul de votre allocation, est estimé à ' + hero.textContent.trim() + '.\n\nIl est calculé à partir des salaires bruts de votre période de référence (' + eur(num(T('sj-sr'))) + ') rapportés au nombre de jours de cette période (' + (row('Dénominateur') || row('Durée de la période')).trim() + ').' + BYE;
+    }
+  };
+
+  /* ---------- Emplacements : un panneau par simulateur ---------- */
+  const SPOTS = [
+    { key: 'od', tab: '1', host: () => document.querySelector('#od-subview-sim > div') },
+    { key: 'delais', tab: 'delais', host: () => document.querySelector('#view-delais .reg-wrap') },
+    { key: 'complement', tab: '5', host: () => document.querySelector('#view-complement-are .wiz-wrap') },
+    { key: 'invalidite', tab: 'invalidite', host: () => $('inv-body') && $('inv-tabs') && $('inv-tabs').querySelector('.is-on') && /calcul/i.test($('inv-tabs').querySelector('.is-on').textContent) ? $('inv-body') : null },
+    { key: 'ans', tab: '3', host: () => document.querySelector('#ans-subview-sim > div') },
+    { key: 'cns', tab: 'cns', host: () => $('cns-out') ? $('cns-out').parentElement : null },
+    { key: 'cspSim', tab: '4', host: () => document.querySelector('#csp-subview-sim > div') },
+    { key: 'cspRec', tab: '4', host: () => document.querySelector('#csp-subview-reclass > div') },
+    { key: 'droits', tab: 'droits', host: () => document.querySelector('#view-droits .reg-wrap') },
+    { key: 'cfd', tab: 'cfd', host: () => $('cfd-panel') ? $('cfd-panel').parentElement : null },
+    { key: 'sjr', tab: 'sjr', host: () => $('sj-pane-sjr') }
+  ];
+  const ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>';
+  const dirty = {};
+  function ensure(sp) {
+    const host = sp.host(); if (!host) return null;
+    let p = host.querySelector(':scope > .ft-mail[data-mail="' + sp.key + '"]');
+    if (!p) {
+      p = document.createElement('section'); p.className = 'ft-mail'; p.dataset.mail = sp.key;
+      p.innerHTML = '<div class="ft-mail-h"><h3>' + ICO + 'Mail à l’allocataire</h3><span class="ft-mail-tag">Généré automatiquement, modifiable avant copie</span><div class="ft-mail-btns"><button type="button" class="ft-mail-regen">Régénérer</button><button type="button" class="ft-mail-copy">Copier le mail</button></div></div><div class="ft-mail-body"></div>';
+      host.appendChild(p);
+    }
+    return p;
+  }
+  function fill(sp, force) {
+    const p = ensure(sp); if (!p) return;
+    if (dirty[sp.key] && !force) { p.querySelector('.ft-mail-regen').classList.add('is-warn'); return; }
+    let txt = ''; try { txt = (GEN[sp.key]() || '').replace(/(\d)\.(\d{2}) €/g, '$1,$2 €'); } catch (e) { txt = ''; }
+    const body = p.querySelector('.ft-mail-body');
+    if (!txt) { body.innerHTML = '<p class="ft-mail-empty">Complétez le simulateur : le mail se rédige automatiquement avec les résultats.</p>'; p.querySelector('.ft-mail-copy').disabled = true; return; }
+    let ta = body.querySelector('textarea');
+    if (!ta) { body.innerHTML = '<textarea aria-label="Mail à l’allocataire" spellcheck="true"></textarea>'; ta = body.querySelector('textarea'); ta.addEventListener('input', () => { dirty[sp.key] = true; }); }
+    if (ta.value !== txt) ta.value = txt;
+    dirty[sp.key] = false; p.querySelector('.ft-mail-regen').classList.remove('is-warn'); p.querySelector('.ft-mail-copy').disabled = false;
+  }
+  let tmr = null;
+  function refresh(force) {
+    const t = (() => { try { return String(activeNavTab); } catch (e) { return ''; } })();
+    SPOTS.filter(s => s.tab === t).forEach(s => fill(s, force));
+  }
+  const later = () => { clearTimeout(tmr); tmr = setTimeout(() => refresh(false), 350); };
+  document.addEventListener('input', e => { if (!e.target.closest('.ft-mail') && e.target.closest('[id^="view-"]')) later(); }, true);
+  document.addEventListener('change', e => { if (!e.target.closest('.ft-mail') && e.target.closest('[id^="view-"]')) later(); }, true);
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('.ft-mail button');
+    if (b) {
+      const p = b.closest('.ft-mail'), key = p.dataset.mail, sp = SPOTS.find(s => s.key === key);
+      if (b.classList.contains('ft-mail-regen')) { dirty[key] = false; fill(sp, true); try { showToast('Mail régénéré', 'info'); } catch (er) {} }
+      if (b.classList.contains('ft-mail-copy')) { const ta = p.querySelector('textarea'); if (ta) { try { copyToClipboard(ta.value); } catch (er) { navigator.clipboard && navigator.clipboard.writeText(ta.value); } try { showToast('Mail copié', 'success'); } catch (er) {} } }
+      return;
+    }
+    if (e.target.closest && e.target.closest('[id^="view-"]')) later();
+  });
+  const _sw = switchNavTab;
+  switchNavTab = function () { const r = _sw.apply(this, arguments); setTimeout(() => refresh(false), 120); return r; };
+  window.ftMailGen = GEN; window.ftMailRefresh = refresh;
+})();
+</script>
 <!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
 <style>
 #ft-news{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.6);backdrop-filter:blur(3px);opacity:0;transition:opacity .25s ease}
@@ -13723,6 +13920,10 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.25', date: '12/11/2026', items: [
+      'Accueil : toutes les rubriques de simulateurs ont la même largeur que « Ouverture de droits ».',
+      'Mail automatique sur chaque simulateur (Conditions et ARE, Délais, Complément ARE, Pension d’invalidité, ANS, Cumul CNS, CSP, Droits et passages, CFD, SJR) : rédigé avec les résultats, modifiable et copiable en un clic.'
+    ] },
     { v: '2026-11-12.24', date: '12/11/2026', items: [
       'Style harmonisé sur tous les onglets : même barre de rubrique en haut, mêmes grands titres, même largeur de page, mêmes cartes, mêmes champs de saisie et textes plus lisibles (plus de très petits caractères).'
     ] },
