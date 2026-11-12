@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.18">
+  <meta name="ft-version" content="2026-11-12.19">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12919,9 +12919,9 @@ html.theme-light .fh-c1{--c:#1d4ed8;--b:#dbeafe}html.theme-light .fh-c2{--c:#0f7
 html.theme-light .fh-news{border-color:#fecaca}
 html.theme-light .fh-news .fh-dico{background:#fee2e2;color:#b91c1c}
 html.theme-light .fh-news li{color:#334155}
-/* ---------- Catégories de mails : boutons modifier et supprimer toujours visibles ---------- */
-#vertical-filters-container button[title="Modifier la catégorie"],#vertical-filters-container button[title="Supprimer la catégorie"]{opacity:.55!important;padding:4px!important;border-radius:6px}
-#vertical-filters-container button[title="Modifier la catégorie"]:hover,#vertical-filters-container button[title="Supprimer la catégorie"]:hover{opacity:1!important;background:rgba(255,255,255,.08)}
+/* ---------- Catégories de mails : modifier et supprimer au survol de la case ---------- */
+#vertical-filters-container button[title="Modifier la catégorie"],#vertical-filters-container button[title="Supprimer la catégorie"]{padding:4px!important;border-radius:6px}
+#vertical-filters-container button[title="Modifier la catégorie"]:hover,#vertical-filters-container button[title="Supprimer la catégorie"]:hover{background:rgba(255,255,255,.08)}
 #vertical-filters-container button[title="Modifier la catégorie"] svg,#vertical-filters-container button[title="Supprimer la catégorie"] svg{width:13px!important;height:13px!important}
 /* ---------- Renommage des outils (administrateur) : crayons ---------- */
 #burger-tabs-list .ft-pen-wrap{position:relative}
@@ -12984,7 +12984,8 @@ html[data-tab]:not([data-tab="cvm"]) #data-btn{display:none!important}
 html.theme-light #floating-calculator .grid.grid-cols-4>button:not([class*="bg-"]){background:#f1f5f9}
 /* ---------- Accueil : simulateurs synthétisés ---------- */
 .fh-C .home-section{display:none!important}
-.fh-sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.fh-sum{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (min-width:1800px){.fh-sum{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .fh-sum>.fh-grp:first-child{grid-column:1/-1}
 .fh-sum>.fh-grp:first-child .fh-chips{grid-template-columns:repeat(3,minmax(0,1fr))}
 .fh-sum>.fh-grp:not(:first-child) .fh-chips{grid-template-columns:minmax(0,1fr)}
@@ -13025,6 +13026,10 @@ html.theme-light #view-sources .sv-row:hover p,html.theme-light #view-sources .s
 html.theme-light #view-sources .sv-row:hover,html.theme-light #view-sources .sv-row:focus{border-color:#2563eb!important}
 html.theme-light #view-sources .sv-src{color:#64748b}
 @media print{#view-sources .sv-row p{display:block!important;position:static!important;border:0!important;box-shadow:none!important;padding:0!important;background:none!important}}
+/* ---------- Copier et favori au niveau de « Contenu du message » ---------- */
+.ft-msg-actions{display:flex;align-items:center;gap:8px}
+.ft-msg-actions #btn-copy-raw{padding:6px 12px!important}
+@media print{.ft-msg-actions #btn-copy-raw,.ft-msg-actions #btn-star-active{display:none!important}}
 /* ---------- Liens cliquables dans les mails ---------- */
 #preview-body a.ft-link{color:#67e8f9;text-decoration:underline;text-underline-offset:3px;word-break:break-all;cursor:pointer}
 #preview-body a.ft-link:hover{color:#a5f3fc}
@@ -13045,11 +13050,12 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
     shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
     book: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
     folder: '<path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9L9.6 3.9A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z"/>',
+    acc: '<circle cx="16" cy="4" r="1"/><path d="m18 19 1-7-6 1"/><path d="m5 8 3-3 5.5 3-2.36 3.5"/><path d="M4.24 14.5a5 5 0 0 0 6.88 6"/><path d="M13.76 17.5a5 5 0 0 0-6.88-6"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
     cal: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
     calc: '<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/>'
   };
-  const LOOK = [[/ouverture/i, 'clip', 'fh-c1'], [/ans|création|cumul/i, 'brief', 'fh-c2'], [/fin de droits|passage/i, 'hour', 'fh-c3'], [/situation/i, 'shield', 'fh-c4'], [/référence|calcul/i, 'book', 'fh-c5']];
+  const LOOK = [[/invalidit/i, 'acc', 'fh-c6'], [/ouverture/i, 'clip', 'fh-c1'], [/ans|création|cumul/i, 'brief', 'fh-c2'], [/fin de droits|passage/i, 'hour', 'fh-c3'], [/situation/i, 'shield', 'fh-c4'], [/référence|calcul/i, 'book', 'fh-c5']];
   const look = t => LOOK.find(l => l[0].test(t)) || [0, 'folder', 'fh-c1'];
 
   /* ---------- Rubriques et outils (lus dans le menu Outils) ---------- */
@@ -13246,7 +13252,7 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
 
 
   /* ---------- Menu Outils : rubriques dans l'ordre voulu, outils par ordre alphabétique ---------- */
-  const SEC_ORDER = [/ouverture/i, /ans|création/i, /situation/i, /fin de droits/i, /référence|calcul/i];
+  const SEC_ORDER = [/ouverture/i, /ans|création/i, /situation/i, /fin de droits/i, /invalidit/i, /référence|calcul/i];
   const secRank = t => { const i = SEC_ORDER.findIndex(r => r.test(t)); return i < 0 ? 99 : i; };
   const lbl = b => ((b.querySelector('.text-xs') || b).textContent || '').trim();
   function sortMenu() {
@@ -13366,14 +13372,199 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
     });
   }
   new MutationObserver(svPrep).observe(document.body, { childList: true, subtree: true });
+  /* « Copier le texte » et l’étoile des favoris à droite de « Contenu du message » */
+  function moveMsgActions() {
+    const stamp = $('current-date-stamp'), copy = $('btn-copy-raw'), star = $('btn-star-active');
+    if (!stamp || !copy) return;
+    const right = stamp.parentElement; if (!right || right.parentElement.querySelector('.ft-msg-actions')) return;
+    const box = document.createElement('div'); box.className = 'ft-msg-actions';
+    right.parentElement.insertBefore(box, right); box.appendChild(right);
+    if (star) box.appendChild(star);
+    box.appendChild(copy);
+  }
   function start() {
     markTab();
+    try { moveMsgActions(); } catch (e) {}
     try { applyLabels(); sortMenu(); watchMenu(); adminBar(); } catch (e) {}
     try { populateCategorySelect(); } catch (e) {}
     try { linkify($('preview-body')); } catch (e) {}
     watch(); layout();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(start, 60)); else setTimeout(start, 60);
+})();
+</script>
+<!-- ================= Extension 27 : rubrique Pension d'invalidité ================= -->
+<style>
+.inv-cards{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin-top:14px;max-width:1100px}
+.inv-card{background:#0f1a36;border:1px solid #24345f;border-radius:14px;padding:16px 18px}
+.inv-card h3{margin:0 0 10px;font-size:15px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.inv-card h3 .inv-n{width:24px;height:24px;border-radius:7px;display:inline-grid;place-items:center;background:rgba(99,102,241,.2);color:#a5b4fc;font-size:12px;font-weight:800}
+.inv-card ul{margin:0;padding-left:18px;list-style:disc;display:flex;flex-direction:column;gap:7px}
+.inv-card li,.inv-card p{font-size:13.5px;line-height:1.55;color:#cdd8ec;margin:0}
+.inv-card strong{color:#fff}
+.inv-ref{margin-top:10px!important;font-size:12px!important;color:#8fa3c8!important}
+.inv-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px}
+.inv-table th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8fa3c8;padding:8px 8px;border-bottom:1px solid #24345f}
+.inv-table td{padding:10px 8px;border-bottom:1px solid #1d2a50;color:#dbe4f3;vertical-align:top}
+.inv-table td b{color:#fff}
+.inv-scroll{overflow-x:auto}
+.inv-pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:700}
+.inv-ok{background:rgba(52,211,153,.15);color:#6ee7b7}.inv-ko{background:rgba(251,113,133,.15);color:#fda4af}.inv-mid{background:rgba(251,191,36,.15);color:#fcd34d}
+.inv-sim{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:14px}
+.inv-sim label{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:#a3b3d1;margin-bottom:12px}
+.inv-sim input,.inv-sim select{height:42px;padding:0 12px;border-radius:10px;border:1px solid #24345f;background:#0a1430;color:#e8eef9;font:inherit;font-size:14px}
+.inv-res{display:flex;flex-direction:column;gap:6px}
+.inv-hero{padding:16px;border-radius:12px;background:rgba(99,102,241,.12);border:1px solid rgba(129,140,248,.4)}
+.inv-hero span{display:block;font-size:12px;color:#a5b4fc;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.inv-hero strong{display:block;font-size:30px;color:#fff;margin-top:4px}
+.inv-hero em{font-style:normal;font-size:12.5px;color:#cbd5e1}
+.inv-row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #1d2a50;font-size:13px;color:#cdd8ec}
+.inv-row b{color:#fff}
+.inv-note{margin-top:8px;padding:10px 12px;border-radius:10px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);font-size:12.5px;color:#fde68a;line-height:1.5}
+.inv-card a{color:#67e8f9}
+@media (max-width:800px){.inv-sim{grid-template-columns:minmax(0,1fr)}}
+html.theme-light .inv-card{background:#fff;border-color:#dbe4f0}
+html.theme-light .inv-card h3,html.theme-light .inv-card strong,html.theme-light .inv-table td b,html.theme-light .inv-hero strong,html.theme-light .inv-row b{color:#0f172a}
+html.theme-light .inv-card li,html.theme-light .inv-card p,html.theme-light .inv-table td,html.theme-light .inv-row{color:#334155}
+html.theme-light .inv-table th,html.theme-light .inv-ref{color:#64748b!important}
+html.theme-light .inv-table td,html.theme-light .inv-table th,html.theme-light .inv-row{border-color:#e2e8f0}
+html.theme-light .inv-sim input,html.theme-light .inv-sim select{background:#fff;border-color:#cbd5e1;color:#0f172a}
+html.theme-light .inv-hero{background:#eef2ff;border-color:#c7d2fe}
+html.theme-light .inv-hero span{color:#4338ca}html.theme-light .inv-hero em{color:#475569}
+html.theme-light .inv-note{background:#fffbeb;color:#92400e;border-color:#fcd34d}
+html.theme-light .inv-card a{color:#1d4ed8}
+.fh-c6{--c:#818cf8;--b:rgba(99,102,241,.18)}html.theme-light .fh-c6{--c:#4338ca;--b:#e0e7ff}
+</style>
+<script>
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const eur = n => (Math.round(n * 100) / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+  const SRC = {
+    sp: 'https://www.service-public.gouv.fr/particuliers/vosdroits/F14944',
+    ft: 'https://www.francetravail.fr/faq/candidat/mes-allocations---mes-aides/lallocation-chomage-en-fonction/cumul-pension-invalidite-et-allo.html',
+    css: 'https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006073189/LEGISCTA000006156110/'
+  };
+
+  /* Calcul pur, testé par les cas de contrôle */
+  window.ftInvCompute = function (p) {
+    const aj = +p.aj || 0, pension = +p.pension || 0, cat = String(p.cat || '1'), cumulee = p.cumulee === true || p.cumulee === 'oui';
+    const areM = Math.round(aj * 30 * 100) / 100; /* mensualisation : 30 jours */
+    const integral = cat === '1' || cumulee;
+    const deduction = integral ? 0 : Math.min(areM, pension);
+    const verse = Math.max(0, Math.round((areM - deduction) * 100) / 100);
+    return { aj: aj, pension: pension, cat: cat, cumulee: cumulee, areM: areM, integral: integral, deduction: deduction, verse: verse, total: verse + pension };
+  };
+
+  const sec = (n, title, body, ref) => '<section class="inv-card"><h3><span class="inv-n">' + n + '</span>' + title + '</h3>' + body + (ref ? '<p class="inv-ref">' + ref + '</p>' : '') + '</section>';
+
+  function tabRegles() {
+    return '<div class="inv-cards">' +
+      sec('1', 'Conditions d’attribution',
+        '<ul><li><strong>Incapacité :</strong> maladie ou accident d’origine <strong>non professionnelle</strong> réduisant d’au moins <strong>2/3</strong> la capacité de travail ou de gain (l’assuré ne peut pas gagner plus d’un tiers de la rémunération normale de sa catégorie dans sa région).</li>' +
+        '<li><strong>Âge :</strong> ne pas avoir atteint l’âge légal de départ à la retraite. À cet âge, la pension est remplacée par la retraite pour inaptitude si l’assuré ne travaille plus.</li>' +
+        '<li><strong>Affiliation :</strong> être immatriculé à la Sécurité sociale depuis au moins <strong>12 mois</strong> au 1er jour du mois de l’arrêt de travail ou de la constatation de l’invalidité.</li>' +
+        '<li><strong>Activité :</strong> au cours des 12 mois précédant l’arrêt ou la constatation, avoir travaillé au moins <strong>600 heures</strong> ou cotisé sur une rémunération d’au moins <strong>2 030 fois le Smic horaire</strong>.</li>' +
+        '<li>La décision et la catégorie sont fixées par le <strong>médecin-conseil de l’Assurance maladie</strong> (CPAM).</li></ul>',
+        'Code de la Sécurité sociale, art. L. 341-1 et suivants · <a href="' + SRC.sp + '" target="_blank" rel="noopener noreferrer">service-public.gouv.fr</a> (vérifié le 01/04/2026)') +
+      sec('2', 'Les 3 catégories et les montants',
+        '<div class="inv-scroll"><table class="inv-table"><thead><tr><th>Catégorie</th><th>Situation</th><th>Montant</th><th>Mensuel min.</th><th>Mensuel max.</th></tr></thead><tbody>' +
+        '<tr><td><b>1re</b></td><td>Capable d’exercer une activité rémunérée</td><td>30 % du SAM</td><td>338,31 €</td><td>1 201,50 €</td></tr>' +
+        '<tr><td><b>2e</b></td><td>Absolument incapable d’exercer une profession quelconque</td><td>50 % du SAM</td><td>338,31 €</td><td>2 002,50 €</td></tr>' +
+        '<tr><td><b>3e</b></td><td>Comme la 2e, avec besoin d’une tierce personne pour les actes ordinaires de la vie</td><td>50 % du SAM + majoration tierce personne</td><td>1 636,76 €</td><td>3 300,95 €</td></tr>' +
+        '</tbody></table></div>' +
+        '<p style="margin-top:10px">SAM : salaire annuel moyen des <strong>10 meilleures années</strong>, plafonné au plafond annuel de la Sécurité sociale. Montants bruts, revalorisés chaque 1er avril.</p>',
+        'Code de la Sécurité sociale, art. L. 341-4 (catégories) · <a href="' + SRC.sp + '" target="_blank" rel="noopener noreferrer">service-public.gouv.fr</a>, montants affichés au 01/04/2026') +
+      sec('3', 'Cumul avec l’ARE',
+        '<div class="inv-scroll"><table class="inv-table"><thead><tr><th>Catégorie</th><th>Situation</th><th>Effet sur l’ARE</th></tr></thead><tbody>' +
+        '<tr><td><b>1re</b></td><td>Toujours</td><td><span class="inv-pill inv-ok">Cumul intégral</span></td></tr>' +
+        '<tr><td><b>2e ou 3e</b></td><td>La pension était déjà cumulée avec les revenus de l’activité ayant servi à ouvrir le droit (y compris en activité partielle)</td><td><span class="inv-pill inv-ok">Cumul intégral</span></td></tr>' +
+        '<tr><td><b>2e ou 3e</b></td><td>La pension n’a <strong>jamais</strong> été cumulée avec ces revenus</td><td><span class="inv-pill inv-ko">Pension déduite en totalité</span> de l’ARE</td></tr>' +
+        '</tbody></table></div>' +
+        '<ul style="margin-top:10px"><li>En cas de déduction, si la pension est supérieure ou égale à l’ARE, aucune allocation n’est versée.</li>' +
+        '<li>À demander : la <strong>notification de la CPAM</strong> (catégorie, montant, date d’effet) et, pour un cumul intégral, les justificatifs montrant que la pension était perçue pendant l’activité.</li>' +
+        '<li>Tout changement de catégorie, de montant ou une suspension de la pension doit être signalé : il modifie le montant de l’ARE.</li></ul>',
+        'Règlement d’assurance chômage, art. 18 § 2 · <a href="' + SRC.ft + '" target="_blank" rel="noopener noreferrer">francetravail.fr</a> · Unédic, fiche ARE (2025)') +
+      '</div>';
+  }
+
+  function tabSim() {
+    return '<div class="inv-sim"><section class="inv-card"><h3><span class="inv-n">€</span>Données du dossier</h3>' +
+      '<label>Allocation journalière brute (AJ)<input id="inv-aj" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex. 45,20"></label>' +
+      '<label>Pension d’invalidité mensuelle nette<input id="inv-pension" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex. 650"></label>' +
+      '<label>Catégorie d’invalidité<select id="inv-cat"><option value="1">1re catégorie</option><option value="2" selected>2e catégorie</option><option value="3">3e catégorie</option></select></label>' +
+      '<label id="inv-cum-l">La pension était-elle déjà perçue pendant l’emploi qui a ouvert le droit ?<select id="inv-cum"><option value="non">Non, jamais cumulée avec ces salaires</option><option value="oui">Oui, cumulée avec ces salaires</option></select></label>' +
+      '</section><section class="inv-card inv-res" id="inv-res"></section></div>';
+  }
+  function run() {
+    const res = $('inv-res'); if (!res) return;
+    const cat = ($('inv-cat') || {}).value || '2';
+    const cl = $('inv-cum-l'); if (cl) cl.style.display = cat === '1' ? 'none' : '';
+    const r = ftInvCompute({ aj: ($('inv-aj') || {}).value, pension: ($('inv-pension') || {}).value, cat: cat, cumulee: ($('inv-cum') || {}).value });
+    res.innerHTML = '<div class="inv-hero"><span>ARE versée sur le mois</span><strong>' + eur(r.verse) + '</strong><em>' + (r.integral ? 'Cumul intégral avec la pension' : 'Pension déduite de l’ARE') + '</em></div>' +
+      '<div class="inv-row"><span>ARE du mois (AJ × 30 jours)</span><b>' + eur(r.areM) + '</b></div>' +
+      '<div class="inv-row"><span>Déduction de la pension</span><b>' + (r.integral ? 'aucune' : '− ' + eur(r.deduction)) + '</b></div>' +
+      '<div class="inv-row"><span>Pension d’invalidité nette</span><b>' + eur(r.pension) + '</b></div>' +
+      '<div class="inv-row"><span>Total ARE + pension</span><b>' + eur(r.total) + '</b></div>' +
+      (!r.integral && r.pension >= r.areM && r.areM > 0 ? '<div class="inv-note">La pension est au moins égale à l’ARE du mois : aucune allocation n’est versée.</div>' : '') +
+      '<div class="inv-note">Calcul indicatif sur 30 jours (mensualisation), avant retenues sociales sur l’ARE. Vérifiez le montant et la catégorie sur la notification de la CPAM.</div>';
+  }
+
+  const TABS = [['regles', 'Règles et conditions', tabRegles], ['sim', 'Cumul avec l’ARE : calcul', tabSim]];
+  let cur = 'regles';
+  const v = document.createElement('div');
+  v.id = 'view-invalidite'; v.className = 'hidden flex-1 overflow-y-auto';
+  v.innerHTML = '<div class="reg-wrap"><div class="reg-head"><div><h2>Pension d’invalidité</h2><p>Conditions d’attribution, catégories et montants, règles de cumul avec l’ARE.</p></div></div><div class="rg-tabs" id="inv-tabs" role="tablist"></div><div id="inv-body"></div></div>';
+  const anchorView = $('view-delais'); if (anchorView) anchorView.parentElement.appendChild(v);
+  window.invTab = function (id) {
+    cur = id;
+    $('inv-tabs').innerHTML = TABS.map(t => '<button type="button" role="tab" class="rg-tab' + (t[0] === cur ? ' is-on' : '') + '" aria-selected="' + (t[0] === cur) + '" onclick="invTab(\'' + t[0] + '\')">' + t[1] + '</button>').join('');
+    $('inv-body').innerHTML = TABS.find(x => x[0] === id)[2]();
+    if (id === 'sim') { ['inv-aj', 'inv-pension', 'inv-cat', 'inv-cum'].forEach(k => { const e = $(k); if (e) { e.addEventListener('input', run); e.addEventListener('change', run); } }); run(); }
+  };
+
+  NAV_TABS_CONFIG.push({ id: 'invalidite', name: 'Pension d’invalidité', desc: 'Conditions, catégories, montants et cumul avec l’ARE', icon: 'accessibility', color: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30', badge: 'CPAM' });
+  try { FT_KW.invalidite = 'pension invalidité invalide catégorie 1 2 3 cpam tierce personne mtp cumul are déduction incapacité deux tiers'; } catch (e) {}
+  const _sw = switchNavTab;
+  switchNavTab = function (t) {
+    const r = _sw.apply(this, arguments);
+    const on = String(t) === 'invalidite';
+    v.classList.toggle('hidden', !on);
+    if (on) { const n = $('header-active-tab-name'); if (n) n.textContent = 'Pension d’invalidité'; invTab(cur); }
+    return r;
+  };
+
+  /* Menu Outils : une rubrique dédiée */
+  if (typeof renderBurgerTabs === 'function') {
+    const _rb = renderBurgerTabs;
+    renderBurgerTabs = function () {
+      const r = _rb.apply(this, arguments);
+      const c = $('burger-tabs-list'); if (!c || c.querySelector('[data-inv-sec]')) return r;
+      const on = String(activeNavTab) === 'invalidite';
+      const sec = document.createElement('div'); sec.className = 'menu-sec'; sec.setAttribute('data-inv-sec', '1');
+      sec.innerHTML = '<div class="menu-sec-h">Pension d’invalidité</div><div class="space-y-1.5"><button onclick="switchNavTab(\'invalidite\')" class="w-full p-2.5 rounded-xl border text-left flex items-start gap-3 transition-all group ' + (on ? 'bg-gradient-to-r from-blue-900/60 to-cyan-950/60 border-cyan-500/50 shadow-md shadow-cyan-950/40' : 'bg-slate-900/60 hover:bg-slate-900 border-slate-800 hover:border-slate-700/80') + '"><div class="w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 ' + (on ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/50' : 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30') + '"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="4" r="1"/><path d="m18 19 1-7-6 1"/><path d="m5 8 3-3 5.5 3-2.36 3.5"/><path d="M4.24 14.5a5 5 0 0 0 6.88 6"/><path d="M13.76 17.5a5 5 0 0 0-6.88-6"/></svg></div><div class="min-w-0 flex-1"><div class="flex items-center gap-1.5"><span class="text-xs font-bold ' + (on ? 'text-white' : 'text-slate-200') + '">Pension d’invalidité</span></div><p class="text-[10px] text-slate-400 mt-0.5 leading-tight">Conditions, catégories, montants et cumul avec l’ARE</p></div></button></div>';
+      const secs = c.querySelectorAll(':scope > .menu-sec'); const last = secs[secs.length - 1];
+      if (last) last.after(sec); else c.appendChild(sec);
+      try { refreshIcons(); } catch (e) {}
+      return r;
+    };
+    try { renderBurgerTabs(); } catch (e) {}
+  }
+
+  /* Sources et cas de contrôle */
+  try {
+    (window.FT_SOURCES || []).push(
+      ['Invalidité', 'Conditions et catégories', 'Incapacité d’au moins 2/3, 12 mois d’immatriculation, 600 h ou 2 030 × Smic horaire ; catégories 1 (30 %), 2 (50 %), 3 (50 % + tierce personne) ; montants au 01/04/2026', 'service-public.gouv.fr (vérifié le 01/04/2026)', 'Vérifié'],
+      ['Invalidité', 'Cumul avec l’ARE', '1re catégorie : cumul intégral ; 2e et 3e : cumul intégral si la pension était cumulée avec les revenus de l’activité, sinon déduite en totalité', 'francetravail.fr et Unédic (règlement, art. 18 § 2)', 'Vérifié']);
+  } catch (e) {}
+  try {
+    FT_CASES.push(
+      { n: 'Invalidité : 2e catégorie non cumulée, AJ 40 €, pension 600 € → 600 €', run: () => ftInvCompute({ aj: 40, pension: 600, cat: '2', cumulee: 'non' }).verse, exp: 600, d: 2 },
+      { n: 'Invalidité : 2e catégorie déjà cumulée → ARE intégrale (1 200 €)', run: () => ftInvCompute({ aj: 40, pension: 600, cat: '2', cumulee: 'oui' }).verse, exp: 1200, d: 2 },
+      { n: 'Invalidité : 1re catégorie → cumul intégral', run: () => ftInvCompute({ aj: 40, pension: 600, cat: '1', cumulee: 'non' }).verse, exp: 1200, d: 2 },
+      { n: 'Invalidité : pension supérieure à l’ARE → 0 €', run: () => ftInvCompute({ aj: 30, pension: 1000, cat: '3', cumulee: 'non' }).verse, exp: 0, d: 2 });
+  } catch (e) {}
+  window.FT_ACTIONS = window.FT_ACTIONS || [];
 })();
 </script>
 <!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
@@ -13408,6 +13599,11 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.19', date: '12/11/2026', items: [
+      'Nouvelle rubrique « Pension d’invalidité » : conditions d’attribution, les 3 catégories et leurs montants, règles de cumul avec l’ARE et calcul rapide du cumul.',
+      'Mails : « Copier le texte » et l’étoile des favoris sont maintenant à droite de « Contenu du message ».',
+      'Catégories de mails : le crayon et la corbeille n’apparaissent qu’au survol de la catégorie.'
+    ] },
     { v: '2026-11-12.18', date: '12/11/2026', items: [
       'Barre du haut : le bouton « Mes données : sauvegarde et confidentialité » n’apparaît plus que sur la page des mails (CVM Direct).'
     ] },
