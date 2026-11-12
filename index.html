@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.6">
+  <meta name="ft-version" content="2026-11-12.7">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12232,7 +12232,7 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
 
   /* ---------- 5. Journal des modifications (page Sources) ---------- */
   const LOG = [
-    ['12/11/2026', 'Application', ['Comptes conseillers et synchronisation des modèles CVM entre les postes, modèles communs publiés par l’administrateur.', 'Barre de recherche dans la barre du haut, à la place du bandeau du barème et du nombre de modèles.', 'Fenêtre « Nouveautés » à l’ouverture de la page quand le site a changé.', 'Bandeau « Nouvelle version disponible » sur la version en ligne.']],
+    ['12/11/2026', 'Application', ['Suppression définitive des mails (mémorisée et synchronisée), synchronisation automatique entre postes.', 'Comptes conseillers et synchronisation des modèles CVM entre les postes, modèles communs publiés par l’administrateur.', 'Barre de recherche dans la barre du haut, à la place du bandeau du barème et du nombre de modèles.', 'Fenêtre « Nouveautés » à l’ouverture de la page quand le site a changé.', 'Bandeau « Nouvelle version disponible » sur la version en ligne.']],
     ['27/10/2026', 'Application', ['Accueil : bouton « Nouveau dossier », fiche du dossier en PDF, plus de doublon avec les bulles des simulateurs.', 'Ouverture de droits : le complément ARE y est intégré.', 'Maintien : passage direct des valeurs vers Cumul CNS.', 'Détecteur de doublons parmi les modèles de mail (aucune suppression automatique).', 'Icônes de secours intégrées au fichier.','Barèmes historiques de l’ARE (juillet 2022 à juillet 2025) appliqués selon la date de fin de contrat.']],
     ['23/10/2026', 'Barème', ['Dernière vérification des valeurs du barème (voir le niveau de vérification ligne par ligne ci-dessus).']],
     ['2026', 'Règles prises en compte', ['À compter du 01/09/2026 : plafonds de durée après rupture conventionnelle (456 j et 624 j) et Scop pour l’ARCE.', 'À compter du 01/07/2026 : congé supplémentaire de naissance (traitement détaillé non intégré, à confirmer).', 'À compter du 01/04/2026 : primo-entrants (108 jours ou 758 heures, minimum 152 jours).', 'Démission : abandon de poste présumé démission, projet professionnel, réexamen après 121 jours.']]
@@ -12430,7 +12430,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   if (!SB_URL || !SB_KEY || !window.fetch) return;
 
   // Données synchronisées (aucune donnée de dossier ou d'allocataire)
-  var SYNC = ['ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use'];
+  var SYNC = ['ft_deleted_tpl', 'ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use'];
   var K_SESS = 'ft_sb_session', K_META = 'ft_sb_meta';
   var LSraw = {
     get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -12455,7 +12455,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   function changed() {
     if (!sess) return;
     meta.dirty = true; saveMeta(); setStatus('busy');
-    clearTimeout(pushTimer); pushTimer = setTimeout(function () { sync('push'); }, 1500);
+    clearTimeout(pushTimer); pushTimer = setTimeout(function () { sync('push'); }, 800);
   }
 
   /* ---------- Appels Supabase ---------- */
@@ -12501,17 +12501,20 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   function parse(v, d) { try { var x = JSON.parse(v); return x == null ? d : x; } catch (e) { return d; } }
   function merge(localData, remoteData) {
     var out = {}; SYNC.forEach(function (k) { out[k] = remoteData[k] != null ? remoteData[k] : localData[k]; });
+    var dead = {}; parse(localData.ft_deleted_tpl, []).concat(parse(remoteData.ft_deleted_tpl, [])).forEach(function (id) { dead[id] = 1; });
+    out.ft_deleted_tpl = JSON.stringify(Object.keys(dead));
     var lt = parse(localData.ft_templates, []), rt = parse(remoteData.ft_templates, []);
     if (lt.length || rt.length) {
       var seen = {}, res = [];
       rt.concat(lt).forEach(function (t) { if (t && t.id != null && !seen[t.id]) { seen[t.id] = 1; res.push(t); } });
       lt.forEach(function (t) { if (t && t.id != null) for (var i = 0; i < res.length; i++) if (res[i].id === t.id) { res[i] = t; break; } });
-      out.ft_templates = JSON.stringify(res);
+      out.ft_templates = JSON.stringify(res.filter(function (t) { return !dead[t.id]; }));
     }
     ['ft_favorites', 'ft_categories_list'].forEach(function (k) {
       var a = parse(remoteData[k], []), b = parse(localData[k], []);
       if (!Array.isArray(a) || !Array.isArray(b)) return;
       var u = a.slice(); b.forEach(function (x) { var js = JSON.stringify(x); if (!u.some(function (y) { return JSON.stringify(y) === js; })) u.push(x); });
+      if (k === 'ft_favorites') u = u.filter(function (id) { return !dead[id]; });
       out[k] = JSON.stringify(u);
     });
     return out;
@@ -12521,8 +12524,11 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   function same(a, b) { return SYNC.every(function (k) { return (a[k] == null ? null : a[k]) === (b[k] == null ? null : b[k]); }); }
   function refreshApp() {
     try { loadState(); } catch (e) {}
+    purge();
     try { renderCategoryPills(); } catch (e) {}
-    try { renderTemplates(); } catch (e) {}
+    try { if (typeof activeTemplateId !== 'undefined' && activeTemplateId != null && !templates.some(function (t) { return t.id === activeTemplateId; })) activeTemplateId = templates.length ? templates[0].id : null; } catch (e) {}
+    try { renderTemplatesList(); } catch (e) {}
+    try { renderActiveTemplate(); } catch (e) {}
   }
 
   /* ---------- Synchronisation ---------- */
@@ -12571,9 +12577,9 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
     if (!sess) return;
     ensureToken().then(function () { return api('/rest/v1/shared_templates?select=id,template,updated_at'); }).then(function (rows) {
       if (!rows || !rows.length || typeof templates === 'undefined') return;
-      var add = 0, upd = 0;
+      var add = 0, upd = 0, dead = parse(LSraw.get('ft_deleted_tpl'), []);
       rows.forEach(function (r) {
-        var t = r.template; if (!t || t.id == null) return;
+        var t = r.template; if (!t || t.id == null || dead.indexOf(String(t.id)) > -1 || dead.indexOf(t.id) > -1) return;
         t.shared = true;
         var i = templates.findIndex(function (x) { return x.id === t.id; });
         if (i < 0) { templates.push(t); add++; }
@@ -12706,8 +12712,34 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
     host.querySelectorAll('.fa-menu [data-a]').forEach(function (b) { b.onclick = function () { host.querySelector('.fa-menu').hidden = true; act[b.dataset.a](); }; });
   }
 
+  /* ---------- Suppressions mémorisées ---------- */
+  function tomb(ids, add) {
+    var cur = parse(LSraw.get('ft_deleted_tpl'), []);
+    ids.forEach(function (id) { id = String(id); var i = cur.indexOf(id); if (add && i < 0) cur.push(id); if (!add && i > -1) cur.splice(i, 1); });
+    safeLS.setItem('ft_deleted_tpl', JSON.stringify(cur));
+  }
+  if (typeof confirmDeleteModel === 'function') {
+    var _del = confirmDeleteModel;
+    confirmDeleteModel = function () { var id = (typeof modelIdToDelete !== 'undefined') ? modelIdToDelete : null; var r = _del.apply(this, arguments); if (id != null) tomb([id], true); return r; };
+  }
+  if (typeof resetDefaults === 'function') {
+    var _rst = resetDefaults;
+    resetDefaults = function () { var r = _rst.apply(this, arguments); try { var ids = templates.map(function (t) { return t.id; }); tomb(ids, false); } catch (e) {} return r; };
+  }
+  // Un modèle supprimé ne revient jamais au chargement (base d'origine comprise)
+  function purge() {
+    try {
+      var dead = parse(LSraw.get('ft_deleted_tpl'), []); if (!dead.length || typeof templates === 'undefined') return false;
+      var n = templates.length; templates = templates.filter(function (t) { return dead.indexOf(String(t.id)) < 0; });
+      if (templates.length !== n) { favorites = favorites.filter(function (id) { return dead.indexOf(String(id)) < 0; }); saveState(); return true; }
+    } catch (e) {}
+    return false;
+  }
+  if (purge()) setTimeout(refreshApp, 0);
+
   /* ---------- Démarrage ---------- */
   function start() {
+    if (purge()) refreshApp();
     // Retour d'un lien d'invitation ou de réinitialisation
     var h = location.hash || '';
     if (/access_token=/.test(h)) {
@@ -12728,6 +12760,8 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(start, 50); }); else setTimeout(start, 50);
 
   document.addEventListener('visibilitychange', function () { if (!document.hidden && sess && !busy) sync('focus'); });
+  window.addEventListener('focus', function () { if (sess && !busy) sync('focus'); });
+  setInterval(function () { if (sess && !busy && !document.hidden) sync('poll'); }, 30000); // récupère les changements faits sur un autre poste
   window.addEventListener('online', function () { if (sess && meta.dirty) sync('push'); });
   window.addEventListener('pagehide', function () { if (sess && meta.dirty && sess.expires_at > Date.now() / 1000) { try { push(collect(), true); } catch (e) {} } });
 
@@ -12772,6 +12806,10 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.7', date: '12/11/2026', items: [
+      'Un mail supprimé, y compris de la base d’origine, est désormais supprimé pour de bon, sur tous vos postes. « Réinitialiser les modèles officiels » permet toujours de les récupérer.',
+      'Synchronisation automatique : vos modifications sont envoyées en moins d’une seconde, et celles faites sur un autre poste arrivent toutes seules (toutes les 30 secondes et dès que vous revenez sur la page), sans recharger.'
+    ] },
     { v: '2026-11-12.6', date: '12/11/2026', items: [
       'Retour à l’interface précédente (menu, accueil et mails comme avant).',
       'Les comptes conseillers, la synchronisation des modèles, la barre de recherche et les nouveautés restent en place.'
