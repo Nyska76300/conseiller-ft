@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#031137">
-  <meta name="ft-version" content="2026-11-12.30">
+  <meta name="ft-version" content="2026-11-12.31">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -13193,6 +13193,28 @@ body>header>div{min-width:0}
   #ft-update{bottom:12px}
   #ft-news .ftn-box{max-height:86vh}
 }
+/* ---------- Mails sur téléphone : catégories en volet, liste puis mail en plein écran ---------- */
+#cvm-m-bar,#cvm-back,#cvm-cats-backdrop{display:none}
+@media (max-width:767px){
+  #view-cvm #left-nav-menu{position:fixed!important;top:0;bottom:0;left:0;width:min(300px,86vw)!important;max-width:none!important;z-index:70;transform:translateX(-104%);transition:transform .25s ease;box-shadow:12px 0 40px rgba(0,0,0,.5);display:flex!important}
+  html.cvm-cats #view-cvm #left-nav-menu{transform:none}
+  #view-cvm #left-nav-menu .sidebar-label.hidden,#view-cvm #left-nav-menu #sidebar-header-title.hidden{display:inline!important}
+  #cvm-cats-backdrop{position:fixed;inset:0;z-index:69;background:rgba(2,6,23,.6);backdrop-filter:blur(2px)}
+  html.cvm-cats #cvm-cats-backdrop{display:block}
+  #view-cvm aside.tpl-col{width:100%!important;max-width:none!important;flex:1 1 auto!important;border-right:0!important}
+  #view-cvm > main{display:none!important}
+  html.cvm-reading #view-cvm aside.tpl-col{display:none!important}
+  html.cvm-reading #view-cvm > main{display:flex!important;width:100%;flex:1 1 auto}
+  #cvm-m-bar{display:flex;align-items:center;gap:8px;padding:10px 10px 0}
+  #cvm-m-bar button{flex:1;display:flex;align-items:center;gap:10px;height:44px;padding:0 12px;border-radius:12px;border:1px solid #24345f;background:rgba(12,24,60,.85);color:#e8eef9;font-family:inherit;font-weight:600;font-size:14px;text-align:left}
+  #cvm-m-bar button svg{width:18px;height:18px;color:#93c5fd;flex:none}
+  #cvm-m-bar .cm-l{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #cvm-m-bar .cm-n{font-size:12px;font-weight:700;color:#a3b3d1;background:rgba(255,255,255,.07);padding:2px 8px;border-radius:999px}
+  #cvm-back{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 12px 0 8px;margin-right:6px;border-radius:10px;border:1px solid #24345f;background:rgba(12,24,60,.85);color:#e8eef9;font-family:inherit;font-weight:600;font-size:13px;flex:none}
+  #cvm-back svg{width:17px;height:17px}
+  #tab-content-cvm > div:first-child{height:auto!important;min-height:56px;flex-wrap:wrap;gap:8px;padding:8px 10px!important}
+  html.theme-light #cvm-m-bar button,html.theme-light #cvm-back{background:#fff;border-color:#cbd5e1;color:#0f172a}
+}
 /* ---------- Liens cliquables dans les mails ---------- */
 #preview-body a.ft-link{color:#67e8f9;text-decoration:underline;text-underline-offset:3px;word-break:break-all;cursor:pointer}
 #preview-body a.ft-link:hover{color:#a5f3fc}
@@ -13387,7 +13409,7 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
   function watch() { const m = $('home-main'); if (m) mo.observe(m, { childList: true }); }
   const _sw = switchNavTab;
   const markTab = () => { try { document.documentElement.dataset.tab = String(activeNavTab); } catch (e) {} };
-  switchNavTab = function () { const r = _sw.apply(this, arguments); markTab(); try { navRecord(); } catch (e) {} try { applyLabels(); } catch (e) {} try { if (String(activeNavTab) === 'home') layout(); } catch (e) {} return r; };
+  switchNavTab = function () { const r = _sw.apply(this, arguments); markTab(); try { if (String(activeNavTab) !== 'cvm') { H.classList.remove('cvm-cats'); H.classList.remove('cvm-reading'); } cvmBarLabel(); } catch (e) {} try { navRecord(); } catch (e) {} try { applyLabels(); } catch (e) {} try { if (String(activeNavTab) === 'home') layout(); } catch (e) {} return r; };
 
   /* ---------- Liens cliquables dans les mails ---------- */
   const URL_RE = /(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+|[\w.+-]+@[\w-]+(?:\.[\w-]+)+|\b(?:[a-z0-9-]+\.)+(?:gouv\.fr|fr|com|org|net|eu)\b(?:\/[^\s<>"']*)?)/gi;
@@ -13613,8 +13635,64 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
     if (e.key === 'ArrowLeft') { e.preventDefault(); navGo(-1); }
     if (e.key === 'ArrowRight') { e.preventDefault(); navGo(1); }
   });
+
+  /* ---------- Mails sur téléphone ---------- */
+  const MQM = window.matchMedia('(max-width:767px)');
+  const H = document.documentElement;
+  const catsOpen = on => H.classList.toggle('cvm-cats', !!on);
+  function cvmMobile() {
+    const col = document.querySelector('#view-cvm aside.tpl-col'), hdr = document.querySelector('#tab-content-cvm > div:first-child');
+    if (col && !$('cvm-m-bar')) {
+      const bar = document.createElement('div'); bar.id = 'cvm-m-bar';
+      bar.innerHTML = '<button type="button" onclick="ftCvmCats(true)" aria-label="Choisir une catégorie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span class="cm-l"></span><span class="cm-n"></span></button>';
+      col.insertBefore(bar, col.firstChild);
+    }
+    if (hdr && !$('cvm-back')) {
+      const b = document.createElement('button'); b.type = 'button'; b.id = 'cvm-back'; b.setAttribute('aria-label', 'Revenir à la liste des mails');
+      b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Mails';
+      b.onclick = () => H.classList.remove('cvm-reading');
+      hdr.insertBefore(b, hdr.firstChild);
+    }
+    if (!$('cvm-cats-backdrop')) { const d = document.createElement('div'); d.id = 'cvm-cats-backdrop'; d.onclick = () => catsOpen(false); document.body.appendChild(d); }
+    cvmBarLabel();
+  }
+  function cvmBarLabel() {
+    const l = document.querySelector('#cvm-m-bar .cm-l'), n = document.querySelector('#cvm-m-bar .cm-n'); if (!l) return;
+    let cur = 'all', cnt = 0;
+    try { cur = currentCategory; cnt = cur === 'all' ? templates.length : cur === 'favorites' ? templates.filter(t => favorites.includes(t.id)).length : templates.filter(t => t.category === cur).length; } catch (e) {}
+    l.textContent = cur === 'all' ? 'Toutes les catégories' : cur === 'favorites' ? 'Favoris' : cur;
+    n.textContent = cnt;
+  }
+  window.ftCvmCats = catsOpen;
+  if (typeof selectCategory === 'function') {
+    const _sc = selectCategory;
+    selectCategory = function () { const r = _sc.apply(this, arguments); try { cvmBarLabel(); if (MQM.matches) catsOpen(false); } catch (e) {} return r; };
+  }
+  if (typeof selectTemplate === 'function') {
+    const _st = selectTemplate;
+    selectTemplate = function () {
+      const r = _st.apply(this, arguments);
+      if (MQM.matches) { H.classList.add('cvm-reading'); const sc = document.querySelector('#tab-content-cvm > .overflow-y-auto'); if (sc) sc.scrollTop = 0; }
+      return r;
+    };
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && H.classList.contains('cvm-cats')) catsOpen(false); });
+  // Geste : glisser depuis le bord gauche pour ouvrir, vers la gauche pour fermer
+  let tx = null, ty = null;
+  document.addEventListener('touchstart', e => { const t = e.touches[0]; tx = t.clientX; ty = t.clientY; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (tx == null || !MQM.matches) return; const t = e.changedTouches[0], dx = t.clientX - tx, dy = Math.abs(t.clientY - ty);
+    let onCvm = false; try { onCvm = String(activeNavTab) === 'cvm'; } catch (er) {}
+    if (onCvm && dy < 60) {
+      if (!H.classList.contains('cvm-cats') && tx < 28 && dx > 60 && !H.classList.contains('cvm-reading')) catsOpen(true);
+      else if (H.classList.contains('cvm-cats') && dx < -60) catsOpen(false);
+      else if (H.classList.contains('cvm-reading') && tx < 28 && dx > 80) H.classList.remove('cvm-reading');
+    }
+    tx = ty = null;
+  }, { passive: true });
   function start() {
     markTab();
+    try { cvmMobile(); } catch (e) {}
     try { navBuild(); } catch (e) {}
     try { hoistBars(); } catch (e) {}
     try { moveMsgActions(); } catch (e) {}
@@ -14067,6 +14145,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.31', date: '12/11/2026', items: [
+      'Mails sur téléphone : les catégories s’ouvrent dans un volet (bouton en haut de la liste ou glissement depuis le bord gauche), la liste prend tout l’écran et le mail s’ouvre en plein écran avec un bouton « Mails » pour revenir.'
+    ] },
     { v: '2026-11-12.30', date: '12/11/2026', items: [
       'Fenêtre réduite et téléphone : la barre du haut s’adapte à la largeur (plus de boutons coupés), et sur téléphone toute la page défile pour accéder à l’ensemble du contenu.'
     ] },
