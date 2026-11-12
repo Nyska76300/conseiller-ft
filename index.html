@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.25">
+  <meta name="ft-version" content="2026-11-12.26">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12437,7 +12437,7 @@ window.ftHeaderSearch = function () {
 #ft-auth .fa-go{width:100%;margin-top:16px;height:44px;border:0;border-radius:12px;background:#e1000f;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
 #ft-auth .fa-go:hover{background:#b8000c}
 #ft-auth .fa-go[disabled]{opacity:.6;cursor:wait}
-#ft-auth .fa-links{display:flex;justify-content:space-between;gap:8px;margin-top:14px;flex-wrap:wrap}
+#ft-auth .fa-links{display:flex;justify-content:space-between;gap:8px 12px;margin-top:14px;flex-wrap:wrap}
 #ft-auth .fa-links button{background:none;border:0;color:#93c5fd;font-size:13px;cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:3px}
 #ft-auth .fa-msg{margin-top:12px;padding:9px 12px;border-radius:10px;font-size:13px;display:none}
 #ft-auth .fa-msg.err{display:block;background:rgba(225,0,15,.15);border:1px solid rgba(248,113,113,.45);color:#fecaca}
@@ -12687,7 +12687,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
       '<form><label for="fa-mail">E-mail</label><input id="fa-mail" type="email" autocomplete="username" required value="' + esc(meta.email || '') + '">' +
       '<label for="fa-pass">Mot de passe</label><input id="fa-pass" type="password" autocomplete="current-password" required>' +
       '<button class="fa-go" type="submit">Se connecter</button></form><div class="fa-msg"></div>' +
-      '<div class="fa-links"><button type="button" data-a="forgot">Mot de passe oublié ?</button><button type="button" data-a="skip">Continuer sans compte</button></div>' +
+      '<div class="fa-links"><button type="button" data-a="forgot">Mot de passe oublié ?</button><button type="button" data-a="signup">Créer un compte</button><button type="button" data-a="skip">Continuer sans compte</button></div>' +
       '<p class="fa-note">Sans compte, les modèles restent enregistrés sur ce poste uniquement. Aucune donnée d’allocataire n’est synchronisée.</p>');
     if (note) msg(w, note);
     (meta.email ? w.querySelector('#fa-pass') : w.querySelector('#fa-mail')).focus();
@@ -12704,6 +12704,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
         })
         .catch(function (e) { b.disabled = false; b.textContent = 'Se connecter'; msg(w, frErr(e)); });
     };
+    w.querySelector('[data-a="signup"]').onclick = function () { showSignup(w.querySelector('#fa-mail').value.trim()); };
     w.querySelector('[data-a="skip"]').onclick = function () { try { sessionStorage.setItem('ft_sb_skip', '1'); } catch (e) {} closeBox(); renderAcct(); };
     w.querySelector('[data-a="forgot"]').onclick = function () {
       var email = w.querySelector('#fa-mail').value.trim();
@@ -12711,6 +12712,44 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
       api('/auth/v1/recover?redirect_to=' + encodeURIComponent(location.origin + location.pathname), { method: 'POST', auth: false, body: { email: email } })
         .then(function () { msg(w, 'Si ce compte existe, un e-mail de réinitialisation vient d’être envoyé.', true); })
         .catch(function (e) { msg(w, frErr(e)); });
+    };
+  }
+  function showSignup(prefill) {
+    var w = box('<h2>Créer un compte</h2><p class="fa-sub">Vos modèles de mails, favoris et liens vous suivront sur tous les postes.</p>' +
+      '<form><label for="fa-smail">E-mail professionnel</label><input id="fa-smail" type="email" autocomplete="email" required value="' + esc(prefill || '') + '">' +
+      '<label for="fa-sp1">Mot de passe (8 caractères minimum)</label><input id="fa-sp1" type="password" autocomplete="new-password" minlength="8" required>' +
+      '<label for="fa-sp2">Confirmer le mot de passe</label><input id="fa-sp2" type="password" autocomplete="new-password" minlength="8" required>' +
+      '<button class="fa-go" type="submit">Créer mon compte</button></form><div class="fa-msg"></div>' +
+      '<div class="fa-links"><button type="button" data-a="back">J’ai déjà un compte</button></div>' +
+      '<p class="fa-note">Aucune donnée d’allocataire n’est enregistrée dans votre compte.</p>');
+    w.querySelector(prefill ? '#fa-sp1' : '#fa-smail').focus();
+    w.querySelector('[data-a="back"]').onclick = function () { showLogin(); };
+    w.querySelector('form').onsubmit = function (ev) {
+      ev.preventDefault();
+      var email = w.querySelector('#fa-smail').value.trim(), p1 = w.querySelector('#fa-sp1').value, p2 = w.querySelector('#fa-sp2').value, b = w.querySelector('.fa-go');
+      if (p1.length < 8) return msg(w, 'Le mot de passe doit contenir au moins 8 caractères.');
+      if (p1 !== p2) return msg(w, 'Les deux mots de passe ne sont pas identiques.');
+      b.disabled = true; b.textContent = 'Création…';
+      api('/auth/v1/signup?redirect_to=' + encodeURIComponent(location.origin + location.pathname), { method: 'POST', auth: false, body: { email: email, password: p1 } })
+        .then(function (d) {
+          meta.email = email; saveMeta();
+          if (d && d.access_token && d.user) {
+            keepSession(d); try { sessionStorage.removeItem('ft_sb_skip'); } catch (e) {}
+            closeBox(); renderAcct(); toast('Compte créé : ' + email, 'success');
+            return sync('start').then(loadShared);
+          }
+          b.disabled = false; b.textContent = 'Créer mon compte';
+          w.querySelector('form').style.display = 'none';
+          msg(w, 'Compte créé. Un e-mail de confirmation vient d’être envoyé à ' + email + ' : cliquez sur le lien qu’il contient pour activer votre compte, puis connectez-vous.', true);
+        })
+        .catch(function (e) {
+          b.disabled = false; b.textContent = 'Créer mon compte';
+          var m = String(e && e.message || '');
+          if (/signups? not allowed|signup.*disabled/i.test(m)) return msg(w, 'La création de compte est désactivée pour le moment. Contactez l’administrateur du site.');
+          if (/already registered|already exists|user_already_exists/i.test(m + (e.code || ''))) return msg(w, 'Un compte existe déjà avec cette adresse. Utilisez « Mot de passe oublié ? » si besoin.');
+          if (/invalid.*email|email.*invalid/i.test(m)) return msg(w, 'Adresse e-mail invalide.');
+          msg(w, frErr(e));
+        });
     };
   }
   function showSetPassword(kind) {
@@ -12828,6 +12867,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   window.FT_ACTIONS.push(
     { t: 'Synchroniser mes modèles', s: 'Envoyer et récupérer les modèles de mon compte', kw: 'synchroniser compte cloud sauvegarde connexion', when: function () { return !!sess; }, run: function () { meta.dirty = true; sync('push'); } },
     { t: 'Se connecter', s: 'Compte conseiller : modèles sur tous les postes', kw: 'connexion compte identifiant login', when: function () { return !sess; }, run: function () { showLogin(); } },
+    { t: 'Créer un compte', s: 'Compte conseiller : modèles sur tous les postes', kw: 'inscription créer compte nouveau conseiller', when: function () { return !sess; }, run: function () { showSignup(''); } },
     { t: 'Se déconnecter', s: 'Fermer la session sur ce poste', kw: 'déconnexion logout quitter compte', when: function () { return !!sess; }, run: logout },
     { t: 'Publier le modèle ouvert pour tous', s: 'Modèles communs (administrateur)', kw: 'publier commun partager modèle équipe', when: function () { return isAdmin; }, run: function () { window.ftSharePublish(); } }
   );
@@ -13920,6 +13960,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.26', date: '12/11/2026', items: [
+      'Écran de connexion : nouveau bouton « Créer un compte » pour que chaque conseiller ouvre son propre compte.'
+    ] },
     { v: '2026-11-12.25', date: '12/11/2026', items: [
       'Accueil : toutes les rubriques de simulateurs ont la même largeur que « Ouverture de droits ».',
       'Mail automatique sur chaque simulateur (Conditions et ARE, Délais, Complément ARE, Pension d’invalidité, ANS, Cumul CNS, CSP, Droits et passages, CFD, SJR) : rédigé avec les résultats, modifiable et copiable en un clic.'
