@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.3">
+  <meta name="ft-version" content="2026-11-12.4">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12232,7 +12232,7 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
 
   /* ---------- 5. Journal des modifications (page Sources) ---------- */
   const LOG = [
-    ['12/11/2026', 'Application', ['Barre de recherche dans la barre du haut, à la place du bandeau du barème et du nombre de modèles.', 'Fenêtre « Nouveautés » à l’ouverture de la page quand le site a changé.', 'Bandeau « Nouvelle version disponible » sur la version en ligne.']],
+    ['12/11/2026', 'Application', ['Comptes conseillers et synchronisation des modèles CVM entre les postes, modèles communs publiés par l’administrateur.', 'Barre de recherche dans la barre du haut, à la place du bandeau du barème et du nombre de modèles.', 'Fenêtre « Nouveautés » à l’ouverture de la page quand le site a changé.', 'Bandeau « Nouvelle version disponible » sur la version en ligne.']],
     ['27/10/2026', 'Application', ['Accueil : bouton « Nouveau dossier », fiche du dossier en PDF, plus de doublon avec les bulles des simulateurs.', 'Ouverture de droits : le complément ARE y est intégré.', 'Maintien : passage direct des valeurs vers Cumul CNS.', 'Détecteur de doublons parmi les modèles de mail (aucune suppression automatique).', 'Icônes de secours intégrées au fichier.','Barèmes historiques de l’ARE (juillet 2022 à juillet 2025) appliqués selon la date de fin de contrat.']],
     ['23/10/2026', 'Barème', ['Dernière vérification des valeurs du barème (voir le niveau de vérification ligne par ligne ci-dessus).']],
     ['2026', 'Règles prises en compte', ['À compter du 01/09/2026 : plafonds de durée après rupture conventionnelle (456 j et 624 j) et Scop pour l’ARCE.', 'À compter du 01/07/2026 : congé supplémentaire de naissance (traitement détaillé non intégré, à confirmer).', 'À compter du 01/04/2026 : primo-entrants (108 jours ou 758 heures, minimum 152 jours).', 'Démission : abandon de poste présumé démission, projet professionnel, réexamen après 121 jours.']]
@@ -12372,6 +12372,374 @@ window.ftHeaderSearch = function () {
   if (typeof window.ftPalOpen === 'function') window.ftPalOpen();
 };
 </script>
+<!-- Comptes conseillers et synchronisation des modèles (Supabase) -->
+<style>
+#ft-auth{position:fixed;inset:0;z-index:99997;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.75);backdrop-filter:blur(6px);font:400 14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+#ft-auth .fa-box{width:min(400px,100%);border-radius:20px;padding:26px 24px 20px;background:linear-gradient(160deg,#1e3a8a,#0f172a 70%);color:#f1f5f9;border:1px solid rgba(147,197,253,.3);box-shadow:0 24px 60px rgba(0,0,0,.5)}
+#ft-auth .fa-logo{display:inline-block;padding:6px 12px;border-radius:10px;background:#fff;color:#1e3a8a;font-weight:800;margin-bottom:12px}
+#ft-auth .fa-logo i{font-style:normal;color:#e1000f}
+#ft-auth h2{margin:0 0 2px;font-size:20px;font-weight:700}
+#ft-auth p.fa-sub{margin:0 0 16px;color:#93c5fd;font-size:13px}
+#ft-auth label{display:block;font-size:12.5px;font-weight:600;color:#cbd5e1;margin:10px 0 4px}
+#ft-auth input{width:100%;box-sizing:border-box;height:42px;padding:0 12px;border-radius:10px;border:1px solid rgba(148,163,184,.35);background:rgba(15,23,42,.7);color:#f1f5f9;font-size:14px;outline:0}
+#ft-auth input:focus{border-color:#67e8f9}
+#ft-auth .fa-go{width:100%;margin-top:16px;height:44px;border:0;border-radius:12px;background:#e1000f;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+#ft-auth .fa-go:hover{background:#b8000c}
+#ft-auth .fa-go[disabled]{opacity:.6;cursor:wait}
+#ft-auth .fa-links{display:flex;justify-content:space-between;gap:8px;margin-top:14px;flex-wrap:wrap}
+#ft-auth .fa-links button{background:none;border:0;color:#93c5fd;font-size:13px;cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:3px}
+#ft-auth .fa-msg{margin-top:12px;padding:9px 12px;border-radius:10px;font-size:13px;display:none}
+#ft-auth .fa-msg.err{display:block;background:rgba(225,0,15,.15);border:1px solid rgba(248,113,113,.45);color:#fecaca}
+#ft-auth .fa-msg.ok{display:block;background:rgba(16,185,129,.15);border:1px solid rgba(52,211,153,.45);color:#a7f3d0}
+#ft-auth .fa-note{margin-top:14px;font-size:11.5px;color:#94a3b8}
+html.theme-light #ft-auth{background:rgba(15,23,42,.35)}
+html.theme-light #ft-auth .fa-box{background:linear-gradient(160deg,#fff,#e0f2fe);color:#0f172a;border-color:#bae6fd}
+html.theme-light #ft-auth p.fa-sub,html.theme-light #ft-auth .fa-links button{color:#1d4ed8}
+html.theme-light #ft-auth label{color:#334155}
+html.theme-light #ft-auth input{background:#fff;color:#0f172a;border-color:#cbd5e1}
+html.theme-light #ft-auth .fa-logo{border:1px solid #e2e8f0}
+html.theme-light #ft-auth .fa-msg.err{color:#991b1b;background:#fee2e2}
+html.theme-light #ft-auth .fa-msg.ok{color:#065f46;background:#d1fae5}
+#ft-acct{position:relative;display:flex}
+#ft-acct>button{display:flex;align-items:center;gap:6px;height:36px;padding:0 10px;border-radius:10px;border:1px solid rgba(71,85,105,.8);background:rgba(30,41,59,.9);color:#cbd5e1;font:600 12px/1 system-ui,sans-serif;cursor:pointer}
+#ft-acct>button:hover{border-color:#67e8f9}
+#ft-acct .fa-av{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#1d4ed8;color:#fff;font-size:11px;font-weight:800}
+#ft-acct .fa-dot{width:8px;height:8px;border-radius:50%;background:#64748b}
+#ft-acct .fa-dot.ok{background:#34d399}#ft-acct .fa-dot.busy{background:#fbbf24}#ft-acct .fa-dot.err{background:#f87171}
+#ft-acct .fa-menu{position:absolute;right:0;top:44px;width:260px;padding:12px;border-radius:14px;background:#0f172a;border:1px solid rgba(148,163,184,.3);box-shadow:0 18px 40px rgba(0,0,0,.45);color:#e2e8f0;font:400 13px/1.45 system-ui,sans-serif;z-index:9999}
+#ft-acct .fa-menu[hidden]{display:none}
+#ft-acct .fa-menu strong{display:block;font-size:13.5px;word-break:break-all}
+#ft-acct .fa-menu .fa-st{color:#94a3b8;font-size:12px;margin:2px 0 10px}
+#ft-acct .fa-menu button{display:block;width:100%;text-align:left;padding:8px 10px;margin-top:4px;border-radius:9px;border:0;background:rgba(255,255,255,.06);color:inherit;font:inherit;cursor:pointer}
+#ft-acct .fa-menu button:hover{background:rgba(255,255,255,.12)}
+#ft-acct .fa-menu button.fa-out{color:#fca5a5}
+html.theme-light #ft-acct>button{background:#fff;border-color:#cbd5e1;color:#334155}
+html.theme-light #ft-acct .fa-menu{background:#fff;color:#0f172a;border-color:#cbd5e1;box-shadow:0 18px 40px rgba(15,23,42,.18)}
+html.theme-light #ft-acct .fa-menu button{background:#f1f5f9}
+html.theme-light #ft-acct .fa-menu button:hover{background:#e2e8f0}
+html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
+@media (max-width:639px){#ft-acct .fa-name{display:none}}
+@media print{#ft-auth,#ft-acct{display:none!important}}
+</style>
+<script>
+(function () {
+  'use strict';
+  var SB_URL = 'https://rzjfiikdpjwzrfmlugpq.supabase.co';
+  var SB_KEY = 'sb_publishable_TBxXU2fK-AZU5pab-bULiQ_bbTjrO4N';
+  if (window.__FT_SB_URL) SB_URL = window.__FT_SB_URL; // tests
+  if (!SB_URL || !SB_KEY || !window.fetch) return;
+
+  // Données synchronisées (aucune donnée de dossier ou d'allocataire)
+  var SYNC = ['ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use'];
+  var K_SESS = 'ft_sb_session', K_META = 'ft_sb_meta';
+  var LSraw = {
+    get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+    del: function (k) { try { localStorage.removeItem(k); } catch (e) {} }
+  };
+  function jget(k, d) { try { var v = JSON.parse(LSraw.get(k)); return v == null ? d : v; } catch (e) { return d; } }
+  function jset(k, v) { LSraw.set(k, JSON.stringify(v)); }
+  var sess = jget(K_SESS, null);
+  var meta = jget(K_META, {}); // { uid, lastSync, dirty }
+  var status = 'off', lastOk = null, isAdmin = false, pushTimer = null, busy = false;
+  function saveMeta() { jset(K_META, meta); }
+  function esc(t) { return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function toast(m, t) { try { showToast(m, t || 'info'); } catch (e) {} }
+
+  /* ---------- Détection des modifications ---------- */
+  if (window.safeLS) {
+    var oSet = safeLS.setItem, oDel = safeLS.removeItem;
+    safeLS.setItem = function (k, v) { var old = LSraw.get(k); oSet.call(safeLS, k, v); if (SYNC.indexOf(k) > -1 && old !== String(v)) changed(); };
+    safeLS.removeItem = function (k) { var had = LSraw.get(k) != null; oDel.call(safeLS, k); if (SYNC.indexOf(k) > -1 && had) changed(); };
+  }
+  function changed() {
+    if (!sess) return;
+    meta.dirty = true; saveMeta(); setStatus('busy');
+    clearTimeout(pushTimer); pushTimer = setTimeout(function () { sync('push'); }, 1500);
+  }
+
+  /* ---------- Appels Supabase ---------- */
+  function api(path, opt) {
+    opt = opt || {};
+    var h = { apikey: SB_KEY, 'Content-Type': 'application/json' };
+    if (opt.auth !== false && sess) h.Authorization = 'Bearer ' + sess.access_token;
+    if (opt.prefer) h.Prefer = opt.prefer;
+    return fetch(SB_URL + path, { method: opt.method || 'GET', headers: h, body: opt.body ? JSON.stringify(opt.body) : undefined, keepalive: !!opt.keepalive })
+      .then(function (r) {
+        return r.text().then(function (t) {
+          var d = null; try { d = t ? JSON.parse(t) : null; } catch (e) {}
+          if (!r.ok) { var er = new Error((d && (d.msg || d.error_description || d.message || d.error)) || ('HTTP ' + r.status)); er.status = r.status; er.code = d && (d.error_code || d.code); throw er; }
+          return d;
+        });
+      });
+  }
+  function keepSession(d) {
+    sess = { access_token: d.access_token, refresh_token: d.refresh_token, expires_at: d.expires_at || (Math.floor(Date.now() / 1000) + (d.expires_in || 3600)), user: { id: d.user.id, email: d.user.email } };
+    jset(K_SESS, sess);
+  }
+  function ensureToken() {
+    if (!sess) return Promise.reject(new Error('no-session'));
+    if (sess.expires_at - 90 > Date.now() / 1000) return Promise.resolve();
+    return api('/auth/v1/token?grant_type=refresh_token', { method: 'POST', auth: false, body: { refresh_token: sess.refresh_token } })
+      .then(function (d) { keepSession(d); })
+      .catch(function (e) {
+        if (e.status && e.status < 500) { sess = null; LSraw.del(K_SESS); setStatus('off'); showLogin('Votre session a expiré, reconnectez-vous.'); }
+        throw e;
+      });
+  }
+  function frErr(e) {
+    var m = String(e && e.message || '');
+    if (/invalid login|invalid_credentials|invalid grant/i.test(m + (e.code || ''))) return 'E-mail ou mot de passe incorrect.';
+    if (/email not confirmed/i.test(m)) return 'Adresse e-mail pas encore confirmée.';
+    if (/rate limit|too many/i.test(m)) return 'Trop de tentatives, réessayez dans quelques minutes.';
+    if (/password should be|weak/i.test(m)) return 'Mot de passe trop court (8 caractères minimum conseillés).';
+    if (/failed to fetch|network/i.test(m)) return 'Connexion impossible : vérifiez votre accès à Internet.';
+    return 'Erreur : ' + m;
+  }
+
+  /* ---------- Fusion (aucun modèle perdu) ---------- */
+  function parse(v, d) { try { var x = JSON.parse(v); return x == null ? d : x; } catch (e) { return d; } }
+  function merge(localData, remoteData) {
+    var out = {}; SYNC.forEach(function (k) { out[k] = remoteData[k] != null ? remoteData[k] : localData[k]; });
+    var lt = parse(localData.ft_templates, []), rt = parse(remoteData.ft_templates, []);
+    if (lt.length || rt.length) {
+      var seen = {}, res = [];
+      rt.concat(lt).forEach(function (t) { if (t && t.id != null && !seen[t.id]) { seen[t.id] = 1; res.push(t); } });
+      lt.forEach(function (t) { if (t && t.id != null) for (var i = 0; i < res.length; i++) if (res[i].id === t.id) { res[i] = t; break; } });
+      out.ft_templates = JSON.stringify(res);
+    }
+    ['ft_favorites', 'ft_categories_list'].forEach(function (k) {
+      var a = parse(remoteData[k], []), b = parse(localData[k], []);
+      if (!Array.isArray(a) || !Array.isArray(b)) return;
+      var u = a.slice(); b.forEach(function (x) { var js = JSON.stringify(x); if (!u.some(function (y) { return JSON.stringify(y) === js; })) u.push(x); });
+      out[k] = JSON.stringify(u);
+    });
+    return out;
+  }
+  function collect() { var d = {}; SYNC.forEach(function (k) { var v = LSraw.get(k); if (v != null) d[k] = v; }); return d; }
+  function applyData(d) { SYNC.forEach(function (k) { if (d[k] != null) LSraw.set(k, d[k]); }); }
+  function same(a, b) { return SYNC.every(function (k) { return (a[k] == null ? null : a[k]) === (b[k] == null ? null : b[k]); }); }
+  function refreshApp() {
+    try { loadState(); } catch (e) {}
+    try { renderCategoryPills(); } catch (e) {}
+    try { renderTemplates(); } catch (e) {}
+  }
+
+  /* ---------- Synchronisation ---------- */
+  function pull() {
+    return api('/rest/v1/user_data?select=data,updated_at&user_id=eq.' + encodeURIComponent(sess.user.id)).then(function (r) { return r && r[0] || null; });
+  }
+  function push(data, keepalive) {
+    var now = new Date().toISOString();
+    return api('/rest/v1/user_data?on_conflict=user_id', { method: 'POST', prefer: 'resolution=merge-duplicates,return=representation', keepalive: keepalive, body: { user_id: sess.user.id, data: data, updated_at: now } })
+      .then(function (r) { meta.lastSync = (r && r[0] && r[0].updated_at) || now; meta.dirty = false; meta.uid = sess.user.id; saveMeta(); });
+  }
+  function sync(mode) {
+    if (!sess || busy) { if (busy && mode === 'push') { clearTimeout(pushTimer); pushTimer = setTimeout(function () { sync('push'); }, 1500); } return Promise.resolve(); }
+    busy = true; setStatus('busy');
+    var local = collect(), reload = false;
+    return ensureToken().then(pull).then(function (remote) {
+      var firstHere = meta.uid !== sess.user.id;
+      if (!remote) return push(local); // premier envoi : reprise des modèles de ce poste
+      var newer = !meta.lastSync || new Date(remote.updated_at) > new Date(meta.lastSync);
+      var rd = remote.data || {};
+      if (firstHere || (newer && meta.dirty)) {
+        var m = merge(local, rd);
+        applyData(m); reload = !same(m, local);
+        return push(m);
+      }
+      if (newer) {
+        applyData(rd); meta.lastSync = remote.updated_at; meta.uid = sess.user.id; saveMeta();
+        reload = !same(collect(), local);
+        return;
+      }
+      if (meta.dirty) return push(local);
+    }).then(function () {
+      busy = false; lastOk = new Date(); setStatus('ok');
+      if (reload) {
+        if (mode === 'start') { try { if (!sessionStorage.getItem('ft_sb_rl')) { sessionStorage.setItem('ft_sb_rl', '1'); location.reload(); return; } } catch (e) {} }
+        refreshApp(); toast('Modèles mis à jour depuis votre compte', 'success');
+      }
+      try { sessionStorage.removeItem('ft_sb_rl'); } catch (e) {}
+    }).catch(function (e) {
+      busy = false;
+      if (e && e.message === 'no-session') return;
+      setStatus('err', frErr(e)); console.warn('Synchronisation :', e);
+    });
+  }
+  function loadShared() {
+    if (!sess) return;
+    ensureToken().then(function () { return api('/rest/v1/shared_templates?select=id,template,updated_at'); }).then(function (rows) {
+      if (!rows || !rows.length || typeof templates === 'undefined') return;
+      var add = 0, upd = 0;
+      rows.forEach(function (r) {
+        var t = r.template; if (!t || t.id == null) return;
+        t.shared = true;
+        var i = templates.findIndex(function (x) { return x.id === t.id; });
+        if (i < 0) { templates.push(t); add++; }
+        else if (JSON.stringify(templates[i]) !== JSON.stringify(t)) { templates[i] = t; upd++; }
+      });
+      if (add || upd) {
+        try { if (typeof categoryList !== 'undefined') rows.forEach(function (r) { var c = r.template && r.template.category; if (c && !categoryList.some(function (x) { return (x && (x.id || x.name || x)) === c; })) {} }); } catch (e) {}
+        try { saveState(); } catch (e) {}
+        refreshApp();
+        if (add) toast(add + ' modèle(s) commun(s) ajouté(s)', 'success');
+      }
+    }).catch(function () {});
+    api('/rest/v1/app_admins?select=user_id&user_id=eq.' + encodeURIComponent(sess.user.id)).then(function (r) { isAdmin = !!(r && r.length); renderAcct(); }).catch(function () {});
+  }
+
+  /* ---------- Modèles communs (administrateurs) ---------- */
+  function currentTpl() { try { return templates.find(function (t) { return t.id === activeTemplateId; }) || null; } catch (e) { return null; } }
+  window.ftSharePublish = function () {
+    var t = currentTpl();
+    if (!isAdmin) return toast('Réservé aux administrateurs', 'info');
+    if (!t) return toast('Ouvrez d’abord un modèle dans l’onglet CVM', 'info');
+    if (!confirm('Publier « ' + t.title + ' » pour tous les conseillers ?')) return;
+    var c = JSON.parse(JSON.stringify(t)); c.shared = true;
+    ensureToken().then(function () { return api('/rest/v1/shared_templates?on_conflict=id', { method: 'POST', prefer: 'resolution=merge-duplicates', body: { id: String(t.id), template: c, updated_at: new Date().toISOString(), updated_by: sess.user.id } }); })
+      .then(function () { toast('Modèle publié pour tous les conseillers', 'success'); }).catch(function (e) { toast(frErr(e), 'error'); });
+  };
+  window.ftShareRemove = function () {
+    var t = currentTpl();
+    if (!isAdmin || !t) return toast(isAdmin ? 'Ouvrez d’abord un modèle' : 'Réservé aux administrateurs', 'info');
+    if (!confirm('Retirer « ' + t.title + ' » des modèles communs ? (il reste dans vos modèles)')) return;
+    ensureToken().then(function () { return api('/rest/v1/shared_templates?id=eq.' + encodeURIComponent(String(t.id)), { method: 'DELETE' }); })
+      .then(function () { toast('Modèle retiré des modèles communs', 'success'); }).catch(function (e) { toast(frErr(e), 'error'); });
+  };
+
+  /* ---------- Écran de connexion ---------- */
+  function box(inner) {
+    var w = document.getElementById('ft-auth');
+    if (!w) { w = document.createElement('div'); w.id = 'ft-auth'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); document.body.appendChild(w); }
+    w.innerHTML = '<div class="fa-box"><div class="fa-logo">France <i>Travail</i></div>' + inner + '</div>';
+    return w;
+  }
+  function closeBox() { var w = document.getElementById('ft-auth'); if (w) w.remove(); }
+  function msg(w, t, ok) { var m = w.querySelector('.fa-msg'); m.className = 'fa-msg ' + (ok ? 'ok' : 'err'); m.textContent = t; }
+  function showLogin(note) {
+    var w = box('<h2>Connexion</h2><p class="fa-sub">Espace Conseiller : vos modèles vous suivent sur tous les postes.</p>' +
+      '<form><label for="fa-mail">E-mail</label><input id="fa-mail" type="email" autocomplete="username" required value="' + esc(meta.email || '') + '">' +
+      '<label for="fa-pass">Mot de passe</label><input id="fa-pass" type="password" autocomplete="current-password" required>' +
+      '<button class="fa-go" type="submit">Se connecter</button></form><div class="fa-msg"></div>' +
+      '<div class="fa-links"><button type="button" data-a="forgot">Mot de passe oublié ?</button><button type="button" data-a="skip">Continuer sans compte</button></div>' +
+      '<p class="fa-note">Sans compte, les modèles restent enregistrés sur ce poste uniquement. Aucune donnée d’allocataire n’est synchronisée.</p>');
+    if (note) msg(w, note);
+    (meta.email ? w.querySelector('#fa-pass') : w.querySelector('#fa-mail')).focus();
+    w.querySelector('form').onsubmit = function (ev) {
+      ev.preventDefault();
+      var b = w.querySelector('.fa-go'), email = w.querySelector('#fa-mail').value.trim();
+      b.disabled = true; b.textContent = 'Connexion…';
+      api('/auth/v1/token?grant_type=password', { method: 'POST', auth: false, body: { email: email, password: w.querySelector('#fa-pass').value } })
+        .then(function (d) {
+          keepSession(d); meta.email = email; saveMeta();
+          try { sessionStorage.removeItem('ft_sb_skip'); } catch (e) {}
+          closeBox(); renderAcct(); toast('Connecté : ' + email, 'success');
+          return sync('start').then(loadShared);
+        })
+        .catch(function (e) { b.disabled = false; b.textContent = 'Se connecter'; msg(w, frErr(e)); });
+    };
+    w.querySelector('[data-a="skip"]').onclick = function () { try { sessionStorage.setItem('ft_sb_skip', '1'); } catch (e) {} closeBox(); renderAcct(); };
+    w.querySelector('[data-a="forgot"]').onclick = function () {
+      var email = w.querySelector('#fa-mail').value.trim();
+      if (!email) { msg(w, 'Saisissez d’abord votre e-mail.'); return; }
+      api('/auth/v1/recover?redirect_to=' + encodeURIComponent(location.origin + location.pathname), { method: 'POST', auth: false, body: { email: email } })
+        .then(function () { msg(w, 'Si ce compte existe, un e-mail de réinitialisation vient d’être envoyé.', true); })
+        .catch(function (e) { msg(w, frErr(e)); });
+    };
+  }
+  function showSetPassword(kind) {
+    var w = box('<h2>' + (kind === 'invite' ? 'Bienvenue !' : 'Nouveau mot de passe') + '</h2><p class="fa-sub">Choisissez votre mot de passe pour ' + esc(sess.user.email) + '.</p>' +
+      '<form><label for="fa-p1">Mot de passe</label><input id="fa-p1" type="password" autocomplete="new-password" minlength="8" required>' +
+      '<label for="fa-p2">Confirmer</label><input id="fa-p2" type="password" autocomplete="new-password" minlength="8" required>' +
+      '<button class="fa-go" type="submit">Enregistrer</button></form><div class="fa-msg"></div>');
+    w.querySelector('#fa-p1').focus();
+    w.querySelector('form').onsubmit = function (ev) {
+      ev.preventDefault();
+      var p1 = w.querySelector('#fa-p1').value, p2 = w.querySelector('#fa-p2').value;
+      if (p1 !== p2) return msg(w, 'Les deux mots de passe ne sont pas identiques.');
+      api('/auth/v1/user', { method: 'PUT', body: { password: p1 } })
+        .then(function () { closeBox(); renderAcct(); toast('Mot de passe enregistré', 'success'); return sync('start').then(loadShared); })
+        .catch(function (e) { msg(w, frErr(e)); });
+    };
+  }
+  function logout() {
+    if (meta.dirty && !confirm('Des modifications ne sont pas encore synchronisées. Se déconnecter quand même ?')) return;
+    var token = sess && sess.access_token;
+    if (token) fetch(SB_URL + '/auth/v1/logout', { method: 'POST', headers: { apikey: SB_KEY, Authorization: 'Bearer ' + token } }).catch(function () {});
+    sess = null; LSraw.del(K_SESS);
+    SYNC.concat(['ft_user_vars', 'ft_profile']).forEach(function (k) { if (k !== 'ft_theme') LSraw.del(k); });
+    meta = { email: meta.email }; saveMeta();
+    location.reload();
+  }
+
+  /* ---------- Bouton compte dans la barre du haut ---------- */
+  function setStatus(s, detail) { status = s; if (detail) status_detail = detail; renderAcct(); }
+  var status_detail = '';
+  function renderAcct() {
+    var host = document.getElementById('ft-acct');
+    if (!host) {
+      var anchor = document.getElementById('datecalc-toggle');
+      if (!anchor || !anchor.parentNode) return;
+      host = document.createElement('div'); host.id = 'ft-acct';
+      anchor.parentNode.insertBefore(host, anchor);
+      document.addEventListener('click', function (e) { if (!host.contains(e.target)) { var m = host.querySelector('.fa-menu'); if (m) m.hidden = true; } });
+    }
+    var open = host.querySelector('.fa-menu') && !host.querySelector('.fa-menu').hidden;
+    var email = sess ? sess.user.email : '';
+    var dot = !sess ? '' : (status === 'ok' ? 'ok' : status === 'busy' ? 'busy' : status === 'err' ? 'err' : '');
+    var st = !sess ? 'Non connecté : modèles enregistrés sur ce poste uniquement.' :
+      status === 'busy' ? 'Synchronisation en cours…' :
+      status === 'err' ? 'Échec de synchronisation : ' + status_detail + ' Vos modifications sont gardées et seront renvoyées.' :
+      lastOk ? 'Modèles synchronisés à ' + lastOk.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) + '.' : 'Connecté.';
+    host.innerHTML = '<button type="button" aria-haspopup="true" title="' + esc(sess ? 'Compte : ' + email : 'Se connecter') + '">' +
+      (sess ? '<span class="fa-av">' + esc(email.charAt(0).toUpperCase()) + '</span><span class="fa-dot ' + dot + '"></span>' : '<span class="fa-name">Se connecter</span><span class="fa-dot"></span>') +
+      '</button><div class="fa-menu"' + (open ? '' : ' hidden') + '>' +
+      (sess ? '<strong>' + esc(email) + '</strong>' + (isAdmin ? '<div class="fa-st">Administrateur des modèles communs</div>' : '') : '<strong>Compte conseiller</strong>') +
+      '<div class="fa-st">' + esc(st) + '</div>' +
+      (sess ? '<button type="button" data-a="sync">Synchroniser maintenant</button>' +
+        (isAdmin ? '<button type="button" data-a="pub">Publier le modèle ouvert pour tous</button><button type="button" data-a="unpub">Retirer le modèle ouvert des communs</button>' : '') +
+        '<button type="button" data-a="out" class="fa-out">Se déconnecter</button>'
+        : '<button type="button" data-a="in">Se connecter</button>') + '</div>';
+    host.querySelector('button').onclick = function (e) { e.stopPropagation(); var m = host.querySelector('.fa-menu'); m.hidden = !m.hidden; };
+    var act = { sync: function () { meta.dirty = true; sync('push').then(loadShared); }, pub: window.ftSharePublish, unpub: window.ftShareRemove, out: logout, in: function () { showLogin(); } };
+    host.querySelectorAll('.fa-menu [data-a]').forEach(function (b) { b.onclick = function () { host.querySelector('.fa-menu').hidden = true; act[b.dataset.a](); }; });
+  }
+
+  /* ---------- Démarrage ---------- */
+  function start() {
+    // Retour d'un lien d'invitation ou de réinitialisation
+    var h = location.hash || '';
+    if (/access_token=/.test(h)) {
+      var p = {}; h.slice(1).split('&').forEach(function (kv) { var i = kv.indexOf('='); p[decodeURIComponent(kv.slice(0, i))] = decodeURIComponent(kv.slice(i + 1).replace(/\+/g, ' ')); });
+      history.replaceState(null, '', location.pathname + location.search);
+      sess = { access_token: p.access_token, refresh_token: p.refresh_token, expires_at: +p.expires_at || Math.floor(Date.now() / 1000) + (+p.expires_in || 3600), user: { id: '', email: '' } };
+      api('/auth/v1/user').then(function (u) {
+        sess.user = { id: u.id, email: u.email }; jset(K_SESS, sess); meta.email = u.email; saveMeta(); renderAcct();
+        if (p.type === 'recovery' || p.type === 'invite') showSetPassword(p.type); else sync('start').then(loadShared);
+      }).catch(function () { sess = null; LSraw.del(K_SESS); showLogin('Ce lien a expiré. Demandez un nouvel e-mail.'); });
+      return;
+    }
+    if (/error_description=/.test(h)) { history.replaceState(null, '', location.pathname + location.search); showLogin('Ce lien n’est plus valide ou a expiré. Demandez un nouvel e-mail.'); return; }
+    renderAcct();
+    if (!sess) { var skip = false; try { skip = !!sessionStorage.getItem('ft_sb_skip'); } catch (e) {} if (!skip) showLogin(); return; }
+    sync('start').then(loadShared);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(start, 50); }); else setTimeout(start, 50);
+
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && sess && !busy) sync('focus'); });
+  window.addEventListener('online', function () { if (sess && meta.dirty) sync('push'); });
+  window.addEventListener('pagehide', function () { if (sess && meta.dirty && sess.expires_at > Date.now() / 1000) { try { push(collect(), true); } catch (e) {} } });
+
+  window.FT_ACTIONS = window.FT_ACTIONS || [];
+  window.FT_ACTIONS.push(
+    { t: 'Synchroniser mes modèles', s: 'Envoyer et récupérer les modèles de mon compte', kw: 'synchroniser compte cloud sauvegarde connexion', when: function () { return !!sess; }, run: function () { meta.dirty = true; sync('push'); } },
+    { t: 'Se connecter', s: 'Compte conseiller : modèles sur tous les postes', kw: 'connexion compte identifiant login', when: function () { return !sess; }, run: function () { showLogin(); } },
+    { t: 'Se déconnecter', s: 'Fermer la session sur ce poste', kw: 'déconnexion logout quitter compte', when: function () { return !!sess; }, run: logout },
+    { t: 'Publier le modèle ouvert pour tous', s: 'Modèles communs (administrateur)', kw: 'publier commun partager modèle équipe', when: function () { return isAdmin; }, run: function () { window.ftSharePublish(); } }
+  );
+})();
+</script>
 <!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
 <style>
 #ft-news{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.6);backdrop-filter:blur(3px);opacity:0;transition:opacity .25s ease}
@@ -12404,6 +12772,12 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.4', date: '12/11/2026', items: [
+      'Comptes conseillers : connectez-vous avec votre e-mail et votre mot de passe pour retrouver vos modèles CVM, favoris et catégories sur tous les postes.',
+      'Enregistrement automatique : chaque modification est synchronisée en quelques secondes (pastille verte à côté de votre initiale, en haut).',
+      'Modèles communs : les modèles publiés par l’administrateur apparaissent chez tous les conseillers.',
+      'Aucune donnée de dossier ou d’allocataire n’est synchronisée. « Continuer sans compte » reste possible.'
+    ] },
     { v: '2026-11-12.3', date: '12/11/2026', items: [
       'Barre du haut : le bandeau du barème Unédic et le nombre de modèles sont remplacés par une barre de recherche.',
       'Un clic dessus ouvre la recherche globale : outils, règles et modèles de mail (aussi avec Ctrl+K).'

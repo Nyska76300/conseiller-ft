@@ -39,3 +39,6 @@ create policy "lecture par les conseillers" on public.shared_templates for selec
 create policy "écriture par les admins" on public.shared_templates for all to authenticated
   using (exists (select 1 from public.app_admins a where a.user_id = auth.uid()))
   with check (exists (select 1 from public.app_admins a where a.user_id = auth.uid()));
+
+-- 4. Me déclarer administrateur des modèles communs (remplacer l'e-mail) :
+-- insert into public.app_admins (user_id) select id from auth.users where email = 'mon.email@exemple.fr';
