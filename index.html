@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-12.33">
+  <meta name="ft-version" content="2026-11-12.34">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -11659,7 +11659,7 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
       if (inp && !inp.value) { inp.value = profile.aj.toFixed(2); try { cnsRun(); } catch (e) {} showToast('Allocation du dossier en cours reprise : ' + profile.aj.toFixed(2).replace('.', ',') + ' €/j', 'info'); }
     }
   };
-  const hs = $('home-search'); if (hs) hs.placeholder = 'Un outil ou un modèle de mail (Ctrl+K partout)';
+  const hs = $('home-search'); if (hs) hs.placeholder = window.matchMedia('(max-width:767px)').matches ? 'Un outil ou un modèle de mail' : 'Un outil ou un modèle de mail (Ctrl+K partout)';
 
   /* ---------- 3. Palette de recherche globale Ctrl+K ---------- */
   function lev1(a, b) { // distance d'édition <= 1
@@ -13222,6 +13222,36 @@ body>header>div{min-width:0}
   #tab-content-cvm > div:first-child{height:auto!important;min-height:56px;flex-wrap:wrap;gap:8px;padding:8px 10px!important}
   html.theme-light #cvm-m-bar button,html.theme-light #cvm-back{background:#fff;border-color:#cbd5e1;color:#0f172a}
 }
+/* ---------- Accueil sur téléphone : le bonjour en premier ---------- */
+@media (max-width:767px){
+  #view-home>.home-wrap.fh-on{flex-direction:column!important;flex-wrap:nowrap!important;align-items:stretch!important}
+  #view-home .fh-L,#view-home .fh-C,#view-home .fh-R{display:contents!important}
+  #view-home .home-hero{order:1}
+  #view-home .fh-dos:not(.fh-news){order:2}
+  #view-home .fh-tools{order:3}
+  #view-home .fh-links{order:4}
+  #view-home .home-top{order:5}
+  #view-home .fh-rep{order:6}
+  #view-home .fh-news{order:7}
+  #view-home .hm-extra{order:8}
+  #view-home .home-foot{order:9}
+  #view-home .home-hero{padding:18px 16px 16px!important;border-radius:20px!important}
+  #view-home .home-hero::after{width:220px;height:220px;right:-70px;top:-80px}
+  #view-home .home-hero-top{flex-direction:column-reverse!important;align-items:flex-start!important;gap:6px!important;margin-bottom:14px!important}
+  #view-home .home-clock{display:flex!important;flex-direction:row!important;align-items:baseline!important;gap:8px!important;text-align:left!important}
+  #view-home .home-time{font-size:15px!important;line-height:1!important;font-weight:700!important;color:#67e8f9!important}
+  #view-home .home-time small{display:none}
+  html.theme-light #view-home .home-time{color:#0369a1!important}
+  #view-home .home-date{font-size:13px!important;margin:0!important;text-transform:none}
+  #view-home .home-date::before{content:'·';margin-right:8px;opacity:.6}
+  #view-home .home-title{font-size:26px!important;line-height:1.15!important;letter-spacing:-.01em}
+  #view-home .home-search{padding-top:0!important;padding-bottom:0!important;min-height:50px!important}
+  #view-home .home-search kbd{display:none!important}
+  #view-home .fh-sum>.fh-grp .fh-chips{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  #view-home .fh-chip{min-height:52px;padding:8px 10px!important;gap:8px!important}
+  #view-home .fh-chip .fh-cl{font-size:13px!important;line-height:1.2!important;white-space:normal!important}
+  #view-home .fh-chip .fh-ci{width:30px!important;height:30px!important;flex:none}
+}
 /* ---------- Liens cliquables dans les mails ---------- */
 #preview-body a.ft-link{color:#67e8f9;text-decoration:underline;text-underline-offset:3px;word-break:break-all;cursor:pointer}
 #preview-body a.ft-link:hover{color:#a5f3fc}
@@ -14264,6 +14294,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.34', date: '12/11/2026', items: [
+      'Accueil sur téléphone : le « Bonjour » et la recherche s’affichent en premier, puis le dossier en cours, les simulateurs, les liens utiles et les repères.'
+    ] },
     { v: '2026-11-12.33', date: '12/11/2026', items: [
       'Le site s’installe comme une application sur iPhone et Android : icône « Conseiller FT », ouverture en plein écran, consultation possible sans réseau. Mode d’emploi dans le menu « ⋯ » → Installer sur l’écran d’accueil.'
     ] },
