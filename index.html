@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.1">
+  <meta name="ft-version" content="2026-11-12.2">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12235,6 +12235,7 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
 
   /* ---------- 5. Journal des modifications (page Sources) ---------- */
   const LOG = [
+    ['12/11/2026', 'Application', ['Fenêtre « Nouveautés » à l’ouverture de la page quand le site a changé.', 'Bandeau « Nouvelle version disponible » sur la version en ligne.']],
     ['27/10/2026', 'Application', ['Accueil : bouton « Nouveau dossier », fiche du dossier en PDF, plus de doublon avec les bulles des simulateurs.', 'Ouverture de droits : le complément ARE y est intégré.', 'Maintien : passage direct des valeurs vers Cumul CNS.', 'Détecteur de doublons parmi les modèles de mail (aucune suppression automatique).', 'Icônes de secours intégrées au fichier.','Barèmes historiques de l’ARE (juillet 2022 à juillet 2025) appliqués selon la date de fin de contrat.']],
     ['23/10/2026', 'Barème', ['Dernière vérification des valeurs du barème (voir le niveau de vérification ligne par ligne ci-dessus).']],
     ['2026', 'Règles prises en compte', ['À compter du 01/09/2026 : plafonds de durée après rupture conventionnelle (456 j et 624 j) et Scop pour l’ARCE.', 'À compter du 01/07/2026 : congé supplémentaire de naissance (traitement détaillé non intégré, à confirmer).', 'À compter du 01/04/2026 : primo-entrants (108 jours ou 758 heures, minimum 152 jours).', 'Démission : abandon de poste présumé démission, projet professionnel, réexamen après 121 jours.']]
@@ -12352,6 +12353,100 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
   ].forEach(c => FT_CASES.push(c));
 })();
 
+</script>
+<!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
+<style>
+#ft-news{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.6);backdrop-filter:blur(3px);opacity:0;transition:opacity .25s ease}
+#ft-news.show{opacity:1}
+#ft-news .ftn-box{width:min(520px,100%);max-height:min(80vh,640px);display:flex;flex-direction:column;border-radius:18px;background:linear-gradient(160deg,#1e3a8a,#0f172a 70%);color:#f1f5f9;border:1px solid rgba(147,197,253,.3);box-shadow:0 24px 60px rgba(0,0,0,.45);font:400 14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;transform:translateY(12px);transition:transform .25s ease}
+#ft-news.show .ftn-box{transform:none}
+#ft-news header{display:flex;align-items:center;gap:12px;padding:18px 20px 10px}
+#ft-news .ftn-ico{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(225,0,15,.15);border:1px solid rgba(225,0,15,.4);font-size:20px}
+#ft-news h2{margin:0;font-size:18px;font-weight:700}
+#ft-news .ftn-sub{margin:0;font-size:12.5px;color:#93c5fd}
+#ft-news .ftn-body{overflow:auto;padding:4px 20px 8px}
+#ft-news h3{margin:12px 0 4px;font-size:13px;font-weight:700;color:#bfdbfe;text-transform:uppercase;letter-spacing:.04em}
+#ft-news ul{margin:0;padding-left:20px;list-style:disc}
+#ft-news li{margin:4px 0}
+#ft-news footer{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px 18px}
+#ft-news button{border:0;border-radius:10px;cursor:pointer;font:600 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif;padding:10px 16px}
+#ft-news .ftn-ok{background:#e1000f;color:#fff}
+#ft-news .ftn-ok:hover{background:#b8000c}
+#ft-news .ftn-more{background:rgba(255,255,255,.08);color:#e2e8f0}
+html.theme-light #ft-news{background:rgba(15,23,42,.35)}
+html.theme-light #ft-news .ftn-box{background:linear-gradient(160deg,#ffffff,#e0f2fe);color:#0f172a;border-color:#bae6fd;box-shadow:0 24px 60px rgba(15,23,42,.25)}
+html.theme-light #ft-news .ftn-sub{color:#1d4ed8}
+html.theme-light #ft-news h3{color:#1e3a8a}
+html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
+@media (prefers-reduced-motion:reduce){#ft-news,#ft-news .ftn-box{transition:none}}
+@media print{#ft-news{display:none!important}}
+</style>
+<script>
+(function () {
+  /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
+     (v = même valeur que la balise ft-version). */
+  var NEWS = [
+    { v: '2026-11-12.2', date: '12/11/2026', items: [
+      'Nouvelle fenêtre « Nouveautés » : elle s’ouvre une seule fois après chaque mise à jour du site pour présenter les changements.',
+      'Bandeau « Nouvelle version disponible » sur la version en ligne : un clic sur « Recharger » suffit pour passer à la dernière version.',
+      'Le journal complet reste consultable dans Références et calculs → Sources.'
+    ] }
+  ];
+  window.FT_NEWS = NEWS;
+  var KEY = 'ft_news_seen';
+
+  function cmp(a, b) { // compare 2026-11-12.2 et 2026-11-12.10 correctement
+    var pa = String(a).split('.'), pb = String(b).split('.');
+    if (pa[0] !== pb[0]) return pa[0] < pb[0] ? -1 : 1;
+    return (parseInt(pa[1] || 0, 10)) - (parseInt(pb[1] || 0, 10));
+  }
+  function getSeen() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function setSeen(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  function open(list) {
+    if (!list.length || document.getElementById('ft-news')) return;
+    var last = document.activeElement;
+    var w = document.createElement('div');
+    w.id = 'ft-news';
+    w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-labelledby', 'ftn-title');
+    w.innerHTML = '<div class="ftn-box"><header><div class="ftn-ico" aria-hidden="true">✨</div><div>' +
+      '<h2 id="ftn-title">Quoi de neuf ?</h2><p class="ftn-sub">' + (list.length > 1 ? list.length + ' mises à jour depuis votre dernière visite' : 'Mise à jour du ' + esc(list[0].date)) + '</p></div></header>' +
+      '<div class="ftn-body">' + list.map(function (e) {
+        return (list.length > 1 ? '<h3>' + esc(e.date) + '</h3>' : '') + '<ul>' + e.items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+      }).join('') + '</div>' +
+      '<footer><button type="button" class="ftn-more">Voir le journal</button><button type="button" class="ftn-ok">J’ai compris</button></footer></div>';
+    document.body.appendChild(w);
+    requestAnimationFrame(function () { w.classList.add('show'); });
+    var ok = w.querySelector('.ftn-ok'); ok.focus();
+    function close() {
+      setSeen(NEWS[0].v);
+      w.classList.remove('show');
+      document.removeEventListener('keydown', onKey, true);
+      setTimeout(function () { w.remove(); if (last && last.focus) try { last.focus(); } catch (e) {} }, 250);
+    }
+    function onKey(ev) { if (ev.key === 'Escape') { ev.stopPropagation(); close(); } }
+    document.addEventListener('keydown', onKey, true);
+    ok.addEventListener('click', close);
+    w.addEventListener('click', function (ev) { if (ev.target === w) close(); });
+    w.querySelector('.ftn-more').addEventListener('click', function () {
+      close();
+      try { if (typeof switchNavTab === 'function') switchNavTab('sources'); } catch (e) {}
+    });
+  }
+
+  // Ouvrir à la demande (Ctrl+K → « Nouveautés »)
+  window.ftShowNews = function () { open(NEWS.slice(0, 3)); };
+  window.FT_ACTIONS = window.FT_ACTIONS || [];
+  window.FT_ACTIONS.push({ t: 'Nouveautés', s: 'Voir les dernières modifications du site', kw: 'nouveautés quoi de neuf mise à jour version changements', run: function () { window.ftShowNews(); } });
+
+  function auto() {
+    var seen = getSeen();
+    var list = seen ? NEWS.filter(function (e) { return cmp(e.v, seen) > 0; }) : NEWS.slice(0, 1);
+    if (list.length) setTimeout(function () { open(list); }, 700);
+  }
+  if (document.readyState === 'complete') auto(); else window.addEventListener('load', auto);
+})();
 </script>
 <!-- Bandeau « Nouvelle version disponible » (version en ligne uniquement) -->
 <style>
