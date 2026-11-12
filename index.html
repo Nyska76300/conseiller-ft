@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-12.40">
+  <meta name="ft-version" content="2026-11-12.41">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -1541,7 +1541,7 @@
       <!-- France Travail Stylized Logo -->
       <div class="flex items-center gap-3">
         <button type="button" onclick="switchNavTab('home')" class="hdr-logo ft-logo-plate" title="Retour à l'accueil" aria-label="France Travail, retour à l'accueil">
-          <img class="ft-logo-img" src="assets/logo-france-travail.svg" alt="France Travail" height="28" onerror="ftLogoFallback(this)">
+          <img class="ft-logo-img" src="assets/logo-france-travail.png" alt="France Travail" height="28" onerror="ftLogoFallback(this)">
         </button>
 
         <!-- Brand Title & Active Module Badge -->
@@ -15077,6 +15077,8 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+.hdr-logo.ft-logo-plate{height:40px;padding:3px 12px}
+.hdr-logo .ft-logo-img{height:34px!important}
 body>header{overflow:visible!important}
 /* 1. Titre d’accueil : « Bonjour » puis la question */
 #home-title .ht-b{display:inline}
@@ -15200,6 +15202,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.41', date: '12/11/2026', items: [
+      'Logo France Travail officiel dans la barre du haut, et sur l’icône de l’appli (à réinstaller sur l’écran d’accueil pour voir la nouvelle icône).'
+    ] },
     { v: '2026-11-12.40', date: '12/11/2026', items: [
       'Trop-perçu, volet « Délais et recours » : le motif se choisit dans une liste (reprise d’activité, écart de revenus, arrêt maladie, retraite, attestation rectificative…), avec « Autre » pour préciser. Le mail reprend la formulation adaptée.'
     ] },
