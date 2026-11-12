@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-12.36">
+  <meta name="ft-version" content="2026-11-12.37">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -3457,8 +3457,8 @@
                   <label class="block text-[11px] font-medium text-slate-300 mb-1">Génération de naissance</label>
                   <select id="retraite-input-cohorte" onchange="runRetraiteCalculation()" class="w-full px-2.5 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-cyan-400 text-xs text-white outline-none">
                     <option value="1961_1">Janv. à août 1961 : 62 ans (168 t)</option>
-                    <option value="1961_2">Sept. à déc. 1961 : 62 ans 3 mois (166 t)</option>
-                    <option value="1962">1962 : 62 ans 6 mois (167 t)</option>
+                    <option value="1961_2">Sept. à déc. 1961 : 62 ans 3 mois (169 t)</option>
+                    <option value="1962">1962 : 62 ans 6 mois (169 t)</option>
                     <option value="1963" selected>1963 : 62 ans 9 mois (170 t)</option>
                     <option value="1964">1964 : 62 ans 9 mois (170 t)</option>
                     <option value="1965_1">Janv. à mars 1965 : 62 ans 9 mois (170 t)</option>
@@ -3733,12 +3733,18 @@
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-800/60 text-slate-300">
-                  <tr><td class="p-2 font-bold">1961 (2e semestre)</td><td class="p-2">62 ans et 3 mois</td><td class="p-2 font-mono text-cyan-300">169 trimestres</td><td class="p-2 font-mono">67 ans</td><td class="p-2 text-emerald-400">Maintien possible</td></tr>
+                  <tr><td class="p-2 font-bold">1961 (janv. à août)</td><td class="p-2">62 ans</td><td class="p-2 font-mono text-cyan-300">168 trimestres</td><td class="p-2 font-mono">67 ans</td><td class="p-2 text-emerald-400">Maintien possible</td></tr>
+                  <tr><td class="p-2 font-bold">1961 (sept. à déc.)</td><td class="p-2">62 ans et 3 mois</td><td class="p-2 font-mono text-cyan-300">169 trimestres</td><td class="p-2 font-mono">67 ans</td><td class="p-2 text-emerald-400">Maintien possible</td></tr>
                   <tr><td class="p-2 font-bold">1962</td><td class="p-2">62 ans et 6 mois</td><td class="p-2 font-mono text-cyan-300">169 trimestres</td><td class="p-2 font-mono">67 ans</td><td class="p-2 text-emerald-400">Maintien possible</td></tr>
                   <tr><td class="p-2 font-bold">1963</td><td class="p-2">62 ans et 9 mois</td><td class="p-2 font-mono text-cyan-300">170 trimestres</td><td class="p-2 font-mono">67 ans</td><td class="p-2 text-emerald-400">Maintien possible</td></tr>
-                  <tr><td class="p-2 font-bold">1964</td><td class="p-2">63 ans</td><td class="p-2 font-mono text-cyan-300">171 trimestres</td><td class="p-2 font-mono">67 ans</td><td class="p-2 text-emerald-400">Maintien possible</td></tr>
-                  <tr><td class="p-2 font-bold">1965</td><td class="p-2">63 ans et 3 mois</td><td class="p-2 font-mono text-cyan-300">172 trimestres</td><td class="p-2 font-mono">67 ans</td><td class="p-2 text-emerald-400">Maintien possible</td></tr>
-                  <tr><td class="p-2 font-bold">1968 et après</td><td class="p-2">64 ans</td><td class="p-2 font-mono text-cyan-300">172 trimestres</td><td class="p-2 font-mono">67 ans</td><td class="p-2 text-emerald-400">Maintien possible</td></tr>
+                  <tr><td class="p-2 font-bold">1964</td><td class="p-2">62 ans et 9 mois</td><td class="p-2 font-mono text-cyan-300">170 trimestres</td><td class="p-2 font-mono">67 ans</td><td class="p-2 text-emerald-400">Maintien possible</td></tr>
+                  <tr><td class="p-2 font-bold">1965 (janv. à mars)</td><td class="p-2">62 ans et 9 mois</td><td class="p-2 font-mono text-cyan-300">170 trimestres</td><td class="p-2 font-mono">67 ans</td><td class="p-2 text-emerald-400">Maintien possible</td></tr>
+                  <tr><td class="p-2 font-bold">1965 (avril à déc.)</td><td class="p-2">63 ans</td><td class="p-2 font-mono text-cyan-300">171 trimestres</td><td class="p-2 font-mono">67 ans</td><td class="p-2 text-emerald-400">Maintien possible</td></tr>
+                  <tr><td class="p-2 font-bold">1966</td><td class="p-2">63 ans et 3 mois</td><td class="p-2 font-mono text-cyan-300">172 trimestres</td><td class="p-2 font-mono">67 ans</td><td class="p-2 text-emerald-400">Maintien possible</td></tr>
+                  <tr><td class="p-2 font-bold">1967</td><td class="p-2">63 ans et 6 mois</td><td class="p-2 font-mono text-cyan-300">172 trimestres</td><td class="p-2 font-mono">67 ans</td><td class="p-2 text-emerald-400">Maintien possible</td></tr>
+                  <tr><td class="p-2 font-bold">1968</td><td class="p-2">63 ans et 9 mois</td><td class="p-2 font-mono text-cyan-300">172 trimestres</td><td class="p-2 font-mono">67 ans</td><td class="p-2 text-emerald-400">Maintien possible</td></tr>
+                  <tr><td class="p-2 font-bold">1969 et après</td><td class="p-2">64 ans</td><td class="p-2 font-mono text-cyan-300">172 trimestres</td><td class="p-2 font-mono">67 ans</td><td class="p-2 text-emerald-400">Maintien possible</td></tr>
+                  <tr><td colspan="5" class="p-2 text-[10px] text-slate-400">Âges et trimestres après la suspension de la réforme des retraites (LFSS 2026, art. 105), applicables depuis le 1er septembre 2026 : Unédic, « Ce qui change le 1er septembre 2026 ».</td></tr>
                 </tbody>
               </table>
             </div>
@@ -7878,8 +7884,8 @@ Votre conseiller France Travail
       // Official thresholds per cohort
       const cohortData = {
         '1961_1': { ageLegalYears: 62, ageLabel: '62 ans', reqTrim: 168 },
-        '1961_2': { ageLegalYears: 62.25, ageLabel: '62 ans et 3 mois', reqTrim: 166 },
-        '1962': { ageLegalYears: 62.5, ageLabel: '62 ans et 6 mois', reqTrim: 167 },
+        '1961_2': { ageLegalYears: 62.25, ageLabel: '62 ans et 3 mois', reqTrim: 169 },
+        '1962': { ageLegalYears: 62.5, ageLabel: '62 ans et 6 mois', reqTrim: 169 },
         '1963': { ageLegalYears: 62.75, ageLabel: '62 ans et 9 mois', reqTrim: 170 },
         '1964': { ageLegalYears: 62.75, ageLabel: '62 ans et 9 mois', reqTrim: 170 },
         '1965_1': { ageLegalYears: 62.75, ageLabel: '62 ans et 9 mois', reqTrim: 170 },
@@ -10988,7 +10994,7 @@ Votre conseiller France Travail
   window.ftGoTpl = function (id) { switchNavTab('cvm'); selectCategory('all'); selectTemplate(id); };
 
   /* Glossaire */
-  const GLOSS = [
+  const GLOSS = window.FT_GLOSS = [
     ['ARE', 'Allocation d’aide au retour à l’emploi', 'Allocation versée par France Travail aux demandeurs d’emploi qui remplissent les conditions d’affiliation.'],
     ['SJR', 'Salaire journalier de référence', 'Base de calcul de l’allocation journalière, établie à partir des salaires de la période de référence.'],
     ['PRA', 'Période de référence d’affiliation', 'Période précédant la fin de contrat où l’on recherche l’activité : 24 mois, ou 36 mois à partir de 55 ans.'],
@@ -12407,7 +12413,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   if (!SB_URL || !SB_KEY || !window.fetch) return;
 
   // Données synchronisées (aucune donnée de dossier ou d'allocataire)
-  var SYNC = ['ft_links', 'ft_deleted_tpl', 'ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use', 'ft_bareme_ack'];
+  var SYNC = ['ft_links', 'ft_deleted_tpl', 'ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use', 'ft_bareme_ack', 'ft_pins'];
   var K_SESS = 'ft_sb_session', K_META = 'ft_sb_meta';
   var LSraw = {
     get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -12607,6 +12613,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
     return ensureToken().then(function () { return api('/rest/v1/template_proposals?select=id,template,note,proposer_email,created_at&order=created_at.asc'); })
       .then(function (r) {
         r = r || []; var before = propCount; propCount = r.length; renderAcct();
+        try { document.dispatchEvent(new CustomEvent('ft-props', { detail: propCount })); } catch (e) {}
         if (propCount && !propToastShown) { propToastShown = true; toast(propCount + ' proposition(s) de modèle à valider : menu de votre compte', 'info'); }
         else if (propCount > before && before) toast('Nouvelle proposition de modèle', 'info');
         return r;
@@ -13927,6 +13934,298 @@ html.theme-light .inv-card a{color:#1d4ed8}
   window.FT_ACTIONS = window.FT_ACTIONS || [];
 })();
 </script>
+<!-- ================= Extension 29 : fiches réglementaires (ATI, AREF/RFF, trop-perçus, sanctions, cas particuliers) ================= -->
+<style>
+.fr-check{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px;line-height:1.45}
+.fr-check:last-child{border-bottom:0}
+.fr-check b.ok{color:#34d399}.fr-check b.ko{color:#f87171}.fr-check b.wa{color:#fbbf24}
+.fr-check b{flex:none;width:18px;text-align:center}
+.fr-ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:13.5px;line-height:1.55}
+.fr-src{font-size:11.5px;color:#94a3b8;margin-top:10px}
+.fr-src a{color:#67e8f9}
+html.theme-light .fr-check{border-bottom-color:#e2e8f0}
+html.theme-light .fr-check b.ok{color:#059669} html.theme-light .fr-check b.ko{color:#dc2626} html.theme-light .fr-check b.wa{color:#b45309}
+html.theme-light .fr-src{color:#64748b} html.theme-light .fr-src a{color:#0369a1}
+.fr-view .inv-sim label{display:block}
+.fr-view .inv-sim input,.fr-view .inv-sim select{width:100%!important;max-width:100%!important;box-sizing:border-box;text-overflow:ellipsis}
+</style>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const eur = n => (Math.round((+n || 0) * 100) / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+  const num = id => { const e = $(id); return e ? parseFloat(String(e.value).replace(',', '.')) || 0 : 0; };
+  const val = id => { const e = $(id); return e ? e.value : ''; };
+  const fdate = d => d ? d.toLocaleDateString('fr-FR') : '';
+  const pdate = s => { if (!s) return null; const d = new Date(s + 'T12:00:00'); return isNaN(d) ? null : d; };
+  const src = (t, u) => '<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + t + '</a>';
+  const sec = (n, title, body, ref) => '<section class="inv-card"><h3><span class="inv-n">' + n + '</span>' + title + '</h3>' + body + (ref ? '<p class="inv-ref">' + ref + '</p>' : '') + '</section>';
+  const chk = (st, txt) => '<div class="fr-check"><b class="' + st + '">' + (st === 'ok' ? '✓' : st === 'ko' ? '✕' : '!') + '</b><span>' + txt + '</span></div>';
+  const mailPanel = key => '<section class="ft-mail" data-mail="' + key + '"><div class="ft-mail-h"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>Mail à l’allocataire</h3><span class="ft-mail-tag">Généré automatiquement, modifiable avant copie</span><div class="ft-mail-btns"><button type="button" class="ft-mail-copy">Copier le mail</button></div></div><div class="ft-mail-body"><textarea aria-label="Mail à l’allocataire" spellcheck="true"></textarea></div></section>';
+  const setMail = (key, txt) => { const ta = document.querySelector('.ft-mail[data-mail="' + key + '"] textarea'); if (ta && !ta.dataset.edited) ta.value = txt; };
+  document.addEventListener('input', e => { if (e.target.matches && e.target.matches('.fr-view .ft-mail textarea')) e.target.dataset.edited = '1'; });
+  const U = {
+    ati: 'https://www.unedic.org/indemnisation/fiches-thematiques/allocation-des-travailleurs-independants-ati',
+    aref: 'https://www.unedic.org/la-reglementation/fiches-thematiques/allocation-daide-au-retour-lemploi-formation-are-f',
+    rff: 'https://www.francetravail.fr/candidat/en-formation/les-dispositifs/la-remuneration-de-fin-de-format.html',
+    indu: 'https://www.francetravail.fr/candidat/vos-droits-et-demarches/vos-demarches-aupres-de-pole-emp/les-allocations-ou-prestations-t.html',
+    justice: 'https://www.justice.fr/fiche/france-travail-demander-remboursement-sommes-versees-tort-percu',
+    ce: 'https://www.conseil-etat.fr/fr/arianeweb/CE/decision/2026-09-21/506563',
+    inter: 'https://www.francetravail.fr/spectacle/spectacle--intermittents/devenir-intermittent.html',
+    option: 'https://www.francetravail.fr/spectacle/spectacle--intermittents/spectacle-droit-d-option.html'
+  };
+
+  /* ---------- Calculs (testés dans « Sources et vérification ») ---------- */
+  window.ftAtiCompute = function (p) {
+    const n1 = +p.n1 || 0, n2 = +p.n2 || 0, sum = n1 + n2;
+    const moisMoyen = sum / 24;
+    const jour = Math.min(26.30, Math.max(19.73, Math.round(moisMoyen * 12 / 365 * 100) / 100));
+    return { sum: sum, moisMoyen: moisMoyen, unAn: Math.max(n1, n2) >= 10000, moyenne: sum >= 20000, jour: jour, mois30: Math.round(jour * 30 * 100) / 100, total: Math.round(jour * 182 * 100) / 100 };
+  };
+  window.ftPrescription = function (p) {
+    const v = pdate(p.versement), n = pdate(p.notif) || new Date(); if (!v) return null;
+    const ans = p.fraude ? 10 : 3;
+    const lim = new Date(v); lim.setFullYear(lim.getFullYear() + ans);
+    const seuil = new Date(n); seuil.setFullYear(seuil.getFullYear() - ans);
+    return { ans: ans, limite: lim, seuil: seuil, prescrit: n > lim, petit: (+p.montant || 0) > 0 && (+p.montant || 0) < 77 };
+  };
+  window.ftRffCompute = function (p) {
+    const fd = pdate(p.finDroits), ff = pdate(p.finForm); const aj = +p.aj || 0;
+    const mens = Math.min(769.49, Math.round(aj * 30 * 100) / 100);
+    if (!fd || !ff) return { mens: mens };
+    const jours = Math.max(0, Math.round((ff - fd) / 864e5));
+    return { mens: mens, jours: jours, besoin: ff > fd };
+  };
+
+  /* ---------- ATI ---------- */
+  function atiSim() {
+    return '<div class="inv-sim"><section class="inv-card"><h3><span class="inv-n">€</span>Situation de l’indépendant</h3>' +
+      '<label>Revenus d’activité déclarés, année N-1 (€)<input id="ati-n1" type="number" min="0" step="1" inputmode="decimal" placeholder="Ex. 12000"></label>' +
+      '<label>Revenus d’activité déclarés, année N-2 (€)<input id="ati-n2" type="number" min="0" step="1" inputmode="decimal" placeholder="Ex. 9000"></label>' +
+      '<label>Activité non salariée exercée sans interruption<select id="ati-2ans"><option value="oui">2 ans ou plus, même entreprise</option><option value="non">Moins de 2 ans, ou mise en sommeil</option></select></label>' +
+      '<label>Motif de la cessation<select id="ati-motif"><option value="lj">Liquidation judiciaire</option><option value="rj">Redressement judiciaire avec remplacement du dirigeant</option><option value="nv">Activité non viable (baisse d’au moins 30 % attestée par un tiers de confiance)</option><option value="simple">Simple cessation d’activité</option></select></label>' +
+      '<label>Ressources personnelles des 12 derniers mois<select id="ati-rsa"><option value="oui">Inférieures au RSA</option><option value="non">Supérieures ou égales au RSA</option></select></label>' +
+      '<label>Inscription à France Travail<select id="ati-12m"><option value="oui">Dans les 12 mois suivant la cessation</option><option value="non">Plus de 12 mois après</option></select></label>' +
+      '<label>ATI déjà perçue dans les 5 dernières années<select id="ati-5a"><option value="non">Non</option><option value="oui">Oui</option></select></label>' +
+      '</section><section class="inv-card inv-res" id="ati-res"></section></div>' + mailPanel('ati');
+  }
+  function atiRun() {
+    const r = ftAtiCompute({ n1: num('ati-n1'), n2: num('ati-n2') });
+    const has = num('ati-n1') || num('ati-n2');
+    const m = val('ati-motif');
+    const c = [
+      [val('ati-2ans') === 'oui' ? 'ok' : 'ko', '2 ans d’activité non salariée continue dans la même entreprise'],
+      [m === 'simple' ? 'ko' : 'ok', m === 'simple' ? 'Une simple cessation d’activité n’ouvre pas droit à l’ATI' : 'Cessation involontaire et définitive reconnue (' + $('ati-motif').selectedOptions[0].text.toLowerCase() + ')'],
+      [!has ? 'wa' : r.unAn && r.moyenne ? 'ok' : r.unAn ? 'wa' : 'ko', !has ? 'Revenus à saisir (seuil de 10 000 €)' : r.unAn && r.moyenne ? 'Revenus : seuil de 10 000 € atteint' : r.unAn ? 'Revenus : 10 000 € atteints sur une année, mais moyenne des deux années inférieure à 10 000 € : à faire vérifier (les sources Unédic lisent le seuil comme une moyenne)' : 'Revenus inférieurs à 10 000 € sur chacune des deux années'],
+      [val('ati-rsa') === 'oui' ? 'ok' : 'ko', 'Ressources personnelles inférieures au RSA (revenus du conjoint non pris en compte)'],
+      [val('ati-12m') === 'oui' ? 'ok' : 'ko', 'Inscription dans les 12 mois suivant la cessation'],
+      [val('ati-5a') === 'non' ? 'ok' : 'ko', 'Une seule ATI tous les 5 ans']
+    ];
+    const ko = c.some(x => x[0] === 'ko'), wa = c.some(x => x[0] === 'wa');
+    $('ati-res').innerHTML = '<div class="inv-hero"><span>ATI journalière</span><strong>' + (has ? eur(r.jour) : '—') + '</strong><em>' + (ko ? 'Conditions non remplies' : wa ? 'Éligibilité à confirmer' : 'Conditions remplies') + '</em></div>' +
+      c.map(x => chk(x[0], x[1])).join('') +
+      (has ? '<div class="inv-row"><span>Revenu mensuel moyen (N-1 + N-2) ÷ 24</span><b>' + eur(r.moisMoyen) + '</b></div><div class="inv-row"><span>Sur un mois de 30 jours</span><b>' + eur(r.mois30) + '</b></div><div class="inv-row"><span>Sur 182 jours (durée maximale)</span><b>' + eur(r.total) + '</b></div>' : '') +
+      '<div class="inv-note">Forfait 26,30 €/jour, ramené au revenu mensuel moyen s’il est plus bas, sans descendre sous 19,73 €/jour (montants hors Mayotte). Aucun différé ni délai d’attente.</div>';
+    setMail('ati', ko || !has ? '' : 'Votre demande d’allocation des travailleurs indépendants (ATI) a été étudiée.\n\nAu vu des éléments transmis, votre allocation s’élèverait à ' + eur(r.jour) + ' par jour, soit environ ' + eur(r.mois30) + ' pour un mois de 30 jours. Elle est versée pendant 182 jours au maximum, à compter de votre inscription, sans différé ni délai d’attente.\n\nPendant cette période, vous pouvez reprendre une activité : l’ATI se cumule intégralement avec vos revenus pendant 3 mois au plus. Au-delà, elle est suspendue.' + (wa ? '\n\nUn justificatif complémentaire sur vos revenus des deux dernières années pourra vous être demandé.' : '') + '\n\nL’ATI est soumise à la CSG, à la CRDS et à l’impôt sur le revenu.');
+  }
+  function atiRegles() {
+    return '<div class="inv-cards">' +
+      sec('1', 'Conditions (cumulatives)', '<ul class="fr-ul"><li><b>2 ans</b> d’activité non salariée sans interruption dans la même entreprise (extrait Kbis).</li><li>Cessation <b>involontaire et définitive</b> : liquidation judiciaire, redressement judiciaire avec remplacement du dirigeant, ou activité non viable (déclaration de cessation et attestation d’un tiers de confiance montrant une baisse d’au moins 30 % des revenus). Une simple cessation ne suffit pas.</li><li>Revenus d’au moins <b>10 000 €</b> (7 500 € à Mayotte) sur l’une des deux années précédant la cessation, selon les déclarations fiscales.</li><li>Ressources personnelles <b>inférieures au RSA</b> sur les 12 mois précédant la demande, hors revenus de l’activité perdue ; ceux du conjoint ne comptent pas.</li><li>Inscription dans les <b>12 mois</b> suivant la cessation ; aptitude au travail, résidence en France, pas de retraite à taux plein ; une seule ATI tous les <b>5 ans</b>.</li></ul>', src('Unédic, fiche ATI', U.ati) + ' (mise à jour du 13/10/2026)') +
+      sec('2', 'Montant et durée', '<ul class="fr-ul"><li>Forfait de <b>26,30 € par jour</b> (environ 800 € par mois), 19,73 € à Mayotte.</li><li>Si le revenu mensuel moyen (revenus des 2 années fiscales ÷ 24) est plus bas, l’ATI est ramenée à cette moyenne, sans descendre sous <b>19,73 € par jour</b> (environ 600 € par mois ; 13,15 € à Mayotte).</li><li>Versée pendant <b>182 jours</b> à compter de l’inscription, <b>sans différé ni délai d’attente</b>. Soumise à CSG, CRDS et impôt.</li></ul>', src('Unédic, fiche ATI', U.ati)) +
+      sec('3', 'Cumuls', '<ul class="fr-ul"><li><b>Activité :</b> cumul intégral pendant 3 mois au plus, consécutifs ou non ; au-delà, l’ATI est suspendue et ne reprend qu’après au moins 3 mois d’arrêt de cette activité.</li><li><b>ARE :</b> pas de cumul. L’ARE est examinée d’abord ; si elle est plus faible ou plus courte, l’indépendant peut choisir l’ATI dans les 30 jours (choix définitif, ARE retenue sans réponse).</li><li><b>ASS :</b> pas de cumul ; l’ASS suspendue reprend à la fin de l’ATI si son terme n’est pas échu.</li></ul>', src('Unédic, fiche ATI', U.ati)) +
+      '</div>';
+  }
+
+  /* ---------- Formation : AREF et RFF ---------- */
+  function arefSim() {
+    return '<div class="inv-sim"><section class="inv-card"><h3><span class="inv-n">€</span>Formation en cours</h3>' +
+      '<label>Allocation journalière AREF brute (€)<input id="rff-aj" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex. 38,50"></label>' +
+      '<label>Date de fin des droits AREF<input id="rff-fd" type="date"></label>' +
+      '<label>Date de fin de la formation<input id="rff-ff" type="date"></label>' +
+      '<label>Formation inscrite au contrat d’engagement et éligible à la RFF<select id="rff-elig"><option value="oui">Oui</option><option value="non">Non ou à vérifier</option></select></label>' +
+      '</section><section class="inv-card inv-res" id="rff-res"></section></div>' + mailPanel('aref');
+  }
+  function arefRun() {
+    const aj = num('rff-aj'), r = ftRffCompute({ aj: aj, finDroits: val('rff-fd'), finForm: val('rff-ff') });
+    const fd = pdate(val('rff-fd')), ff = pdate(val('rff-ff')), ok = val('rff-elig') === 'oui';
+    const aj22 = aj ? Math.max(aj, 22.99) : 0;
+    let h = '<div class="inv-hero"><span>AREF journalière (plancher 22,99 €)</span><strong>' + (aj ? eur(aj22) : '—') + '</strong><em>' + (r.besoin ? 'Les droits s’arrêtent avant la fin de la formation' : fd && ff ? 'Les droits couvrent toute la formation' : 'Saisissez les deux dates') + '</em></div>';
+    if (r.besoin) h += '<div class="inv-row"><span>Période à couvrir après la fin des droits</span><b>' + r.jours + ' jours</b></div><div class="inv-row"><span>RFF possible du</span><b>' + fdate(new Date(+fd + 864e5)) + ' au ' + fdate(ff) + '</b></div><div class="inv-row"><span>RFF mensuelle estimée (dernière AREF × 30, plafond 769,49 €)</span><b>' + (aj ? eur(Math.min(769.49, Math.round(aj22 * 30 * 100) / 100)) : '—') + '</b></div>' + (ok ? '' : chk('wa', 'La RFF n’est accordée que pour une formation éligible inscrite au contrat d’engagement : à vérifier avant d’informer l’allocataire.'));
+    h += '<div class="inv-note">AREF + RFF : 3 ans au plus pour une même formation. Si ni l’AREF ni la RFF ne couvrent la fin du stage, l’ASS peut être étudiée si ses conditions sont remplies.</div>';
+    $('rff-res').innerHTML = h;
+    setMail('aref', !(fd && ff) ? '' : r.besoin ? 'Vous suivez actuellement une formation indemnisée au titre de l’AREF.\n\nVos droits arrivent à leur terme le ' + fdate(fd) + ', avant la fin de votre formation prévue le ' + fdate(ff) + '.' + (ok ? '\n\nVous pouvez demander la rémunération de fin de formation (RFF), qui prend le relais jusqu’à la fin de votre formation. Son montant correspond à votre dernière allocation journalière' + (aj ? ', soit environ ' + eur(Math.min(769.49, Math.round(aj22 * 30 * 100) / 100)) + ' par mois' : '') + ', dans la limite de 769,49 € par mois, sous réserve de votre assiduité.' : '\n\nNous vérifions si votre formation ouvre droit à la rémunération de fin de formation (RFF) et revenons vers vous rapidement.') + '\n\nPensez à nous transmettre vos attestations de présence.' : 'Vous suivez actuellement une formation indemnisée au titre de l’AREF.\n\nVos droits couvrent toute la durée de votre formation, qui se termine le ' + fdate(ff) + '. Si vous êtes toujours en recherche d’emploi à son issue, l’ARE reprendra dans la limite de vos droits restants.');
+  }
+  function arefRegles() {
+    return '<div class="inv-cards">' +
+      sec('1', 'AREF (ARE-Formation)', '<ul class="fr-ul"><li>Formation inscrite au <b>contrat d’engagement</b>, ou financée en tout ou partie par le <b>CPF</b>. Hors contrat, l’ARE reste versée si la formation dure 40 heures au plus ou laisse le temps de chercher un emploi.</li><li>Montant égal à l’ARE, sans pouvoir être inférieur à <b>22,99 € par jour</b>. Seule la cotisation de retraite complémentaire de 3 % est prélevée.</li><li>À l’issue de la formation, l’ARE reprend dans la limite des droits restants.</li></ul>', src('Unédic, fiche ARE-F', U.aref) + ' (mise à jour du 05/10/2026)') +
+      sec('2', 'Allongement pour les 55 ans et plus', '<ul class="fr-ul"><li><b>55 ou 56 ans</b> à la fin du contrat : plus de 913 jours calendaires d’affiliation dans les 36 mois précédents.</li><li><b>57 ans et plus :</b> pas de durée minimale, mais le droit doit avoir subi le coefficient de 0,75.</li><li>Allongement de <b>137 jours</b> au plus (182 en outre-mer) : jusqu’à 822 jours (55-56 ans) ou 959 jours (57 ans et plus). Pas d’allongement pour une formation suivie dans le cadre du CSP.</li></ul>', src('Unédic, fiche ARE-F', U.aref)) +
+      sec('3', 'RFF (rémunération de fin de formation)', '<ul class="fr-ul"><li>Prend le relais quand l’ARE-F, l’ASP-F ou l’ATI-F s’arrête avant la fin d’une formation inscrite au contrat d’engagement.</li><li>Égale au <b>dernier montant journalier</b> perçu, dans la limite de <b>769,49 € par mois</b> selon France Travail, sous condition d’assiduité.</li><li>Prolongée pour les formations prescrites jusqu’au 31/12/2026, sur une liste de métiers fixée par arrêté.</li></ul>', src('France Travail, RFF', U.rff) + ' · vérifier le plafond en vigueur') +
+      '</div>';
+  }
+
+  /* ---------- Trop-perçus ---------- */
+  function induSim() {
+    return '<div class="inv-sim"><section class="inv-card"><h3><span class="inv-n">€</span>Trop-perçu notifié</h3>' +
+      '<label>Montant du trop-perçu (€)<input id="tp-mt" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex. 845,20"></label>' +
+      '<label>Période concernée<input id="tp-per" type="text" placeholder="Ex. mars à mai 2026"></label>' +
+      '<label>Motif<input id="tp-motif" type="text" placeholder="Ex. reprise d’activité déclarée tardivement"></label>' +
+      '<label>Date du versement le plus ancien<input id="tp-v" type="date"></label>' +
+      '<label>Date de la notification<input id="tp-n" type="date"></label>' +
+      '<label>Fraude ou fausse déclaration<select id="tp-fr"><option value="non">Non</option><option value="oui">Oui</option></select></label>' +
+      '</section><section class="inv-card inv-res" id="tp-res"></section></div>' + mailPanel('indu');
+  }
+  function induRun() {
+    const mt = num('tp-mt'), r = ftPrescription({ versement: val('tp-v'), notif: val('tp-n'), fraude: val('tp-fr') === 'oui', montant: mt });
+    let h = '<div class="inv-hero"><span>Délai de prescription</span><strong>' + (r ? r.ans + ' ans' : '—') + '</strong><em>' + (!r ? 'Saisissez la date du versement' : r.prescrit ? 'Sommes versées avant le ' + fdate(r.seuil) + ' : prescrites' : 'Récupération possible jusqu’au ' + fdate(r.limite)) + '</em></div>';
+    if (r && r.prescrit) h += chk('wa', 'La notification intervient plus de ' + r.ans + ' ans après le versement le plus ancien : les mois les plus anciens ne peuvent plus être réclamés. Vérifier période par période.');
+    if (r && r.petit) h += chk('ok', 'Montant inférieur à 77 € : il n’est pas récupéré par France Travail.');
+    h += '<div class="inv-note">3 ans à compter du versement, 10 ans en cas de fraude ou de fausse déclaration.</div>';
+    $('tp-res').innerHTML = h;
+    setMail('indu', !mt ? '' : 'Un trop-perçu de ' + eur(mt) + ' a été constaté sur votre dossier' + (val('tp-per') ? ', pour la période de ' + val('tp-per') : '') + '.' + (val('tp-motif') ? '\n\nIl résulte de la situation suivante : ' + val('tp-motif') + '.' : '') + '\n\nVous avez plusieurs possibilités :\n- rembourser cette somme en une fois ou demander un échéancier adapté à votre situation ;\n- accepter une retenue sur vos prochaines allocations : le questionnaire joint à la notification nous permet d’en calculer le montant ;\n- demander une remise totale ou partielle de la dette, en expliquant votre situation ;\n- contester ce trop-perçu par un courrier argumenté adressé à votre agence. Si notre réponse ne vous satisfait pas, vous pourrez saisir le médiateur de France Travail.\n\nSans réponse de votre part, une procédure de recouvrement pourra être engagée.');
+  }
+  function induRegles() {
+    return '<div class="inv-cards">' +
+      sec('1', 'Délais', '<ul class="fr-ul"><li>Remboursement réclamable <b>3 ans</b> après la date de versement.</li><li><b>10 ans</b> en cas de fraude ou de fausse déclaration.</li><li>Les indus de moins de <b>77 €</b> ne sont pas récupérés.</li></ul>', src('justice.fr', U.justice)) +
+      sec('2', 'Notification et remboursement', '<ul class="fr-ul"><li>Courrier précisant le motif, le montant et la période, les modalités de remboursement, la possibilité de remise et les voies de recours.</li><li>Remboursement en une fois ou échelonné, ou <b>retenue sur les allocations</b> calculée à partir du questionnaire joint.</li><li>Sans remboursement, demande de remise ni contestation : <b>contrainte</b> (recouvrement contentieux).</li></ul>', src('France Travail, trop-perçu', U.indu)) +
+      sec('3', 'Remise et contestation', '<ul class="fr-ul"><li><b>Remise de dette</b> totale ou partielle sur demande ; pour l’assurance chômage, les instances paritaires régionales examinent ces demandes.</li><li><b>Contestation</b> par courrier argumenté à l’agence, puis saisine du <b>médiateur</b> de France Travail si la réponse ne règle pas le litige.</li><li>Pour l’échéancier, utiliser l’outil <b>Indus</b>.</li></ul>', src('France Travail, trop-perçu', U.indu) + ' · Unédic, instances paritaires') +
+      '</div>';
+  }
+
+  /* ---------- Sanctions ---------- */
+  function sancRegles() {
+    return '<div class="inv-cards">' +
+      sec('1', 'Suspension-remobilisation', '<ul class="fr-ul"><li>En cas de manquement aux obligations du <b>contrat d’engagement</b>, l’allocation peut être suspendue d’<b>au moins 30 %</b> pendant <b>1 à 2 mois</b>.</li><li>Si le manquement persiste ou se répète : suspension ou suppression, partielle ou totale, pendant <b>1 à 4 mois</b>.</li><li>Il est mis fin à la suspension dès que le demandeur d’emploi se conforme à ses obligations, dans les conditions définies avec son conseiller : les sommes suspendues peuvent alors être reversées.</li><li>Une suppression totale de <b>4 mois</b> entraîne la radiation pour la même durée.</li><li>La durée et la part retenue tiennent compte de la situation de la personne.</li></ul>', 'Décret n° 2025-478 du 30/05/2025 (JO du 31/05/2025) · ' + src('Conseil d’État, 21/09/2026 : recours rejetés, décret maintenu', U.ce)) +
+      sec('2', 'Procédure', '<ul class="fr-ul"><li>Décision motivée, avec la durée et la part de l’allocation concernées, et les voies de recours.</li><li>La personne peut présenter ses observations avant la décision.</li><li>Rappel utile : l’absence à un rendez-vous fait l’objet d’une appréciation individuelle.</li></ul>', 'Décret n° 2025-478 · code du travail, art. R. 5426-1 et suivants') +
+      '</div>' + '<div class="inv-sim" style="margin-top:14px"><section class="inv-card"><h3><span class="inv-n">✉</span>Mail d’information</h3>' +
+      '<label>Manquement constaté<input id="sa-motif" type="text" placeholder="Ex. absence aux deux derniers rendez-vous"></label>' +
+      '<label>Part suspendue<select id="sa-part"><option>30 %</option><option>50 %</option><option>100 %</option></select></label>' +
+      '<label>Durée<select id="sa-duree"><option>1 mois</option><option>2 mois</option><option>3 mois</option><option>4 mois</option></select></label>' +
+      '<label>Pour lever la suspension<input id="sa-action" type="text" placeholder="Ex. reprendre contact avec votre conseiller avant le 30/11"></label>' +
+      '</section><section class="inv-card inv-res"><div class="inv-note">Le mail se met à jour avec les éléments saisis. Il explique la sanction et, surtout, comment la lever.</div></section></div>' + mailPanel('sanc');
+  }
+  function sancRun() {
+    if (!$('sa-motif')) return;
+    setMail('sanc', !val('sa-motif') ? '' : 'Lors de l’examen de votre dossier, nous avons constaté le manquement suivant à vos engagements : ' + val('sa-motif') + '.\n\nEn conséquence, votre allocation est suspendue à hauteur de ' + val('sa-part') + ' pendant ' + val('sa-duree') + '.\n\nCette suspension peut être levée avant son terme : ' + (val('sa-action') || 'il vous suffit de reprendre vos démarches dans les conditions convenues avec votre conseiller') + '. Les sommes suspendues pourront alors vous être reversées.\n\nVous pouvez présenter vos observations ou contester cette décision en répondant à ce message ou auprès de votre agence.');
+  }
+
+  /* ---------- Cas particuliers ---------- */
+  function casRegles() {
+    return '<div class="inv-cards">' +
+      sec('1', 'Travailleurs frontaliers', '<ul class="fr-ul"><li>Résident en France, travaillant dans un autre État (UE, EEE, Suisse) : en cas de <b>chômage complet</b>, c’est France Travail (État de résidence) qui indemnise, selon les règles françaises (règlement CE n° 883/2004).</li><li>Le salaire de référence est calculé sur les <b>salaires réellement perçus à l’étranger</b>, convertis en euros ; les périodes travaillées à l’étranger comptent pour l’affiliation. Justificatif : formulaire <b>U1</b> (PD U1 pour la Suisse).</li><li>Le coefficient réducteur prévu par la convention de 2024 n’a pas été agréé : il ne s’applique pas.</li><li>Réforme européenne adoptée en juillet 2026 (indemnisation par l’État d’emploi) : <b>pas encore applicable</b>, règles actuelles maintenues.</li></ul>', 'Avenant n° 3 du 25/02/2026 · sources spécialisées frontaliers (vérifiées 11/2026)') +
+      sec('2', 'Intermittents du spectacle (annexes 8 et 10)', '<ul class="fr-ul"><li><b>Annexe 8</b> : ouvriers et techniciens · <b>annexe 10</b> : artistes.</li><li>Ouverture : <b>507 heures</b> de travail dans le spectacle sur les <b>12 mois</b> précédant la fin de contrat retenue.</li><li>Artistes : 1 cachet = 12 heures. Les contrats de droit commun, l’intérim et l’activité indépendante ne comptent pas.</li><li><b>Droit d’option :</b> un allocataire du régime général peut y renoncer pour ouvrir un droit annexes 8 et 10 dès qu’il réunit les 507 heures.</li></ul>', src('France Travail, devenir intermittent', U.inter) + ' · ' + src('droit d’option', U.option)) +
+      sec('3', 'Condition de résidence', '<ul class="fr-ul"><li>L’ARE, comme l’ATI, suppose de <b>résider en France</b> (territoire couvert par l’assurance chômage). La convention de 2024 précise la définition de cette condition.</li><li>Un séjour à l’étranger doit être signalé : il peut suspendre le versement. L’exportation des droits vers un autre État de l’UE se fait avec le formulaire <b>U2</b>, pour une durée limitée.</li></ul>', 'Convention du 15/11/2024, art. 2 § 10 · Unédic') +
+      '</div>';
+  }
+
+  /* ---------- Vues ---------- */
+  const VIEWS = [
+    { id: 'ati', title: 'Travailleurs indépendants (ATI)', sub: 'Conditions, montant de 19,73 € à 26,30 € par jour, 182 jours, cumuls.', desc: 'Allocation des travailleurs indépendants : éligibilité et montant', badge: 'ATI', icon: 'briefcase', color: 'bg-orange-500/15 text-orange-400 border-orange-500/30', kw: 'ati travailleur indépendant liquidation redressement auto-entrepreneur micro-entreprise non salarié', path: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>', tabs: [['sim', 'Éligibilité et montant', atiSim, atiRun, ['ati-n1', 'ati-n2', 'ati-2ans', 'ati-motif', 'ati-rsa', 'ati-12m', 'ati-5a']], ['regles', 'Règles et cumuls', atiRegles]] },
+    { id: 'aref', title: 'Formation : AREF et RFF', sub: 'Indemnisation pendant la formation, allongement des 55 ans et plus, relais par la RFF.', desc: 'AREF, allongement seniors, rémunération de fin de formation', badge: 'AREF', icon: 'graduation-cap', color: 'bg-violet-500/15 text-violet-400 border-violet-500/30', kw: 'aref are-f formation rff fin de formation cpf stage', path: '<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>', tabs: [['sim', 'Fin des droits pendant la formation', arefSim, arefRun, ['rff-aj', 'rff-fd', 'rff-ff', 'rff-elig']], ['regles', 'Règles', arefRegles]] },
+    { id: 'tropercu', title: 'Trop-perçus : délais et recours', sub: 'Prescription de 3 ou 10 ans, retenue, remise de dette, contestation, avec mail type.', desc: 'Prescription, remise de dette, contestation et mail type', badge: 'Indus', icon: 'file-warning', color: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30', kw: 'trop-perçu trop percu indu prescription remise dette contestation médiateur contrainte retenue', path: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 12v3M12 18h.01"/>', tabs: [['sim', 'Prescription et mail', induSim, induRun, ['tp-mt', 'tp-per', 'tp-motif', 'tp-v', 'tp-n', 'tp-fr']], ['regles', 'Règles et recours', induRegles]] },
+    { id: 'sanctions', title: 'Sanctions et radiations', sub: 'Suspension-remobilisation depuis juin 2025, durées, procédure, mail d’information.', desc: 'Suspension-remobilisation, durées et mail d’information', badge: 'Décret 2025', icon: 'gavel', color: 'bg-red-500/15 text-red-400 border-red-500/30', kw: 'sanction radiation suspension remobilisation manquement contrat d engagement suppression', path: '<path d="m14 13-7.5 7.5a2.1 2.1 0 0 1-3-3L11 10"/><path d="m16 16 6-6M8 8l6-6M9 7l8 8M21 11l-8-8"/>', tabs: [['regles', 'Règles et mail', sancRegles, sancRun, ['sa-motif', 'sa-part', 'sa-duree', 'sa-action']]] },
+    { id: 'casparts', title: 'Frontaliers, intermittents, résidence', sub: 'Repères et textes pour les situations à règles spécifiques.', desc: 'Frontaliers, annexes 8 et 10, condition de résidence', badge: 'Repères', icon: 'globe', color: 'bg-sky-500/15 text-sky-400 border-sky-500/30', kw: 'frontalier suisse luxembourg u1 intermittent spectacle annexe 8 10 507 heures résidence étranger u2', path: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>', tabs: [['regles', 'Repères', casRegles]] }
+  ];
+  const anchor = $('view-delais');
+  const isSit = el => /situation/i.test((el && (el.dataset.lbOrig || el.textContent)) || '');
+  VIEWS.forEach(cfg => {
+    const v = document.createElement('div');
+    v.id = 'view-' + cfg.id; v.className = 'hidden flex-1 overflow-y-auto fr-view';
+    v.innerHTML = '<div class="reg-wrap"><div class="reg-head"><div><h2>' + cfg.title + '</h2><p>' + cfg.sub + '</p></div></div>' + (cfg.tabs.length > 1 ? '<div class="rg-tabs" role="tablist"></div>' : '') + '<div class="fr-body"></div></div>';
+    if (anchor) anchor.parentElement.appendChild(v);
+    cfg.v = v; cfg.cur = cfg.tabs[0][0];
+    cfg.show = function (k) {
+      cfg.cur = k || cfg.cur;
+      const tl = v.querySelector('.rg-tabs');
+      if (tl) tl.innerHTML = cfg.tabs.map(t => '<button type="button" role="tab" class="rg-tab' + (t[0] === cfg.cur ? ' is-on' : '') + '" aria-selected="' + (t[0] === cfg.cur) + '" data-k="' + t[0] + '">' + t[1] + '</button>').join('');
+      const t = cfg.tabs.find(x => x[0] === cfg.cur);
+      v.querySelector('.fr-body').innerHTML = t[2]();
+      if (t[3]) { (t[4] || []).forEach(id => { const e = $(id); if (e) { e.addEventListener('input', t[3]); e.addEventListener('change', t[3]); } }); t[3](); }
+    };
+    v.addEventListener('click', e => { const b = e.target.closest('.rg-tab[data-k]'); if (b) cfg.show(b.dataset.k); });
+    NAV_TABS_CONFIG.push({ id: cfg.id, name: cfg.title, desc: cfg.desc, icon: cfg.icon, color: cfg.color, badge: cfg.badge });
+    try { FT_KW[cfg.id] = cfg.kw; } catch (e) {}
+  });
+  const byId = id => VIEWS.find(c => c.id === String(id));
+  const _sw = switchNavTab;
+  switchNavTab = function (t) {
+    const r = _sw.apply(this, arguments);
+    VIEWS.forEach(c => {
+      const on = String(t) === c.id; c.v.classList.toggle('hidden', !on);
+      if (on) { c.show(); const n = $('header-active-tab-name'); if (n) n.textContent = 'Situations particulières · ' + c.title; }
+    });
+    try { hub(); } catch (e) {}
+    return r;
+  };
+
+  /* Menu Outils : rubrique « Situations particulières » (copie du style d’un outil voisin) */
+  if (typeof renderBurgerTabs === 'function') {
+    const _rb = renderBurgerTabs;
+    renderBurgerTabs = function () {
+      const r = _rb.apply(this, arguments);
+      const c = $('burger-tabs-list'); if (!c) return r;
+      const s = [...c.querySelectorAll(':scope > .menu-sec')].find(x => isSit(x.querySelector('.menu-sec-h'))); if (!s) return r;
+      const model = [...s.querySelectorAll('button[onclick^="switchNavTab"]')].find(b => !/from-blue-900/.test(b.className)); if (!model) return r;
+      VIEWS.forEach(cfg => {
+        if (s.querySelector('button[onclick="switchNavTab(\'' + cfg.id + '\')"]')) return;
+        const b = model.cloneNode(true);
+        b.setAttribute('onclick', "switchNavTab('" + cfg.id + "')");
+        const lb = b.querySelector('.text-xs'), d = b.querySelector('p'), ic = b.querySelector('svg');
+        if (lb) { lb.textContent = cfg.title; delete lb.dataset.lbOrig; }
+        if (d) d.textContent = cfg.desc;
+        if (ic) { const n = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); n.setAttribute('viewBox', '0 0 24 24'); n.setAttribute('fill', 'none'); n.setAttribute('stroke', 'currentColor'); n.setAttribute('stroke-width', '2'); n.setAttribute('stroke-linecap', 'round'); n.setAttribute('stroke-linejoin', 'round'); n.setAttribute('class', ic.getAttribute('class') || ''); n.innerHTML = cfg.path; ic.replaceWith(n); }
+        b.querySelectorAll('.ft-pen-wrap,.ft-pen').forEach(x => x.remove());
+        model.parentElement.appendChild(b.parentElement === model.parentElement ? b : b);
+      });
+      return r;
+    };
+    try { renderBurgerTabs(); } catch (e) {}
+  }
+  /* Barre d’onglets de la rubrique */
+  function hub() {
+    document.querySelectorAll('.hub-bar').forEach(bar => {
+      if (!isSit(bar.querySelector('.hub-name'))) return;
+      VIEWS.forEach(cfg => {
+        if (bar.querySelector('.hub-tab[data-t="' + cfg.id + '"]')) return;
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'hub-tab'; b.dataset.t = cfg.id;
+        b.setAttribute('onclick', "switchNavTab('" + cfg.id + "')"); b.textContent = cfg.title;
+        bar.insertBefore(b, bar.querySelector(':scope > .hub-sub'));
+      });
+    });
+    VIEWS.forEach(cfg => {
+      if (!cfg.v.querySelector(':scope > .hub-bar')) {
+        const srcBar = [...document.querySelectorAll('.hub-bar')].find(x => isSit(x.querySelector('.hub-name')) && !x.closest('.fr-view'));
+        if (srcBar) { const cl = srcBar.cloneNode(true); const sub = cl.querySelector('.hub-sub'); if (sub) sub.remove(); cfg.v.insertBefore(cl, cfg.v.firstChild); }
+      }
+    });
+    const t = String(activeNavTab);
+    document.querySelectorAll('.hub-bar .hub-tab').forEach(b => {
+      if (byId(b.dataset.t)) { const on = b.dataset.t === t; b.classList.toggle('is-on', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); }
+      else if (byId(t) && b.closest('.fr-view')) { b.classList.remove('is-on'); b.removeAttribute('aria-current'); }
+    });
+  }
+  try { hub(); } catch (e) {}
+
+  /* Sources et cas de contrôle */
+  try {
+    (window.FT_SOURCES || []).push(
+      ['ATI', 'Conditions, montant, cumuls', '2 ans d’activité, cessation involontaire, 10 000 € de revenus, ressources < RSA ; 19,73 € à 26,30 € par jour, 182 jours, sans différé', 'Unédic, fiche ATI (13/10/2026)', 'ok'],
+      ['Formation', 'AREF et RFF', 'Plancher 22,99 €/j ; allongement 55 ans et plus jusqu’à 137 jours ; RFF plafonnée à 769,49 €/mois', 'Unédic, fiche ARE-F (05/10/2026) ; France Travail, RFF', 'ok'],
+      ['Trop-perçus', 'Prescription et recours', '3 ans, 10 ans en cas de fraude ; indus < 77 € non récupérés ; remise, contestation, médiateur, contrainte', 'justice.fr ; France Travail', 'ok'],
+      ['Sanctions', 'Suspension-remobilisation', 'Au moins 30 % pendant 1 à 2 mois ; 1 à 4 mois si persistance ; radiation si suppression totale de 4 mois', 'Décret 2025-478 ; Conseil d’État 21/09/2026', 'ok'],
+      ['Retraite', 'Âges et trimestres après suspension de la réforme', '1964 et janv.-mars 1965 : 62 ans 9 mois et 170 trimestres ; avr.-déc. 1965 : 63 ans et 171 ; 1966 à 1968 : +3 mois par génération, 172 ; 1969 : 64 ans', 'Unédic (1er septembre 2026) ; LFSS 2026', 'ok']
+    );
+  } catch (e) {}
+  try {
+    FT_CASES.push(
+      { n: 'ATI : revenus 12 000 € + 12 000 € → 26,30 €/jour', run: () => ftAtiCompute({ n1: 12000, n2: 12000 }).jour, exp: 26.30, d: 2 },
+      { n: 'ATI : revenus 10 000 € + 6 000 € → moyenne 666,67 €/mois → 21,92 €/jour', run: () => ftAtiCompute({ n1: 10000, n2: 6000 }).jour, exp: 21.92, d: 2 },
+      { n: 'ATI : plancher 19,73 €/jour', run: () => ftAtiCompute({ n1: 10000, n2: 0 }).jour, exp: 19.73, d: 2 },
+      { n: 'Trop-perçu : versé le 15/01/2023, notifié le 20/01/2026 → prescrit (1 = oui)', run: () => ftPrescription({ versement: '2023-01-15', notif: '2026-01-20' }).prescrit ? 1 : 0, exp: 1, d: 0 },
+      { n: 'Trop-perçu avec fraude : même dates → non prescrit (0)', run: () => ftPrescription({ versement: '2023-01-15', notif: '2026-01-20', fraude: true }).prescrit ? 1 : 0, exp: 0, d: 0 },
+      { n: 'RFF : AREF 30 €/j → 769,49 € (plafond)', run: () => ftRffCompute({ aj: 30 }).mens, exp: 769.49, d: 2 }
+    );
+  } catch (e) {}
+})();
+</script>
 <!-- ================= Extension 28 : mail automatique pour chaque simulateur ================= -->
 <style>
 .ft-mail{margin:18px 0 8px;padding:16px 18px;border-radius:14px;border:1px solid #24345f;background:rgba(12,24,60,.78)}
@@ -14432,6 +14731,262 @@ html.theme-light #ft-props .fp-b .fp-ok{color:#fff}
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(all, 300)); else setTimeout(all, 300);
 })();
 </script>
+<style>
+/* ---------- Fiche PDF (impression) ---------- */
+#ft-print{display:none}
+@media print{
+  body.ft-printing>*:not(#ft-print){display:none!important}
+  body.ft-printing{padding:0!important;background:#fff!important}
+  body.ft-printing #ft-print{display:block!important;color:#14264d;font-family:Arial,Helvetica,sans-serif;padding:8mm 6mm}
+  #ft-print h1{font-size:20px;margin:0 0 4px;color:#0b2a6f}
+  #ft-print .fp-meta{font-size:11px;color:#55627a;margin-bottom:14px;border-bottom:2px solid #0b2a6f;padding-bottom:8px}
+  #ft-print h2{font-size:14px;margin:16px 0 6px;color:#0b2a6f}
+  #ft-print table{width:100%;border-collapse:collapse;font-size:12px}
+  #ft-print td{padding:5px 6px;border-bottom:1px solid #dde3ee;vertical-align:top}
+  #ft-print td:last-child{text-align:right;font-weight:700;white-space:nowrap}
+  #ft-print .fp-txt{white-space:pre-wrap;font-size:12.5px;line-height:1.55}
+  #ft-print .fp-foot{margin-top:18px;font-size:10px;color:#6b7280}
+}
+.ft-mail-btns .ft-mail-pdf{background:transparent}
+/* ---------- Mes outils épinglés ---------- */
+.fh-pins{padding:16px 18px!important}
+.fh-pins .fh-gh{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.fh-pins .fh-gh h3{margin:0;font-size:15px;font-weight:700}
+.fh-pins .fh-pin-row{display:flex;flex-wrap:wrap;gap:8px}
+.fh-pins .fh-pin{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:12px;border:1px solid rgba(71,85,105,.7);background:rgba(15,23,42,.55);color:#e2e8f0;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer}
+.fh-pins .fh-pin:hover{border-color:rgba(34,211,238,.5);color:#fff}
+.fh-pins .fh-pin svg{width:16px;height:16px;color:#67e8f9}
+.fh-pins .fh-pin-empty{font-size:13px;color:#94a3b8;margin:0}
+.fh-pins .fh-pin-edit{margin-left:auto;border:1px solid rgba(71,85,105,.7);background:transparent;color:#cbd5e1;border-radius:9px;padding:5px 10px;font-family:inherit;font-weight:600;font-size:12px;cursor:pointer}
+html.theme-light .fh-pins .fh-pin{background:#fff;border-color:#cbd5e1;color:#0f172a}
+html.theme-light .fh-pins .fh-pin svg{color:#0369a1}
+html.theme-light .fh-pins .fh-pin-edit{color:#334155;border-color:#cbd5e1}
+@media (max-width:767px){#view-home .fh-pins{order:1}}
+#ft-pins-dlg{position:fixed;inset:0;z-index:99990;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.65);padding:16px}
+#ft-pins-dlg.on{display:flex}
+#ft-pins-dlg .pd-box{width:min(520px,100%);max-height:86vh;display:flex;flex-direction:column;border-radius:18px;border:1px solid #24345f;background:#081028;color:#e8eef9}
+#ft-pins-dlg .pd-h{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+#ft-pins-dlg h3{margin:0;font-size:16px;font-weight:800}
+#ft-pins-dlg .pd-x{border:0;background:none;color:#94a3b8;font-size:26px;line-height:1;cursor:pointer}
+#ft-pins-dlg .pd-list{overflow:auto;padding:8px 12px 14px}
+#ft-pins-dlg .pd-g{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#93c5fd;margin:12px 6px 4px}
+#ft-pins-dlg label{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:10px;font-size:14px;cursor:pointer}
+#ft-pins-dlg label:hover{background:rgba(255,255,255,.05)}
+#ft-pins-dlg input{width:18px;height:18px;accent-color:#2563eb}
+html.theme-light #ft-pins-dlg .pd-box{background:#fff;color:#0f172a;border-color:#cbd5e1}
+html.theme-light #ft-pins-dlg .pd-g{color:#0369a1}
+/* ---------- Glossaire au survol / au toucher ---------- */
+abbr.ft-g{text-decoration:underline dotted rgba(103,232,249,.7);text-underline-offset:3px;cursor:help}
+html.theme-light abbr.ft-g{text-decoration-color:rgba(3,105,161,.6)}
+#ft-gtip{position:fixed;z-index:99995;max-width:min(320px,calc(100vw - 20px));padding:10px 12px;border-radius:12px;border:1px solid #24345f;background:#0b1530;color:#e2e8f0;font-size:13px;line-height:1.45;box-shadow:0 14px 40px rgba(0,0,0,.5);display:none}
+#ft-gtip b{display:block;color:#67e8f9;margin-bottom:3px}
+html.theme-light #ft-gtip{background:#fff;color:#334155;border-color:#cbd5e1}
+html.theme-light #ft-gtip b{color:#0369a1}
+</style>
+<script>
+(function () {
+  const $ = id => document.getElementById(id), H = document.documentElement;
+  const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const tab = () => { try { return String(activeNavTab); } catch (e) { return ''; } };
+  const toast = (m, t) => { try { showToast(m, t || 'info'); } catch (e) {} };
+  const ls = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+
+  /* ================= Fiche PDF ================= */
+  function viewTitle() { const n = $('header-active-tab-name'); return (n && n.textContent.trim()) || 'Simulation'; }
+  function resultRows(view) {
+    const rows = []; const seen = new Set();
+    view.querySelectorAll('.inv-row, .bar-row, .res-row, [class*="result"] .flex.justify-between').forEach(r => {
+      if (r.closest('.ft-mail') || !r.offsetParent) return;
+      const kids = [...r.children].filter(k => k.textContent.trim());
+      if (kids.length < 2) return;
+      const k = kids[0].textContent.trim().replace(/\s+/g, ' '), v = kids[kids.length - 1].textContent.trim().replace(/\s+/g, ' ');
+      if (!k || !v || k.length > 120 || seen.has(k)) return; seen.add(k); rows.push([k, v]);
+    });
+    const hero = view.querySelector('.inv-hero');
+    if (hero && hero.offsetParent) { const s = hero.querySelector('span'), st = hero.querySelector('strong'); if (s && st) rows.unshift([s.textContent.trim(), st.textContent.trim()]); }
+    return rows.slice(0, 30);
+  }
+  window.ftPrintSheet = function (title, rows, text) {
+    let p = $('ft-print'); if (!p) { p = document.createElement('div'); p.id = 'ft-print'; document.body.appendChild(p); }
+    const d = new Date();
+    p.innerHTML = '<h1>' + esc(title) + '</h1><div class="fp-meta">Espace Conseiller France Travail · fiche établie le ' + d.toLocaleDateString('fr-FR') + ' à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) + ' · simulation indicative</div>' +
+      (rows && rows.length ? '<h2>Résultats</h2><table>' + rows.map(r => '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td></tr>').join('') + '</table>' : '') +
+      (text ? '<h2>Message à l’allocataire</h2><div class="fp-txt">' + esc(text) + '</div>' : '') +
+      '<div class="fp-foot">Document de travail : les montants et dates sont donnés à titre indicatif et doivent être confirmés par la décision notifiée.</div>';
+    document.body.classList.add('ft-printing');
+    const done = () => { document.body.classList.remove('ft-printing'); window.removeEventListener('afterprint', done); };
+    window.addEventListener('afterprint', done);
+    setTimeout(() => { try { window.print(); } catch (e) {} setTimeout(done, 1500); }, 60);
+  };
+  function pdfButtons() {
+    document.querySelectorAll('.ft-mail .ft-mail-btns').forEach(g => {
+      if (g.querySelector('.ft-mail-pdf')) return;
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'ft-mail-pdf'; b.textContent = 'Fiche PDF'; b.title = 'Imprimer ou enregistrer en PDF : résultats et mail';
+      g.insertBefore(b, g.firstChild);
+    });
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('.ft-mail-pdf'); if (!b) return;
+    const p = b.closest('.ft-mail'), view = b.closest('[id^="view-"]'), ta = p.querySelector('textarea');
+    window.ftPrintSheet(viewTitle(), view ? resultRows(view) : [], ta ? ta.value : '');
+  });
+
+  /* ================= Mes outils épinglés ================= */
+  const getPins = () => { try { return JSON.parse(ls.get('ft_pins') || '[]'); } catch (e) { return []; } };
+  const setPins = a => { ls.set('ft_pins', JSON.stringify(a)); try { window.dispatchEvent(new StorageEvent('storage', { key: 'ft_pins' })); } catch (e) {} };
+  function allTools() {
+    const list = $('burger-tabs-list'); if (!list) return [];
+    const out = [];
+    list.querySelectorAll('.menu-sec').forEach(sec => {
+      const h = sec.querySelector('.menu-sec-h'), g = h ? h.textContent.trim() : '';
+      sec.querySelectorAll('button[onclick^="switchNavTab"]').forEach(b => {
+        const m = /switchNavTab\('([^']+)'\)/.exec(b.getAttribute('onclick') || ''); if (!m) return;
+        const lb = b.querySelector('.text-xs'), svg = b.querySelector('svg');
+        out.push({ id: m[1], label: (lb ? lb.textContent : b.textContent).trim(), group: g, icon: svg ? svg.outerHTML.replace(/\sclass="[^"]*"/, '') : '' });
+      });
+    });
+    return out;
+  }
+  function pinsCard() {
+    const hero = document.querySelector('#view-home .fh-C .home-hero'); if (!hero) return;
+    let c = document.querySelector('#view-home .fh-pins');
+    if (!c) { c = document.createElement('section'); c.className = 'fh-card fh-pins'; hero.parentNode.insertBefore(c, hero.nextSibling); }
+    const tools = allTools(), pins = getPins().map(id => tools.find(t => t.id === id)).filter(Boolean);
+    const html = '<div class="fh-gh"><h3>Mes outils</h3><button type="button" class="fh-pin-edit">' + (pins.length ? 'Modifier' : 'Choisir') + '</button></div>' +
+      (pins.length ? '<div class="fh-pin-row">' + pins.map(t => '<button type="button" class="fh-pin" data-id="' + esc(t.id) + '">' + t.icon + '<span>' + esc(t.label) + '</span></button>').join('') + '</div>' : '<p class="fh-pin-empty">Épinglez les outils que vous utilisez le plus pour les retrouver ici en un geste.</p>');
+    if (c.dataset.h !== html) { c.innerHTML = html; c.dataset.h = html; }
+  }
+  document.addEventListener('click', e => {
+    const p = e.target.closest && e.target.closest('.fh-pins .fh-pin'); if (p) { switchNavTab(p.dataset.id); return; }
+    if (e.target.closest && e.target.closest('.fh-pins .fh-pin-edit')) openPins();
+  });
+  function openPins() {
+    let d = $('ft-pins-dlg'); if (!d) { d = document.createElement('div'); d.id = 'ft-pins-dlg'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true'); document.body.appendChild(d); }
+    const tools = allTools(), pins = getPins(); let last = '';
+    d.innerHTML = '<div class="pd-box"><div class="pd-h"><h3>Mes outils épinglés</h3><button type="button" class="pd-x" aria-label="Fermer">×</button></div><div class="pd-list">' +
+      tools.map(t => (t.group !== last ? '<div class="pd-g">' + esc(last = t.group) + '</div>' : '') + '<label><input type="checkbox" value="' + esc(t.id) + '"' + (pins.includes(t.id) ? ' checked' : '') + '>' + esc(t.label) + '</label>').join('') + '</div></div>';
+    d.classList.add('on');
+    d.onclick = e => { if (e.target === d || e.target.closest('.pd-x')) { d.classList.remove('on'); } };
+    d.onchange = e => {
+      const id = e.target.value, cur = getPins().filter(x => x !== id);
+      if (e.target.checked) cur.push(id);
+      setPins(cur); pinsCard();
+    };
+  }
+  window.ftOpenPins = openPins;
+
+  /* ================= Notifications et pastille de l’icône ================= */
+  const canNotif = 'Notification' in window && 'serviceWorker' in navigator;
+  const notifOn = () => canNotif && Notification.permission === 'granted' && ls.get('ft_notif') === '1';
+  function notify(title, body, tag) {
+    if (!notifOn()) return;
+    navigator.serviceWorker.ready.then(r => r.showNotification(title, { body: body, tag: tag, icon: 'icons/icon-192.png', badge: 'icons/icon-192.png' })).catch(() => { try { new Notification(title, { body: body, tag: tag }); } catch (e) {} });
+  }
+  window.ftEnableNotifs = function () {
+    if (!canNotif) { toast('Les notifications ne sont pas disponibles ici. Sur iPhone, installez d’abord le site sur l’écran d’accueil.', 'info'); return; }
+    if (ls.get('ft_notif') === '1' && Notification.permission === 'granted') { ls.set('ft_notif', '0'); toast('Notifications désactivées', 'info'); menuLabel(); return; }
+    Notification.requestPermission().then(p => {
+      if (p === 'granted') { ls.set('ft_notif', '1'); toast('Notifications activées', 'success'); notify('Notifications activées', 'Vous serez prévenu des nouveautés du site.', 'ft-test'); }
+      else toast('Notifications refusées : vous pouvez les autoriser dans les réglages du téléphone', 'info');
+      menuLabel();
+    });
+  };
+  function latestNews() { try { const n = (window.FT_NEWS || []); return n[0]; } catch (e) { return null; } }
+  function checkNotifs() {
+    const meta = document.querySelector('meta[name="ft-version"]'), v = meta && meta.content;
+    if (v && ls.get('ft_notif_v') && ls.get('ft_notif_v') !== v) { const n = latestNews(); notify('Espace Conseiller mis à jour', n && n.items ? n.items[0] : 'De nouvelles fonctions sont disponibles.', 'ft-news'); }
+    if (v) ls.set('ft_notif_v', v);
+    badge();
+  }
+  let props = 0;
+  document.addEventListener('ft-props', e => { const n = +e.detail || 0; if (n > props && notifOn() && document.hidden) notify('Proposition de modèle', n + ' proposition(s) de collègues à valider', 'ft-props'); props = n; badge(); });
+  function badge() {
+    const due = document.querySelector('#view-home .fh-alert') ? 1 : 0;
+    const n = props + due;
+    try { if (navigator.setAppBadge) { n ? navigator.setAppBadge(n) : navigator.clearAppBadge(); } } catch (e) {}
+  }
+  function menuLabel() {
+    const m = $('ft-more'); if (!m) return;
+    let b = m.querySelector('[data-k="notif"]');
+    if (!b) {
+      b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'menuitem'); b.dataset.k = 'notif';
+      b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span></span>';
+      b.addEventListener('click', ev => { ev.stopPropagation(); H.classList.remove('ft-more-on'); setTimeout(window.ftEnableNotifs, 30); });
+      const pinsB = document.createElement('button'); pinsB.type = 'button'; pinsB.setAttribute('role', 'menuitem'); pinsB.dataset.k = 'pins';
+      pinsB.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg><span>Mes outils épinglés</span>';
+      pinsB.addEventListener('click', ev => { ev.stopPropagation(); H.classList.remove('ft-more-on'); setTimeout(openPins, 30); });
+      const hr = m.querySelector('hr'); m.insertBefore(b, hr || null); m.insertBefore(pinsB, hr || null);
+    }
+    b.querySelector('span').textContent = notifOn() ? 'Désactiver les notifications' : 'Activer les notifications';
+  }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) checkNotifs(); });
+
+  /* ================= Glossaire au survol ================= */
+  let GL = null;
+  function gl() {
+    if (GL) return GL;
+    const g = window.FT_GLOSS || []; if (!g.length) return null;
+    GL = { map: {}, re: null };
+    g.forEach(x => { GL.map[x[0]] = x; });
+    const keys = g.map(x => x[0]).filter(k => /^[A-Z][A-Z0-9-]{1,7}$/.test(k)).sort((a, b) => b.length - a.length);
+    GL.re = new RegExp('(^|[^A-Za-zÀ-ÿ0-9-])(' + keys.map(k => k.replace(/[-]/g, '\\-')).join('|') + ')(?![A-Za-zÀ-ÿ0-9-])');
+    return GL;
+  }
+  const SKIP = 'INPUT,TEXTAREA,SELECT,BUTTON,A,ABBR,SCRIPT,STYLE,SVG,CODE,PRE,OPTION,H1,H2';
+  function glossify(root) {
+    const G = gl(); if (!G || !root) return;
+    const done = new Set([...root.querySelectorAll('abbr.ft-g')].map(a => a.dataset.g));
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: n => {
+        if (!n.nodeValue || n.nodeValue.length < 3) return NodeFilter.FILTER_REJECT;
+        const p = n.parentElement; if (!p || p.closest(SKIP) || p.closest('.ft-mail,.hub-bar,.rg-tabs,[contenteditable="true"],#view-glossaire,.fh-chip')) return NodeFilter.FILTER_REJECT;
+        return G.re.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    const nodes = []; let n; while ((n = walker.nextNode()) && nodes.length < 400) nodes.push(n);
+    nodes.forEach(t => {
+      const m = G.re.exec(t.nodeValue); if (!m) return;
+      const key = m[2]; if (done.has(key)) return; done.add(key);
+      const start = m.index + m[1].length;
+      const after = t.splitText(start); after.splitText(key.length);
+      const ab = document.createElement('abbr'); ab.className = 'ft-g'; ab.tabIndex = 0; ab.dataset.g = key; ab.textContent = key;
+      ab.setAttribute('aria-label', key + ' : ' + G.map[key][1]);
+      after.parentNode.replaceChild(ab, after);
+    });
+  }
+  function tip(el) {
+    let t = $('ft-gtip'); if (!t) { t = document.createElement('div'); t.id = 'ft-gtip'; t.setAttribute('role', 'tooltip'); document.body.appendChild(t); }
+    if (!el) { t.style.display = 'none'; return; }
+    const g = (window.FT_GLOSS || []).find(x => x[0] === el.dataset.g); if (!g) return;
+    t.innerHTML = '<b>' + esc(g[0]) + ' · ' + esc(g[1]) + '</b>' + esc(g[2] || '');
+    t.style.display = 'block';
+    const r = el.getBoundingClientRect(), w = t.offsetWidth, h = t.offsetHeight;
+    let x = Math.min(Math.max(10, r.left + r.width / 2 - w / 2), innerWidth - w - 10), y = r.bottom + 8;
+    if (y + h > innerHeight - 70) y = r.top - h - 8;
+    t.style.left = x + 'px'; t.style.top = y + 'px';
+  }
+  document.addEventListener('mouseover', e => { const a = e.target.closest && e.target.closest('abbr.ft-g'); if (a) tip(a); });
+  document.addEventListener('mouseout', e => { if (e.target.closest && e.target.closest('abbr.ft-g')) tip(null); });
+  document.addEventListener('focusin', e => { if (e.target.matches && e.target.matches('abbr.ft-g')) tip(e.target); });
+  document.addEventListener('focusout', e => { if (e.target.matches && e.target.matches('abbr.ft-g')) tip(null); });
+  document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('abbr.ft-g'); if (a) { e.preventDefault(); tip(a); } else tip(null); }, true);
+  window.addEventListener('scroll', () => tip(null), true);
+  function glossActive() {
+    const t = tab(); if (t === 'home' || t === 'cvm' || t === 'glossaire') return;
+    const v = document.querySelector('[id^="view-"]:not(.hidden):not(#view-home):not(#view-cvm)');
+    if (v) glossify(v);
+  }
+
+  /* ================= Démarrage ================= */
+  function all() { try { pdfButtons(); pinsCard(); menuLabel(); glossActive(); badge(); } catch (e) { console.warn(e); } }
+  if (typeof switchNavTab === 'function') { const _s = switchNavTab; switchNavTab = function () { const r = _s.apply(this, arguments); setTimeout(all, 80); return r; }; }
+  let mt = null;
+  new MutationObserver(() => { clearTimeout(mt); mt = setTimeout(() => { try { pdfButtons(); if (tab() === 'home') pinsCard(); glossActive(); } catch (e) {} }, 400); }).observe(document.body, { childList: true, subtree: true });
+  window.addEventListener('storage', e => { if (e.key === 'ft_pins' && tab() === 'home') pinsCard(); });
+  const go = () => { setTimeout(all, 500); setTimeout(checkNotifs, 2500); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
+})();
+</script>
 <!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
 <style>
 #ft-news{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.6);backdrop-filter:blur(3px);opacity:0;transition:opacity .25s ease}
@@ -14464,6 +15019,14 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.37', date: '12/11/2026', items: [
+      'Nouvelles fiches dans « Situations particulières » : travailleurs indépendants (ATI) avec simulateur, formation (AREF et RFF), trop-perçus (prescription, recours), sanctions (suspension-remobilisation), frontaliers, intermittents et condition de résidence. Chacune avec un mail type.',
+      'Retraite : âges et trimestres mis à jour après la suspension de la réforme (générations 1961 à 1969).',
+      'Bouton « Fiche PDF » sous chaque mail de simulateur : résultats et message, prêts à imprimer ou à enregistrer.',
+      'Accueil : « Mes outils » pour épingler vos simulateurs favoris.',
+      'Sigles expliqués au survol ou au toucher (SJR, PRA, ARCE…) dans les simulateurs.',
+      'Notifications sur le téléphone (menu « ⋯ ») : nouveautés et, pour l’administrateur, propositions de modèles ; pastille sur l’icône de l’appli.'
+    ] },
     { v: '2026-11-12.36', date: '12/11/2026', items: [
       'Téléphone : le menu du compte (rond avec votre initiale) s’ouvre de nouveau : synchronisation, propositions, déconnexion.'
     ] },
