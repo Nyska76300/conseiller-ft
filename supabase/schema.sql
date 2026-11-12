@@ -42,3 +42,22 @@ create policy "écriture par les admins" on public.shared_templates for all to a
 
 -- 4. Me déclarer administrateur des modèles communs (remplacer l'e-mail) :
 -- insert into public.app_admins (user_id) select id from auth.users where email = 'mon.email@exemple.fr';
+
+-- 5. Propositions de modèles par les collègues (validées par l'administrateur)
+create table if not exists public.template_proposals (
+  id             uuid primary key default gen_random_uuid(),
+  template       jsonb not null,
+  note           text,
+  proposer_email text,
+  proposed_by    uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  created_at     timestamptz not null default now()
+);
+alter table public.template_proposals enable row level security;
+drop policy if exists "proposer un modèle" on public.template_proposals;
+drop policy if exists "voir les propositions" on public.template_proposals;
+drop policy if exists "traiter les propositions" on public.template_proposals;
+create policy "proposer un modèle" on public.template_proposals for insert to authenticated with check (proposed_by = auth.uid());
+create policy "voir les propositions" on public.template_proposals for select to authenticated
+  using (proposed_by = auth.uid() or exists (select 1 from public.app_admins a where a.user_id = auth.uid()));
+create policy "traiter les propositions" on public.template_proposals for delete to authenticated
+  using (proposed_by = auth.uid() or exists (select 1 from public.app_admins a where a.user_id = auth.uid()));
