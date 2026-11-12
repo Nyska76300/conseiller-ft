@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-12.38">
+  <meta name="ft-version" content="2026-11-12.39">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -2881,7 +2881,7 @@
           </div>
           <div>
             <h2 class="text-xs md:text-sm font-bold text-white tracking-tight flex items-center gap-2">
-              <span>Indus &amp; Échéancier de Remboursement</span>
+              <span>Trop-perçu : échéancier, délais et recours</span>
               <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-normal">Instruction Recouvrement FT</span>
             </h2>
           </div>
@@ -5310,7 +5310,7 @@ Votre conseiller France Travail
       { id: 3, name: 'ANS', desc: 'Création : ARCE 60% vs maintien mensuel', icon: 'calculator', color: 'bg-teal-500/15 text-teal-400 border-teal-500/30', badge: 'ARCE / Maintien' },
       { id: 4, name: 'CSP', desc: 'ASP à 75%, 21 jours & reclassement (IDR/Prime)', icon: 'shield', color: 'bg-amber-500/15 text-amber-400 border-amber-500/30', badge: 'ASP & IDR' },
       { id: 5, name: 'Complément ARE', desc: 'Règle des 70% et report de jours de droit', icon: 'trending-up', color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30', badge: 'Règle 70%' },
-      { id: 6, name: 'Indus', desc: 'Échéancier par durée/mensualité & multi-créances', icon: 'receipt', color: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30', badge: 'Échéancier' },
+      { id: 6, name: 'Trop-perçu', desc: 'Échéancier, prescription, délais et recours, mail type', icon: 'receipt', color: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30', badge: 'Échéancier' },
       { id: 7, name: 'ICCP', desc: 'Différé congés payés & attestation CIBTP BTP', icon: 'calendar-clock', color: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30', badge: 'Formule BTP' },
       { id: 8, name: 'Retraite', desc: 'Maintien de droit Art. 9 § 3 & taux plein', icon: 'landmark', color: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30', badge: 'Art. 9 § 3' },
       { id: 9, name: 'RCI', desc: 'Rupture conventionnelle 2026 : plafond 15/20,5m', icon: 'handshake', color: 'bg-rose-500/15 text-rose-400 border-rose-500/30', badge: 'Réforme 2026' }
@@ -11401,13 +11401,13 @@ Votre conseiller France Travail
 
   const HUBS = [
     { id: 'hub:ouverture', name: 'Ouverture de droits', desc: 'Dossier, conditions, démission, rupture conventionnelle, délais, complément ARE', icon: 'clipboard-check', color: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
-      members: [['dossier', 'Parcours dossier'], ['1', 'Conditions et ARE'], ['2', 'Démission'], ['9', 'Rupture conventionnelle'], ['delais', 'Délais'], ['5', 'Complément ARE']] },
+      members: [['dossier', 'Parcours dossier'], ['1', 'Conditions et ARE'], ['2', 'Démission'], ['9', 'Rupture conventionnelle'], ['delais', 'Délais'], ['5', 'Complément ARE'], ['6', 'Trop-perçu']] },
     { id: 'hub:ans', name: 'ANS : création d’entreprise', desc: 'ARCE ou maintien de l’ARE, cumul CNS (activité non salariée)', icon: 'calculator', color: 'bg-teal-500/15 text-teal-400 border-teal-500/30',
       members: [['3', 'ARCE et maintien'], ['cns', 'Cumul CNS']] },
     { id: 'hub:fin', name: 'Fin de droits et passages', desc: 'Rechargement, ASS, CFD, retraite', icon: 'hourglass', color: 'bg-rose-500/15 text-rose-400 border-rose-500/30',
       members: [['droits', 'Rechargement et ASS'], ['cfd', 'CFD'], ['8', 'Retraite']] },
-    { id: 'hub:situations', name: 'Situations particulières', desc: 'CSP, indus, ICCP et CIBTP', icon: 'shield', color: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
-      members: [['4', 'CSP'], ['6', 'Indus'], ['7', 'ICCP et CIBTP']] },
+    { id: 'hub:situations', name: 'Situations particulières', desc: 'CSP, ICCP et CIBTP, indépendants, formation, sanctions', icon: 'shield', color: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+      members: [['4', 'CSP'], ['7', 'ICCP et CIBTP']] },
     { id: 'hub:calculs', name: 'Références et calculs', desc: 'SJR et net, schémas, barèmes, glossaire, sources', icon: 'book-open-check', color: 'bg-sky-500/15 text-sky-400 border-sky-500/30',
       members: [['sjr', 'SJR et net'], ['schemas', 'Schémas'], ['bareme', 'Barèmes'], ['glossaire', 'Glossaire'], ['sources', 'Sources']] }
   ];
@@ -12799,7 +12799,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
         (isAdmin ? '<button type="button" data-a="props">Propositions des collègues' + (propCount ? ' (' + propCount + ')' : '') + '</button>' : '<button type="button" data-a="prop">Proposer le modèle ouvert à l’équipe</button>') + (isAdmin ? '<button type="button" data-a="pub">Publier le modèle ouvert pour tous</button><button type="button" data-a="unpub">Retirer le modèle ouvert des communs</button>' : '') +
         '<button type="button" data-a="out" class="fa-out">Se déconnecter</button>'
         : '<button type="button" data-a="in">Se connecter</button>') + '</div>';
-    host.querySelector('button').onclick = function (e) { e.stopPropagation(); var m = host.querySelector('.fa-menu'); m.hidden = !m.hidden; };
+    host.querySelector('button').onclick = function (e) { e.stopPropagation(); if (!sess) { showLogin(); return; } var m = host.querySelector('.fa-menu'); m.hidden = !m.hidden; };
     var act = { sync: function () { meta.dirty = true; sync('push').then(loadShared); }, pub: window.ftSharePublish, unpub: window.ftShareRemove, prop: function () { window.ftPropose(); }, props: function () { window.ftProposals(); }, out: logout, in: function () { showLogin(); } };
     host.querySelectorAll('.fa-menu [data-a]').forEach(function (b) { b.onclick = function () { host.querySelector('.fa-menu').hidden = true; act[b.dataset.a](); }; });
   }
@@ -13949,6 +13949,7 @@ html.theme-light .fr-check{border-bottom-color:#e2e8f0}
 html.theme-light .fr-check b.ok{color:#059669} html.theme-light .fr-check b.ko{color:#dc2626} html.theme-light .fr-check b.wa{color:#b45309}
 html.theme-light .fr-src{color:#64748b} html.theme-light .fr-src a{color:#0369a1}
 .fr-view .pb-2.border-b>span:last-child{max-width:55%}
+.fr-hide{display:none!important}
 .fr-view .inv-sim input,.fr-view .inv-sim select{width:100%!important;max-width:100%!important;box-sizing:border-box;text-overflow:ellipsis}
 </style>
 <script>
@@ -14142,7 +14143,6 @@ html.theme-light .fr-src{color:#64748b} html.theme-light .fr-src a{color:#0369a1
   const VIEWS = [
     { id: 'ati', hue: 'orange', title: 'Travailleurs indépendants (ATI)', sub: 'Conditions, montant de 19,73 € à 26,30 € par jour, 182 jours, cumuls.', desc: 'Allocation des travailleurs indépendants : éligibilité et montant', badge: 'ATI', icon: 'briefcase', color: 'bg-orange-500/15 text-orange-400 border-orange-500/30', kw: 'ati travailleur indépendant liquidation redressement auto-entrepreneur micro-entreprise non salarié', path: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>', tabs: [['sim', 'Éligibilité et montant', atiSim, atiRun, ['ati-n1', 'ati-n2', 'ati-2ans', 'ati-motif', 'ati-rsa', 'ati-12m', 'ati-5a']], ['regles', 'Règles et cumuls', atiRegles]] },
     { id: 'aref', hue: 'violet', title: 'Formation : AREF et RFF', sub: 'Indemnisation pendant la formation, allongement des 55 ans et plus, relais par la RFF.', desc: 'AREF, allongement seniors, rémunération de fin de formation', badge: 'AREF', icon: 'graduation-cap', color: 'bg-violet-500/15 text-violet-400 border-violet-500/30', kw: 'aref are-f formation rff fin de formation cpf stage', path: '<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>', tabs: [['sim', 'Fin des droits pendant la formation', arefSim, arefRun, ['rff-aj', 'rff-fd', 'rff-ff', 'rff-elig']], ['regles', 'Règles', arefRegles]] },
-    { id: 'tropercu', hue: 'yellow', title: 'Trop-perçus : délais et recours', sub: 'Prescription de 3 ou 10 ans, retenue, remise de dette, contestation, avec mail type.', desc: 'Prescription, remise de dette, contestation et mail type', badge: 'Indus', icon: 'file-warning', color: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30', kw: 'trop-perçu trop percu indu prescription remise dette contestation médiateur contrainte retenue', path: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 12v3M12 18h.01"/>', tabs: [['sim', 'Prescription et mail', induSim, induRun, ['tp-mt', 'tp-per', 'tp-motif', 'tp-v', 'tp-n', 'tp-fr']], ['regles', 'Règles et recours', induRegles]] },
     { id: 'sanctions', hue: 'rose', title: 'Sanctions et radiations', sub: 'Suspension-remobilisation depuis juin 2025, durées, procédure, mail d’information.', desc: 'Suspension-remobilisation, durées et mail d’information', badge: 'Décret 2025', icon: 'gavel', color: 'bg-red-500/15 text-red-400 border-red-500/30', kw: 'sanction radiation suspension remobilisation manquement contrat d engagement suppression', path: '<path d="m14 13-7.5 7.5a2.1 2.1 0 0 1-3-3L11 10"/><path d="m16 16 6-6M8 8l6-6M9 7l8 8M21 11l-8-8"/>', tabs: [['regles', 'Règles et mail', sancRegles, sancRun, ['sa-motif', 'sa-part', 'sa-duree', 'sa-action']]] },
     { id: 'casparts', hue: 'sky', title: 'Frontaliers, intermittents, résidence', sub: 'Repères et textes pour les situations à règles spécifiques.', desc: 'Frontaliers, annexes 8 et 10, condition de résidence', badge: 'Repères', icon: 'globe', color: 'bg-sky-500/15 text-sky-400 border-sky-500/30', kw: 'frontalier suisse luxembourg u1 intermittent spectacle annexe 8 10 507 heures résidence étranger u2', path: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>', tabs: [['regles', 'Repères', casRegles]] }
   ];
@@ -14231,6 +14231,43 @@ html.theme-light .fr-src{color:#64748b} html.theme-light .fr-src a{color:#0369a1
     });
   }
   try { hub(); } catch (e) {}
+
+  /* ---------- Trop-perçu (outil Indus) : volet « Délais et recours » ---------- */
+  (function induVolet() {
+    const view = $('view-indus'); if (!view) return;
+    const head = view.querySelector(':scope > .h-12'); if (!head) return;
+    const ON = 'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition-all bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-sm';
+    const OFF = 'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all';
+    const seg = document.createElement('div'); seg.className = 'flex items-center bg-slate-950 p-0.5 rounded-lg border border-slate-800 fr-seg'; seg.setAttribute('role', 'tablist');
+    const right = head.querySelector(':scope > div:last-child');
+    head.insertBefore(seg, right);
+    const box = document.createElement('div'); box.id = 'indus-delais'; box.className = 'flex-1 overflow-y-auto p-4 md:p-6 space-y-4 fr-view'; box.hidden = true;
+    view.appendChild(box);
+    let mode = 'ech', built = false;
+    const TI = { ech: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>', del: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 12v3M12 18h.01"/>' };
+    function draw() {
+      seg.innerHTML = [['ech', 'Échéancier'], ['del', 'Délais et recours']].map(t => '<button type="button" role="tab" data-m="' + t[0] + '" aria-selected="' + (t[0] === mode) + '" class="' + (t[0] === mode ? ON : OFF) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5" aria-hidden="true">' + TI[t[0]] + '</svg><span>' + t[1] + '</span></button>').join('');
+      const del = mode === 'del';
+      [...view.children].forEach(c => {
+        if (c === box || c === head || c.classList.contains('hub-bar') || c.classList.contains('rg-panel')) return;
+        if (del) { if (!c.dataset.frWas) { c.dataset.frWas = '1'; c.classList.add('fr-hide'); } }
+        else if (c.dataset.frWas) { delete c.dataset.frWas; c.classList.remove('fr-hide'); }
+      });
+      right.style.display = del ? 'none' : '';
+      box.hidden = !del;
+      if (del && !built) {
+        built = true;
+        box.innerHTML = '<p class="max-w-7xl mx-auto text-xs text-slate-400">Prescription de 3 ou 10 ans, retenue sur allocations, remise de dette, contestation et médiateur, avec un mail type pour l’allocataire.</p>' + induSim() + '<div class="h-2"></div>' + induRegles();
+        ['tp-mt', 'tp-per', 'tp-motif', 'tp-v', 'tp-n', 'tp-fr'].forEach(id => { const e = $(id); if (e) { e.addEventListener('input', induRun); e.addEventListener('change', induRun); } });
+        induRun();
+      }
+    }
+    seg.addEventListener('click', e => { const b = e.target.closest('[data-m]'); if (b) { mode = b.dataset.m; draw(); } });
+    document.addEventListener('click', e => { if (mode === 'del' && e.target.closest && e.target.closest('#view-indus .hub-sub button')) { mode = 'ech'; draw(); } });
+    window.ftInduMode = m => { mode = m; draw(); };
+    draw();
+  })();
+  try { FT_KW['6'] = (FT_KW['6'] || '') + ' trop-perçu trop percu indu prescription délais recours remise dette contestation médiateur contrainte'; } catch (e) {}
 
   /* Sources et cas de contrôle */
   try {
@@ -15017,6 +15054,7 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+body>header{overflow:visible!important}
 /* 1. Titre d’accueil : « Bonjour » puis la question */
 #home-title .ht-b{display:inline}
 @media (max-width:767px){
@@ -15139,6 +15177,10 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.39', date: '12/11/2026', items: [
+      'Le bouton « Se connecter » ouvre de nouveau l’écran de connexion.',
+      'Trop-perçu : l’outil (ex-« Indus ») rejoint la rubrique « Ouverture de droits » et réunit l’échéancier et un nouveau volet « Délais et recours » (prescription, remise, contestation, mail type).'
+    ] },
     { v: '2026-11-12.38', date: '12/11/2026', items: [
       'Les nouveaux simulateurs (ATI, AREF et RFF, trop-perçus, sanctions, cas particuliers) reprennent la présentation des anciens : blocs numérotés, verdict coloré, chiffres clés, conditions avec pastilles.',
       'Barre du haut allégée : Dates, Calculatrice, Repères, thème et rechargement sont regroupés dans le bouton « ⋯ ».',
