@@ -2,8 +2,9 @@
 <html lang="fr" class="h-full bg-gradient-to-br from-slate-900 to-slate-950 text-slate-100 antialiased">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.29">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#031137">
+  <meta name="ft-version" content="2026-11-12.30">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -13158,6 +13159,40 @@ html.theme-light .ft-ds-k{color:#1d4ed8}html.theme-light .ft-ds-new{border-color
 html.theme-light .ft-nav button{background:#fff;border-color:#cbd5e1;color:#334155}
 html.theme-light .ft-nav button:hover:not(:disabled){background:#eff6ff;color:#1d4ed8;border-color:#2563eb}
 @media print{.ft-nav{display:none!important}}
+/* ---------- Adaptation à la taille de la fenêtre (appli réduite, tablette, téléphone) ---------- */
+html,body{height:100%;height:100dvh;max-width:100vw;overflow-x:hidden}
+body>header,#ft-col>header{min-width:0;max-width:100vw;overflow:hidden}
+body>header>div{min-width:0}
+@media (max-width:1279px){
+  header .hdr-logo ~ div{display:none!important}
+  #burger-menu-btn>span,#datecalc-toggle>span,#header-calc-btn>span{display:none!important}
+}
+@media (max-width:1023px){
+  #rp-btn{padding-left:10px!important;padding-right:10px!important}
+}
+@media (max-width:640px){
+  body>header{padding-left:6px!important;padding-right:6px!important;gap:6px!important}
+  body>header>div{gap:4px!important}
+  .ft-nav button{width:32px;height:32px}
+  #rp-btn,#theme-toggle-btn,header button[title="Recharger la page"]{display:none!important}
+  header .hdr-logo{padding:5px 8px!important;font-size:12px!important}
+  header .hdr-logo *{font-size:12px!important}
+  /* Toute la page défile, au lieu de petites zones de défilement */
+  [id^="view-"]:not(#view-cvm){overflow-y:auto!important;-webkit-overflow-scrolling:touch}
+  [id^="view-"]:not(#view-cvm) > .flex-1.overflow-y-auto,[id^="view-"]:not(#view-cvm) > [id*="-subview-"]{overflow:visible!important;flex:none!important;height:auto!important}
+  .rg-panel + div.border-b{padding:14px 14px 6px!important}
+  .rg-panel + div.border-b h2{font-size:19px!important}
+  .reg-wrap{padding-left:14px!important;padding-right:14px!important}
+  [id^="view-"] > .flex-1.overflow-y-auto,[id^="view-"] > [id*="-subview-"]{padding-left:12px!important;padding-right:12px!important}
+  .hub-bar{padding-left:10px!important;padding-right:10px!important;overflow-x:auto;flex-wrap:nowrap!important;scrollbar-width:none}
+  .hub-bar::-webkit-scrollbar{display:none}
+  .hub-bar>*{flex:none}
+  #view-home>.home-wrap.fh-on{padding:14px 12px 24px!important;gap:14px}
+  .fh-L,.fh-R{min-width:0!important;flex:1 1 100%!important}
+  .fh-sum>.fh-grp .fh-chips{grid-template-columns:minmax(0,1fr)!important}
+  #ft-update{bottom:12px}
+  #ft-news .ftn-box{max-height:86vh}
+}
 /* ---------- Liens cliquables dans les mails ---------- */
 #preview-body a.ft-link{color:#67e8f9;text-decoration:underline;text-underline-offset:3px;word-break:break-all;cursor:pointer}
 #preview-body a.ft-link:hover{color:#a5f3fc}
@@ -14032,6 +14067,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.30', date: '12/11/2026', items: [
+      'Fenêtre réduite et téléphone : la barre du haut s’adapte à la largeur (plus de boutons coupés), et sur téléphone toute la page défile pour accéder à l’ensemble du contenu.'
+    ] },
     { v: '2026-11-12.29', date: '12/11/2026', items: [
       'Barre du haut : le bouton Accueil n’affiche plus que l’icône de la maison.'
     ] },
