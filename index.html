@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.2">
+  <meta name="ft-version" content="2026-11-12.3">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -1641,16 +1641,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
       </div>
     </div>
 
-    <!-- Center Quick Stat / Status -->
-    <div class="hidden xl:flex items-center gap-4 text-xs">
-      <button type="button" onclick="switchNavTab('bareme')" class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:border-emerald-400/60 transition-colors" title="Voir les barèmes et leurs sources">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span id="reg-banner-text" class="font-medium text-[11px]">Barème Unédic à jour</span>
-      </button>
-      <div class="text-slate-400 text-[11px] flex items-center gap-1.5">
-        <i data-lucide="database" class="w-3.5 h-3.5 text-slate-500"></i>
-        <span id="model-count-badge" class="font-medium text-slate-300">13 modèles prêts</span>
-      </div>
+    <!-- Barre de recherche (ouvre la recherche globale) -->
+    <div class="hidden lg:flex flex-1 justify-center px-3 min-w-0">
+      <label class="ft-hsearch" title="Rechercher un outil, une règle ou un modèle de mail (Ctrl+K)">
+        <i data-lucide="search" class="w-4 h-4"></i>
+        <input id="ft-header-search" type="search" readonly autocomplete="off" placeholder="Rechercher…" aria-label="Rechercher un outil, une règle ou un modèle de mail" onfocus="ftHeaderSearch()" onclick="ftHeaderSearch()">
+        <kbd>Ctrl K</kbd>
+      </label>
     </div>
 
     <!-- Right Header Actions -->
@@ -12235,7 +12232,7 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
 
   /* ---------- 5. Journal des modifications (page Sources) ---------- */
   const LOG = [
-    ['12/11/2026', 'Application', ['Fenêtre « Nouveautés » à l’ouverture de la page quand le site a changé.', 'Bandeau « Nouvelle version disponible » sur la version en ligne.']],
+    ['12/11/2026', 'Application', ['Barre de recherche dans la barre du haut, à la place du bandeau du barème et du nombre de modèles.', 'Fenêtre « Nouveautés » à l’ouverture de la page quand le site a changé.', 'Bandeau « Nouvelle version disponible » sur la version en ligne.']],
     ['27/10/2026', 'Application', ['Accueil : bouton « Nouveau dossier », fiche du dossier en PDF, plus de doublon avec les bulles des simulateurs.', 'Ouverture de droits : le complément ARE y est intégré.', 'Maintien : passage direct des valeurs vers Cumul CNS.', 'Détecteur de doublons parmi les modèles de mail (aucune suppression automatique).', 'Icônes de secours intégrées au fichier.','Barèmes historiques de l’ARE (juillet 2022 à juillet 2025) appliqués selon la date de fin de contrat.']],
     ['23/10/2026', 'Barème', ['Dernière vérification des valeurs du barème (voir le niveau de vérification ligne par ligne ci-dessus).']],
     ['2026', 'Règles prises en compte', ['À compter du 01/09/2026 : plafonds de durée après rupture conventionnelle (456 j et 624 j) et Scop pour l’ARCE.', 'À compter du 01/07/2026 : congé supplémentaire de naissance (traitement détaillé non intégré, à confirmer).', 'À compter du 01/04/2026 : primo-entrants (108 jours ou 758 heures, minimum 152 jours).', 'Démission : abandon de poste présumé démission, projet professionnel, réexamen après 121 jours.']]
@@ -12354,6 +12351,27 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
 })();
 
 </script>
+<style>
+.ft-hsearch{position:relative;display:flex;align-items:center;gap:8px;width:100%;max-width:440px;height:36px;padding:0 10px 0 12px;border-radius:12px;background:rgba(15,23,42,.55);border:1px solid rgba(148,163,184,.25);color:#94a3b8;cursor:text;transition:border-color .15s,background .15s}
+.ft-hsearch:hover,.ft-hsearch:focus-within{border-color:rgba(103,232,249,.6);background:rgba(15,23,42,.8)}
+.ft-hsearch input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#e2e8f0;font-size:13px;cursor:text}
+.ft-hsearch input::placeholder{color:#94a3b8}
+.ft-hsearch kbd{display:none;flex:none;font:600 10.5px/1 system-ui,sans-serif;padding:4px 6px;border-radius:6px;border:1px solid rgba(148,163,184,.3);color:#94a3b8}
+@media (min-width:1440px){.ft-hsearch kbd{display:inline-block}}
+@media (max-width:1279px){.ft-hsearch{width:38px;max-width:38px;padding:0;justify-content:center;cursor:pointer}.ft-hsearch input,.ft-hsearch kbd{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}}
+html.theme-light .ft-hsearch{background:#fff;border-color:#cbd5e1;color:#64748b}
+html.theme-light .ft-hsearch:hover,html.theme-light .ft-hsearch:focus-within{border-color:#3b82f6;background:#fff}
+html.theme-light .ft-hsearch input{color:#0f172a}
+html.theme-light .ft-hsearch input::placeholder,html.theme-light .ft-hsearch kbd{color:#64748b}
+</style>
+<script>
+document.addEventListener('click', function (e) { var l = e.target.closest && e.target.closest('.ft-hsearch'); if (l) { e.preventDefault(); window.ftHeaderSearch(); } });
+window.ftHeaderSearch = function () {
+  var h = document.getElementById('ft-header-search');
+  if (h) h.blur();
+  if (typeof window.ftPalOpen === 'function') window.ftPalOpen();
+};
+</script>
 <!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
 <style>
 #ft-news{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.6);backdrop-filter:blur(3px);opacity:0;transition:opacity .25s ease}
@@ -12386,6 +12404,10 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.3', date: '12/11/2026', items: [
+      'Barre du haut : le bandeau du barème Unédic et le nombre de modèles sont remplacés par une barre de recherche.',
+      'Un clic dessus ouvre la recherche globale : outils, règles et modèles de mail (aussi avec Ctrl+K).'
+    ] },
     { v: '2026-11-12.2', date: '12/11/2026', items: [
       'Nouvelle fenêtre « Nouveautés » : elle s’ouvre une seule fois après chaque mise à jour du site pour présenter les changements.',
       'Bandeau « Nouvelle version disponible » sur la version en ligne : un clic sur « Recharger » suffit pour passer à la dernière version.',
