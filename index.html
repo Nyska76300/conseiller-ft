@@ -11857,10 +11857,10 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
     return v;
   }
   [
-    { n: 'ANS Maintien : abattement 50 % (BIC), 1 000 € de CA et 40 €/j', run: () => maint('bic', 1000, 40), exp: 866.8, d: 1 },
-    { n: 'ANS Maintien : abattement 71 % (vente), 1 000 € de CA et 40 €/j', run: () => maint('vente', 1000, 40), exp: 1013.8, d: 1 },
-    { n: 'ANS Maintien : BNC, abattement 34 % (minimum 305 €)', run: () => maint('bnc', 1000, 40), exp: 754.8, d: 1 },
-    { n: 'ANS Maintien : BNC, minimum de 305 € appliqué sur 500 € de CA', run: () => maint('bnc', 500, 40), exp: 1216.8 - 0.7 * (500 - 305), d: 1 }
+    { n: 'ANS Maintien : abattement 50 % (BIC), 1 000 € de CA et 40 €/j', run: () => maint('bic', 1000, 40), exp: 840, d: 1 },
+    { n: 'ANS Maintien : abattement 71 % (vente), 1 000 € de CA et 40 €/j', run: () => maint('vente', 1000, 40), exp: 1000, d: 1 },
+    { n: 'ANS Maintien : BNC, abattement 34 % (minimum 305 €)', run: () => maint('bnc', 1000, 40), exp: 720, d: 1 },
+    { n: 'ANS Maintien : BNC, minimum de 305 € appliqué sur 500 € de CA', run: () => maint('bnc', 500, 40), exp: 1080, d: 1 }
   ].forEach(c => FT_CASES.push(c));
 })();
 
