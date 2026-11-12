@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.22">
+  <meta name="ft-version" content="2026-11-12.23">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -13041,6 +13041,16 @@ html.theme-light #view-sources .sv-src{color:#64748b}
 .fh-rr span{color:#b8c5de}.fh-rr b{color:#fff;font-weight:700;white-space:nowrap;text-align:right}
 html.theme-light .fh-rr span{color:#475569}html.theme-light .fh-rr b{color:#0f172a}
 html.theme-light .fh-rep .fh-dico{background:#fef3c7;color:#b45309}
+/* ---------- Fond de page : dégradé plus marqué ---------- */
+html:not(.theme-light){background:
+  radial-gradient(1100px 760px at 92% 110%, rgba(59,130,246,.42), transparent 62%),
+  radial-gradient(900px 600px at 0% -10%, rgba(34,211,238,.16), transparent 60%),
+  radial-gradient(700px 500px at 55% 45%, rgba(37,99,235,.10), transparent 70%),
+  linear-gradient(150deg, #01030d 0%, #031137 28%, #072063 56%, #0c3392 82%, #1a4fbf 100%) fixed !important}
+html.theme-light{background:
+  radial-gradient(1000px 700px at 95% 110%, rgba(59,130,246,.22), transparent 62%),
+  radial-gradient(800px 560px at 0% -10%, rgba(34,211,238,.14), transparent 60%),
+  linear-gradient(160deg, #ffffff 0%, #eef5fe 30%, #d6e7fb 62%, #b7d3f6 100%) fixed !important}
 /* ---------- Liens cliquables dans les mails ---------- */
 #preview-body a.ft-link{color:#67e8f9;text-decoration:underline;text-underline-offset:3px;word-break:break-all;cursor:pointer}
 #preview-body a.ft-link:hover{color:#a5f3fc}
@@ -13227,7 +13237,7 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
       take('.home-top', R);
       // Droite : carte « Quoi de neuf ? »
       let nw = R.querySelector(':scope > .fh-news'); const nh = newsHtml();
-      if (nh) { if (nw) nw.outerHTML = nh; else R.insertAdjacentHTML('beforeend', nh); }
+      if (nh) { if (nw) nw.remove(); R.insertAdjacentHTML('beforeend', nh); }
     } catch (e) { console.warn('Accueil :', e); }
     busy = false;
   }
@@ -13659,6 +13669,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.23', date: '12/11/2026', items: [
+      'Fond de page : dégradé de bleu plus marqué sur tout le site, en thème sombre comme en thème clair.'
+    ] },
     { v: '2026-11-12.22', date: '12/11/2026', items: [
       'La pension d’invalidité rejoint la rubrique « Ouverture de droits » (menu Outils, onglets de la rubrique et accueil).'
     ] },
