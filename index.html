@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.17">
+  <meta name="ft-version" content="2026-11-12.18">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12963,6 +12963,8 @@ html.theme-light .lk-t small,html.theme-light .lk-empty,html.theme-light .lk-for
 html.theme-light .lk-btn,html.theme-light .fh-links .lk-manage{border-color:#cbd5e1;color:#334155}
 html.theme-light .lk-form{background:#eff6ff}
 html.theme-light .lk-form input{background:#fff;border-color:#cbd5e1;color:#0f172a}
+/* ---------- « Mes données » : uniquement sur la page Mails ---------- */
+html[data-tab]:not([data-tab="cvm"]) #data-btn{display:none!important}
 /* ---------- Menu Outils élargi (+2 cm) ---------- */
 #burger-nav-drawer{width:396px!important;max-width:94vw!important}
 /* ---------- Calculatrice agrandie ---------- */
@@ -13196,7 +13198,8 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
   const mo = new MutationObserver(() => { if (!busy) setTimeout(layout, 0); });
   function watch() { const m = $('home-main'); if (m) mo.observe(m, { childList: true }); }
   const _sw = switchNavTab;
-  switchNavTab = function () { const r = _sw.apply(this, arguments); try { applyLabels(); } catch (e) {} try { if (String(activeNavTab) === 'home') layout(); } catch (e) {} return r; };
+  const markTab = () => { try { document.documentElement.dataset.tab = String(activeNavTab); } catch (e) {} };
+  switchNavTab = function () { const r = _sw.apply(this, arguments); markTab(); try { applyLabels(); } catch (e) {} try { if (String(activeNavTab) === 'home') layout(); } catch (e) {} return r; };
 
   /* ---------- Liens cliquables dans les mails ---------- */
   const URL_RE = /(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+|[\w.+-]+@[\w-]+(?:\.[\w-]+)+|\b(?:[a-z0-9-]+\.)+(?:gouv\.fr|fr|com|org|net|eu)\b(?:\/[^\s<>"']*)?)/gi;
@@ -13364,6 +13367,7 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
   }
   new MutationObserver(svPrep).observe(document.body, { childList: true, subtree: true });
   function start() {
+    markTab();
     try { applyLabels(); sortMenu(); watchMenu(); adminBar(); } catch (e) {}
     try { populateCategorySelect(); } catch (e) {}
     try { linkify($('preview-body')); } catch (e) {}
@@ -13404,6 +13408,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.18', date: '12/11/2026', items: [
+      'Barre du haut : le bouton « Mes données : sauvegarde et confidentialité » n’apparaît plus que sur la page des mails (CVM Direct).'
+    ] },
     { v: '2026-11-12.17', date: '12/11/2026', items: [
       'Accueil : la carte « Références et calculs » est retirée (toujours accessible par le menu Outils).',
       'Accueil : nouveaux boutons de simulateurs, plus modernes : icône colorée, effet au survol et flèche d’accès.'
