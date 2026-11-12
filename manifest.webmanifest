@@ -1,0 +1,17 @@
+{
+  "name": "Espace Conseiller France Travail",
+  "short_name": "Conseiller FT",
+  "description": "Modèles de mails, simulateurs et repères réglementaires pour les conseillers indemnisation.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#031137",
+  "theme_color": "#031137",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

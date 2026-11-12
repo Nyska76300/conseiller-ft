@@ -4,7 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#031137">
-  <meta name="ft-version" content="2026-11-12.32">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Conseiller FT">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="ft-version" content="2026-11-12.33">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -14168,6 +14175,63 @@ html.theme-light .ft-mail-btns .ft-mail-copy{color:#fff}
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build); else build();
 })();
 </script>
+<style>
+/* ---------- Application installée (écran d'accueil) : encoche et barre du bas ---------- */
+body>header{height:calc(3.5rem + env(safe-area-inset-top))!important;padding-top:env(safe-area-inset-top)!important}
+body{padding-bottom:env(safe-area-inset-bottom)}
+@media (max-width:640px){
+  #ft-more{top:calc(60px + env(safe-area-inset-top))!important}
+  #view-cvm #left-nav-menu{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+}
+#ft-install{position:fixed;inset:0;z-index:95;display:none;align-items:flex-end;justify-content:center;background:rgba(2,6,23,.6);padding:16px 12px calc(16px + env(safe-area-inset-bottom))}
+#ft-install.on{display:flex}
+#ft-install .fi-box{width:min(420px,100%);border-radius:18px;border:1px solid #24345f;background:#081028;color:#e8eef9;padding:20px 20px 16px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+#ft-install h3{display:flex;align-items:center;gap:12px;font-size:17px;font-weight:800;margin:0 0 14px}
+#ft-install h3 img{width:44px;height:44px;border-radius:11px}
+#ft-install ol{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+#ft-install li{display:flex;gap:12px;align-items:flex-start;font-size:14px;line-height:1.45;color:#cbd5e1}
+#ft-install li b{color:#fff}
+#ft-install li span.n{flex:none;width:24px;height:24px;border-radius:50%;background:rgba(59,130,246,.2);color:#93c5fd;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
+#ft-install button{margin-top:16px;width:100%;height:44px;border-radius:12px;border:0;background:#2563eb;color:#fff;font:700 14px inherit;font-family:inherit}
+html.theme-light #ft-install .fi-box{background:#fff;border-color:#cbd5e1;color:#0f172a}
+html.theme-light #ft-install li{color:#334155} html.theme-light #ft-install li b{color:#0f172a}
+</style>
+<script>
+(function () {
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  }
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  if (standalone) document.documentElement.classList.add('ft-app');
+  window.ftInstallHelp = function () {
+    let o = document.getElementById('ft-install');
+    if (!o) {
+      const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const share = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
+      const steps = ios
+        ? ['Ouvrez ce site dans <b>Safari</b>.', 'Touchez le bouton <b>Partager</b> ' + share + ' en bas de l’écran.', 'Choisissez <b>Sur l’écran d’accueil</b>, puis <b>Ajouter</b>.']
+        : ['Ouvrez le menu du navigateur (<b>⋮</b>).', 'Choisissez <b>Installer l’application</b> ou <b>Ajouter à l’écran d’accueil</b>.', 'Confirmez.'];
+      o = document.createElement('div'); o.id = 'ft-install';
+      o.innerHTML = '<div class="fi-box" role="dialog" aria-label="Installer l’application"><h3><img src="icons/apple-touch-icon.png" alt="">Installer sur l’écran d’accueil</h3><ol>' +
+        steps.map((t, i) => '<li><span class="n">' + (i + 1) + '</span><span>' + t + '</span></li>').join('') +
+        '</ol><button type="button">J’ai compris</button></div>';
+      o.addEventListener('click', e => { if (e.target === o || e.target.tagName === 'BUTTON') o.classList.remove('on'); });
+      document.body.appendChild(o);
+    }
+    o.classList.add('on');
+  };
+  // Entrée « Installer » dans le menu ⋯ (seulement quand le site n'est pas déjà installé)
+  function addItem() {
+    const m = document.getElementById('ft-more'); if (!m) return setTimeout(addItem, 300);
+    if (standalone || m.querySelector('[data-k="install"]')) return;
+    const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'menuitem'); b.dataset.k = 'install';
+    b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M12 7v7M9 11l3 3 3-3"/></svg><span>Installer sur l’écran d’accueil</span>';
+    b.addEventListener('click', e => { e.stopPropagation(); document.documentElement.classList.remove('ft-more-on'); setTimeout(window.ftInstallHelp, 30); });
+    m.insertBefore(b, m.firstChild);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', addItem); else addItem();
+})();
+</script>
 <!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
 <style>
 #ft-news{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.6);backdrop-filter:blur(3px);opacity:0;transition:opacity .25s ease}
@@ -14200,6 +14264,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.33', date: '12/11/2026', items: [
+      'Le site s’installe comme une application sur iPhone et Android : icône « Conseiller FT », ouverture en plein écran, consultation possible sans réseau. Mode d’emploi dans le menu « ⋯ » → Installer sur l’écran d’accueil.'
+    ] },
     { v: '2026-11-12.32', date: '12/11/2026', items: [
       'Téléphone : la barre du haut tient entièrement dans l’écran. Les outils qui manquaient (recherche, date à date, calculatrice, repères, mes données, thème, recharger) sont dans le bouton « ⋯ ».'
     ] },
