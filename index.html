@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-12.39">
+  <meta name="ft-version" content="2026-11-12.40">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -14096,9 +14096,32 @@ html.theme-light .fr-src{color:#64748b} html.theme-light .fr-src a{color:#0369a1
   }
 
   /* ---------- Trop-perçus ---------- */
+  /* Motifs de trop-perçu (causes recensées par France Travail et l’Unédic) : [code, libellé de la liste, phrase du mail] */
+  const TP_MOTIFS = [
+    ['', 'Choisir un motif…', ''],
+    ['reprise', 'Reprise d’activité non déclarée ou déclarée tardivement', 'une reprise d’activité qui n’a pas été déclarée, ou l’a été tardivement, lors de votre actualisation'],
+    ['ecart', 'Écart entre revenus déclarés et bulletin de salaire', 'un écart entre les revenus déclarés lors de votre actualisation et ceux qui figurent sur votre bulletin de salaire'],
+    ['bulletin', 'Bulletin de salaire transmis tardivement', 'la transmission tardive de votre bulletin de salaire, qui n’a pas permis de calculer à temps le montant dû'],
+    ['ans', 'Activité non salariée ou chiffre d’affaires non déclaré', 'des revenus d’activité non salariée (chiffre d’affaires) qui n’ont pas été déclarés'],
+    ['maladie', 'Arrêt maladie, maternité ou accident du travail non signalé', 'un arrêt de travail (maladie, maternité ou accident) indemnisé par l’Assurance maladie et non signalé'],
+    ['retraite', 'Retraite liquidée ou taux plein atteint', 'la liquidation de votre retraite, ou l’atteinte du nombre de trimestres pour une retraite à taux plein'],
+    ['invalidite', 'Pension d’invalidité non signalée ou modifiée', 'une pension d’invalidité, ou un changement de catégorie ou de montant, qui n’avait pas été pris en compte'],
+    ['attestation', 'Attestation employeur rectificative', 'une attestation employeur rectificative qui modifie votre salaire de référence ou vos dates de contrat'],
+    ['differe', 'Indemnités de rupture ou congés payés pris en compte après coup', 'des indemnités de rupture ou de congés payés connues après l’ouverture de vos droits, qui reportent le début de votre indemnisation'],
+    ['formation', 'Formation rémunérée par un autre organisme', 'une formation rémunérée par un autre organisme pendant une période où l’allocation vous a été versée'],
+    ['etranger', 'Séjour à l’étranger ou changement de résidence non signalé', 'un séjour à l’étranger ou un changement de résidence qui n’a pas été signalé'],
+    ['sanction', 'Radiation ou sanction appliquée après versement', 'une radiation ou une sanction prise en compte après le versement de votre allocation'],
+    ['erreur', 'Erreur de calcul ou de traitement de France Travail', 'une erreur de calcul ou de traitement de nos services, dont nous vous prions de nous excuser'],
+    ['autre', 'Autre motif (à préciser)', '']
+  ];
+  function tpMotif() {
+    const k = val('tp-motif'), w = $('tp-autre-w'); if (w) w.hidden = k !== 'autre';
+    if (k === 'autre') return val('tp-autre').trim();
+    const m = TP_MOTIFS.find(x => x[0] === k); return m ? m[2] : '';
+  }
   function induSim() {
     return cols(
-      sec('1', 'Trop-perçu notifié', grid(field('Montant (€)', inp('tp-mt', 'number', 'Ex. 845,20', ' min="0" step="0.01" inputmode="decimal"')) + field('Période concernée', inp('tp-per', 'text', 'Ex. mars à mai 2026')) + '<div class="sm:col-span-2">' + field('Motif', inp('tp-motif', 'text', 'Ex. reprise d’activité déclarée tardivement')) + '</div>'), 'Pour le mail') +
+      sec('1', 'Trop-perçu notifié', grid(field('Montant (€)', inp('tp-mt', 'number', 'Ex. 845,20', ' min="0" step="0.01" inputmode="decimal"')) + field('Période concernée', inp('tp-per', 'text', 'Ex. mars à mai 2026')) + '<div class="sm:col-span-2">' + field('Motif du trop-perçu', sel('tp-motif', TP_MOTIFS.map(m => [m[0], m[1]]))) + '</div><div class="sm:col-span-2" id="tp-autre-w" hidden>' + field('Préciser le motif', inp('tp-autre', 'text', 'Ex. versement en double à la suite d’une régularisation')) + '</div>'), 'Pour le mail') +
       sec('2', 'Prescription', grid(field('Versement le plus ancien', inp('tp-v', 'date')) + field('Date de la notification', inp('tp-n', 'date')) + field('Fraude ou fausse déclaration', sel('tp-fr', [['non', 'Non'], ['oui', 'Oui']]))), '3 ans · 10 ans si fraude'),
       '<div id="tp-res" class="space-y-4"></div>' + mailPanel('indu'));
   }
@@ -14110,7 +14133,7 @@ html.theme-light .fr-src{color:#64748b} html.theme-light .fr-src a{color:#0369a1
     h += sec('€', 'Délais et seuils', tiles([['Délai applicable', r ? r.ans + ' ans' : '—', r && r.ans === 10 ? 'Fraude ou fausse déclaration' : 'Cas général', 'text-cyan-300'], ['Montant', mt ? eur(mt) : '—', r && r.petit ? 'Inférieur à 77 € : non récupéré' : 'Seuil de récupération 77 €', r && r.petit ? 'text-emerald-400' : 'text-amber-300']]) +
       (r ? rows([['Versement le plus ancien', fdate(pdate(val('tp-v')))], ['Notification', fdate(pdate(val('tp-n')) || new Date())], ['Sommes prescrites si versées avant le', fdate(r.seuil), 'text-amber-300']]) : ''), 'justice.fr');
     $('tp-res').innerHTML = h;
-    setMail('indu', !mt ? '' : 'Un trop-perçu de ' + eur(mt) + ' a été constaté sur votre dossier' + (val('tp-per') ? ', pour la période de ' + val('tp-per') : '') + '.' + (val('tp-motif') ? '\n\nIl résulte de la situation suivante : ' + val('tp-motif') + '.' : '') + '\n\nVous avez plusieurs possibilités :\n- rembourser cette somme en une fois ou demander un échéancier adapté à votre situation ;\n- accepter une retenue sur vos prochaines allocations : le questionnaire joint à la notification nous permet d’en calculer le montant ;\n- demander une remise totale ou partielle de la dette, en expliquant votre situation ;\n- contester ce trop-perçu par un courrier argumenté adressé à votre agence. Si notre réponse ne vous satisfait pas, vous pourrez saisir le médiateur de France Travail.\n\nSans réponse de votre part, une procédure de recouvrement pourra être engagée.');
+    setMail('indu', !mt ? '' : 'Un trop-perçu de ' + eur(mt) + ' a été constaté sur votre dossier' + (val('tp-per') ? ', pour la période de ' + val('tp-per') : '') + '.' + (tpMotif() ? '\n\nCe trop-perçu s’explique par ' + tpMotif().replace(/\.$/, '') + '.' : '') + '\n\nVous avez plusieurs possibilités :\n- rembourser cette somme en une fois ou demander un échéancier adapté à votre situation ;\n- accepter une retenue sur vos prochaines allocations : le questionnaire joint à la notification nous permet d’en calculer le montant ;\n- demander une remise totale ou partielle de la dette, en expliquant votre situation ;\n- contester ce trop-perçu par un courrier argumenté adressé à votre agence. Si notre réponse ne vous satisfait pas, vous pourrez saisir le médiateur de France Travail.\n\nSans réponse de votre part, une procédure de recouvrement pourra être engagée.');
   }
   function induRegles() {
     return cols(
@@ -14258,7 +14281,7 @@ html.theme-light .fr-src{color:#64748b} html.theme-light .fr-src a{color:#0369a1
       if (del && !built) {
         built = true;
         box.innerHTML = '<p class="max-w-7xl mx-auto text-xs text-slate-400">Prescription de 3 ou 10 ans, retenue sur allocations, remise de dette, contestation et médiateur, avec un mail type pour l’allocataire.</p>' + induSim() + '<div class="h-2"></div>' + induRegles();
-        ['tp-mt', 'tp-per', 'tp-motif', 'tp-v', 'tp-n', 'tp-fr'].forEach(id => { const e = $(id); if (e) { e.addEventListener('input', induRun); e.addEventListener('change', induRun); } });
+        ['tp-mt', 'tp-per', 'tp-motif', 'tp-autre', 'tp-v', 'tp-n', 'tp-fr'].forEach(id => { const e = $(id); if (e) { e.addEventListener('input', induRun); e.addEventListener('change', induRun); } });
         induRun();
       }
     }
@@ -15177,6 +15200,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.40', date: '12/11/2026', items: [
+      'Trop-perçu, volet « Délais et recours » : le motif se choisit dans une liste (reprise d’activité, écart de revenus, arrêt maladie, retraite, attestation rectificative…), avec « Autre » pour préciser. Le mail reprend la formulation adaptée.'
+    ] },
     { v: '2026-11-12.39', date: '12/11/2026', items: [
       'Le bouton « Se connecter » ouvre de nouveau l’écran de connexion.',
       'Trop-perçu : l’outil (ex-« Indus ») rejoint la rubrique « Ouverture de droits » et réunit l’échéancier et un nouveau volet « Délais et recours » (prescription, remise, contestation, mail type).'
