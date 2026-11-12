@@ -61,3 +61,18 @@ create policy "voir les propositions" on public.template_proposals for select to
   using (proposed_by = auth.uid() or exists (select 1 from public.app_admins a where a.user_id = auth.uid()));
 create policy "traiter les propositions" on public.template_proposals for delete to authenticated
   using (proposed_by = auth.uid() or exists (select 1 from public.app_admins a where a.user_id = auth.uid()));
+
+-- 6. Statistiques d'équipe (administrateur) : ouvertures d'outils cumulées, sans nom ni donnée d'allocataire
+create or replace function public.team_usage()
+returns table(tool text, uses bigint, users bigint)
+language sql security definer set search_path = public as $$
+  select e.key as tool, sum((e.value)::bigint) as uses, count(distinct u.user_id) as users
+  from public.user_data u
+  cross join lateral jsonb_each_text(coalesce((u.data->>'ft_tool_use')::jsonb, '{}'::jsonb)) as e(key, value)
+  where exists (select 1 from public.app_admins a where a.user_id = auth.uid())
+    and e.value ~ '^[0-9]+$'
+  group by e.key
+  order by uses desc;
+$$;
+revoke all on function public.team_usage() from public;
+grant execute on function public.team_usage() to authenticated;
