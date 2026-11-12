@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.26">
+  <meta name="ft-version" content="2026-11-12.27">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -2404,6 +2404,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
       </div>
 
       <div class="flex-1 overflow-y-auto p-4 md:p-6">
+        <div class="max-w-7xl mx-auto"><div class="ft-dem-seuils"><div class="ft-ds"><span class="ft-ds-k">Démission avant toute ouverture de droits</span><strong>65 jours ou 455 heures</strong><span class="ft-ds-t">retravaillés depuis le dernier départ volontaire pour pouvoir ouvrir un droit.</span></div><div class="ft-ds ft-ds-new"><span class="ft-ds-k">Démission d’un emploi repris en cours d’indemnisation</span><strong>88 jours ou 610 heures au plus</strong><span class="ft-ds-t">L’indemnisation se poursuit si l’emploi quitté n’a pas dépassé 4 mois. Depuis le 1er avril 2025 (avant : 65 j ou 455 h).</span></div></div></div>
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5">
           <div class="lg:col-span-7 space-y-3">
             <div class="flex items-center justify-between px-1">
@@ -13123,6 +13124,7 @@ details.mt-strip > summary,details.mt-strip > div{padding-left:var(--ft-pad)!imp
 [id^="view-"] textarea{border-radius:10px!important;border:1px solid var(--ft-card-b)!important;background-color:var(--ft-in)!important;color:#e8eef9!important;font-size:14px!important}
 [id^="view-"] input:focus,[id^="view-"] select:focus,[id^="view-"] textarea:focus{outline:0!important;border-color:#67e8f9!important;box-shadow:0 0 0 3px rgba(103,232,249,.18)!important}
 [id^="view-"] input[type="checkbox"],[id^="view-"] input[type="radio"],[id^="view-"] input[type="range"]{min-height:0;padding:0!important}
+[id^="view-"] input.pl-7{padding-left:30px!important}[id^="view-"] input.pl-8{padding-left:34px!important}[id^="view-"] input.pl-9{padding-left:38px!important}[id^="view-"] input.pl-10{padding-left:42px!important}
 /* Onglets internes (Simulateur, Règles…) */
 .rg-tab{border-radius:10px!important;font-size:13.5px!important;font-weight:600!important;padding:9px 14px!important}
 /* Thème clair */
@@ -13131,6 +13133,23 @@ html.theme-light .rg-panel + div.border-b h2{color:#0f172a}
 html.theme-light details.mt-strip{background:rgba(255,255,255,.92)!important;border-color:#d6e2f0!important;color:#0f172a!important}
 html.theme-light details.mt-strip summary{color:#0f172a!important}
 html.theme-light [id^="view-"] input,html.theme-light [id^="view-"] select,html.theme-light [id^="view-"] textarea{color:#0f172a!important}
+/* ---------- Démission : les deux seuils ---------- */
+.ft-dem-seuils{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.ft-ds{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-radius:14px;border:1px solid #24345f;background:rgba(12,24,60,.78)}
+.ft-ds-k{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#93c5fd}
+.ft-ds strong{font-size:20px;color:#fff}
+.ft-ds-t{font-size:13px;color:#b8c5de;line-height:1.45}
+.ft-ds-new{border-color:rgba(52,211,153,.45)}.ft-ds-new .ft-ds-k{color:#6ee7b7}
+@media (max-width:760px){.ft-dem-seuils{grid-template-columns:minmax(0,1fr)}}
+html.theme-light .ft-ds{background:#fff;border-color:#d6e2f0}html.theme-light .ft-ds strong{color:#0f172a}html.theme-light .ft-ds-t{color:#475569}
+html.theme-light .ft-ds-k{color:#1d4ed8}html.theme-light .ft-ds-new{border-color:#6ee7b7}html.theme-light .ft-ds-new .ft-ds-k{color:#047857}
+/* ---------- Mail à droite sur les pages déroulantes ---------- */
+@media (min-width:1100px){
+  .ft-split{max-width:1480px!important;display:grid!important;grid-template-columns:minmax(0,1fr) 420px;column-gap:22px;align-items:start}
+  .ft-split > :not(.ft-mail){grid-column:1}
+  .ft-split > .ft-mail{grid-column:2;grid-row:1 / span 40;position:sticky;top:12px;margin:0}
+  .ft-split > .ft-mail textarea{min-height:360px;max-height:calc(100vh - 240px)}
+}
 /* ---------- Liens cliquables dans les mails ---------- */
 #preview-body a.ft-link{color:#67e8f9;text-decoration:underline;text-underline-offset:3px;word-break:break-all;cursor:pointer}
 #preview-body a.ft-link:hover{color:#a5f3fc}
@@ -13265,7 +13284,7 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
     const n = v => String(v).replace('.', ',');
     const e2 = v => Number(v).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
     const G = B ? [
-      ['Ouverture de droits', 'fh-c1', [['Affiliation', B.affiliation.jours + ' j / ' + B.affiliation.heures + ' h'], ['Saisonniers, primo-entrants', B.affiliation.joursSais + ' j / ' + B.affiliation.heuresSais + ' h'], ['Après démission', '65 j / 455 h'], ['Réexamen démission', '121 jours'], ['Délai d’inscription', '12 mois']]],
+      ['Ouverture de droits', 'fh-c1', [['Affiliation', B.affiliation.jours + ' j / ' + B.affiliation.heures + ' h'], ['Saisonniers, primo-entrants', B.affiliation.joursSais + ' j / ' + B.affiliation.heuresSais + ' h'], ['Après une démission (avant ouverture de droits)', '65 j / 455 h'], ['Démission d’un emploi repris en cours de droits', '88 j / 610 h max.'], ['Réexamen démission', '121 jours'], ['Délai d’inscription', '12 mois']]],
       ['Allocation', 'fh-c2', [['ARE par jour', e2(B.are.min) + ' à ' + e2(B.are.max)], ['Partie fixe', e2(B.are.partieFixe)], ['Durée max. (< 55 / 55-56 / 57 ans et +)', B.duree.max.u55 + ' / ' + B.duree.max.a55 + ' / ' + B.duree.max.a57 + ' j'], ['Rupture conventionnelle', B.duree.rci.u55 + ' / ' + B.duree.rci.a55 + ' j'], ['Dégressivité', '−' + Math.round((1 - B.degr.coef) * 100) + ' % dès le ' + B.degr.moisDebut + 'e mois']]],
       ['Différés', 'fh-c4', [['Délai d’attente', B.differe.attente + ' jours'], ['Congés payés', B.differe.cpMax + ' j maximum'], ['Supra-légal', 'max. ' + B.differe.specMax + ' j (' + B.differe.specMaxEco + ' j éco)'], ['Diviseur supra-légal', n(B.differe.diviseur)]]],
       ['Cumul et autres', 'fh-c6', [['Cumul avec un salaire', Math.round(B.cumul.remun * 100) + ' % du brut déduit'], ['Mois indemnisé', B.cumul.base + ' jours'], ['Plafond du cumul', 'SJR × 30,42'], ['Retraite complémentaire', n(Math.round(B.retenues.retraiteCompl * 1000) / 10) + ' % du SJR'], ['ARCE', Math.round(B.cumul.arce * 100) + ' % du reliquat']]]
@@ -13716,6 +13735,7 @@ html.theme-light .inv-card a{color:#1d4ed8}
   try {
     (window.FT_SOURCES || []).push(
       ['Invalidité', 'Conditions et catégories', 'Incapacité d’au moins 2/3, 12 mois d’immatriculation, 600 h ou 2 030 × Smic horaire ; catégories 1 (30 %), 2 (50 %), 3 (50 % + tierce personne) ; montants au 01/04/2026', 'service-public.gouv.fr (vérifié le 01/04/2026)', 'Vérifié'],
+      ['Démission', 'Départ volontaire d’un emploi repris en cours de droits', 'Indemnisation maintenue si l’emploi quitté n’a pas dépassé 88 jours ou 610 heures (4 mois), depuis le 01/04/2025 ; 65 jours ou 455 heures pour neutraliser une démission avant ouverture de droits', 'Unédic (convention du 15/11/2024)', 'Vérifié'],
       ['Invalidité', 'Cumul avec l’ARE', '1re catégorie : cumul intégral ; 2e et 3e : cumul intégral si la pension était cumulée avec les revenus de l’activité, sinon déduite en totalité', 'francetravail.fr et Unédic (règlement, art. 18 § 2)', 'Vérifié']);
   } catch (e) {}
   try {
@@ -13757,8 +13777,8 @@ html.theme-light .ft-mail-btns .ft-mail-copy{color:#fff}
   const num = v => { const n = parseFloat(String(v || '').replace(/\s/g, '').replace(',', '.')); return isNaN(n) ? 0 : n; };
   const eur = n => (Math.round(n * 100) / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
   const vis = el => !!(el && el.offsetParent);
-  const HELLO = 'Madame, Monsieur,\n\n';
-  const BYE = '\n\nCes éléments vous sont communiqués à titre indicatif : seule la notification de vos droits fait foi.\n\nCordialement,\nVotre conseiller France Travail';
+  const HELLO = '';
+  const BYE = '\n\nCes éléments vous sont communiqués à titre indicatif : seule la notification de vos droits fait foi.';
   const fd = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return m ? m[3] + '/' + m[2] + '/' + m[1] : iso; };
   const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
   const moisLbl = v => { const m = /^(\d{4})-(\d{2})/.exec(v || ''); return m ? MOIS[+m[2] - 1] + ' ' + m[1] : ''; };
@@ -13846,7 +13866,7 @@ html.theme-light .ft-mail-btns .ft-mail-copy{color:#fff}
     cspRec() {
       if (!vis($('csp-subview-reclass'))) return '';
       const n = T('csp-rec-adviser-note'); if (!n || !num(T('csp-rec-nouveau-salaire'))) return '';
-      return HELLO + n.replace(/^Madame, Monsieur,?\s*/i, '') + BYE;
+      return n.replace(/^Madame, Monsieur,?\s*/i, '').replace(/\s*(Cordialement|Bien cordialement)[\s\S]*$/i, '').trim() + BYE;
     },
     droits() {
       const rc = $('rc-out'), as = $('as-out'); const parts = [];
@@ -13872,15 +13892,15 @@ html.theme-light .ft-mail-btns .ft-mail-copy{color:#fff}
   const SPOTS = [
     { key: 'od', tab: '1', host: () => document.querySelector('#od-subview-sim > div') },
     { key: 'delais', tab: 'delais', host: () => document.querySelector('#view-delais .reg-wrap') },
-    { key: 'complement', tab: '5', host: () => document.querySelector('#view-complement-are .wiz-wrap') },
-    { key: 'invalidite', tab: 'invalidite', host: () => $('inv-body') && $('inv-tabs') && $('inv-tabs').querySelector('.is-on') && /calcul/i.test($('inv-tabs').querySelector('.is-on').textContent) ? $('inv-body') : null },
+    { key: 'complement', tab: '5', split: true, host: () => document.querySelector('#view-complement-are .wiz-wrap') },
+    { key: 'invalidite', tab: 'invalidite', split: true, show: () => !!$('inv-aj'), host: () => document.querySelector('#view-invalidite .reg-wrap') },
     { key: 'ans', tab: '3', host: () => document.querySelector('#ans-subview-sim > div') },
-    { key: 'cns', tab: 'cns', host: () => $('cns-out') ? $('cns-out').parentElement : null },
+    { key: 'cns', tab: 'cns', split: true, show: () => !!$('cns-out'), host: () => document.querySelector('#view-cns .reg-wrap') },
     { key: 'cspSim', tab: '4', host: () => document.querySelector('#csp-subview-sim > div') },
     { key: 'cspRec', tab: '4', host: () => document.querySelector('#csp-subview-reclass > div') },
-    { key: 'droits', tab: 'droits', host: () => document.querySelector('#view-droits .reg-wrap') },
+    { key: 'droits', tab: 'droits', split: true, host: () => document.querySelector('#view-droits .reg-wrap') },
     { key: 'cfd', tab: 'cfd', host: () => $('cfd-panel') ? $('cfd-panel').parentElement : null },
-    { key: 'sjr', tab: 'sjr', host: () => $('sj-pane-sjr') }
+    { key: 'sjr', tab: 'sjr', split: true, show: () => !!($('sj-pane-sjr') && $('sj-pane-sjr').offsetParent), host: () => document.querySelector('#view-sjr .reg-wrap') }
   ];
   const ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>';
   const dirty = {};
@@ -13892,10 +13912,13 @@ html.theme-light .ft-mail-btns .ft-mail-copy{color:#fff}
       p.innerHTML = '<div class="ft-mail-h"><h3>' + ICO + 'Mail à l’allocataire</h3><span class="ft-mail-tag">Généré automatiquement, modifiable avant copie</span><div class="ft-mail-btns"><button type="button" class="ft-mail-regen">Régénérer</button><button type="button" class="ft-mail-copy">Copier le mail</button></div></div><div class="ft-mail-body"></div>';
       host.appendChild(p);
     }
+    if (sp.split) host.classList.add('ft-split');
     return p;
   }
   function fill(sp, force) {
     const p = ensure(sp); if (!p) return;
+    p.hidden = !!(sp.show && !sp.show());
+    if (p.hidden) return;
     if (dirty[sp.key] && !force) { p.querySelector('.ft-mail-regen').classList.add('is-warn'); return; }
     let txt = ''; try { txt = (GEN[sp.key]() || '').replace(/(\d)\.(\d{2}) €/g, '$1,$2 €'); } catch (e) { txt = ''; }
     const body = p.querySelector('.ft-mail-body');
@@ -13925,6 +13948,7 @@ html.theme-light .ft-mail-btns .ft-mail-copy{color:#fff}
   });
   const _sw = switchNavTab;
   switchNavTab = function () { const r = _sw.apply(this, arguments); setTimeout(() => refresh(false), 120); return r; };
+  ['invTab', 'cnsTab'].forEach(n => { const o = window[n]; if (typeof o === 'function') window[n] = function () { const r = o.apply(this, arguments); setTimeout(() => refresh(false), 60); return r; }; });
   window.ftMailGen = GEN; window.ftMailRefresh = refresh;
 })();
 </script>
@@ -13960,6 +13984,11 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.27', date: '12/11/2026', items: [
+      'Démission : nouveau seuil affiché pour l’emploi repris en cours de droits (88 jours ou 610 heures au plus, depuis le 1er avril 2025), à côté du seuil de 65 jours ou 455 heures (Repères de l’accueil, simulateur Démission, Sources).',
+      'Mails automatiques : sans formules de politesse.',
+      'Pages déroulantes (Complément ARE, Pension d’invalidité, Cumul CNS, Droits et passages, SJR) : le mail s’affiche à droite de l’écran et reste visible pendant la saisie.'
+    ] },
     { v: '2026-11-12.26', date: '12/11/2026', items: [
       'Écran de connexion : nouveau bouton « Créer un compte » pour que chaque conseiller ouvre son propre compte.'
     ] },
