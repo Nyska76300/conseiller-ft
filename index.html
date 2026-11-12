@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-12.43">
+  <meta name="ft-version" content="2026-11-12.44">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12672,7 +12672,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   function box(inner) {
     var w = document.getElementById('ft-auth');
     if (!w) { w = document.createElement('div'); w.id = 'ft-auth'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); document.body.appendChild(w); }
-    w.innerHTML = '<div class="fa-box"><div class="fa-logo">France <i>Travail</i></div>' + inner + '</div>';
+    w.innerHTML = '<div class="fa-box"><div class="fa-logo fa-logo-img"><img src="assets/logo-france-travail.png" alt="France Travail" onerror="this.parentNode.innerHTML=\'France <i>Travail</i>\';this.parentNode.classList.remove(\'fa-logo-img\')"></div>' + inner + '</div>';
     return w;
   }
   function closeBox() { var w = document.getElementById('ft-auth'); if (w) w.remove(); }
@@ -15078,6 +15078,8 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+#ft-auth .fa-logo.fa-logo-img{display:inline-flex;align-items:center;justify-content:center;background:#fff;border-radius:12px;padding:8px 16px;margin-bottom:14px}
+#ft-auth .fa-logo.fa-logo-img img{height:52px;width:auto;display:block}
 .mt-strip{display:none!important}
 .hdr-logo.ft-logo-plate{height:40px;padding:3px 12px}
 .hdr-logo .ft-logo-img{height:34px!important}
@@ -15206,6 +15208,7 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.44', date: '12/11/2026', items: ['Logo France Travail officiel sur l’écran de connexion.'] },
     { v: '2026-11-12.43', date: '12/11/2026', items: ['Sur ordinateur, Dates, Calculatrice, Repères, thème et rechargement sont de retour dans la barre du haut ; le menu « ⋯ » reste sur téléphone.'] },
     { v: '2026-11-12.42', date: '12/11/2026', items: ['Les liens « Modèles CVM associés » ont été retirés des rubriques.'] },
     { v: '2026-11-12.41', date: '12/11/2026', items: [
