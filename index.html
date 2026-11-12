@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.21">
+  <meta name="ft-version" content="2026-11-12.22">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -13564,22 +13564,52 @@ html.theme-light .inv-card a{color:#1d4ed8}
     return r;
   };
 
-  /* Menu Outils : une rubrique dédiée */
+  /* Menu Outils : dans la rubrique « Ouverture de droits » */
+  const isOuv = el => /ouverture/i.test((el && (el.dataset.lbOrig || el.textContent)) || '');
   if (typeof renderBurgerTabs === 'function') {
     const _rb = renderBurgerTabs;
     renderBurgerTabs = function () {
       const r = _rb.apply(this, arguments);
-      const c = $('burger-tabs-list'); if (!c || c.querySelector('[data-inv-sec]')) return r;
+      const c = $('burger-tabs-list'); if (!c || c.querySelector("button[onclick=\"switchNavTab('invalidite')\"]")) return r;
+      const sec = [...c.querySelectorAll(':scope > .menu-sec')].find(x => isOuv(x.querySelector('.menu-sec-h')));
+      const list = sec && (sec.querySelector('.space-y-1\\.5') || sec.querySelector('.menu-sec-h + div')); if (!list) return r;
       const on = String(activeNavTab) === 'invalidite';
-      const sec = document.createElement('div'); sec.className = 'menu-sec'; sec.setAttribute('data-inv-sec', '1');
-      sec.innerHTML = '<div class="menu-sec-h">Pension d’invalidité</div><div class="space-y-1.5"><button onclick="switchNavTab(\'invalidite\')" class="w-full p-2.5 rounded-xl border text-left flex items-start gap-3 transition-all group ' + (on ? 'bg-gradient-to-r from-blue-900/60 to-cyan-950/60 border-cyan-500/50 shadow-md shadow-cyan-950/40' : 'bg-slate-900/60 hover:bg-slate-900 border-slate-800 hover:border-slate-700/80') + '"><div class="w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 ' + (on ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/50' : 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30') + '"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="4" r="1"/><path d="m18 19 1-7-6 1"/><path d="m5 8 3-3 5.5 3-2.36 3.5"/><path d="M4.24 14.5a5 5 0 0 0 6.88 6"/><path d="M13.76 17.5a5 5 0 0 0-6.88-6"/></svg></div><div class="min-w-0 flex-1"><div class="flex items-center gap-1.5"><span class="text-xs font-bold ' + (on ? 'text-white' : 'text-slate-200') + '">Pension d’invalidité</span></div><p class="text-[10px] text-slate-400 mt-0.5 leading-tight">Conditions, catégories, montants et cumul avec l’ARE</p></div></button></div>';
-      const secs = c.querySelectorAll(':scope > .menu-sec'); const last = secs[secs.length - 1];
-      if (last) last.after(sec); else c.appendChild(sec);
-      try { refreshIcons(); } catch (e) {}
+      const t = document.createElement('div');
+      t.innerHTML = '<button onclick="switchNavTab(\'invalidite\')" class="w-full p-2.5 rounded-xl border text-left flex items-start gap-3 transition-all group ' + (on ? 'bg-gradient-to-r from-blue-900/60 to-cyan-950/60 border-cyan-500/50 shadow-md shadow-cyan-950/40' : 'bg-slate-900/60 hover:bg-slate-900 border-slate-800 hover:border-slate-700/80') + '"><div class="w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 ' + (on ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/50' : 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30') + '"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="4" r="1"/><path d="m18 19 1-7-6 1"/><path d="m5 8 3-3 5.5 3-2.36 3.5"/><path d="M4.24 14.5a5 5 0 0 0 6.88 6"/><path d="M13.76 17.5a5 5 0 0 0-6.88-6"/></svg></div><div class="min-w-0 flex-1"><div class="flex items-center gap-1.5"><span class="text-xs font-bold ' + (on ? 'text-white' : 'text-slate-200') + '">Pension d’invalidité</span></div><p class="text-[10px] text-slate-400 mt-0.5 leading-tight">Conditions, catégories, montants et cumul avec l’ARE</p></div></button>';
+      list.appendChild(t.firstChild);
       return r;
     };
     try { renderBurgerTabs(); } catch (e) {}
   }
+  /* Onglet dans la barre de la rubrique « Ouverture de droits » */
+  function hubTabs() {
+    document.querySelectorAll('.hub-bar').forEach(bar => {
+      if (!isOuv(bar.querySelector('.hub-name'))) return;
+      if (!bar.querySelector('.hub-tab[data-t="invalidite"]')) {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'hub-tab'; b.dataset.t = 'invalidite';
+        b.setAttribute('onclick', "switchNavTab('invalidite')"); b.textContent = 'Pension d’invalidité';
+        bar.insertBefore(b, bar.querySelector(':scope > .hub-sub'));
+      }
+    });
+    if (!v.querySelector(':scope > .hub-bar')) {
+      const src = [...document.querySelectorAll('.hub-bar')].find(x => isOuv(x.querySelector('.hub-name')));
+      if (src) { const cl = src.cloneNode(true); const sub = cl.querySelector('.hub-sub'); if (sub) sub.remove(); v.insertBefore(cl, v.firstChild); }
+    }
+    const on = String(activeNavTab) === 'invalidite';
+    document.querySelectorAll('.hub-bar .hub-tab').forEach(t => {
+      if (t.dataset.t === 'invalidite') { t.classList.toggle('is-on', on); if (on) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current'); }
+      else if (on && t.closest('#view-invalidite')) { t.classList.remove('is-on'); t.removeAttribute('aria-current'); }
+    });
+  }
+  try { hubTabs(); } catch (e) {}
+  const _sw2 = switchNavTab;
+  switchNavTab = function () {
+    const r = _sw2.apply(this, arguments);
+    try { hubTabs(); } catch (e) {}
+    if (String(activeNavTab) === 'invalidite') { const n = $('header-active-tab-name'); if (n) n.textContent = 'Ouverture de droits · Pension d’invalidité'; }
+    try { if (window.ftApplyLabels) window.ftApplyLabels(); } catch (e) {}
+    return r;
+  };
 
   /* Sources et cas de contrôle */
   try {
@@ -13629,6 +13659,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.22', date: '12/11/2026', items: [
+      'La pension d’invalidité rejoint la rubrique « Ouverture de droits » (menu Outils, onglets de la rubrique et accueil).'
+    ] },
     { v: '2026-11-12.21', date: '12/11/2026', items: [
       'Pension d’invalidité : le calcul du cumul avec l’ARE s’ouvre en premier, avant les règles.'
     ] },
