@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.23">
+  <meta name="ft-version" content="2026-11-12.24">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -13051,6 +13051,49 @@ html.theme-light{background:
   radial-gradient(1000px 700px at 95% 110%, rgba(59,130,246,.22), transparent 62%),
   radial-gradient(800px 560px at 0% -10%, rgba(34,211,238,.14), transparent 60%),
   linear-gradient(160deg, #ffffff 0%, #eef5fe 30%, #d6e7fb 62%, #b7d3f6 100%) fixed !important}
+/* ================= Harmonisation visuelle de tous les onglets ================= */
+:root{--ft-w:1200px;--ft-pad:max(24px,calc((100% - var(--ft-w)) / 2));--ft-card:rgba(12,24,60,.78);--ft-card-b:#24345f;--ft-r:14px;--ft-in:#0a1430}
+/* Largeur de contenu identique partout */
+.reg-wrap{max-width:var(--ft-w)!important;padding-left:24px!important;padding-right:24px!important}
+[id^="view-"] .max-w-7xl{max-width:var(--ft-w)!important}
+[id^="view-"] .max-w-4xl{max-width:min(var(--ft-w),960px)!important}
+/* Barre de rubrique : même place et même style sur tous les écrans */
+.hub-bar{padding-left:var(--ft-pad)!important;padding-right:var(--ft-pad)!important;min-height:56px;align-items:center}
+/* En-tête des simulateurs : grand titre comme les autres pages */
+.rg-panel + div.border-b{height:auto!important;min-height:0!important;padding:22px var(--ft-pad) 10px!important;background:transparent!important;border-bottom:0!important;flex-wrap:wrap;gap:12px}
+.rg-panel + div.border-b h2{font-size:24px!important;line-height:1.2!important;font-weight:800!important;letter-spacing:-.01em;color:#fff}
+.rg-panel + div.border-b h2 > span:not(:first-child),.rg-panel + div.border-b .font-mono{font-size:11.5px!important;font-family:inherit!important;font-weight:600!important;padding:3px 9px!important;border-radius:999px!important;vertical-align:middle}
+.rg-panel + div.border-b > div:first-child > div:first-child.w-7,.rg-panel + div.border-b > div:first-child > div:first-child.w-8{width:40px!important;height:40px!important;border-radius:11px!important}
+.rg-panel + div.border-b > div:first-child > div:first-child svg{width:20px!important;height:20px!important}
+.rg-panel + div.border-b button{font-size:13px!important;padding:8px 12px!important;border-radius:10px!important}
+.rg-panel + div.border-b + div.border-b,#demission-category-chips,#csp-category-chips{padding-left:var(--ft-pad)!important;padding-right:var(--ft-pad)!important;background:transparent!important;border-bottom:0!important}
+[id^="view-"] > .flex-1.overflow-y-auto,[id^="view-"] > [id$="-subview-sim"],[id^="view-"] > [id*="-subview-"]{padding-left:24px!important;padding-right:24px!important}
+details.mt-strip > summary,details.mt-strip > div{padding-left:var(--ft-pad)!important;padding-right:var(--ft-pad)!important}
+.reg-head h2,.wiz-wrap .reg-head h2{font-size:24px!important;font-weight:800!important;letter-spacing:-.01em}
+/* Cartes : même fond, même bordure, mêmes arrondis */
+[id^="view-"] .rounded-xl.border,[id^="view-"] .rounded-2xl.border,[id^="view-"] .bar-card,[id^="view-"] .dl-form,[id^="view-"] .dl-result,[id^="view-"] .reg-card,[id^="view-"] .cns-panel,[id^="view-"] .inv-card,[id^="view-"] .sv-row,[id^="view-"] .gl-item,[id^="view-"] .wiz,[id^="view-"] .jr-card,[id^="view-"] .hm-card{border-radius:var(--ft-r)!important;border-color:var(--ft-card-b)!important}
+[id^="view-"] .rounded-xl.border.bg-slate-900,[id^="view-"] .rounded-xl.border[class*="bg-slate-900/"],[id^="view-"] .rounded-2xl.border[class*="bg-slate-900"],[id^="view-"] .bar-card,[id^="view-"] .dl-form,[id^="view-"] .reg-card,[id^="view-"] .inv-card,[id^="view-"] .sv-row{background:var(--ft-card)!important}
+/* Titres de section dans les cartes */
+[id^="view-"] h3.uppercase,[id^="view-"] .uppercase.tracking-wider,[id^="view-"] .uppercase.tracking-wide{font-size:12px!important;letter-spacing:.07em!important}
+/* Textes trop petits rendus lisibles */
+[id^="view-"] .text-\[9px\]{font-size:11px!important}
+[id^="view-"] .text-\[10px\]{font-size:11.5px!important}
+[id^="view-"] .text-\[11px\]{font-size:12.5px!important}
+[id^="view-"] .text-xs{font-size:13px!important}
+[id^="view-"] .font-mono:not(#calc-display){font-family:inherit!important;font-variant-numeric:tabular-nums}
+/* Champs de saisie identiques */
+[id^="view-"] input[type="text"],[id^="view-"] input[type="number"],[id^="view-"] input[type="date"],[id^="view-"] input[type="month"],[id^="view-"] input[type="search"],[id^="view-"] input:not([type]),[id^="view-"] select{min-height:40px;border-radius:10px!important;border:1px solid var(--ft-card-b)!important;background-color:var(--ft-in)!important;color:#e8eef9!important;font-size:14px!important;padding-left:12px!important}
+[id^="view-"] textarea{border-radius:10px!important;border:1px solid var(--ft-card-b)!important;background-color:var(--ft-in)!important;color:#e8eef9!important;font-size:14px!important}
+[id^="view-"] input:focus,[id^="view-"] select:focus,[id^="view-"] textarea:focus{outline:0!important;border-color:#67e8f9!important;box-shadow:0 0 0 3px rgba(103,232,249,.18)!important}
+[id^="view-"] input[type="checkbox"],[id^="view-"] input[type="radio"],[id^="view-"] input[type="range"]{min-height:0;padding:0!important}
+/* Onglets internes (Simulateur, Règles…) */
+.rg-tab{border-radius:10px!important;font-size:13.5px!important;font-weight:600!important;padding:9px 14px!important}
+/* Thème clair */
+html.theme-light{--ft-card:rgba(255,255,255,.9);--ft-card-b:#d6e2f0;--ft-in:#ffffff}
+html.theme-light .rg-panel + div.border-b h2{color:#0f172a}
+html.theme-light details.mt-strip{background:rgba(255,255,255,.92)!important;border-color:#d6e2f0!important;color:#0f172a!important}
+html.theme-light details.mt-strip summary{color:#0f172a!important}
+html.theme-light [id^="view-"] input,html.theme-light [id^="view-"] select,html.theme-light [id^="view-"] textarea{color:#0f172a!important}
 /* ---------- Liens cliquables dans les mails ---------- */
 #preview-body a.ft-link{color:#67e8f9;text-decoration:underline;text-underline-offset:3px;word-break:break-all;cursor:pointer}
 #preview-body a.ft-link:hover{color:#a5f3fc}
@@ -13422,8 +13465,19 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
     if (star) box.appendChild(star);
     box.appendChild(copy);
   }
+
+  /* Barre de rubrique toujours en haut de l’écran, sur toute la largeur */
+  function hoistBars() {
+    document.querySelectorAll('[id^="view-"] .reg-wrap > nav.hub-bar').forEach(bar => {
+      const view = bar.closest('[id^="view-"]'); if (!view) return;
+      const panel = bar.nextElementSibling && bar.nextElementSibling.classList.contains('rg-panel') ? bar.nextElementSibling : null;
+      view.insertBefore(bar, view.firstChild);
+      if (panel) view.insertBefore(panel, bar.nextSibling);
+    });
+  }
   function start() {
     markTab();
+    try { hoistBars(); } catch (e) {}
     try { moveMsgActions(); } catch (e) {}
     try { applyLabels(); sortMenu(); watchMenu(); adminBar(); } catch (e) {}
     try { populateCategorySelect(); } catch (e) {}
@@ -13669,6 +13723,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.24', date: '12/11/2026', items: [
+      'Style harmonisé sur tous les onglets : même barre de rubrique en haut, mêmes grands titres, même largeur de page, mêmes cartes, mêmes champs de saisie et textes plus lisibles (plus de très petits caractères).'
+    ] },
     { v: '2026-11-12.23', date: '12/11/2026', items: [
       'Fond de page : dégradé de bleu plus marqué sur tout le site, en thème sombre comme en thème clair.'
     ] },
