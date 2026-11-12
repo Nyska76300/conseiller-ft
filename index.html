@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.7">
+  <meta name="ft-version" content="2026-11-12.8">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -4385,7 +4385,7 @@ Votre conseiller France Travail
           <label class="block text-slate-300 mb-1">Corps du texte (utiliser {{variable}} pour les champs) *</label>
           <textarea id="m-body" required rows="6" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-white font-mono text-xs"></textarea>
         </div>
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-2 gap-2" hidden style="display:none">
           <div><label class="block text-slate-300 mb-1">Référence réglementaire</label><input id="m-ref" type="text" placeholder="Ex. Règlement AC, art. 4" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-white"></div>
           <div><label class="block text-slate-300 mb-1">Dernière relecture</label><input id="m-reviewed" type="date" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-white"></div>
         </div>
@@ -4442,7 +4442,7 @@ Votre conseiller France Travail
           <textarea id="edit-m-body" required rows="7" class="w-full p-2.5 rounded-lg bg-slate-800 border border-slate-700 focus:border-cyan-400 text-white font-mono text-xs leading-relaxed outline-none"></textarea>
           <span class="block text-[10px] text-slate-400 mt-1">Les variables entourées de doubles accolades créent automatiquement des champs interactifs.</span>
         </div>
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-2 gap-2" hidden style="display:none">
           <div><label class="block text-slate-300 mb-1">Référence réglementaire</label><input id="edit-m-ref" type="text" placeholder="Ex. Règlement AC, art. 4" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-white"></div>
           <div><label class="block text-slate-300 mb-1">Dernière relecture</label><input id="edit-m-reviewed" type="date" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-white"></div>
         </div>
@@ -10086,7 +10086,7 @@ Votre conseiller France Travail
       const rv = '<section class="bar-card"><div class="bar-head"><i data-lucide="file-check" class="w-4 h-4"></i><h3>Modèles de mails à relire</h3></div>' +
         '<div class="bar-row"><span class="bar-k">Jamais relus</span><span class="bar-v">' + never + ' / ' + templates.length + '</span><span class="bar-n">Renseignez la date de relecture et la référence réglementaire dans la fiche du modèle.</span></div>' +
         '<div class="bar-row"><span class="bar-k">Relus il y a plus d\u2019un an</span><span class="bar-v">' + old + '</span></div></section>';
-      return jr + rv + renderCasesCard();
+      return jr + renderCasesCard();
     }
 
     // =====================================================================
@@ -12232,7 +12232,7 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
 
   /* ---------- 5. Journal des modifications (page Sources) ---------- */
   const LOG = [
-    ['12/11/2026', 'Application', ['Suppression définitive des mails (mémorisée et synchronisée), synchronisation automatique entre postes.', 'Comptes conseillers et synchronisation des modèles CVM entre les postes, modèles communs publiés par l’administrateur.', 'Barre de recherche dans la barre du haut, à la place du bandeau du barème et du nombre de modèles.', 'Fenêtre « Nouveautés » à l’ouverture de la page quand le site a changé.', 'Bandeau « Nouvelle version disponible » sur la version en ligne.']],
+    ['12/11/2026', 'Application', ['Accueil pleine largeur avec outils par rubrique, liens cliquables dans les mails, catégories triées A→Z, retrait de la référence et de la relecture.', 'Suppression définitive des mails (mémorisée et synchronisée), synchronisation automatique entre postes.', 'Comptes conseillers et synchronisation des modèles CVM entre les postes, modèles communs publiés par l’administrateur.', 'Barre de recherche dans la barre du haut, à la place du bandeau du barème et du nombre de modèles.', 'Fenêtre « Nouveautés » à l’ouverture de la page quand le site a changé.', 'Bandeau « Nouvelle version disponible » sur la version en ligne.']],
     ['27/10/2026', 'Application', ['Accueil : bouton « Nouveau dossier », fiche du dossier en PDF, plus de doublon avec les bulles des simulateurs.', 'Ouverture de droits : le complément ARE y est intégré.', 'Maintien : passage direct des valeurs vers Cumul CNS.', 'Détecteur de doublons parmi les modèles de mail (aucune suppression automatique).', 'Icônes de secours intégrées au fichier.','Barèmes historiques de l’ARE (juillet 2022 à juillet 2025) appliqués selon la date de fin de contrat.']],
     ['23/10/2026', 'Barème', ['Dernière vérification des valeurs du barème (voir le niveau de vérification ligne par ligne ci-dessus).']],
     ['2026', 'Règles prises en compte', ['À compter du 01/09/2026 : plafonds de durée après rupture conventionnelle (456 j et 624 j) et Scop pour l’ARCE.', 'À compter du 01/07/2026 : congé supplémentaire de naissance (traitement détaillé non intégré, à confirmer).', 'À compter du 01/04/2026 : primo-entrants (108 jours ou 758 heures, minimum 152 jours).', 'Démission : abandon de poste présumé démission, projet professionnel, réexamen après 121 jours.']]
@@ -12774,6 +12774,250 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   );
 })();
 </script>
+<!-- ================= Extension 26 : accueil pleine largeur (variante A), liens cliquables, tri des catégories ================= -->
+<style>
+/* ---------- Accueil : 3 colonnes sur toute la largeur ---------- */
+#view-home>.home-wrap.fh-on{max-width:1840px!important;width:100%;box-sizing:border-box;margin:0 auto;padding:22px 24px 28px!important;display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;gap:18px;align-items:flex-start}
+.home-wrap.fh-on #home-main{display:none!important}
+.fh-col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.fh-L{flex:0 1 320px;min-width:280px}
+.fh-C{flex:999 1 620px}
+.fh-R{flex:0 1 350px;min-width:290px}
+.fh-C>.home-hero{margin:0!important}
+.fh-C>.home-foot{margin:4px 2px 0!important}
+.fh-col>section,.fh-col>.home-top>section{margin:0!important}
+/* Repères en liste verticale */
+.fh-L .hm-extra{margin:0!important}
+.fh-L .hm-extra .hm-card{padding:16px 18px!important;margin:0!important}
+.fh-L .hm-key{display:flex!important;flex-direction:column!important;gap:0!important;grid-template-columns:none!important}
+.fh-L .hm-key>div{display:flex!important;flex-direction:row-reverse!important;justify-content:space-between!important;align-items:baseline!important;gap:12px!important;padding:10px 0!important;background:transparent!important;border:0!important;border-bottom:1px solid #24345f!important;border-radius:0!important}
+.fh-L .hm-key>div strong{white-space:nowrap;text-align:right}
+.fh-L .hm-key>div span{font-size:13px!important;margin:0!important}
+.fh-L .hm-key>div span::first-letter{text-transform:uppercase}
+html.theme-light .fh-L .hm-key>div{border-color:#e2e8f0!important}
+/* Colonne droite : favoris et reprendre empilés */
+.fh-R>.home-top{display:flex!important;flex-direction:column!important;gap:16px!important;margin:0!important;grid-template-columns:none!important}
+.fh-R>.home-top>section{width:auto!important}
+/* Carte dossier */
+.fh-card{background:#111d3d;border:1px solid #24345f;border-radius:16px}
+.fh-dos{padding:18px;display:flex;flex-direction:column;gap:12px;border-color:rgba(103,232,249,.35)}
+.fh-dh{display:flex;align-items:center;gap:10px}
+.fh-dh h2{margin:0;font-size:15px;font-weight:700;color:#fff}
+.fh-dico{width:36px;height:36px;border-radius:10px;background:rgba(103,232,249,.1);color:#67e8f9;display:grid;place-items:center;flex:none}
+.fh-dico svg{width:19px;height:19px}
+.fh-dos p{margin:0;font-size:13px;color:#a3b3d1;line-height:1.5}
+.fh-dos dl{margin:0;display:flex;flex-direction:column}
+.fh-dos dl div{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid #24345f;font-size:13px}
+.fh-dos dt{color:#a3b3d1}.fh-dos dd{margin:0;color:#fff;font-weight:600;text-align:right}
+.fh-btns{display:flex;gap:8px;flex-wrap:wrap}
+.fh-btn{flex:1 1 auto;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 14px;border-radius:11px;border:0;background:#e1000f;color:#fff;font:700 14px/1 inherit;font-family:inherit;cursor:pointer}
+.fh-btn:hover{background:#b8000c}
+.fh-btn2{flex:1 1 auto;display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 12px;border-radius:11px;border:1px solid #24345f;background:transparent;color:#e8eef9;font-weight:600;font-size:13.5px;font-family:inherit;cursor:pointer}
+.fh-btn2:hover{border-color:#67e8f9}
+.fh-btn svg{width:17px;height:17px}
+/* Simulateurs groupés */
+.fh-th{display:flex;align-items:baseline;gap:10px;margin:6px 2px 0}
+.fh-th h2{margin:0;font-size:18px;font-weight:700;color:#fff}
+.fh-th span{font-size:13px;color:#a3b3d1}
+.fh-g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.fh-g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.fh-grp{padding:16px;display:flex;flex-direction:column;gap:12px}
+.fh-gh{display:flex;align-items:center;gap:10px}
+.fh-gh .fh-gi{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:none}
+.fh-gh .fh-gi svg{width:17px;height:17px}
+.fh-gh h3{margin:0;font-size:15px;font-weight:700;color:#fff}
+.fh-gh small{margin-left:auto;font-size:12px;color:#a3b3d1;white-space:nowrap}
+.fh-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.fh-g3 .fh-items{grid-template-columns:minmax(0,1fr)}
+.fh-tool{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.05);color:#e8eef9;text-align:left;cursor:pointer;font-family:inherit;min-width:0}
+.fh-tool:hover{border-color:currentColor;background:rgba(255,255,255,.06)}
+.fh-tool .fh-ti{flex:none;width:38px;height:38px;border-radius:10px;display:grid;place-items:center}
+.fh-tool .fh-ti svg{width:19px;height:19px}
+.fh-tool .fh-tt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.fh-tool b{font-size:14px;font-weight:600;color:#e8eef9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fh-tool small{font-size:12px;color:#a3b3d1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fh-c1{--c:#60a5fa;--b:rgba(59,130,246,.16)}.fh-c2{--c:#2dd4bf;--b:rgba(20,184,166,.16)}.fh-c3{--c:#fb7185;--b:rgba(244,63,94,.16)}.fh-c4{--c:#fbbf24;--b:rgba(245,158,11,.16)}.fh-c5{--c:#a78bfa;--b:rgba(139,92,246,.18)}
+.fh-grp .fh-gi,.fh-grp .fh-ti{background:var(--b);color:var(--c)}
+.fh-grp .fh-tool:hover{border-color:var(--c)}
+@media (max-width:1100px){.fh-g2,.fh-g3{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){.fh-items{grid-template-columns:minmax(0,1fr)}}
+html.theme-light .fh-card{background:#fff;border-color:#dbe4f0}
+html.theme-light .fh-dos{border-color:#a5f3fc}
+html.theme-light .fh-dh h2,html.theme-light .fh-th h2,html.theme-light .fh-gh h3,html.theme-light .fh-tool b,html.theme-light .fh-dos dd{color:#0f172a}
+html.theme-light .fh-dos p,html.theme-light .fh-dos dt,html.theme-light .fh-th span,html.theme-light .fh-gh small,html.theme-light .fh-tool small{color:#475569}
+html.theme-light .fh-dos dl div{border-color:#e2e8f0!important}
+html.theme-light .fh-tool{background:#f8fafc;border-color:#e2e8f0;color:#0f172a}
+html.theme-light .fh-btn2{color:#0f172a;border-color:#cbd5e1}
+html.theme-light .fh-dico{background:#ecfeff;color:#0e7490}
+html.theme-light .fh-c1{--c:#1d4ed8;--b:#dbeafe}html.theme-light .fh-c2{--c:#0f766e;--b:#ccfbf1}html.theme-light .fh-c3{--c:#be123c;--b:#ffe4e6}html.theme-light .fh-c4{--c:#b45309;--b:#fef3c7}html.theme-light .fh-c5{--c:#6d28d9;--b:#ede9fe}
+/* ---------- Liens cliquables dans les mails ---------- */
+#preview-body a.ft-link{color:#67e8f9;text-decoration:underline;text-underline-offset:3px;word-break:break-all;cursor:pointer}
+#preview-body a.ft-link:hover{color:#a5f3fc}
+html.theme-light #preview-body a.ft-link{color:#1d4ed8}
+/* ---------- Mails : plus de référence ni de relecture ---------- */
+#preview-ref{display:none!important}
+</style>
+<script>
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const SVG = p => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
+  const IC = {
+    clip: '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>',
+    brief: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 13h20"/>',
+    hour: '<path d="M5 22h14M5 2h14"/><path d="M17 22v-4.2a2 2 0 0 0-.6-1.4L12 12l-4.4 4.4a2 2 0 0 0-.6 1.4V22"/><path d="M7 2v4.2a2 2 0 0 0 .6 1.4L12 12l4.4-4.4a2 2 0 0 0 .6-1.4V2"/>',
+    shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+    book: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+    folder: '<path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9L9.6 3.9A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    cal: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+    calc: '<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/>'
+  };
+  const LOOK = [[/ouverture/i, 'clip', 'fh-c1'], [/ans|création|cumul/i, 'brief', 'fh-c2'], [/fin de droits|passage/i, 'hour', 'fh-c3'], [/situation/i, 'shield', 'fh-c4'], [/référence|calcul/i, 'book', 'fh-c5']];
+  const look = t => LOOK.find(l => l[0].test(t)) || [0, 'folder', 'fh-c1'];
+
+  /* ---------- Rubriques et outils (lus dans le menu Outils) ---------- */
+  function groups() {
+    const list = $('burger-tabs-list'); if (!list) return [];
+    return [...list.querySelectorAll('.menu-sec')].map(sec => {
+      const h = sec.querySelector('.menu-sec-h');
+      const items = [...sec.querySelectorAll('button[onclick]')].map(b => {
+        const m = /switchNavTab\('([^']+)'\)/.exec(b.getAttribute('onclick') || ''); if (!m) return null;
+        const svg = b.querySelector('svg'), lb = b.querySelector('.text-xs'), d = b.querySelector('p');
+        return { act: "switchNavTab('" + m[1] + "')", label: lb ? lb.textContent.trim() : b.textContent.trim(), desc: d ? d.textContent.trim() : '', icon: svg ? svg.outerHTML.replace(/\sclass="[^"]*"/, '') : SVG(IC.folder) };
+      }).filter(Boolean);
+      return { title: h ? h.textContent.trim() : '', items };
+    }).filter(g => g.items.length);
+  }
+  function toolsHtml() {
+    const gs = groups(); if (!gs.length) return '';
+    const ref = gs.find(g => /référence|calcul/i.test(g.title));
+    if (ref) ref.items.push(
+      { act: "document.getElementById('datecalc-toggle').click()", label: 'Dates', desc: 'Nombre de jours entre deux dates', icon: SVG(IC.cal) },
+      { act: "document.getElementById('header-calc-btn').click()", label: 'Calculatrice', desc: 'Calcul rapide', icon: SVG(IC.calc) });
+    const card = g => {
+      const L = look(g.title);
+      return '<section class="fh-card fh-grp ' + L[2] + '"><div class="fh-gh"><span class="fh-gi">' + SVG(IC[L[1]]) + '</span><h3>' + esc(g.title) + '</h3><small>' + g.items.length + ' outil' + (g.items.length > 1 ? 's' : '') + '</small></div><div class="fh-items">' +
+        g.items.map(i => '<button type="button" class="fh-tool" onclick="' + esc(i.act) + '" title="' + esc(i.desc) + '"><span class="fh-ti">' + i.icon + '</span><span class="fh-tt"><b>' + esc(i.label) + '</b><small>' + esc(i.desc) + '</small></span></button>').join('') + '</div></section>';
+    };
+    const big = gs.filter(g => g.items.length >= 4), small = gs.filter(g => g.items.length < 4);
+    return '<div class="fh-th"><h2>Simulateurs et outils</h2><span>classés par rubrique</span></div>' +
+      (big.length ? '<div class="fh-g2">' + big.map(card).join('') + '</div>' : '') +
+      (small.length ? '<div class="fh-g3"' + (small.length === 2 ? ' style="grid-template-columns:repeat(2,minmax(0,1fr))"' : '') + '>' + small.map(card).join('') + '</div>' : '');
+  }
+
+  /* ---------- Carte dossier ---------- */
+  window.ftHomeNewDossier = window.ftHomeNewDossier || function () { switchNavTab('dossier'); try { wizRestart('dossier'); } catch (e) {} };
+  function dossierHtml() {
+    let p = null; try { p = window.__ftProfile && window.__ftProfile(); } catch (e) {}
+    const head = '<div class="fh-dh"><span class="fh-dico">' + SVG(IC.folder) + '</span><h2>' + (p && p.sn ? 'Dossier en cours' + (p.a && p.a.ref ? ' · ' + esc(p.a.ref) : '') : 'Dossier en cours') + '</h2></div>';
+    if (p && p.sn) {
+      const sn = p.sn, rows = [];
+      if (p.a && p.a.fct) rows.push(['Fin de contrat', p.a.fct.split('-').reverse().join('/')]);
+      if (sn.verdict) rows.push(['Résultat', sn.verdict]);
+      if (sn.are && !/^NON/i.test(sn.verdict || '')) rows.push(['ARE journalière', sn.are]);
+      if (p.premier) rows.push(['1er jour indemnisable', p.premier]);
+      return '<section class="fh-card fh-dos" aria-label="Dossier en cours">' + head + '<dl>' + rows.map(r => '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>').join('') + '</dl>' +
+        '<div class="fh-btns"><button type="button" class="fh-btn" onclick="switchNavTab(\'dossier\')">Reprendre</button><button type="button" class="fh-btn2" onclick="ftHomeNewDossier()">Nouveau</button></div></section>';
+    }
+    return '<section class="fh-card fh-dos" aria-label="Dossier en cours">' + head + '<p>Aucun dossier ouvert. Démarrez un parcours guidé : droits, ARE, durée et texte du mail.</p><div class="fh-btns"><button type="button" class="fh-btn" onclick="ftHomeNewDossier()">' + SVG(IC.plus) + 'Nouveau dossier</button></div></section>';
+  }
+
+  /* ---------- Mise en page ---------- */
+  let busy = false;
+  function layout() {
+    const wrap = document.querySelector('#view-home > .home-wrap'), main = $('home-main');
+    if (!wrap || !main || busy) return;
+    busy = true;
+    try {
+      wrap.classList.add('fh-on');
+      let L = wrap.querySelector(':scope > .fh-L'), C = wrap.querySelector(':scope > .fh-C'), R = wrap.querySelector(':scope > .fh-R');
+      if (!C) {
+        L = document.createElement('div'); L.className = 'fh-col fh-L';
+        C = document.createElement('div'); C.className = 'fh-col fh-C';
+        R = document.createElement('div'); R.className = 'fh-col fh-R';
+        wrap.insertBefore(R, wrap.firstChild); wrap.insertBefore(C, R); wrap.insertBefore(L, C);
+      }
+      const hero = wrap.querySelector(':scope > .home-hero'); if (hero) C.insertBefore(hero, C.firstChild);
+      const foot = wrap.querySelector(':scope > .home-foot');
+      // Éléments rendus dans #home-main : on remplace les anciens par les nouveaux
+      const take = (sel, col) => {
+        const fresh = main.querySelector(':scope > ' + sel);
+        if (!fresh) return;
+        col.querySelectorAll(':scope > ' + sel).forEach(x => x.remove());
+        col.appendChild(fresh);
+      };
+      // Colonne gauche : dossier puis repères
+      let dos = L.querySelector(':scope > .fh-dos'); const dh = dossierHtml();
+      if (!dos) { L.insertAdjacentHTML('afterbegin', dh); } else { dos.outerHTML = dh; }
+      take('.hm-extra', L);
+      // Centre : outils groupés puis sections secondaires
+      let tw = C.querySelector(':scope > .fh-tools'); if (!tw) { tw = document.createElement('div'); tw.className = 'fh-col fh-tools'; C.appendChild(tw); }
+      const th = toolsHtml(); if (th && tw.dataset.h !== String(th.length)) { tw.innerHTML = th; tw.dataset.h = String(th.length); }
+      [...main.querySelectorAll(':scope > .home-section')].forEach((sec, i, arr) => { if (i === 0) C.querySelectorAll(':scope > .home-section').forEach(x => x.remove()); C.appendChild(sec); });
+      if (foot) C.appendChild(foot); else { const f = C.querySelector(':scope > .home-foot'); if (f) C.appendChild(f); }
+      // Droite : favoris et reprendre
+      take('.home-top', R);
+    } catch (e) { console.warn('Accueil :', e); }
+    busy = false;
+  }
+  const mo = new MutationObserver(() => { if (!busy) setTimeout(layout, 0); });
+  function watch() { const m = $('home-main'); if (m) mo.observe(m, { childList: true }); }
+  const _sw = switchNavTab;
+  switchNavTab = function () { const r = _sw.apply(this, arguments); try { if (String(activeNavTab) === 'home') layout(); } catch (e) {} return r; };
+
+  /* ---------- Liens cliquables dans les mails ---------- */
+  const URL_RE = /(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+|[\w.+-]+@[\w-]+(?:\.[\w-]+)+|\b(?:[a-z0-9-]+\.)+(?:gouv\.fr|fr|com|org|net|eu)\b(?:\/[^\s<>"']*)?)/gi;
+  const URL_TEST = new RegExp(URL_RE.source, 'i');
+  function linkify(root) {
+    if (!root) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => (n.parentNode && n.parentNode.closest && n.parentNode.closest('a,textarea,input,script,style')) ? NodeFilter.FILTER_REJECT : (URL_TEST.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT) });
+    const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n => {
+      const txt = n.nodeValue, frag = document.createDocumentFragment(); let last = 0; URL_RE.lastIndex = 0; let m;
+      while ((m = URL_RE.exec(txt))) {
+        let u = m[0], trail = '';
+        while (/[.,;:!?)\]»]$/.test(u)) { trail = u.slice(-1) + trail; u = u.slice(0, -1); }
+        if (!u) continue;
+        frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
+        const a = document.createElement('a'); a.className = 'ft-link'; a.textContent = u;
+        a.href = /@/.test(u) && !/^https?:/i.test(u) ? 'mailto:' + u : (/^https?:/i.test(u) ? u : 'https://' + u);
+        a.target = '_blank'; a.rel = 'noopener noreferrer';
+        frag.appendChild(a);
+        if (trail) frag.appendChild(document.createTextNode(trail));
+        last = m.index + m[0].length;
+      }
+      frag.appendChild(document.createTextNode(txt.slice(last)));
+      n.parentNode.replaceChild(frag, n);
+    });
+    URL_RE.lastIndex = 0;
+  }
+  window.ftLinkify = linkify;
+  if (typeof updateCompiledPreview === 'function') {
+    const _up = updateCompiledPreview;
+    updateCompiledPreview = function () { const r = _up.apply(this, arguments); try { linkify($('preview-body')); } catch (e) {} return r; };
+  }
+  // Le clic sur un lien ouvre la page, sans déclencher les autres actions de l'aperçu
+  document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('#preview-body a.ft-link'); if (a) e.stopPropagation(); }, true);
+
+  /* ---------- Catégories par ordre alphabétique dans les formulaires ---------- */
+  if (typeof populateCategorySelect === 'function') {
+    populateCategorySelect = function () {
+      const opts = categoryList.map(c => c.name).sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }))
+        .map(n => '<option value="' + escapeHtml(n) + '">' + escapeHtml(n) + '</option>').join('');
+      ['m-category', 'edit-m-category'].forEach(id => { const s = $(id); if (!s) return; const v = s.value; s.innerHTML = opts; if (v && [...s.options].some(o => o.value === v)) s.value = v; });
+    };
+  }
+
+  function start() {
+    try { populateCategorySelect(); } catch (e) {}
+    try { linkify($('preview-body')); } catch (e) {}
+    watch(); layout();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(start, 60)); else setTimeout(start, 60);
+})();
+</script>
 <!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
 <style>
 #ft-news{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.6);backdrop-filter:blur(3px);opacity:0;transition:opacity .25s ease}
@@ -12806,6 +13050,13 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.8', date: '12/11/2026', items: [
+      'Nouvel accueil sur toute la largeur de l’écran : dossier en cours et repères à gauche, recherche et simulateurs au centre, CVM favoris et « Reprendre » à droite.',
+      'Les bulles sont remplacées par des cartes par rubrique : chaque outil a son icône, son nom et une courte description.',
+      'Les liens dans les mails sont maintenant cliquables (ils s’ouvrent dans un nouvel onglet).',
+      'Création et modification de modèle : les catégories sont classées par ordre alphabétique.',
+      'Les mentions « référence réglementaire » et « dernière relecture » sont retirées des mails.'
+    ] },
     { v: '2026-11-12.7', date: '12/11/2026', items: [
       'Un mail supprimé, y compris de la base d’origine, est désormais supprimé pour de bon, sur tous vos postes. « Réinitialiser les modèles officiels » permet toujours de les récupérer.',
       'Synchronisation automatique : vos modifications sont envoyées en moins d’une seconde, et celles faites sur un autre poste arrivent toutes seules (toutes les 30 secondes et dès que vous revenez sur la page), sans recharger.'
