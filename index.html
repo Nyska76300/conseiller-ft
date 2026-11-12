@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-12.35">
+  <meta name="ft-version" content="2026-11-12.36">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -14192,6 +14192,8 @@ body>header{height:calc(3.5rem + env(safe-area-inset-top))!important;padding-top
 body{padding-bottom:env(safe-area-inset-bottom)}
 @media (max-width:640px){
   #ft-more{top:calc(60px + env(safe-area-inset-top))!important}
+  body>header{overflow:visible!important}
+  #ft-acct .fa-menu{position:fixed!important;top:calc(60px + env(safe-area-inset-top))!important;right:8px!important;left:auto!important;width:min(300px,calc(100vw - 16px))!important;max-height:calc(100vh - 150px);overflow:auto;z-index:95!important}
   #view-cvm #left-nav-menu{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
 }
 #ft-install{position:fixed;inset:0;z-index:95;display:none;align-items:flex-end;justify-content:center;background:rgba(2,6,23,.6);padding:16px 12px calc(16px + env(safe-area-inset-bottom))}
@@ -14462,6 +14464,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.36', date: '12/11/2026', items: [
+      'Téléphone : le menu du compte (rond avec votre initiale) s’ouvre de nouveau : synchronisation, propositions, déconnexion.'
+    ] },
     { v: '2026-11-12.35', date: '12/11/2026', items: [
       'Ouverture plus rapide du site, surtout sur téléphone (styles préparés à l’avance).',
       'Téléphone : barre d’onglets en bas (Accueil, Mails, Simulateurs, Rechercher) et repères repliables sur l’accueil.',
