@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="ft-version" content="2026-11-12.9">
+  <meta name="ft-version" content="2026-11-12.10">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -6837,7 +6837,7 @@ Votre conseiller France Travail
       const are = parseFloat(document.getElementById('maint-input-are-jour')?.value) || 0;
       const salRef = parseFloat(document.getElementById('maint-input-salaire-ref')?.value) || 0;
 
-      const arePleine = are * 30.42;
+      const arePleine = are * 30;
       const retenu = ca * 0.50; // abattement micro-entreprise
       const deduction = retenu * 0.70;
       let areVersee = Math.max(0, arePleine - deduction);
@@ -7238,7 +7238,7 @@ Votre conseiller France Travail
       const areJour = parseFloat(document.getElementById('care-input-are-jour')?.value) || 0;
       const salRef = parseFloat(document.getElementById('care-input-salaire-ref')?.value) || 0;
 
-      const arePleine = areJour * 30.42;
+      const arePleine = areJour * 30;
       const deduction = brut * 0.70;
       let areVersee = Math.max(0, arePleine - deduction);
 
@@ -11106,7 +11106,7 @@ Votre conseiller France Travail
         calc: [
           ['Capital ARE restant', 'AJ × nombre de jours restants au droit', ''],
           ['ARCE', pc(b.cumul.arce) + ' × capital restant, en 2 versements de 50 % (soit 30 % + 30 % du capital)', 'AJ 45 € × 500 j = 22 500 € → ARCE 13 500 € (2 × 6 750 €)'],
-          ['Maintien (écran de l’outil)', 'recettes × 50 % (abattement unique) = revenu retenu ; ARE versée = AJ × 30,42 − 70 % × revenu retenu. Cet écran n’applique pas les abattements par nature d’activité (71 % / 50 % / 34 %) ni le plafond de 60 % : utiliser la rubrique Cumul CNS.', ''],
+          ['Maintien (écran de l’outil)', 'recettes × 50 % (abattement unique) = revenu retenu ; jours payés = (AJ × 30 − 70 % × revenu retenu) ÷ AJ, arrondi ; ARE versée = jours payés × AJ (mensualisation : 30 jours quel que soit le mois). Cet écran n’applique pas les abattements par nature d’activité (71 % / 50 % / 34 %) ni le plafond de 60 % : utiliser la rubrique Cumul CNS.', ''],
           ['Jours payés / reportés', 'jours payés = ARE versée ÷ AJ (maximum 30) ; jours reportés = 30 − jours payés', '']] },
       { id: 'csp', tab: '4', title: 'CSP : allocation de sécurisation professionnelle', icon: 'shield',
         rules: [
@@ -11361,7 +11361,7 @@ Votre conseiller France Travail
     const out = $('cns-out'); if (!out) return;
     const aj = parseFloat($('cns-aj').value) || 0;
     const [y, m] = ($('cns-mois').value || '').split('-').map(Number);
-    const jm = y && m ? new Date(y, m, 0).getDate() : 30;
+    const jm = 30; /* mensualisation : 30 jours quel que soit le mois */
     const type = $('cns-type').value;
     $('cns-l-rev').firstChild.nodeValue = type === 'assurances' ? 'Revenus du mois déclarés aux assurances sociales (€)' : 'Chiffre d’affaires du mois (€)';
     if (!(aj > 0)) { out.innerHTML = note('Renseignez l’allocation journalière pour calculer le cumul.'); return; }
@@ -11721,13 +11721,13 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
     const val = id => parseFloat(($(id) || {}).value) || 0;
     const ca = val('maint-input-recette'), are = val('maint-input-are-jour'), salRef = val('maint-input-salaire-ref');
     const t = ($('maint-type') || {}).value || 'bic', ab = ABAT[t] || ABAT.bic;
-    const arePleine = are * 30.42;
+    const arePleine = are * 30; /* mensualisation : 30 jours quel que soit le mois */
     const abattu = Math.max(ca * ab[0], ab[1] ? Math.min(ca, ab[1]) : 0);
     const retenu = Math.max(0, ca - abattu);
     const deduction = retenu * 0.70;
-    let areVersee = Math.max(0, arePleine - deduction);
-    if (salRef > 0 && retenu + areVersee > salRef) areVersee = Math.max(0, salRef - retenu);
-    const joursPayes = Math.min(30, Math.round(areVersee / (are || 1)));
+    let joursPayes = are > 0 ? Math.max(0, Math.min(30, Math.round((arePleine - deduction) / are))) : 0;
+    if (salRef > 0) while (joursPayes > 0 && retenu + joursPayes * are > salRef + 1e-9) joursPayes--;
+    const areVersee = joursPayes * are;
     const set = (id, v) => { const e = $(id); if (e) e.textContent = v; };
     set('maint-res-are-versee', areVersee.toFixed(2) + ' €');
     set('maint-res-revenu-total', (retenu + areVersee).toFixed(2) + ' €');
@@ -12232,7 +12232,7 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
 
   /* ---------- 5. Journal des modifications (page Sources) ---------- */
   const LOG = [
-    ['12/11/2026', 'Application', ['Accueil pleine largeur avec outils par rubrique, liens cliquables dans les mails, catégories triées A→Z, retrait de la référence et de la relecture.', 'Suppression définitive des mails (mémorisée et synchronisée), synchronisation automatique entre postes.', 'Comptes conseillers et synchronisation des modèles CVM entre les postes, modèles communs publiés par l’administrateur.', 'Barre de recherche dans la barre du haut, à la place du bandeau du barème et du nombre de modèles.', 'Fenêtre « Nouveautés » à l’ouverture de la page quand le site a changé.', 'Bandeau « Nouvelle version disponible » sur la version en ligne.']],
+    ['12/11/2026', 'Application', ['Mensualisation sur 30 jours dans le complément ARE, le cumul CNS et le maintien ANS ; cas de contrôle du complément ARE (565,29 €).', 'Accueil pleine largeur avec outils par rubrique, liens cliquables dans les mails, catégories triées A→Z, retrait de la référence et de la relecture.', 'Suppression définitive des mails (mémorisée et synchronisée), synchronisation automatique entre postes.', 'Comptes conseillers et synchronisation des modèles CVM entre les postes, modèles communs publiés par l’administrateur.', 'Barre de recherche dans la barre du haut, à la place du bandeau du barème et du nombre de modèles.', 'Fenêtre « Nouveautés » à l’ouverture de la page quand le site a changé.', 'Bandeau « Nouvelle version disponible » sur la version en ligne.']],
     ['27/10/2026', 'Application', ['Accueil : bouton « Nouveau dossier », fiche du dossier en PDF, plus de doublon avec les bulles des simulateurs.', 'Ouverture de droits : le complément ARE y est intégré.', 'Maintien : passage direct des valeurs vers Cumul CNS.', 'Détecteur de doublons parmi les modèles de mail (aucune suppression automatique).', 'Icônes de secours intégrées au fichier.','Barèmes historiques de l’ARE (juillet 2022 à juillet 2025) appliqués selon la date de fin de contrat.']],
     ['23/10/2026', 'Barème', ['Dernière vérification des valeurs du barème (voir le niveau de vérification ligne par ligne ci-dessus).']],
     ['2026', 'Règles prises en compte', ['À compter du 01/09/2026 : plafonds de durée après rupture conventionnelle (456 j et 624 j) et Scop pour l’ARCE.', 'À compter du 01/07/2026 : congé supplémentaire de naissance (traitement détaillé non intégré, à confirmer).', 'À compter du 01/04/2026 : primo-entrants (108 jours ou 758 heures, minimum 152 jours).', 'Démission : abandon de poste présumé démission, projet professionnel, réexamen après 121 jours.']]
@@ -12346,7 +12346,10 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
     { n: 'Barème 2024 : partie fixe 13,11 € (SJR 78,89 €)', run: () => mk('2024-09-30', 78.89), exp: 0.404 * 78.89 + 13.11, d: 2 },
     { n: 'Barème 2023 : allocation minimale 31,59 €', run: () => mk('2023-10-02', 45), exp: 31.59, d: 2 },
     { n: 'Barème actuel intact après un calcul historique', run: () => { mk('2023-10-02', 45); return BAREME.are.min + BAREME.are.partieFixe + BAREME.degr.seuil; }, exp: 32.13 + 13.18 + 92.57, d: 2 },
-    { n: 'Fin de contrat en 2026 : barème actuel', run: () => mk('2026-09-30', 45), exp: 32.13, d: 2 }
+    { n: 'Fin de contrat en 2026 : barème actuel', run: () => mk('2026-09-30', 45), exp: 32.13, d: 2 },
+    { n: 'Complément ARE : AJ 66,30 €, SJR 116,31 €, brut 2 000 € → 565,29 € net', run: () => cumulCompute({ type: 'salarie', aj: '66.3', sjr: '116.31', mois: '2026-10', brut: '2000' }).net, exp: 565.29, d: 2 },
+    { n: 'Complément ARE : 30 jours en février (mensualisation)', run: () => cumulCompute({ type: 'salarie', aj: '66.3', sjr: '116.31', mois: '2027-02', brut: '2000' }).jm, exp: 30, d: 0 },
+    { n: 'Complément ARE : 30 jours en mois de 31 jours (mensualisation)', run: () => cumulCompute({ type: 'salarie', aj: '66.3', sjr: '116.31', mois: '2026-10', brut: '0' }).areM, exp: 1989, d: 2 }
   ].forEach(c => FT_CASES.push(c));
 })();
 
@@ -13074,6 +13077,10 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-12.10', date: '12/11/2026', items: [
+      'Complément ARE : calcul vérifié sur 30 jours quel que soit le mois (mensualisation), net après retraite complémentaire (3 % du SJR). Exemple : AJ 66,30 €, SJR 116,31 €, brut 2 000 € → 565,29 €.',
+      'Cumul CNS et maintien ANS : l’allocation mensuelle est aussi calculée sur 30 jours, quel que soit le mois.'
+    ] },
     { v: '2026-11-12.9', date: '12/11/2026', items: [
       'Accueil : nouvelle carte « Quoi de neuf ? » pour retrouver les dernières nouveautés à tout moment.',
       'Barre du haut : la flèche circulaire recharge maintenant la page (la réinitialisation des modèles reste accessible avec Ctrl+K, « Réinitialiser les modèles officiels »).',
