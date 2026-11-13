@@ -92,24 +92,24 @@
     const f = x => ftFmtDate(x);
     if (eligible) {
       out.push({ id: 'bm-m005', why: 'Notification d’admission avec date de prise en charge, taux et durée.',
-        fill: Object.assign({}, c.aj ? { montant: c.aj.toFixed(2).replace('.', ',') } : {}, { date: f(d.debut), x: String(d.dureeReelle) }),
+        fill: Object.assign({}, c.aj ? { montant_net_jour: c.aj.toFixed(2).replace('.', ',') } : {}, { date_prise_en_charge: f(d.debut), duree_jours: String(d.dureeReelle) }),
         note: 'Le modèle parle d’un taux « net » : le montant prérempli est brut, à adapter si besoin.' });
       if (d.total > 7) {
         const fl = { sjr: c.sjr ? c.sjr.toFixed(2).replace('.', ',') : '' };
-        if (d.diffSpec) { fl.x = String(d.diffSpec); fl.x_2 = String(d.diffSpec); }
-        if (d.diffCp) { fl.x_3 = String(d.diffCp); fl.x_4 = String(d.diffCp); }
+        if (d.diffSpec) { fl.nb_jours_differe_islr = String(d.diffSpec); fl.nb_jours_calcul_islr = String(d.diffSpec); }
+        if (d.diffCp) { fl.nb_jours_differe_iccp = String(d.diffCp); fl.nb_jours_calcul_iccp = String(d.diffCp); }
         out.push({ id: 'bm-m041', why: 'Explication des différés (' + d.total + ' jours avant le premier versement).', fill: fl,
-          note: 'Le montant et la date de notification, partagés entre deux lignes du modèle, sont à saisir.' });
+          note: 'La date de notification et les montants d’indemnités sont à saisir.' });
       } else {
         out.push({ id: 'bm-m004', why: 'Admission standard, sans différé particulier.', fill: {} });
       }
       out.push({ id: 'bm-m058', why: 'Rappel de la règle du délai congés payés, utile si l’usager conteste la date.', fill: {} });
     } else if (/demission/.test(String(a.motif || ''))) {
-      out.push({ id: 'bm-m009', why: 'Rejet : 65 jours ou 455 heures non effectués depuis la démission.', fill: { date_2: f(c.fct) }, note: 'La date de démission et l’employeur sont à saisir.' });
-      out.push({ id: 'bm-m010', why: 'Rejet avec suspension des droits pendant 4 mois.', fill: {}, note: 'Le texte contient des dates fixes à vérifier.' });
+      out.push({ id: 'bm-m009', why: 'Rejet : 65 jours ou 455 heures non effectués depuis la démission.', fill: { date_fin_contrat: f(c.fct) }, note: 'La date de démission et l’employeur sont à saisir.' });
+      out.push({ id: 'bm-m010', why: 'Rejet avec suspension des droits pendant 4 mois.', fill: {}, note: 'La date de réexamen se calcule à partir de la date de démission.' });
       out.push({ id: 'bm-m011', why: 'Rappel de la réglementation démission (455 h / 3 mois d’activité).', fill: {} });
     } else {
-      out.push({ id: 'bm-m001', why: 'Étude de droits en attente (nouvelle fin de mission, période de référence).', fill: { date_fc: f(c.fct) } });
+      out.push({ id: 'bm-m001', why: 'Étude de droits en attente (nouvelle fin de mission, période de référence).', fill: { date_fin_contrat_retenue: f(c.fct) } });
       out.push({ id: 'bm-m049', why: 'Précisions sur le calcul de l’allocation si l’usager le conteste.', fill: {} });
     }
     return out.filter(s => templates.some(t => t.id === s.id)).slice(0, 3);
@@ -120,7 +120,7 @@
     if (!list.length) return '';
     const cards = list.map((s, i) => {
       const t = templates.find(x => x.id === s.id);
-      const vals = Object.keys(s.fill).filter(k => s.fill[k] !== '').map(k => '<span class="sg2-chip">' + esc(k) + ' = ' + esc(s.fill[k]) + '</span>').join('');
+      const vals = Object.keys(s.fill).filter(k => s.fill[k] !== '').map(k => '<span class="sg2-chip">' + esc(((t.variables || []).find(v => v.key === k) || {}).label || k) + ' = ' + esc(s.fill[k]) + '</span>').join('');
       return '<div class="sg2-card"><div class="sg2-top"><strong>' + esc(t.title) + '</strong><span class="sg2-cat">' + esc(t.category) + '</span></div>' +
         '<p>' + esc(s.why) + '</p>' + (vals ? '<div class="sg2-chips">' + vals + '</div>' : '') + (s.note ? '<p class="sg2-note">' + esc(s.note) + '</p>' : '') +
         '<button type="button" class="wiz-btn wiz-btn-primary" onclick="ftOpenSuggestion(' + i + ')"><i data-lucide="mail" class="w-4 h-4"></i>Ouvrir ce modèle prérempli</button></div>';

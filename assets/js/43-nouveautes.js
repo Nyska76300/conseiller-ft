@@ -2,6 +2,13 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.59', date: '13/11/2026', items: [
+      'Mails CVM vérifiés sur la réglementation en vigueur : affiliation 130 jours / 910 h (et non 182 jours), 36 mois à partir de 55 ans (et non 53), démission en cours d’indemnisation : 88 jours / 610 h depuis le 1er avril 2025, plafond RFF 775,65 €.',
+      'Avant de copier un mail : alerte si une date est invalide ou dans le désordre (fin avant début), ou si un montant paraît anormal.',
+      'Du simulateur au mail : bouton « Rédiger le mail CVM » dans les outils, qui ouvre le mail correspondant déjà rempli avec les résultats.',
+      'Recherche des mails : dans le texte et les champs, avec les sigles du métier (ICCP ↔ congés payés, DV ↔ démission, TP ↔ trop-perçu…).',
+      'Raccourcis CVM : Entrée = champ suivant, Ctrl+Entrée = copier, Ctrl+↓ / ↑ = mail suivant / précédent.'
+    ] },
     { v: '2026-11-13.58', date: '13/11/2026', items: [
       'CVM : les mails n’ont plus de dates, montants ou durées d’anciens dossiers dans le texte : ce sont des champs à compléter.',
       'CVM : champs intelligents — saisie rapide des dates (01082026 → 01/08/2026), calendrier, alerte si la date est invalide, montants mis en forme, et calculs automatiques (délai d’attente, 1er jour indemnisable, capital ARCE, totaux…). Un champ calculé reste modifiable.',

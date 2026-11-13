@@ -108,7 +108,8 @@
 
   /* Saisie rapide et mise en forme */
   document.addEventListener('input', e => {
-    const inp = e.target; if (!inp.matches || !inp.matches('#dynamic-inputs-grid input.cv-date')) return;
+    const inp = e.target; if (inp.classList && inp.classList.contains('cv-warn')) inp.classList.remove('cv-warn');
+    if (!inp.matches || !inp.matches('#dynamic-inputs-grid input.cv-date')) return;
     const d = inp.value.replace(/\D/g, '');
     if (/^\d{8}$/.test(d) && !/\//.test(inp.value)) { inp.value = d.slice(0, 2) + '/' + d.slice(2, 4) + '/' + d.slice(4); }
     valid(inp);
@@ -148,5 +149,86 @@
     const _z = resetVariables;
     resetVariables = function () { try { const id = activeTemplateId; delete manual[id]; delete auto[id]; } catch (e) {} return _z.apply(this, arguments); };
   }
+
+  /* Contrôle avant de copier : dates invalides ou dans le désordre, montants anormaux */
+  function checks(tpl) {
+    const v = userVariables[tpl.id] || {}, defs = tpl.variables || [], out = [], bad = new Set();
+    const lab = k => ((defs.find(x => x.key === k) || {}).label || k);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    defs.forEach(d => {
+      const x = String(v[d.key] || '').trim(); if (!x) return;
+      if (isDateKey(d.key, d.label)) {
+        const dt = parseD(x);
+        if (!dt) { out.push('« ' + d.label + ' » : « ' + x + ' » n’est pas une date valide (JJ/MM/AAAA)'); bad.add(d.key); return; }
+        const yrs = (dt - today) / 3.156e10;
+        if (yrs > 3 || yrs < -12) { out.push('« ' + d.label + ' » : ' + x + ' paraît très ' + (yrs > 0 ? 'lointaine' : 'ancienne')); bad.add(d.key); }
+      } else if (isMoneyKey(d.key, d.label) && /€/.test(d.label || '')) {
+        const n = parseN(x);
+        if (n == null) { out.push('« ' + d.label + ' » : « ' + x + ' » n’est pas un montant'); bad.add(d.key); return; }
+        if (n < 0) { out.push('« ' + d.label + ' » : montant négatif'); bad.add(d.key); }
+        else if (/jour|journali|sjr/i.test(d.key + d.label) && n > 400) { out.push('« ' + d.label + ' » : ' + x + ' € par jour paraît élevé'); bad.add(d.key); }
+        else if (n > 150000) { out.push('« ' + d.label + ' » : ' + x + ' € paraît très élevé'); bad.add(d.key); }
+      } else if (/^nb_/.test(d.key)) {
+        const n = parseN(x);
+        if (n == null || n < 0) { out.push('« ' + d.label + ' » : « ' + x + ' » n’est pas un nombre'); bad.add(d.key); }
+      }
+    });
+    /* paires début / fin */
+    const keys = defs.map(d => d.key);
+    keys.forEach(k => {
+      const m = k.match(/^(date_)?debut(_.*)?$/); if (!m) return;
+      const tail = m[2] || '';
+      const f = keys.find(x => x === (m[1] || '') + 'fin' + tail) || keys.find(x => x === 'fin' + tail) || keys.find(x => x === 'date_fin' + tail);
+      if (!f) return;
+      const a = parseD(v[k]), b = parseD(v[f]);
+      if (a && b && b < a) { out.push('« ' + lab(f) + ' » (' + v[f] + ') tombe avant « ' + lab(k) + ' » (' + v[k] + ')'); bad.add(k); bad.add(f); }
+    });
+    return { out, bad };
+  }
+  window.ftCvmChecks = checks;
+  if (typeof copyCurrentMail === 'function') {
+    const _c = copyCurrentMail;
+    copyCurrentMail = function () {
+      try {
+        const tpl = tplOf(activeTemplateId);
+        if (tpl) {
+          const { out, bad } = checks(tpl);
+          document.querySelectorAll('#dynamic-inputs-grid input[data-key]').forEach(i => i.classList.toggle('cv-warn', bad.has(i.dataset.key)));
+          if (out.length && !confirm('À vérifier avant d’envoyer :\n\n• ' + out.slice(0, 8).join('\n• ') + (out.length > 8 ? '\n• …' : '') + '\n\nCopier quand même ?')) return;
+        }
+      } catch (e) { console.warn(e); }
+      return _c.apply(this, arguments);
+    };
+  }
+
+  /* Raccourcis clavier dans CVM Direct :
+     Entrée → champ suivant (sur le dernier : retour au mail) ; Ctrl+Entrée → copier le mail ;
+     Ctrl+↓ / Ctrl+↑ → mail suivant / précédent de la liste. */
+  const inCvm = () => cur() === 'cvm' || !!document.querySelector('.ft-split-b#view-cvm');
+  function cur() { try { return String(activeNavTab); } catch (e) { return ''; } }
+  function step(d) {
+    const ids = [...document.querySelectorAll('#templates-list [data-tpl-id]')].map(x => x.dataset.tplId);
+    if (!ids.length) return;
+    let i = ids.indexOf(activeTemplateId); i = i < 0 ? 0 : Math.max(0, Math.min(ids.length - 1, i + d));
+    try { selectTemplate(ids[i]); } catch (e) {}
+    const el = document.querySelector('#templates-list [data-tpl-id="' + CSS.escape(ids[i]) + '"]'); if (el) el.scrollIntoView({ block: 'nearest' });
+  }
+  document.addEventListener('keydown', e => {
+    if (!inCvm() || e.altKey) return;
+    const a = document.activeElement || {};
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); try { copyCurrentMail('raw'); } catch (er) {} return; }
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+      if (a.tagName === 'TEXTAREA') return;
+      e.preventDefault(); step(e.key === 'ArrowDown' ? 1 : -1); return;
+    }
+    if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.metaKey && a.matches && a.matches('#dynamic-inputs-grid input[data-key]')) {
+      e.preventDefault();
+      const all = [...document.querySelectorAll('#dynamic-inputs-grid input[data-key]')], i = all.indexOf(a);
+      a.blur(); /* applique la mise en forme (date, montant) */
+      if (all[i + 1]) all[i + 1].focus(); else { const b = document.getElementById('btn-copy-raw'); if (b) b.focus(); }
+    }
+  }, true);
+  window.FT_ACTIONS = window.FT_ACTIONS || [];
+  window.FT_ACTIONS.push({ t: 'Raccourcis de CVM Direct', s: 'Entrée : champ suivant · Ctrl+Entrée : copier · Ctrl+↓/↑ : mail suivant/précédent', kw: 'raccourci clavier cvm copier suivant', run: () => { try { showToast('CVM Direct — Entrée : champ suivant · Ctrl+Entrée : copier le mail · Ctrl+↓ / Ctrl+↑ : mail suivant / précédent', 'info'); } catch (e) {} } });
   window.ftCvmCompute = compute;
 })();

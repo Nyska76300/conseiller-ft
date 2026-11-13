@@ -1649,4 +1649,15 @@ html.theme-light #sidebar-footer .sidebar-label,html.theme-light #vertical-filte
 html.theme-light #view-formation h2 .text-\[10px\]{color:#641b77!important;background:#efe9f5!important}
 .qz-intro .qz-th button.on em{color:#140d1d!important;background:#e8e3fd!important}
 html.theme-light .qz-intro .qz-th button.on em{background:#6234e1!important}
+#ft-s2m-btn{border:1px solid #906ff1;background:#6234e1;box-shadow:0 8px 20px -6px rgba(144,111,241,.55)}
+#ft-s2m-btn:hover{background:#906ff1}
+#ft-s2m{background:#1b0e29;border:1px solid #4a385f}
+#ft-s2m .s2m-h{color:#dad1fb}
+#ft-s2m button{color:#e9e6ec}
+#ft-s2m button:hover,#ft-s2m button:focus-visible{background:#2c1843}
+#ft-s2m button span{color:#a69fad}
+html.theme-light #ft-s2m{border-color:#dfd4ec}
+html.theme-light #ft-s2m button{color:#1a1125}
+html.theme-light #ft-s2m button:hover{background:#f9f7fb}
+html.theme-light #ft-s2m button span{color:#595162}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(103,48,166,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(123,57,198,0.1),transparent 60%),linear-gradient(150deg,#06030a 0%,#0f0718 35%,#190b28 70%,#27123f 100%) fixed!important}

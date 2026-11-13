@@ -24,7 +24,7 @@ FAUTES = {
 }
 REPEAT_OK = {'vous', 'nous', 'en', 'le', 'la'}  # « vous vous », « nous nous »… sont corrects
 DATE_OK = {'01/10/2021'}  # dates réglementaires
-MONTANT_OK = {'723,36 €'}  # plafonds réglementaires (RFF)
+MONTANT_OK = {'775,65 €'}  # plafonds réglementaires (RFF, depuis le 1er avril 2026)
 
 
 def load():
