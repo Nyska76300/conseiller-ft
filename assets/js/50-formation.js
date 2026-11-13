@@ -32,7 +32,7 @@
       q('are', 'L’ARE ne peut pas dépasser quel pourcentage du SJR ?', pct(a.plafond), ['57 %', '70 %', '80 %'], 'Plafond : ' + pct(a.plafond) + ' du salaire journalier de référence.');
     }
     if (dg) {
-      q('are', 'À partir de quel mois d’indemnisation s’applique la dégressivité ?', dg.moisDebut + 'e mois', ['4e mois', '9e mois', '13e mois'], 'Coefficient de ' + nf(dg.coef, 1) + ' à partir du ' + dg.moisDebut + 'e mois pour un SJR supérieur à ' + eur(dg.seuil) + '.');
+      q('are', 'À partir de quel mois d’indemnisation s’applique la dégressivité ?', dg.moisDebut + 'e mois', ['4e mois', '9e mois', '13e mois'], 'Coefficient de ' + nf(dg.coef, 1) + ' à partir du ' + dg.moisDebut + 'e mois pour une allocation journalière supérieure à ' + eur(dg.seuil) + ' (sans descendre sous ce montant), si moins de ' + dg.ageLimite + ' ans.');
       q('are', 'Réduction appliquée par la dégressivité ?', pct(1 - dg.coef), ['20 %', '25 %', '40 %'], 'L’allocation est multipliée par ' + nf(dg.coef, 1) + ', soit une baisse de ' + pct(1 - dg.coef) + '.');
     }
     if (df) {
@@ -58,31 +58,86 @@
     if (b.generations) { const g = b.generations[b.generations.length - 1]; q('autres', 'Retraite : nombre de trimestres requis pour le taux plein, générations ' + g[0].toLowerCase() + ' ?', g[1] + ' trimestres', ['168 trimestres', '170 trimestres', '176 trimestres'], 'Génération ' + g[0].toLowerCase() + ' : ' + g[1] + ' trimestres, âge légal ' + g[2] + '.'); }
     return L;
   }
-  /* ---------- Questions de calcul (cas de contrôle des simulateurs) ---------- */
-  function themeOf(n) {
-    const t = n.toLowerCase();
-    if (/différé|cibtp/.test(t)) return 'diff';
-    if (/cumul|csp|cns|micro|non salari/.test(t)) return 'cumul';
-    if (/ass|ata|ati|aref|rff|formation/.test(t)) return 'sol';
-    if (/indu|trop/.test(t)) return 'indu';
-    if (/^are|durée|sjr|dégressiv|rupture|ouverture|affiliation/.test(t)) return 'are';
-    return 'autres';
+  /* ---------- Questions de calcul, avec le détail pas à pas ----------
+     Les résultats viennent des mêmes fonctions que les simulateurs (et donc du barème en vigueur). */
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const r2 = x => Math.round(x * 100) / 100;
+  const AGES = { u55: 'moins de 55 ans', a55: '55 ou 56 ans', a57: '57 ans et plus' };
+  function opts(ok, cands, fmt) {
+    const out = [], seen = new Set([fmt(ok)]);
+    cands.concat([ok * 0.9, ok * 1.1, ok * 0.8, ok * 1.2, ok + 1, ok - 1]).forEach(v => { if (v == null || !isFinite(v) || v < 0) return; const f = fmt(v); if (!seen.has(f) && out.length < 3) { seen.add(f); out.push(f); } });
+    return shuffle([fmt(ok)].concat(out));
   }
-  function distract(x, d) {
-    const out = new Set(), step = d ? 0 : 1;
-    const f = [0.9, 1.1, 0.75, 1.25, 0.8, 1.2];
-    if (!x) [1, 2, 5, 7].forEach(v => out.add(v));
-    f.forEach(k => { let v = d ? Math.round(x * k * 100) / 100 : Math.round(x * k); if (v === x) v = x + (k > 1 ? 1 : -1) * Math.max(step, 1); if (v >= 0) out.add(v); });
-    out.delete(x);
-    return shuffle([...out]).slice(0, 3);
-  }
-  function cases() {
-    let C = []; try { C = FT_CASES; } catch (e) { return []; }
-    return C.filter(c => c && typeof c.exp === 'number' && c.n && !/\(.*\d+\s*[−-]\s*\d+.*\)|identique/.test(c.n)).map(c => {
-      const fmt = v => nf(v, c.d > 0 ? 2 : 0) + (c.d > 0 ? (/jours?|trimestres|mensualit|nombre/i.test(c.n) ? '' : ' €') : /trimestre/i.test(c.n) ? ' trimestres' : /mensualit/i.test(c.n) ? ' mensualités' : /durée|différé|jours|délai/i.test(c.n) ? ' jours' : '');
-      const ok = fmt(c.exp);
-      return { th: themeOf(c.n), calc: true, text: 'Que donne le calcul : « ' + c.n + ' » ?', ok, opts: shuffle([ok].concat(distract(c.exp, c.d).map(fmt).filter(x => x !== ok))).slice(0, 4).concat([]), expl: 'Résultat attendu : ' + ok + ' (cas de contrôle du simulateur, recalculé à chaque mise à jour du barème).' };
-    }).map(x => { if (!x.opts.includes(x.ok)) x.opts[0] = x.ok; x.opts = shuffle(x.opts); return x; });
+  function calcs() {
+    const b = B(); if (!b) return [];
+    const L = [];
+    const F = n => typeof window[n] === 'function' ? window[n] : null;
+    const areJour = F('ftAreJour'), dates = F('ftComputeDates'), cumul = F('cumulCompute');
+    const a = b.are, df = b.differe, du = b.duree, dg = b.degr;
+    const add = (th, text, okVal, cands, fmt, steps, go) => L.push({ th, calc: true, text, ok: fmt(okVal), opts: opts(okVal, cands, fmt), expl: 'Détail du calcul :', steps, go });
+    const day = v => nf(v) + ' jours';
+    /* 1. ARE journalière */
+    if (areJour) for (const sjr of shuffle([34, 45, 62, 78.89, 95, 120, 160]).slice(0, 3)) {
+      const r = areJour(sjr), A = r2(r.opA), Bv = r2(r.opB), lim = r2(r.lim), aj = r2(r.aj);
+      const st = ['Formule 1 : ' + pct(a.tauxA) + ' × ' + eur(sjr) + ' + ' + eur(a.partieFixe) + ' (partie fixe) = <b>' + eur(A) + '</b>',
+        'Formule 2 : ' + pct(a.tauxB) + ' × ' + eur(sjr) + ' = <b>' + eur(Bv) + '</b>',
+        'On retient la plus favorable : ' + eur(Math.max(A, Bv))];
+      if (r.formule === 'min') st.push('Inférieure à l’allocation minimale : on applique <b>' + eur(a.min) + '</b>');
+      if (r.formule === 'plafond') st.push('Mais l’ARE ne peut pas dépasser ' + pct(a.plafond) + ' du SJR : ' + pct(a.plafond) + ' × ' + eur(sjr) + ' = <b>' + eur(lim) + '</b>');
+      st.push('ARE journalière brute : <b>' + eur(aj) + '</b>');
+      add('are', 'SJR de ' + eur(sjr) + ' : quelle est l’ARE journalière brute ?', aj, [A, Bv, lim, a.min], eur, st, 3);
+    }
+    /* 2. Durée d’indemnisation */
+    if (dates) for (const [jp, age] of shuffle([[250, 'u55'], [320, 'u55'], [480, 'u55'], [900, 'u55'], [800, 'a55'], [1000, 'a57'], [960, 'a55']]).slice(0, 3)) {
+      const r = dates({ fct: new Date('2026-06-01T12:00:00'), sjr: 0, ageBand: age, joursPeriode: jp }), raw = jp * du.coef;
+      const st = [nf(jp) + ' jours calendaires × ' + nf(du.coef, 2) + ' = ' + nf(raw, raw % 1 ? 2 : 0) + ' → arrondi à <b>' + day(Math.round(raw)) + '</b>',
+        'Minimum : ' + day(du.min) + ' ; maximum ' + AGES[age] + ' : ' + day(du.max[age])];
+      if (Math.round(raw) < du.min) st.push('Résultat sous le minimum : on applique ' + day(du.min));
+      if (Math.round(raw) > du.max[age]) st.push('Résultat au-dessus du maximum : on applique ' + day(du.max[age]));
+      st.push('Durée d’indemnisation : <b>' + day(r.dureeReelle) + '</b>');
+      add('are', 'Allocataire de ' + AGES[age] + ', période de référence de ' + nf(jp) + ' jours calendaires : durée d’indemnisation ?', r.dureeReelle, [Math.round(raw), du.max[age], du.min, jp], day, st, 3);
+    }
+    /* 3. Différé congés payés */
+    if (dates) for (const [cp, sjr] of shuffle([[800, 62], [1500, 78.89], [2600, 70], [4000, 95], [5000, 120]]).slice(0, 2)) {
+      const r = dates({ fct: new Date('2026-10-15T12:00:00'), sjr, cp, ageBand: 'u55' }), raw = cp / sjr;
+      const st = ['ICCP ÷ SJR : ' + eur(cp) + ' ÷ ' + eur(sjr) + ' = ' + nf(raw, 2) + ' → arrondi à l’entier inférieur : ' + day(Math.floor(raw)),
+        'Plafond : ' + day(df.cpMax) + (Math.floor(raw) > df.cpMax ? ' → on retient ' + day(df.cpMax) : ''), 'Différé congés payés : <b>' + day(r.diffCp) + '</b>'];
+      add('diff', 'Indemnité compensatrice de congés payés de ' + eur(cp) + ', SJR de ' + eur(sjr) + ' : différé congés payés ?', r.diffCp, [Math.ceil(raw), Math.round(raw * 30 / 26), df.cpMax], day, st, 3);
+    }
+    /* 4. Différé spécifique */
+    if (dates) for (const [sup, eco] of shuffle([[3000, false], [8000, false], [12000, true], [20000, false], [30000, true]]).slice(0, 2)) {
+      const r = dates({ fct: new Date('2026-10-15T12:00:00'), sjr: 80, supra: sup, eco, ageBand: 'u55' }), raw = sup / df.diviseur, cap = eco ? df.specMaxEco : df.specMax;
+      const st = ['Indemnités supra-légales ÷ ' + nf(df.diviseur, 1) + ' : ' + eur(sup) + ' ÷ ' + nf(df.diviseur, 1) + ' = ' + nf(raw, 2) + ' → arrondi à l’entier inférieur : ' + day(Math.floor(raw)),
+        'Plafond ' + (eco ? '(licenciement économique) ' : '') + ': ' + day(cap) + (Math.floor(raw) > cap ? ' → on retient ' + day(cap) : ''), 'Différé spécifique : <b>' + day(r.diffSpec) + '</b>'];
+      add('diff', 'Indemnités supra-légales de ' + eur(sup) + (eco ? ' (licenciement économique)' : '') + ' : différé spécifique ?', r.diffSpec, [Math.ceil(raw), Math.round(sup / 100), cap, eco ? df.specMax : df.specMaxEco], day, st, 3);
+    }
+    /* 5. Total des différés + délai d’attente */
+    if (dates) { const cp = pick([1200, 1800]), sjr = pick([60, 80]), sup = pick([4000, 6000]);
+      const r = dates({ fct: new Date('2026-10-15T12:00:00'), sjr, cp, supra: sup, ageBand: 'u55' });
+      add('diff', 'ICCP ' + eur(cp) + ', SJR ' + eur(sjr) + ', supra-légales ' + eur(sup) + ' : nombre total de jours avant le premier jour indemnisable ?', r.total, [r.diffCp + r.diffSpec, r.total - df.attente + 3, r.diffCp + df.attente], day,
+        ['Différé congés payés : ' + eur(cp) + ' ÷ ' + eur(sjr) + ' → ' + day(r.diffCp), 'Différé spécifique : ' + eur(sup) + ' ÷ ' + nf(df.diviseur, 1) + ' → ' + day(r.diffSpec), 'Délai d’attente : ' + day(r.attente), 'Total : ' + r.diffCp + ' + ' + r.diffSpec + ' + ' + r.attente + ' = <b>' + day(r.total) + '</b>'], 3); }
+    /* 6. Cumul ARE et reprise d’activité */
+    if (cumul) for (const [aj, brut] of shuffle([[57, 2100], [45, 900], [66.3, 1500], [40, 600], [52, 1300]]).slice(0, 2)) {
+      const sjr = r2(aj / 0.57 * 1.4), r = cumul({ aj, brut, sjr, mois: '2026-11' });
+      const st = ['ARE mensuelle théorique : ' + eur(aj) + ' × 30 = ' + eur(r.areM), 'Rémunération déduite : ' + pct(b.cumul.remun) + ' × ' + eur(brut) + ' = ' + eur(r2(r.deduit)),
+        '(' + eur(r.areM) + ' − ' + eur(r2(r.deduit)) + ') ÷ ' + eur(aj) + ' = ' + nf(r.jBrut, 2) + ' → arrondi à ' + day(Math.max(0, Math.min(30, Math.round(r.jBrut))))];
+      if (r.plafondAtteint) st.push('Salaire + ARE ne peuvent pas dépasser le salaire de référence : jours réduits à ' + day(r.j));
+      st.push('Jours indemnisés dans le mois : <b>' + day(r.j) + '</b> (complément de ' + eur(r.complement) + ' brut)');
+      add('cumul', 'AJ de ' + eur(aj) + ', reprise d’emploi à ' + eur(brut) + ' brut dans le mois : combien de jours d’ARE versés ?', r.j, [Math.floor(r.jBrut) === r.j ? Math.ceil(r.jBrut) : Math.floor(r.jBrut), Math.round((r.areM - brut) / aj), 30 - r.j], day, st, 'cns');
+    }
+    /* 7. Dégressivité */
+    for (const aj of shuffle([110, 130, 150, 180]).slice(0, 2)) {
+      const red = r2(Math.max(dg.seuil, aj * dg.coef));
+      add('are', 'Allocataire de moins de ' + dg.ageLimite + ' ans, AJ de ' + eur(aj) + ' : montant à partir du ' + dg.moisDebut + 'e mois ?', red, [aj, r2(aj * 0.75), r2(aj * 0.8), dg.seuil], eur,
+        ['AJ supérieure à ' + eur(dg.seuil) + ' et moins de ' + dg.ageLimite + ' ans : dégressivité applicable', eur(aj) + ' × ' + nf(dg.coef, 1) + ' = ' + eur(r2(aj * dg.coef)), 'Sans pouvoir descendre sous ' + eur(dg.seuil) + ' → <b>' + eur(red) + '</b>'], 3);
+    }
+    /* 8. Micro-entreprise : revenu retenu */
+    if (b.cns && b.cns.abat) for (const [k, lbl] of shuffle([['vente', 'vente de marchandises'], ['bic', 'prestations de services (BIC)'], ['bnc', 'activité libérale (BNC)']]).slice(0, 2)) {
+      const ca = pick([6000, 9000, 12000, 15000]), ab = b.cns.abat[k], rev = r2(ca * (1 - ab));
+      add('cumul', 'Micro-entrepreneur, ' + lbl + ', chiffre d’affaires annuel de ' + eur(ca) + ' : revenu retenu après abattement ?', rev, [r2(ca * (1 - b.cns.abat.bic)), r2(ca * (1 - b.cns.abat.bnc)), r2(ca * (1 - b.cns.abat.vente)), r2(ca * 0.5), ca], eur,
+        ['Abattement forfaitaire ' + lbl + ' : ' + pct(ab), eur(ca) + ' × (1 − ' + pct(ab) + ') = <b>' + eur(rev) + '</b>'], 'cns');
+    }
+    return L.filter(q => q.opts.includes(q.ok) && new Set(q.opts).size === q.opts.length && q.opts.length >= 3);
   }
 
   /* ---------- Vue « Formation » ---------- */
@@ -96,7 +151,7 @@
   let S = null, theme = 'all';
   const best = () => { try { return JSON.parse(localStorage.getItem('ft_quiz_best') || '{}') || {}; } catch (e) { return {}; } };
   function start() {
-    const pool = rules().concat(cases()).filter(x => theme === 'all' || x.th === theme);
+    const pool = rules().concat(calcs()).filter(x => theme === 'all' || x.th === theme);
     const r = shuffle(pool.filter(x => !x.calc)), c = shuffle(pool.filter(x => x.calc));
     const qs = []; while (qs.length < 10 && (r.length || c.length)) { if (r.length && (qs.length % 3 !== 2 || !c.length)) qs.push(r.shift()); else qs.push(c.shift()); }
     S = { qs, i: 0, score: 0, wrong: [], picked: null };
@@ -104,7 +159,7 @@
   }
   function home() {
     const h = $('qz'); if (!h) return;
-    const all = rules().concat(cases()), bs = best();
+    const all = rules().concat(calcs()), bs = best();
     h.innerHTML = '<div class="qz-intro"><h3>Entraînez-vous sur les règles et les calculs</h3><p>10 questions tirées du barème en vigueur et des cas de contrôle des simulateurs : les réponses suivent automatiquement les mises à jour réglementaires. Idéal pour les nouveaux conseillers ou pour réviser après une réforme.</p>' +
       '<div class="qz-th" role="group" aria-label="Thème">' + THEMES.map(t => { const n = t[0] === 'all' ? all.length : all.filter(x => x.th === t[0]).length; return n ? '<button type="button" data-th="' + t[0] + '" class="' + (t[0] === theme ? 'on' : '') + '">' + esc(t[1]) + ' <em>' + n + '</em></button>' : ''; }).join('') + '</div>' +
       '<div class="qz-row"><button type="button" class="ad-btn pri" data-qz="go">Commencer le quiz</button>' + (bs[theme] != null ? '<span class="qz-best">Meilleur score : <b>' + bs[theme] + '/10</b></span>' : '') + '</div></div>';
@@ -116,7 +171,7 @@
     h.innerHTML = '<div class="qz-card"><div class="qz-top"><span>Question ' + (S.i + 1) + ' / ' + S.qs.length + '</span><span class="qz-tag">' + esc((THEMES.find(t => t[0] === q.th) || [0, ''])[1]) + '</span><span>Score : ' + S.score + '</span></div>' +
       '<div class="qz-bar"><i style="width:' + Math.round(S.i / S.qs.length * 100) + '%"></i></div>' +
       '<h3 class="qz-q">' + esc(q.text) + '</h3><div class="qz-opts">' + q.opts.map((o, k) => '<button type="button" data-o="' + k + '" class="' + (done ? (o === q.ok ? 'ok' : (k === S.picked ? 'ko' : 'dim')) : '') + '"' + (done ? ' disabled' : '') + '>' + esc(o) + '</button>').join('') + '</div>' +
-      (done ? '<div class="qz-expl ' + (q.opts[S.picked] === q.ok ? 'ok' : 'ko') + '" role="status"><b>' + (q.opts[S.picked] === q.ok ? '✅ Bonne réponse' : '❌ La bonne réponse : ' + esc(q.ok)) + '</b><p>' + esc(q.expl) + '</p></div>' +
+      (done ? '<div class="qz-expl ' + (q.opts[S.picked] === q.ok ? 'ok' : 'ko') + '" role="status"><b>' + (q.opts[S.picked] === q.ok ? '✅ Bonne réponse' : '❌ La bonne réponse : ' + esc(q.ok)) + '</b><p>' + esc(q.expl) + '</p>' + (q.steps ? '<ol class="qz-steps">' + q.steps.map(x => '<li>' + x + '</li>').join('') + '</ol>' : '') + '</div>' +
         '<div class="qz-row">' + (q.go != null ? '<button type="button" class="ad-btn" data-qz="tool" data-go="' + esc(q.go) + '">Voir dans l’outil</button>' : '') + '<button type="button" class="ad-btn pri" data-qz="next">' + (S.i + 1 < S.qs.length ? 'Question suivante' : 'Voir mon score') + '</button></div>' : '') + '</div>';
     const f = h.querySelector(done ? '[data-qz="next"]' : '.qz-opts button'); if (f) f.focus();
   }
@@ -125,13 +180,14 @@
     if (bs[theme] == null || sc > bs[theme]) { bs[theme] = sc; try { localStorage.setItem('ft_quiz_best', JSON.stringify(bs)); } catch (e) {} }
     const msg = sc >= 9 ? 'Excellent, vous maîtrisez le sujet !' : sc >= 7 ? 'Très bien, quelques points à revoir.' : sc >= 5 ? 'Pas mal : revoyez les réponses ci-dessous.' : 'À retravailler : les fiches des outils vous aideront.';
     h.innerHTML = '<div class="qz-card qz-end"><div class="qz-score">' + sc + '<small>/' + n + '</small></div><p>' + msg + '</p>' +
-      (S.wrong.length ? '<div class="qz-rev"><h4>À revoir</h4>' + S.wrong.map(q => '<div><b>' + esc(q.text) + '</b><span>Réponse : ' + esc(q.ok) + '</span></div>').join('') + '</div>' : '') +
+      '<div class="qz-rev"><h4>Détail des réponses</h4>' + S.qs.map((q, i) => '<details' + (q.mine !== q.ok ? ' open' : '') + '><summary><span>' + (q.mine === q.ok ? '✅' : '❌') + '</span><b>' + (i + 1) + '. ' + esc(q.text) + '</b></summary>' +
+        '<div class="qz-rev-b">' + (q.mine !== q.ok ? '<p>Votre réponse : <s>' + esc(q.mine) + '</s></p>' : '') + '<p>Bonne réponse : <b>' + esc(q.ok) + '</b></p><p>' + esc(q.expl) + '</p>' + (q.steps ? '<ol class="qz-steps">' + q.steps.map(x => '<li>' + x + '</li>').join('') + '</ol>' : '') + '</div></details>').join('') + '</div>' +
       '<div class="qz-row"><button type="button" class="ad-btn" data-qz="home">Changer de thème</button><button type="button" class="ad-btn pri" data-qz="go">Nouveau quiz</button></div></div>';
   }
   V.addEventListener('click', e => {
     const th = e.target.closest('[data-th]'); if (th) { theme = th.dataset.th; home(); return; }
     const o = e.target.closest('.qz-opts [data-o]');
-    if (o && S && S.picked == null) { S.picked = +o.dataset.o; const q = S.qs[S.i]; if (q.opts[S.picked] === q.ok) S.score++; else S.wrong.push(q); draw(); return; }
+    if (o && S && S.picked == null) { S.picked = +o.dataset.o; const q = S.qs[S.i]; q.mine = q.opts[S.picked]; if (q.mine === q.ok) S.score++; else S.wrong.push(q); draw(); return; }
     const b = e.target.closest('[data-qz]'); if (!b) return;
     const a = b.dataset.qz;
     if (a === 'go') start();
@@ -167,5 +223,5 @@
   window.FT_ACTIONS = window.FT_ACTIONS || [];
   window.FT_ACTIONS.push({ t: 'Mode formation', s: 'Quiz de 10 questions sur les règles et les calculs', kw: 'formation quiz entraînement réviser apprendre nouveau conseiller', run: () => switchNavTab('formation') });
   try { if (typeof HOME_GROUPS !== 'undefined' && HOME_GROUPS[0] && !HOME_GROUPS[0].ids.includes('formation')) HOME_GROUPS[0].ids.push('formation'); } catch (e) {}
-  window.ftQuiz = { rules, cases };
+  window.ftQuiz = { rules, calcs };
 })();

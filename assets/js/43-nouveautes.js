@@ -2,6 +2,13 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.35', date: '13/11/2026', items: [
+      'Paramètres : thème, taille du texte, contraste, lecture facilitée, animations, page d’ouverture, notifications… réunis dans une seule fenêtre (icône ⚙ en haut, menu du compte ou menu « ⋯ » sur téléphone).',
+      'Aide-mémo : l’ancien bouton « Repères » s’appelle maintenant « Aide-mémo » ; il se ferme en touchant à côté du volet.',
+      'Mode formation : chaque calcul est détaillé pas à pas, et le récapitulatif de fin reprend toutes les questions avec votre réponse, la bonne réponse et l’explication.',
+      'Profil : le prénom, le nom et l’agence de rattachement sont désormais obligatoires (demandés une fois à la connexion s’ils manquent).',
+      'Accueil : « Derniers calculs » s’affiche juste sous « Mes favoris ».'
+    ] },
     { v: '2026-11-13.33', date: '13/11/2026', items: [
       'Mes rappels : programmez un rappel (« relancer dans 15 jours ») depuis le menu de votre compte, la recherche ou le bouton « ⏰ Rappel » sous chaque mail généré ; vous recevez une notification à la date choisie, même appli fermée. Les prochains rappels s’affichent sur l’accueil.',
       'Mails pré-remplis : dans la page Mails, « Remplir les champs vides » reprend les montants, dates et durées de votre dernier calcul (et chaque champ propose les valeurs du calcul). Vérifiez toujours avant d’envoyer.',

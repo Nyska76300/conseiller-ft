@@ -186,6 +186,8 @@
     [/^Notifications/i, 'Activer', () => window.ftEnableNotifs && window.ftEnableNotifs(), () => !(window.ftNotifOn && window.ftNotifOn())],
     [/^Confidentialit/i, 'Lire', () => window.ftPrivacy && window.ftPrivacy()],
     [/^Mes rappels/i, 'Ouvrir', () => window.ftReminders && window.ftReminders()],
+    [/^Paramètres/i, 'Ouvrir', () => window.ftSettings && window.ftSettings()],
+    [/^Aide-mémo/i, 'Ouvrir', () => window.ftRpToggle && window.ftRpToggle(true)],
     [/^Mode formation/i, 'Ouvrir', () => switchNavTab('formation')],
     [/^Mails pré-remplis/i, 'Ouvrir', () => switchNavTab('cvm')],
     [/^Quoi de neuf/i, '', null, () => false],

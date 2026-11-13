@@ -66,11 +66,15 @@
         : '<p class="hc-empty">Les simulations que vous faites apparaîtront ici pour être reprises en un clic (sur ce poste uniquement).</p>') + '</section>';
   }
   function render() {
-    const L = document.querySelector('#view-home .fh-L'); if (!L) return;
-    const cur = L.querySelector(':scope > .fh-hist'), h = html();
-    if (cur) { if (cur.outerHTML !== h) cur.outerHTML = h; return; }
-    const lk = L.querySelector(':scope > .fh-links'), tmp = document.createElement('div'); tmp.innerHTML = h;
-    if (lk && lk.nextSibling) L.insertBefore(tmp.firstChild, lk.nextSibling); else L.appendChild(tmp.firstChild);
+    /* Juste sous « Mes favoris » (sinon dans la colonne de droite) */
+    const pins = document.querySelector('#view-home .fh-pins'), L = document.querySelector('#view-home .fh-L');
+    if (!pins && !L) return;
+    let cur = document.querySelector('#view-home .fh-hist');
+    const h = html();
+    if (cur && cur.outerHTML !== h) { const t = document.createElement('div'); t.innerHTML = h; cur.replaceWith(t.firstChild); cur = document.querySelector('#view-home .fh-hist'); }
+    if (!cur) { const t = document.createElement('div'); t.innerHTML = h; cur = t.firstChild; }
+    if (pins) { const rem = document.getElementById('ft-rem-home'); const after = rem && rem.previousElementSibling === pins ? rem : pins; if (after.nextElementSibling !== cur) after.after(cur); }
+    else if (cur.parentNode !== L) L.appendChild(cur);
   }
   document.addEventListener('click', e => {
     const b = e.target.closest && e.target.closest('[data-hc]'); if (!b) return;

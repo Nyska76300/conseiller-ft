@@ -4,7 +4,7 @@
     ['search', 'Rechercher', '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', () => window.ftHeaderSearch && window.ftHeaderSearch()],
     ['date', 'Simulateur de date à date', '<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>', () => document.getElementById('datecalc-toggle').click()],
     ['calc', 'Calculatrice', '<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h8"/>', () => document.getElementById('header-calc-btn').click()],
-    ['rp', 'Repères et affichage', '<circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/>', () => document.getElementById('rp-btn').click()],
+    ['rp', 'Aide-mémo', '<circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/>', () => document.getElementById('rp-btn').click()],
     ['data', 'Mes données : sauvegarde', '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>', () => document.getElementById('data-btn').click()],
     ['theme', 'Mode clair / sombre', '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>', () => document.getElementById('theme-toggle-btn').click()],
     ['reload', 'Forcer la mise à jour', '<path d="M21 12a9 9 0 1 1-2.6-6.4L21 8"/><path d="M21 3v5h-5"/>', () => window.ftHardReload()]

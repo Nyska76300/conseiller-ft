@@ -6,7 +6,7 @@
   if (!SB_URL || !SB_KEY || !window.fetch) return;
 
   // Données synchronisées (aucune donnée de dossier ou d'allocataire)
-  var SYNC = ['ft_links', 'ft_deleted_tpl', 'ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use', 'ft_bareme_ack', 'ft_pins', 'ft_menu_favs', 'ft_tour_done'];
+  var SYNC = ['ft_prefs', 'ft_links', 'ft_deleted_tpl', 'ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use', 'ft_bareme_ack', 'ft_pins', 'ft_menu_favs', 'ft_tour_done'];
   var K_SESS = 'ft_sb_session', K_META = 'ft_sb_meta';
   var LSraw = {
     get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -49,7 +49,8 @@
         });
       });
   }
-  function userOf(u) { var m = (u && u.user_metadata) || {}; return { id: u.id, email: u.email, first: m.first_name || '', last: m.last_name || '', name: m.full_name || [m.first_name, m.last_name].filter(Boolean).join(' ') }; }
+  function incomplete(u) { return !u || !u.first || !u.last || !u.agence; }
+  function userOf(u) { var m = (u && u.user_metadata) || {}; return { id: u.id, email: u.email, first: m.first_name || '', last: m.last_name || '', agence: m.agence || '', name: m.full_name || [m.first_name, m.last_name].filter(Boolean).join(' ') }; }
   function capName(t) { return String(t || '').trim().replace(/\s+/g, ' ').toLowerCase().replace(/(^|[\s'’-])(\p{L})/gu, function (a, b, c) { return b + c.toUpperCase(); }); }
   function keepSession(d) {
     sess = { access_token: d.access_token, refresh_token: d.refresh_token, expires_at: d.expires_at || (Math.floor(Date.now() / 1000) + (d.expires_in || 3600)), user: userOf(d.user) };
@@ -307,7 +308,7 @@
           keepSession(d); meta.email = email; saveMeta();
           try { sessionStorage.removeItem('ft_sb_skip'); } catch (e) {}
           closeBox(); renderAcct(); toast(sess.user.name ? 'Bonjour ' + (sess.user.first || sess.user.name) + ' !' : 'Connecté : ' + email, 'success');
-          if (!sess.user.name) setTimeout(function () { if (!document.getElementById('ft-auth')) showAccount(true); }, 1200);
+          if (incomplete(sess.user)) setTimeout(function () { if (!document.getElementById('ft-auth')) showAccount(true); }, 1200);
           try { document.dispatchEvent(new Event('ft-login')); } catch (e) {}
           return sync('start').then(loadShared);
         })
@@ -327,6 +328,7 @@
   function showSignup(prefill) {
     var w = box('<h2>Créer un compte</h2><p class="fa-sub">Vos modèles de mails, favoris et liens vous suivront sur tous les postes.</p>' +
       '<form><div class="fa-2"><div><label for="fa-sfirst">Prénom</label><input id="fa-sfirst" type="text" autocomplete="given-name" required maxlength="40"></div><div><label for="fa-slast">Nom</label><input id="fa-slast" type="text" autocomplete="family-name" required maxlength="40"></div></div>' +
+      '<label for="fa-sag">Agence de rattachement</label><input id="fa-sag" type="text" autocomplete="organization" required maxlength="60" placeholder="Ex. : Rouen Saint-Sever">' +
       '<label for="fa-smail">E-mail professionnel</label><input id="fa-smail" type="email" autocomplete="email" required value="' + esc(prefill || '') + '">' +
       '<label for="fa-sp1">Mot de passe (8 caractères minimum)</label><input id="fa-sp1" type="password" autocomplete="new-password" minlength="8" required>' +
       '<label for="fa-sp2">Confirmer le mot de passe</label><input id="fa-sp2" type="password" autocomplete="new-password" minlength="8" required>' +
@@ -339,11 +341,13 @@
       ev.preventDefault();
       var email = w.querySelector('#fa-smail').value.trim(), p1 = w.querySelector('#fa-sp1').value, p2 = w.querySelector('#fa-sp2').value, b = w.querySelector('.fa-go');
       var first = capName(w.querySelector('#fa-sfirst').value), last = capName(w.querySelector('#fa-slast').value);
+      var agence = w.querySelector('#fa-sag').value.trim().replace(/\s+/g, ' ');
       if (!first || !last) return msg(w, 'Indiquez votre prénom et votre nom.');
+      if (!agence) return msg(w, 'Indiquez votre agence de rattachement.');
       if (p1.length < 8) return msg(w, 'Le mot de passe doit contenir au moins 8 caractères.');
       if (p1 !== p2) return msg(w, 'Les deux mots de passe ne sont pas identiques.');
       b.disabled = true; b.textContent = 'Création…';
-      api('/auth/v1/signup?redirect_to=' + encodeURIComponent(location.origin + location.pathname), { method: 'POST', auth: false, body: { email: email, password: p1, data: { first_name: first, last_name: last, full_name: first + ' ' + last, invite: (function () { try { return sessionStorage.getItem('ft_invite') || ''; } catch (e) { return ''; } })() } } })
+      api('/auth/v1/signup?redirect_to=' + encodeURIComponent(location.origin + location.pathname), { method: 'POST', auth: false, body: { email: email, password: p1, data: { first_name: first, last_name: last, full_name: first + ' ' + last, agence: agence, invite: (function () { try { return sessionStorage.getItem('ft_invite') || ''; } catch (e) { return ''; } })() } } })
         .then(function (d) {
           meta.email = email; saveMeta();
           if (d && d.access_token && d.user) {
@@ -370,25 +374,27 @@
   function showAccount(first) {
     if (!sess) return showLogin();
     var u = sess.user;
-    var w = box('<h2>' + (first ? 'Complétez votre profil' : 'Mon compte') + '</h2><p class="fa-sub">' + (first ? 'Indiquez votre prénom et votre nom : ils remplacent votre adresse e-mail dans le site.' : 'Modifiez vos informations. L’ancien mot de passe est demandé pour changer d’adresse ou de mot de passe.') + '</p>' +
+    var w = box('<h2>' + (first ? 'Complétez votre profil' : 'Mon compte') + '</h2><p class="fa-sub">' + (first ? 'Indiquez votre prénom, votre nom et votre agence de rattachement : ces informations sont obligatoires pour utiliser votre compte.' : 'Modifiez vos informations. L’ancien mot de passe est demandé pour changer d’adresse ou de mot de passe.') + '</p>' +
       '<form autocomplete="off"><div class="fa-sec">Identité</div><div class="fa-2"><div><label for="fa-afirst">Prénom</label><input id="fa-afirst" type="text" autocomplete="given-name" required maxlength="40" value="' + esc(u.first || '') + '"></div><div><label for="fa-alast">Nom</label><input id="fa-alast" type="text" autocomplete="family-name" required maxlength="40" value="' + esc(u.last || '') + '"></div></div>' +
+      '<label for="fa-aag">Agence de rattachement</label><input id="fa-aag" type="text" autocomplete="organization" required maxlength="60" placeholder="Ex. : Rouen Saint-Sever" value="' + esc(u.agence || '') + '">' +
       (first ? '' : '<div class="fa-sec">Adresse e-mail</div><label for="fa-amail">E-mail</label><input id="fa-amail" type="email" autocomplete="email" value="' + esc(u.email) + '">' +
       '<div class="fa-sec">Mot de passe</div><label for="fa-anew">Nouveau mot de passe <small>(laisser vide pour ne pas le changer)</small></label><input id="fa-anew" type="password" autocomplete="new-password" minlength="8">' +
       '<label for="fa-anew2">Confirmer le nouveau mot de passe</label><input id="fa-anew2" type="password" autocomplete="new-password" minlength="8">' +
       '<label for="fa-acur">Mot de passe actuel <small>(obligatoire pour changer l’e-mail ou le mot de passe)</small></label><input id="fa-acur" type="password" autocomplete="current-password">') +
       '<button class="fa-go" type="submit">Enregistrer</button></form><div class="fa-msg"></div>' +
-      '<div class="fa-links"><button type="button" data-a="close">' + (first ? 'Plus tard' : 'Fermer') + '</button>' + (first ? '' : '<button type="button" data-a="out">Se déconnecter</button>') + '</div>');
-    w.querySelector('#fa-afirst').focus();
-    w.querySelector('[data-a="close"]').onclick = function () { closeBox(); if (first) try { sessionStorage.setItem('ft_name_later', '1'); } catch (e) {} };
+      '<div class="fa-links">' + (first ? '' : '<button type="button" data-a="close">Fermer</button>') + '<button type="button" data-a="out">Se déconnecter</button></div>');
+    (w.querySelector(first && u.first && u.last ? '#fa-aag' : '#fa-afirst')).focus();
+    var cl = w.querySelector('[data-a="close"]'); if (cl) cl.onclick = function () { closeBox(); };
     var o = w.querySelector('[data-a="out"]'); if (o) o.onclick = function () { closeBox(); logout(); };
-    w.addEventListener('click', function (e) { if (e.target === w) closeBox(); });
+    w.addEventListener('click', function (e) { if (e.target === w && !first) closeBox(); });
     w.querySelector('form').onsubmit = function (ev) {
       ev.preventDefault();
-      var f = capName(w.querySelector('#fa-afirst').value), l = capName(w.querySelector('#fa-alast').value);
+      var f = capName(w.querySelector('#fa-afirst').value), l = capName(w.querySelector('#fa-alast').value), ag = w.querySelector('#fa-aag').value.trim().replace(/\s+/g, ' ');
       var me = w.querySelector('#fa-amail'), nm = me ? me.value.trim() : u.email;
       var p1 = w.querySelector('#fa-anew') ? w.querySelector('#fa-anew').value : '', p2 = w.querySelector('#fa-anew2') ? w.querySelector('#fa-anew2').value : '', cur = w.querySelector('#fa-acur') ? w.querySelector('#fa-acur').value : '';
       if (!f || !l) return msg(w, 'Indiquez votre prénom et votre nom.');
-      var chMail = nm && nm.toLowerCase() !== String(u.email).toLowerCase(), chPass = !!p1, chName = f !== u.first || l !== u.last;
+      if (!ag) return msg(w, 'Indiquez votre agence de rattachement.');
+      var chMail = nm && nm.toLowerCase() !== String(u.email).toLowerCase(), chPass = !!p1, chName = f !== u.first || l !== u.last || ag !== (u.agence || '');
       if (chPass && p1.length < 8) return msg(w, 'Le nouveau mot de passe doit contenir au moins 8 caractères.');
       if (chPass && p1 !== p2) return msg(w, 'Les deux nouveaux mots de passe ne sont pas identiques.');
       if ((chMail || chPass) && !cur) return msg(w, 'Saisissez votre mot de passe actuel pour changer l’e-mail ou le mot de passe.');
@@ -398,7 +404,7 @@
       var done = [];
       chk.then(function () {
         if (!chName) return;
-        return api('/auth/v1/user', { method: 'PUT', body: { data: { first_name: f, last_name: l, full_name: f + ' ' + l } } }).then(function (d) { sess.user = userOf(d); jset(K_SESS, sess); done.push('nom'); });
+        return api('/auth/v1/user', { method: 'PUT', body: { data: { first_name: f, last_name: l, full_name: f + ' ' + l, agence: ag } } }).then(function (d) { sess.user = userOf(d); jset(K_SESS, sess); done.push('nom'); });
       }).then(function () {
         if (!chPass) return;
         return api('/auth/v1/user', { method: 'PUT', body: { password: p1 } }).then(function () { done.push('mot de passe'); });
@@ -432,8 +438,7 @@
     if (!sess) return;
     api('/auth/v1/user').then(function (u) {
       if (!sess) return; var nu = userOf(u); nu.id = sess.user.id || nu.id; sess.user = nu; jset(K_SESS, sess); renderAcct();
-      var later = false; try { later = !!sessionStorage.getItem('ft_name_later'); } catch (e) {}
-      if (!nu.name && !later && !document.getElementById('ft-auth')) showAccount(true);
+      if (incomplete(nu) && !document.getElementById('ft-auth')) showAccount(true);
     }).catch(function () {});
   }
   function showSetPassword(kind) {

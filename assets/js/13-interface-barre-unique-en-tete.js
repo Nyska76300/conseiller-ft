@@ -39,25 +39,23 @@
     LSset('ft_a11y', JSON.stringify(A11));
   }
   applyA11();
-  window.ftA11y = (k, v) => { A11[k] = v; applyA11(); rpRender(); };
+  window.ftA11y = (k, v) => { A11[k] = v; applyA11(); rpRender(); try { document.dispatchEvent(new Event('ft-a11y')); } catch (e) {} };
+  window.__ftA11y = () => Object.assign({}, A11);
 
   const btn = document.createElement('button');
-  btn.id = 'rp-btn'; btn.type = 'button'; btn.title = 'Repères et affichage (?)'; btn.setAttribute('onclick', 'ftRpToggle()'); btn.textContent = 'Repères';
+  btn.id = 'rp-btn'; btn.type = 'button'; btn.title = 'Aide-mémo : seuils et montants clés (?)'; btn.setAttribute('onclick', 'ftRpToggle()'); btn.textContent = 'Aide-mémo';
   if (actions) actions.insertBefore(btn, actions.firstChild);
-  const dr = document.createElement('div'); dr.setAttribute('role', 'dialog'); dr.id = 'rp-drawer'; dr.className = 'hidden'; dr.setAttribute('aria-label', 'Repères et affichage');
+  const dr = document.createElement('div'); dr.setAttribute('role', 'dialog'); dr.id = 'rp-drawer'; dr.className = 'hidden'; dr.setAttribute('aria-label', 'Aide-mémo'); dr.setAttribute('aria-modal', 'true');
   document.body.appendChild(dr);
   function rpRender() {
     const on = (k, v) => A11[k] === v ? ' is-on' : '';
-    dr.innerHTML = '<div class="rp-head"><h3>Repères et affichage</h3><button type="button" onclick="ftRpToggle(false)" aria-label="Fermer">Fermer</button></div>' +
-      '<section class="rp-sec"><h4>Affichage</h4><div class="rp-row"><span>Taille du texte</span><div class="rp-seg">' +
-      '<button type="button" class="' + on('ts', 0) + '" onclick="ftA11y(\'ts\',0)">Normal</button><button type="button" class="' + on('ts', 1) + '" onclick="ftA11y(\'ts\',1)">Grand</button><button type="button" class="' + on('ts', 2) + '" onclick="ftA11y(\'ts\',2)">Très grand</button></div></div>' +
-      '<div class="rp-row"><span>Contraste renforcé</span><div class="rp-seg"><button type="button" class="' + (A11.hc ? '' : ' is-on') + '" onclick="ftA11y(\'hc\',false)">Non</button><button type="button" class="' + (A11.hc ? ' is-on' : '') + '" onclick="ftA11y(\'hc\',true)">Oui</button></div></div>' +
-      '<div class="rp-row"><span>Mode entretien (Ctrl+J)</span><div class="rp-seg"><button type="button" onclick="ftEntretien()">Activer ou couper</button></div></div></section>' +
+    dr.innerHTML = '<div class="rp-head"><h3>Aide-mémo</h3><button type="button" onclick="ftRpToggle(false)" aria-label="Fermer">Fermer</button></div>' +
       KEY.map((g, gi) => '<section class="rp-sec"><h4>' + esc(g[0]) + '</h4><dl>' + g[1].map(r => '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>').join('') + '</dl><button type="button" class="rp-copy" onclick="ftRpCopy(' + gi + ')">Copier ce groupe</button></section>').join('') +
       '<p class="rp-foot">Valeurs du barème vérifié le ' + esc(typeof BAREME !== 'undefined' ? BAREME.verifie : '') + ', détail et sources dans « Références et calculs ».</p>';
   }
   window.ftRpCopy = gi => { const g = KEY[gi]; copyToClipboard(g[0] + '\n' + g[1].map(r => '- ' + r[0] + ' : ' + r[1]).join('\n')); showToast('Repères copiés', 'success'); };
-  window.ftRpToggle = v => { const open = v == null ? dr.classList.contains('hidden') : v; if (open) rpRender(); dr.classList.toggle('hidden', !open); };
+  const scrim = document.createElement('div'); scrim.id = 'rp-scrim'; scrim.hidden = true; scrim.addEventListener('click', () => ftRpToggle(false)); document.body.appendChild(scrim);
+  window.ftRpToggle = v => { const open = v == null ? dr.classList.contains('hidden') : v; if (open) rpRender(); dr.classList.toggle('hidden', !open); scrim.hidden = !open; };
   window.addEventListener('keydown', e => {
     const f = /INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || '');
     if (e.key === '?' && !f && !e.ctrlKey && !e.metaKey) { e.preventDefault(); ftRpToggle(); }
@@ -65,7 +63,7 @@
   });
   window.FT_ACTIONS = window.FT_ACTIONS || [];
   window.FT_ACTIONS.push(
-    { t: 'Repères et affichage', s: 'Seuils clés, taille du texte, contraste (touche ?)', kw: 'aide mémoire seuils repères texte contraste accessibilité taille', run: () => ftRpToggle(true) },
+    { t: 'Aide-mémo', s: 'Seuils et montants clés à copier (touche ?)', kw: 'aide mémo mémoire seuils repères montants', run: () => ftRpToggle(true) },
     { t: 'Texte plus grand', s: 'Agrandir l’affichage', kw: 'taille texte police zoom', run: () => ftA11y('ts', Math.min(2, A11.ts + 1)) },
     { t: 'Contraste renforcé', s: 'Activer ou couper', kw: 'contraste lisibilité', run: () => ftA11y('hc', !A11.hc) }
   );
