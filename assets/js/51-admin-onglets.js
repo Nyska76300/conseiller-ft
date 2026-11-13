@@ -5,7 +5,7 @@
   const $ = id => document.getElementById(id);
   const KEY = 'ft_adm_pane', SKEY = 'ft_adm_sub';
   const PANES = [['todo', 'À traiter'], ['stats', 'Statistiques'], ['team', 'Équipe'], ['content', 'Contenu']];
-  const SUBS = [['over', 'Activité'], ['mails', 'Mails'], ['tools', 'Outils'], ['users', 'Conseillers']];
+  const SUBS = [['over', 'Activité'], ['mails', 'Mails'], ['tools', 'Outils'], ['users', 'Conseillers'], ['agences', 'Agences'], ['formation', 'Formation']];
   const BY_ID = { 'ad-regs': 'todo', 'ad-ideas': 'todo', 'ad-bugs': 'todo', 'ad-annonce': 'team', 'ad-push': 'team', 'ad-invites': 'team', 'ad-mfa': 'team', 'ad-users': 'stats', 'ad-faq': 'content' };
   const BY_TITLE = [[/propositions/i, 'todo'], [/statistiques cumul/i, 'stats'], [/bar[eè]me/i, 'content'], [/mod[eè]les communs/i, 'content'], [/noms renomm/i, 'content'], [/^site$/i, 'content']];
   const SUB_CARD = { 'ad-users': 'users' };

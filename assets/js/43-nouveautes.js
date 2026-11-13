@@ -2,6 +2,11 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.36', date: '13/11/2026', items: [
+      'Vue usager : sous chaque mail généré par un simulateur, « 👁 Vue usager » affiche les résultats en grand et sans jargon, à montrer à la personne reçue (texte agrandissable, impression).',
+      'Annonces par agence : un message peut désormais concerner une seule agence ; il ne s’affiche que pour ses conseillers.',
+      'Résumé du mois : le 1er de chaque mois, une notification récapitule les nouveautés du site et les changements réglementaires du mois écoulé (si les notifications sont activées).'
+    ] },
     { v: '2026-11-13.35', date: '13/11/2026', items: [
       'Paramètres : thème, taille du texte, contraste, lecture facilitée, animations, page d’ouverture, notifications… réunis dans une seule fenêtre (icône ⚙ en haut, menu du compte ou menu « ⋯ » sur téléphone).',
       'Aide-mémo : l’ancien bouton « Repères » s’appelle maintenant « Aide-mémo » ; il se ferme en touchant à côté du volet.',

@@ -178,6 +178,12 @@
   function end() {
     const h = $('qz'), n = S.qs.length, sc = S.score, bs = best();
     if (bs[theme] == null || sc > bs[theme]) { bs[theme] = sc; try { localStorage.setItem('ft_quiz_best', JSON.stringify(bs)); } catch (e) {} }
+    /* Suivi de la formation : résultat envoyé sans détail personnel (taux par thème) */
+    if (!S.sent && window.ftLoggedIn && window.ftLoggedIn() && window.__ftRest) {
+      S.sent = true; const det = {};
+      S.qs.forEach(q => { const d = det[q.th] = det[q.th] || [0, 0]; d[1]++; if (q.mine === q.ok) d[0]++; });
+      window.__ftRest('/rest/v1/quiz_results', { method: 'POST', prefer: 'return=minimal', body: { theme, score: sc, total: n, details: det } }).catch(() => {});
+    }
     const msg = sc >= 9 ? 'Excellent, vous maîtrisez le sujet !' : sc >= 7 ? 'Très bien, quelques points à revoir.' : sc >= 5 ? 'Pas mal : revoyez les réponses ci-dessous.' : 'À retravailler : les fiches des outils vous aideront.';
     h.innerHTML = '<div class="qz-card qz-end"><div class="qz-score">' + sc + '<small>/' + n + '</small></div><p>' + msg + '</p>' +
       '<div class="qz-rev"><h4>Détail des réponses</h4>' + S.qs.map((q, i) => '<details' + (q.mine !== q.ok ? ' open' : '') + '><summary><span>' + (q.mine === q.ok ? '✅' : '❌') + '</span><b>' + (i + 1) + '. ' + esc(q.text) + '</b></summary>' +

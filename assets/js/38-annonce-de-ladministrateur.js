@@ -12,12 +12,15 @@
   function annonce() {
     const a = jget('ft_annonce', null), hd = document.querySelector('body > header, header.h-14');
     let bar = $('ft-ann');
-    const live = a && a.active && a.text && (!a.until || today() <= a.until);
+    const norm = t => String(t || '').trim().toLowerCase();
+    const mine = window.__ftUserAgence ? window.__ftUserAgence() : '';
+    const forMe = !a || !a.agence || isAdmin() || (mine && norm(mine) === norm(a.agence));
+    const live = a && a.active && a.text && (!a.until || today() <= a.until) && forMe;
     if (!live || LS.get('ft_ann_x') === a.id) { if (bar) bar.remove(); return; }
     if (!bar) { bar = document.createElement('div'); bar.id = 'ft-ann'; bar.setAttribute('role', 'status'); if (hd && hd.parentNode) hd.parentNode.insertBefore(bar, hd.nextSibling); else document.body.prepend(bar); }
     if (bar.dataset.id === a.id) return;
     bar.dataset.id = a.id; bar.className = a.level === 'imp' ? 'imp' : '';
-    bar.innerHTML = '<span class="an-i" aria-hidden="true">' + (a.level === 'imp' ? '⚠️' : '📣') + '</span><div class="an-t"><b>' + (a.level === 'imp' ? 'Important' : 'Annonce') + '</b>' + esc(a.text) + '</div><button type="button" class="an-x" aria-label="Masquer l’annonce" title="Masquer">×</button>';
+    bar.innerHTML = '<span class="an-i" aria-hidden="true">' + (a.level === 'imp' ? '⚠️' : '📣') + '</span><div class="an-t"><b>' + (a.level === 'imp' ? 'Important' : 'Annonce') + (a.agence ? ' · ' + esc(a.agence) : '') + '</b>' + esc(a.text) + '</div><button type="button" class="an-x" aria-label="Masquer l’annonce" title="Masquer">×</button>';
     bar.querySelector('.an-x').onclick = () => { LS.set('ft_ann_x', a.id); bar.remove(); };
     if (LS.get('ft_ann_n') !== a.id) { LS.set('ft_ann_n', a.id); notify(a.level === 'imp' ? 'Annonce importante' : 'Annonce', a.text, 'ft-ann'); }
   }
@@ -31,10 +34,10 @@
     const a = jget('ft_annonce', {}) || {};
     const live = a.active && a.text && (!a.until || today() <= a.until);
     return card('📣', 'Annonce aux conseillers', live ? 'En ligne' : 'Aucune',
-      '<p class="ad-empty">Le message s’affiche en bandeau en haut du site chez tous les conseillers (et en notification pour ceux qui les ont activées), jusqu’à sa date de fin ou son retrait.</p>' +
+      '<p class="ad-empty">Le message s’affiche en bandeau en haut du site chez tous les conseillers (ou ceux d’une seule agence) (et en notification pour ceux qui les ont activées), jusqu’à sa date de fin ou son retrait.</p>' +
       '<textarea class="ad-in" id="an-txt" maxlength="400" placeholder="Ex. : Nouvelle règle démission au 1er janvier, voir la fiche mise à jour.">' + esc(live ? a.text : '') + '</textarea>' +
       '<div class="ad-row" style="margin-top:8px;flex-wrap:wrap;gap:8px"><select class="ad-in" id="an-lvl"><option value="info"' + (a.level !== 'imp' ? ' selected' : '') + '>Information</option><option value="imp"' + (a.level === 'imp' ? ' selected' : '') + '>Important</option></select>' +
-      '<label class="ad-empty" style="display:flex;align-items:center;gap:6px">Jusqu’au <input type="date" class="ad-in" id="an-until" value="' + esc(live ? (a.until || '') : '') + '"></label></div>' +
+      '<select class="ad-in" id="an-ag" aria-label="Destinataires"><option value="">Toutes les agences</option>' + (window.__ftAgences || []).map(x => '<option' + (live && a.agence === x ? ' selected' : '') + '>' + esc(x) + '</option>').join('') + '</select><label class="ad-empty" style="display:flex;align-items:center;gap:6px">Jusqu’au <input type="date" class="ad-in" id="an-until" value="' + esc(live ? (a.until || '') : '') + '"></label></div>' +
       '<div class="ad-row" style="margin-top:8px"><button type="button" class="ad-btn pri" data-an="pub">Publier</button>' + (live ? '<button type="button" class="ad-btn" data-an="off">Retirer</button>' : '') + '</div>');
   }
   document.addEventListener('click', e => {
@@ -42,9 +45,9 @@
     const off = b.dataset.an === 'off';
     const txt = ($('an-txt') || {}).value || '';
     if (!off && !txt.trim()) return toast('Écrivez le message de l’annonce', 'info');
-    const a = off ? Object.assign({}, jget('ft_annonce', {}), { active: false }) : { id: Date.now().toString(36), text: txt.trim(), level: ($('an-lvl') || {}).value || 'info', until: ($('an-until') || {}).value || '', date: today(), active: true };
-    if (!off && !confirm('Publier cette annonce pour tous les conseillers ?')) return;
-    window.__ftSaveShared('__ft_annonce', a).then(() => { LS.set('ft_annonce', JSON.stringify(a)); LS.set('ft_ann_n', a.id); annonce(); if (!off && window.ftPushSend) window.ftPushSend({ title: a.level === 'imp' ? 'Annonce importante' : 'Annonce', body: a.text, go: 'home', tag: 'ft-ann' }).catch(() => {}); toast(off ? 'Annonce retirée' : 'Annonce publiée', 'success'); if (window.ftAdminRefresh) window.ftAdminRefresh(); else try { switchNavTab('admin'); } catch (er) {} })
+    const a = off ? Object.assign({}, jget('ft_annonce', {}), { active: false }) : { id: Date.now().toString(36), text: txt.trim(), level: ($('an-lvl') || {}).value || 'info', until: ($('an-until') || {}).value || '', agence: ($('an-ag') || {}).value || '', date: today(), active: true };
+    if (!off && !confirm(a.agence ? 'Publier cette annonce pour l’agence « ' + a.agence + ' » ?' : 'Publier cette annonce pour tous les conseillers ?')) return;
+    window.__ftSaveShared('__ft_annonce', a).then(() => { LS.set('ft_annonce', JSON.stringify(a)); LS.set('ft_ann_n', a.id); annonce(); if (!off && window.ftPushSend) window.ftPushSend(Object.assign({ title: a.level === 'imp' ? 'Annonce importante' : 'Annonce', body: a.text, go: 'home', tag: 'ft-ann' }, a.agence ? { audience: 'agence', agence: a.agence } : {})).catch(() => {}); toast(off ? 'Annonce retirée' : 'Annonce publiée', 'success'); if (window.ftAdminRefresh) window.ftAdminRefresh(); else try { switchNavTab('admin'); } catch (er) {} })
       .catch(er => toast('Publication impossible : ' + (er && er.message || er), 'error'));
   });
 
@@ -187,6 +190,7 @@
     [/^Confidentialit/i, 'Lire', () => window.ftPrivacy && window.ftPrivacy()],
     [/^Mes rappels/i, 'Ouvrir', () => window.ftReminders && window.ftReminders()],
     [/^Paramètres/i, 'Ouvrir', () => window.ftSettings && window.ftSettings()],
+    [/^Vue usager/i, 'Essayer', () => switchNavTab(1)],
     [/^Aide-mémo/i, 'Ouvrir', () => window.ftRpToggle && window.ftRpToggle(true)],
     [/^Mode formation/i, 'Ouvrir', () => switchNavTab('formation')],
     [/^Mails pré-remplis/i, 'Ouvrir', () => switchNavTab('cvm')],

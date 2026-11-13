@@ -432,6 +432,7 @@
   window.ftReloadShared = function () { loadShared(); };
   setInterval(function () { if (sess) loadShared(); }, 15 * 60 * 1000);
   window.ftLoggedIn = function () { return !!sess; };
+  window.__ftUserAgence = function () { return sess && sess.user ? (sess.user.agence || '') : ''; };
   window.__ftUserName = function () { return sess && sess.user ? (sess.user.name || '') : ''; };
   /* Profil sans nom : on rafraîchit depuis Supabase puis on propose de le compléter */
   function checkName() {

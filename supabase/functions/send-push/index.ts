@@ -14,6 +14,37 @@ const cors = {
 };
 const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { ...cors, "Content-Type": "application/json" } });
 
+/* Résumé mensuel : nouveautés du site et changements réglementaires du mois écoulé */
+const SITE = "https://nyska76300.github.io/conseiller-ft/";
+const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+// deno-lint-ignore no-explicit-any
+async function monthly(db: any) {
+  const now = new Date(), prev = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
+  const y = prev.getUTCFullYear(), m = prev.getUTCMonth() + 1, ym = y + "-" + String(m).padStart(2, "0");
+  let news: string[] = [], regs = 0;
+  try {
+    const js = await (await fetch(SITE + "assets/js/43-nouveautes.js", { cache: "no-store" })).text();
+    for (const e of js.matchAll(/\{ v: '[^']+', date: '(\d{2})\/(\d{2})\/(\d{4})', items: \[([\s\S]*?)\] \}/g)) {
+      if (+e[2] === m && +e[3] === y) news = news.concat([...e[4].matchAll(/'((?:[^'\\]|\\.)*)'/g)].map((x) => x[1].replace(/\\'/g, "'")));
+    }
+  } catch (_) { /* site injoignable */ }
+  try {
+    const mj = await (await fetch(SITE + "reglementation/maj.json", { cache: "no-store" })).json();
+    regs = ((mj && mj.updates) || []).filter((u: { date?: string }) => String(u.date || "").startsWith(ym)).length;
+  } catch (_) { /* fichier absent */ }
+  if (!news.length && !regs) return { monthly: "rien à signaler", month: ym };
+  const first = news[0] ? (news[0].split(" : ")[0] || "").slice(0, 60) : "";
+  const parts = [news.length ? news.length + " nouveauté" + (news.length > 1 ? "s" : "") + " sur le site" + (first ? " (dont « " + first + " »)" : "") : "", regs ? regs + " changement" + (regs > 1 ? "s" : "") + " réglementaire" + (regs > 1 ? "s" : "") : ""].filter(Boolean);
+  const payload = JSON.stringify({ title: "📅 Le mois " + (/^[aeiouyàâéèêëîïôûù]/i.test(MOIS[m - 1]) ? "d’" : "de ") + MOIS[m - 1] + " en bref", body: parts.join(" · ") + ". Touchez pour voir le détail.", go: "news", tag: "ft-mensuel-" + ym });
+  const { data: subs } = await db.from("push_subs").select("endpoint,p256dh,auth");
+  let sent = 0;
+  for (const s of subs || []) {
+    try { await webpush.sendNotification({ endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } }, payload, { TTL: 172800 }); sent++; }
+    catch (e) { const code = (e as { statusCode?: number }).statusCode; if (code === 404 || code === 410) await db.from("push_subs").delete().eq("endpoint", s.endpoint); }
+  }
+  return { monthly: ym, news: news.length, regs, sent };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   const url = Deno.env.get("SUPABASE_URL")!;
@@ -31,6 +62,7 @@ Deno.serve(async (req) => {
     if (!c || c.token !== cron) return json({ error: "Jeton interne invalide" }, 403);
     if (!pub || !priv) return json({ error: "Clés VAPID absentes" }, 500);
     webpush.setVapidDetails(Deno.env.get("VAPID_SUBJECT") || "mailto:admin@example.org", pub, priv);
+    if (body.action === "monthly") return json(await monthly(db));
     const { data: due } = await db.from("reminders").select("id,user_id,body,go").is("sent_at", null).lte("due_at", new Date().toISOString()).limit(200);
     let sent = 0;
     for (const r of due || []) {
@@ -75,6 +107,10 @@ Deno.serve(async (req) => {
 
   let q = db.from("push_subs").select("endpoint,p256dh,auth,user_id");
   if (body.audience === "me" && callerId) q = q.eq("user_id", callerId);
+  else if (body.audience === "agence") {
+    const { data: ids } = await db.rpc("ft_agence_users", { a: body.agence || "" });
+    q = q.in("user_id", ((ids || []) as unknown[]).map((x) => typeof x === "string" ? x : (x as Record<string, string>).ft_agence_users));
+  }
   else if (body.audience === "admins") {
     const { data: ads } = await db.from("app_admins").select("user_id");
     q = q.in("user_id", (ads || []).map((x: { user_id: string }) => x.user_id));
