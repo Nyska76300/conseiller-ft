@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.4">
+  <meta name="ft-version" content="2026-11-13.5">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -1308,6 +1308,16 @@
     .sc-dot { fill: var(--r-accent); }
     .sc-band { fill: rgba(52, 211, 153, 0.18); stroke: var(--r-ok); } .sc-band2 { fill: rgba(251, 191, 36, 0.15); stroke: var(--r-warn); }
     .rg-extra { margin-top: 10px; }
+    .sc-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; counter-reset: none; }
+    .sc-steps li { position: relative; padding: 14px 14px 12px; border-radius: 14px; border: 1px solid var(--r-line); border-top: 3px solid var(--r-accent); background: var(--r-card2); display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .sc-steps li:not(:last-child)::after { content: '›'; position: absolute; right: -11px; top: 50%; transform: translateY(-50%); font-size: 20px; font-weight: 800; color: var(--r-accent); }
+    .sc-steps .sc-num { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: #fff; background: linear-gradient(90deg, #2563eb, #06b6d4); }
+    .sc-steps h4 { margin: 2px 0 0; font-size: 0.95rem; font-weight: 800; color: var(--r-text); }
+    .sc-steps p { margin: 0; font-size: 0.82rem; line-height: 1.45; color: var(--r-text); opacity: .9; }
+    .sc-steps em { margin-top: auto; padding-top: 6px; font-style: normal; font-size: 0.78rem; font-weight: 700; color: var(--r-accent); line-height: 1.35; }
+    @media (max-width: 1100px) { .sc-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } .sc-steps li::after { display: none; } }
+    @media (max-width: 560px) { .sc-steps { grid-template-columns: 1fr; } }
+    @media print { .sc-steps li { border-color: #333; background: #fff; } .sc-steps h4, .sc-steps p { color: #000; } }
     @media (max-width: 560px) { .sc-fig { overflow-x: auto; } .sc-fig svg { min-width: 560px; } }
     @media print { .sc-fig, .sc-tree { border: 0; padding: 0; } .sc-n rect { fill: #fff; stroke: #333 !important; } .sc-n text, .sc-t { fill: #000; } .sc-s, .sc-n2 { fill: #333; } }
 
@@ -10490,8 +10500,8 @@ Votre conseiller France Travail
       arrow(682, 232, 682, 262, 'Oui') + box(612, 262, 140, 50, ['ARE si inscrit', 'sous 6 mois'], 'is-ok') +
       arrow(380, 232, 380, 288, 'Non') +
       box(210, 288, 340, 56, ['65 jours ou 455 h travaillés', 'depuis la démission ?'], 'is-q') +
-      arrow(550, 316, 620, 316) + box(620, 330, 130, 50, ['Droits ouverts', 'si conditions OK'], 'is-ok') +
-      '<text class="sc-l" x="560" y="308">Oui</text>' +
+      arrow(550, 330, 620, 347) + box(620, 324, 130, 50, ['Droits ouverts', 'si conditions OK'], 'is-ok') +
+      '<text class="sc-l" x="562" y="326">Oui</text>' +
       arrow(380, 344, 380, 380, 'Non') +
       box(210, 380, 340, 56, ['121 jours de chômage', 'non indemnisé écoulés ?'], 'is-q') +
       arrow(380, 436, 380, 474, 'Oui') + box(190, 474, 380, 56, ['Réexamen par l’instance paritaire', 'Avis favorable : ARE dès le 122e jour'], 'is-warn') +
@@ -10514,9 +10524,8 @@ Votre conseiller France Travail
       '<text class="sc-n2" x="380" y="248" text-anchor="middle">Un arrêt maladie de 21 jours ou plus prolonge le délai de 121 jours. Frise non à l’échelle.</text></svg>';
   }
   function svgProjet() {
-    const steps = [['1', 'Accompagnement', 'CEP agréé (Apec, Cap emploi…)', 'pas France Travail'], ['2', 'Dossier', 'Commission Transitions Pro', 'projet réel et sérieux'], ['3', 'Démission', 'après l’avis de la commission', '1 300 j sur 60 mois'], ['4', 'Inscription', 'et demande d’ARE', 'dans les 6 mois de l’attestation'], ['5', 'Contrôle', 'mise en œuvre du projet', 'dans les 6 mois : sinon 4 mois de suspension']];
-    return '<svg viewBox="0 0 760 190" role="img" aria-label="Démission pour projet professionnel">' + defs +
-      steps.map((s, i) => { const x = 8 + i * 150; return box(x, 30, 134, 100, [s[1], s[2]], 'is-q') + '<text class="sc-t" x="' + (x + 67) + '" y="20" text-anchor="middle">' + s[0] + '</text><text class="sc-s" x="' + (x + 67) + '" y="150" text-anchor="middle">' + esc(s[3]) + '</text>' + (i < 4 ? arrow(x + 134, 80, x + 150, 80) : ''); }).join('') + '</svg>';
+    const steps = [['Accompagnement', 'Conseil en évolution professionnelle (CEP) agréé : Apec, Cap emploi, opérateur régional', 'Pas France Travail'], ['Dossier', 'Dépôt auprès de la commission Transitions Pro', 'Projet reconnu réel et sérieux'], ['Démission', 'Seulement après l’avis favorable de la commission', '1 300 jours travaillés sur 60 mois'], ['Inscription', 'Inscription et demande d’ARE', 'Dans les 6 mois suivant l’attestation'], ['Contrôle', 'Mise en œuvre du projet vérifiée par France Travail', 'Dans les 6 mois, sinon 4 mois de suspension']];
+    return '<ol class="sc-steps" aria-label="Démission pour projet professionnel">' + steps.map((s, i) => '<li><span class="sc-num">' + (i + 1) + '</span><h4>' + esc(s[0]) + '</h4><p>' + esc(s[1]) + '</p><em>' + esc(s[2]) + '</em></li>').join('') + '</ol>';
   }
   function svgRcc() {
     return '<svg viewBox="0 0 760 270" role="img" aria-label="Rupture conventionnelle et prolongation">' + defs +
@@ -16061,6 +16070,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.5', date: '13/11/2026', items: [
+      'Schémas : les étapes du projet professionnel sont présentées en cartes lisibles (le texte ne déborde plus), et une flèche mal placée de l’arbre de décision a été corrigée.'
+    ] },
     { v: '2026-11-13.4', date: '13/11/2026', items: [
       '« Mes outils » sur l’accueil sont désormais propres à chaque conseiller : ils sont enregistrés dans votre compte, vous suivent sur tous vos postes et ne sont plus partagés avec les autres personnes qui utilisent le même ordinateur.'
     ] },
