@@ -65,12 +65,6 @@
     })(performance.now());
   }
   setTimeout(() => probe(2500), 4000);
-  let scT = null, scEl = null;
-  document.addEventListener('wheel', e => {
-    const v = e.target.closest && e.target.closest('[id^="view-"]'); if (!v) return;
-    if (scEl !== v) { if (scEl) scEl.classList.remove('ft-scr'); scEl = v; v.classList.add('ft-scr'); }
-    clearTimeout(scT); scT = setTimeout(() => { if (scEl) scEl.classList.remove('ft-scr'); scEl = null; }, 160);
-  }, { capture: true, passive: true });
   let probed = false;
   document.addEventListener('scroll', () => { if (!probed) { probed = true; probe(1500); } }, { capture: true, passive: true });
   function apply() {

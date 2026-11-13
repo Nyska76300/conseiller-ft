@@ -2,7 +2,7 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
-    { v: '2026-11-13.46', date: '13/11/2026', items: [
+    { v: '2026-11-13.47', date: '13/11/2026', items: [
       'Site beaucoup plus fluide : une boucle cachée redessinait l’accueil et le menu plusieurs fois par seconde, c’est corrigé. Défilement et survol allégés.',
       'Affichage allégé : s’active tout seul sur un poste lent, ou à la demande dans Paramètres.',
       'Accueil sur ordinateur : les rubriques d’outils se répartissent dans les trois colonnes, sans grand vide sur les côtés.'

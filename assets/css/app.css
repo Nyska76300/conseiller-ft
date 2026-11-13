@@ -1500,8 +1500,6 @@ html.theme-light .cp-card{background:#fff;border-color:#e2e8f0}html.theme-light 
 
 /* Fluidité : pas d’animation d’ombres ni de filtres (repeints coûteux à chaque image), pas d’animation sans fin en fond */
 *,*::before,*::after{transition-property:opacity,transform,translate,scale,visibility,width,max-height!important}
-/* Pendant le défilement, pas d’effets de survol (évite de repeindre chaque tuile qui passe sous la souris) */
-.ft-scr>*{pointer-events:none!important}
 .ft-rp i{animation:none!important}
 .animate-pulse{animation-iteration-count:3!important}
 /* Barres toujours visibles : fond presque opaque sans flou (le flou se recalcule à chaque image du défilement) */
@@ -1514,3 +1512,6 @@ html.ft-lite .fh-chip:hover,html.ft-lite .fh-pin:hover{transform:none!important}
 /* ---------- Accueil : rubriques d’outils réparties dans les colonnes de côté ---------- */
 #view-home .fh-sum.fh-sum-side>.fh-grp .fh-chips{grid-template-columns:minmax(0,1fr)!important}
 #view-home .fh-sum-side{align-content:start}
+/* Le défilement reste dans la zone sous la souris (il ne se reporte pas sur le reste du site) */
+html,body{overscroll-behavior:none}
+[id^="view-"],.overflow-y-auto,.overflow-auto{overscroll-behavior:contain}
