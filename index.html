@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.2">
+  <meta name="ft-version" content="2026-11-13.3">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -15869,6 +15869,164 @@ html.theme-light #ft-tts.on{color:#fff}
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(go, 300)); else setTimeout(go, 300);
 })();
 </script>
+<!-- ================= Extension 34 : interprète vocal (conversation à deux) ================= -->
+<style>
+#ft-ip{position:fixed;inset:0;z-index:9500;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.72);backdrop-filter:blur(4px)}
+#ft-ip.on{display:flex}
+#ft-ip .ip-box{width:min(760px,96vw);height:min(720px,92vh);display:flex;flex-direction:column;background:#0f172a;border:1px solid #1e293b;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.5);overflow:hidden;color:#e2e8f0}
+#ft-ip .ip-top{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #1e293b;background:rgba(15,23,42,.95)}
+#ft-ip .ip-top b{font-size:14px;flex:1}
+#ft-ip .ip-x,#ft-ip .ip-mini{height:32px;padding:0 10px;border-radius:9px;border:1px solid #334155;background:#1e293b;color:#cbd5e1;font:600 12px/1 system-ui,sans-serif;cursor:pointer}
+#ft-ip .ip-mini.on{background:linear-gradient(90deg,#2563eb,#06b6d4);color:#fff;border-color:transparent}
+#ft-ip .ip-side{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#111c33}
+#ft-ip .ip-side .ip-who{font-size:12px;font-weight:700;color:#94a3b8;min-width:88px}
+#ft-ip select{flex:1;height:36px;border-radius:9px;border:1px solid #334155;background:#0b1222;color:#e2e8f0;padding:0 8px;font-size:13px}
+#ft-ip .ip-mic{flex:none;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 16px;border-radius:12px;border:0;cursor:pointer;color:#fff;font-weight:700;font-size:13.5px;background:linear-gradient(90deg,#2563eb,#06b6d4);box-shadow:0 8px 20px rgba(37,99,235,.35)}
+#ft-ip .ip-mic.b{background:linear-gradient(90deg,#7c3aed,#db2777);box-shadow:0 8px 20px rgba(219,39,119,.3)}
+#ft-ip .ip-mic.rec{animation:ipPulse 1s infinite;background:#dc2626}
+#ft-ip .ip-mic svg{width:18px;height:18px}
+@keyframes ipPulse{50%{box-shadow:0 0 0 8px rgba(220,38,38,.25)}}
+#ft-ip .ip-log{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+#ft-ip .ip-empty{margin:auto;text-align:center;color:#64748b;font-size:13px;max-width:420px;line-height:1.5}
+#ft-ip .ip-msg{max-width:82%;padding:10px 12px;border-radius:14px;font-size:14px;line-height:1.45}
+#ft-ip .ip-msg.a{align-self:flex-start;background:#1e3a8a33;border:1px solid #1d4ed855}
+#ft-ip .ip-msg.b{align-self:flex-end;background:#831d5a33;border:1px solid #db277755}
+#ft-ip .ip-msg .tr{font-size:16px;font-weight:600;color:#f8fafc}
+#ft-ip .ip-msg .or{font-size:12px;color:#94a3b8;margin-top:4px}
+#ft-ip .ip-msg .rp{float:right;margin-left:8px;border:0;background:none;color:#67e8f9;cursor:pointer;font-size:15px}
+#ft-ip .ip-live{font-size:12.5px;color:#fbbf24;padding:0 14px 6px;min-height:18px}
+#ft-ip .ip-type{display:flex;gap:6px;padding:8px 14px;border-top:1px solid #1e293b}
+#ft-ip .ip-type input{flex:1;height:36px;border-radius:9px;border:1px solid #334155;background:#0b1222;color:#e2e8f0;padding:0 10px;font-size:13px}
+#ft-ip .ip-note{font-size:11px;color:#64748b;padding:6px 14px 10px}
+#ft-ip.face .ip-side.sb{transform:rotate(180deg)}
+@media (max-width:640px){#ft-ip .ip-box{width:100vw;height:100dvh;border-radius:0}#ft-ip .ip-side .ip-who{min-width:0}#ft-ip .ip-mic span{display:none}}
+html.theme-light #ft-ip .ip-box{background:#fff;color:#0f172a;border-color:#e2e8f0}
+html.theme-light #ft-ip .ip-top,html.theme-light #ft-ip .ip-side{background:#f8fafc;border-color:#e2e8f0}
+html.theme-light #ft-ip select,html.theme-light #ft-ip .ip-type input{background:#fff;color:#0f172a;border-color:#cbd5e1}
+html.theme-light #ft-ip .ip-msg .tr{color:#0f172a}
+html.theme-light #ft-ip .ip-x,html.theme-light #ft-ip .ip-mini{background:#fff;color:#334155;border-color:#cbd5e1}
+</style>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const LANGS = [
+    ['fr', 'fr-FR', 'Français'], ['en', 'en-GB', 'Anglais'], ['es', 'es-ES', 'Espagnol'], ['ar', 'ar-SA', 'Arabe'],
+    ['pt', 'pt-PT', 'Portugais'], ['it', 'it-IT', 'Italien'], ['de', 'de-DE', 'Allemand'], ['ro', 'ro-RO', 'Roumain'],
+    ['ru', 'ru-RU', 'Russe'], ['uk', 'uk-UA', 'Ukrainien'], ['tr', 'tr-TR', 'Turc'], ['pl', 'pl-PL', 'Polonais'],
+    ['nl', 'nl-NL', 'Néerlandais'], ['zh-CN', 'zh-CN', 'Chinois'], ['fa', 'fa-IR', 'Persan (farsi)'], ['hi', 'hi-IN', 'Hindi'],
+    ['vi', 'vi-VN', 'Vietnamien'], ['bn', 'bn-BD', 'Bengali'], ['sq', 'sq-AL', 'Albanais'], ['ka', 'ka-GE', 'Géorgien']
+  ];
+  const L = code => LANGS.find(l => l[0] === code) || LANGS[0];
+  const st = { a: 'fr', b: 'en', rec: null, side: null };
+  try { const s = JSON.parse(localStorage.getItem('ft-ip') || '{}'); if (s.a) st.a = s.a; if (s.b) st.b = s.b; } catch (e) {}
+  const save = () => { try { localStorage.setItem('ft-ip', JSON.stringify({ a: st.a, b: st.b })); } catch (e) {} };
+  const MIC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10a7 7 0 0 1-14 0M12 19v3"/></svg>';
+
+  async function translate(text, from, to) {
+    if (from === to) return text;
+    const f = from.split('-')[0] === 'zh' ? 'zh-CN' : from, t = to;
+    try {
+      const r = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl=' + encodeURIComponent(f) + '&tl=' + encodeURIComponent(t) + '&q=' + encodeURIComponent(text));
+      if (r.ok) { const j = await r.json(); const out = (j[0] || []).map(x => x[0]).join(''); if (out) return out; }
+    } catch (e) {}
+    const r2 = await fetch('https://api.mymemory.translated.net/get?langpair=' + encodeURIComponent(f.split('-')[0] + '|' + t.split('-')[0]) + '&q=' + encodeURIComponent(text.slice(0, 480)));
+    const j2 = await r2.json();
+    if (j2 && j2.responseData && j2.responseData.translatedText) return j2.responseData.translatedText;
+    throw new Error('traduction indisponible');
+  }
+  function speak(text, code) {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const loc = L(code)[1], vs = speechSynthesis.getVoices();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = loc; const v = vs.find(v => v.lang.replace('_', '-') === loc) || vs.find(v => v.lang.toLowerCase().startsWith(code.split('-')[0].toLowerCase()));
+    if (v) u.voice = v; u.rate = .95;
+    speechSynthesis.speak(u);
+  }
+  function live(t) { const e = $('ip-live'); if (e) e.textContent = t || ''; }
+  async function handle(side, text) {
+    text = String(text || '').trim(); if (!text) return;
+    const from = side === 'a' ? st.a : st.b, to = side === 'a' ? st.b : st.a;
+    const log = $('ip-log'); const em = log.querySelector('.ip-empty'); if (em) em.remove();
+    const m = document.createElement('div'); m.className = 'ip-msg ' + side;
+    m.innerHTML = '<div class="tr">…</div><div class="or">' + esc(L(from)[2]) + ' : ' + esc(text) + '</div>';
+    log.appendChild(m); log.scrollTop = log.scrollHeight; live('Traduction…');
+    try {
+      const out = await translate(text, from, to);
+      m.querySelector('.tr').innerHTML = '<button class="rp" title="Réécouter">🔊</button>' + esc(out);
+      m.querySelector('.rp').onclick = () => speak(out, to);
+      live(''); speak(out, to);
+    } catch (e) {
+      m.querySelector('.tr').textContent = '⚠️ Traduction impossible (connexion Internet ?)'; live('');
+    }
+    log.scrollTop = log.scrollHeight;
+  }
+  function stopRec() { if (st.rec) { try { st.rec.stop(); } catch (e) {} } }
+  function listen(side) {
+    if (st.rec) { const same = st.side === side; stopRec(); if (same) return; }
+    if (!SR) { live('Dictée non disponible sur ce navigateur : utilisez Safari ou Chrome, ou tapez le texte ci-dessous.'); return; }
+    try { speechSynthesis.cancel(); } catch (e) {}
+    const r = new SR(); r.lang = L(side === 'a' ? st.a : st.b)[1]; r.interimResults = true; r.continuous = false; r.maxAlternatives = 1;
+    let finalTxt = '';
+    const btn = $('ip-mic-' + side);
+    r.onstart = () => { btn.classList.add('rec'); btn.querySelector('span').textContent = 'J’écoute… (toucher pour finir)'; live(''); };
+    r.onresult = ev => { let t = ''; for (let i = 0; i < ev.results.length; i++) { t += ev.results[i][0].transcript; if (ev.results[i].isFinal) finalTxt = t; } live('« ' + t + ' »'); if (!finalTxt) finalTxt = ''; r._last = t; };
+    r.onerror = ev => { live(ev.error === 'not-allowed' || ev.error === 'service-not-allowed' ? 'Micro refusé : autorisez le micro pour ce site dans les réglages du navigateur.' : ev.error === 'no-speech' ? 'Je n’ai rien entendu, réessayez.' : 'Erreur de dictée : ' + ev.error); };
+    r.onend = () => { btn.classList.remove('rec'); btn.querySelector('span').textContent = 'Parler'; const t = finalTxt || r._last || ''; st.rec = null; st.side = null; if (t) handle(side, t); };
+    st.rec = r; st.side = side; r.start();
+  }
+  function opts(sel) { return LANGS.map(l => '<option value="' + l[0] + '"' + (l[0] === sel ? ' selected' : '') + '>' + l[2] + '</option>').join(''); }
+  function build() {
+    if ($('ft-ip')) return;
+    const d = document.createElement('div'); d.id = 'ft-ip'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'Interprète vocal');
+    d.innerHTML = '<div class="ip-box">' +
+      '<div class="ip-top"><b>🗣️ Interprète vocal</b><button class="ip-mini" id="ip-face" title="Retourne la partie de l’usager pour poser le téléphone entre vous deux">Face à face</button><button class="ip-mini" id="ip-clear">Effacer</button><button class="ip-x" id="ip-close" aria-label="Fermer">✕</button></div>' +
+      '<div class="ip-side sb"><span class="ip-who">Usager</span><select id="ip-lb">' + opts(st.b) + '</select><button class="ip-mic b" id="ip-mic-b">' + MIC + '<span>Parler</span></button></div>' +
+      '<div class="ip-log" id="ip-log"><div class="ip-empty">Chacun appuie sur <b>Parler</b> à son tour : la phrase est traduite à l’écran et lue à voix haute dans la langue de l’autre.<br><br>Évitez de dicter des données personnelles (n° de sécurité sociale, identifiant…) : la traduction passe par un service en ligne.</div></div>' +
+      '<div class="ip-live" id="ip-live"></div>' +
+      '<div class="ip-type"><select id="ip-ts" style="flex:none;width:120px"><option value="a">Conseiller</option><option value="b">Usager</option></select><input id="ip-ti" placeholder="Ou tapez une phrase puis Entrée"></div>' +
+      '<div class="ip-side sa"><span class="ip-who">Conseiller</span><select id="ip-la">' + opts(st.a) + '</select><button class="ip-mic" id="ip-mic-a">' + MIC + '<span>Parler</span></button></div>' +
+      '<div class="ip-note">Dictée et voix : Safari ou Chrome. La qualité dépend du micro et des voix installées sur l’appareil.</div></div>';
+    document.body.appendChild(d);
+    d.addEventListener('click', e => { if (e.target === d) close(); });
+    $('ip-close').onclick = close;
+    $('ip-clear').onclick = () => { $('ip-log').innerHTML = ''; live(''); };
+    $('ip-face').onclick = () => { d.classList.toggle('face'); $('ip-face').classList.toggle('on', d.classList.contains('face')); };
+    $('ip-la').onchange = e => { st.a = e.target.value; save(); };
+    $('ip-lb').onchange = e => { st.b = e.target.value; save(); };
+    $('ip-mic-a').onclick = () => listen('a');
+    $('ip-mic-b').onclick = () => listen('b');
+    $('ip-ti').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.value.trim()) { handle($('ip-ts').value, e.target.value); e.target.value = ''; } });
+  }
+  function close() { stopRec(); try { speechSynthesis.cancel(); } catch (e) {} const d = $('ft-ip'); if (d) d.classList.remove('on'); }
+  window.ftInterp = function () { build(); $('ft-ip').classList.add('on'); try { speechSynthesis.getVoices(); } catch (e) {} };
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('ft-ip') && $('ft-ip').classList.contains('on')) close(); });
+
+  /* Le bouton haut-parleur de la barre du haut ouvre l’interprète */
+  function hook() {
+    const b = $('ft-tts');
+    if (b && !b.dataset.ip) {
+      b.dataset.ip = '1'; b.style.display = '';
+      b.onclick = () => window.ftInterp();
+      const fix = () => { b.title = 'Interprète vocal : conversation à deux dans deux langues'; b.setAttribute('aria-label', b.title); const l = b.querySelector('.tt-l'); if (l) l.textContent = 'Interprète'; };
+      fix(); new MutationObserver(() => { const l = b.querySelector('.tt-l'); if (l && l.textContent !== 'Interprète') fix(); }).observe(b, { childList: true });
+    }
+    const m = $('ft-more');
+    if (m && !m.querySelector('[data-k="interp"]')) {
+      const it = document.createElement('button'); it.type = 'button'; it.setAttribute('role', 'menuitem'); it.dataset.k = 'interp';
+      it.innerHTML = MIC + '<span>Interprète vocal</span>';
+      it.addEventListener('click', ev => { ev.stopPropagation(); document.documentElement.classList.remove('ft-more-on'); window.ftInterp(); });
+      m.insertBefore(it, m.firstChild);
+    }
+  }
+  window.FT_ACTIONS = window.FT_ACTIONS || [];
+  window.FT_ACTIONS.push({ t: 'Interprète vocal', s: 'Conversation à voix haute entre deux langues', kw: 'traduire traducteur traduction interprète langue étranger anglais arabe espagnol voix micro', run: () => setTimeout(window.ftInterp, 120) });
+  if (window.ftOnDom) window.ftOnDom(hook);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(hook, 400)); else setTimeout(hook, 400);
+})();
+</script>
 <!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
 <style>
 #ft-news{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.6);backdrop-filter:blur(3px);opacity:0;transition:opacity .25s ease}
@@ -15901,6 +16059,10 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.3', date: '13/11/2026', items: [
+      'Interprète vocal : le bouton haut-parleur (menu « ⋯ » sur téléphone) ouvre une conversation à deux. Chacun choisit sa langue et appuie sur « Parler » : la phrase est traduite à l’écran et lue à voix haute dans la langue de l’autre. Mode « Face à face » pour poser le téléphone entre vous.',
+      'La lecture à voix haute d’une page reste disponible par la recherche (Ctrl+K → « Lire à voix haute ») et le menu « ⋯ ».'
+    ] },
     { v: '2026-11-13.2', date: '13/11/2026', items: [
       'Lecture à voix haute : bouton haut-parleur dans la barre du haut (menu « ⋯ » sur téléphone). Il lit le texte sélectionné, sinon le mail ouvert ou généré, sinon la page ; un second clic arrête.',
       'Écran de connexion : boutons bleus aux couleurs du site, et messages plus clairs si la création de compte échoue.'
