@@ -1,7 +1,7 @@
 /* Espace Conseiller : fonctionnement hors ligne.
    La page est toujours prise sur le réseau en priorité (les mises à jour arrivent tout de suite) ;
    la copie gardée sur l'appareil ne sert que sans connexion. Les comptes (Supabase) ne passent jamais par ici. */
-const CACHE = 'ft-conseiller-v2';
+const CACHE = 'ft-conseiller-v3';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/apple-touch-icon.png', './icons/icon-192.png', './icons/icon-512.png'];
 const STATIC_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdn.jsdelivr.net'];
 
@@ -36,6 +36,8 @@ self.addEventListener('fetch', e => {
     e.respondWith(caches.match(req).then(r => r || fetch(req).then(res => keep(req, res))));
     return;
   }
+  // Données de veille : toujours le réseau
+  if (same && url.pathname.endsWith('.json')) return;
   // Fichiers du site (icônes…) : copie locale, mise à jour en arrière-plan
   if (same) {
     e.respondWith(caches.match(req).then(r => {

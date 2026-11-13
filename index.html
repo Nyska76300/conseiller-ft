@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.5">
+  <meta name="ft-version" content="2026-11-13.6">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -1706,6 +1706,11 @@
               <span id="current-filter-badge" class="text-slate-300 font-semibold truncate">Tous les modèles</span>
             </span>
             <span id="filtered-count-badge" class="text-slate-400 font-mono text-[9px] shrink-0">13 résultats</span>
+          </div>
+          <div id="tpl-scope" class="tpl-scope" role="tablist" aria-label="Type de modèles">
+            <button type="button" data-s="all" onclick="setTplScope('all')">Tous</button>
+            <button type="button" data-s="common" onclick="setTplScope('common')">Communs <b></b></button>
+            <button type="button" data-s="perso" onclick="setTplScope('perso')">Mes modèles <b></b></button>
           </div>
           <button id="sort-btn" type="button" onclick="cycleSort()" title="Changer l'ordre de tri des mails" class="w-full flex items-center justify-between gap-1.5 px-2 py-1 rounded-md bg-slate-800/70 hover:bg-slate-800 border border-slate-700/70 text-[10px] font-semibold text-slate-300 hover:text-cyan-300 transition-colors"></button>
         </div>
@@ -5755,7 +5760,16 @@ Votre conseiller France Travail
 
       const terms = qTerms(searchQuery);
       const scores = new Map();
+      const isCommon = t => !!(t && (t.isOfficial || t.shared));
+      let tplScope = 'all'; try { tplScope = localStorage.getItem('ft_tpl_scope') || 'all'; } catch (e) {}
+      const scopeBar = document.getElementById('tpl-scope');
+      if (scopeBar) {
+        const nC = templates.filter(isCommon).length, nP = templates.length - nC;
+        scopeBar.querySelectorAll('button').forEach(b => { b.classList.toggle('on', b.dataset.s === tplScope); b.setAttribute('aria-selected', String(b.dataset.s === tplScope)); const c = b.querySelector('b'); if (c) c.textContent = b.dataset.s === 'common' ? nC : nP; });
+      }
       const filtered = templates.filter(tpl => {
+        if (tplScope === 'common' && !isCommon(tpl)) return false;
+        if (tplScope === 'perso' && isCommon(tpl)) return false;
         if (currentCategory === 'favorites' && !favorites.includes(tpl.id)) return false;
         if (currentCategory !== 'all' && currentCategory !== 'favorites' && tpl.category !== currentCategory) return false;
         const sc = scoreTpl(tpl, terms);
@@ -5770,6 +5784,8 @@ Votre conseiller France Travail
       } else if (terms.length) {
         filtered.sort((a, b) => scores.get(b.id) - scores.get(a.id));
       }
+      const grouped = tplScope === 'all' && filtered.some(isCommon) && filtered.some(t => !isCommon(t));
+      if (grouped) { const c = filtered.filter(isCommon), p = filtered.filter(t => !isCommon(t)); filtered.length = 0; filtered.push(...p, ...c); }
 
       const countBadge = document.getElementById('filtered-count-badge');
       if (countBadge) countBadge.textContent = `${filtered.length} résultat(s)`;
@@ -5778,7 +5794,7 @@ Votre conseiller France Travail
         listContainer.innerHTML = `
           <div class="py-8 text-center text-slate-500 text-xs space-y-1">
             <i data-lucide="search-x" class="w-6 h-6 mx-auto text-slate-600"></i>
-            <p>${searchQuery ? 'Aucun modèle ne correspond à « ' + escapeHtml(searchQuery) + ' »' : 'Aucun modèle trouvé'}</p>${searchQuery ? '<button type="button" onclick="clearSearch()" class="text-cyan-400 hover:underline font-semibold">Effacer la recherche</button>' : ''}
+            <p>${searchQuery ? 'Aucun modèle ne correspond à « ' + escapeHtml(searchQuery) + ' »' : (tplScope === 'perso' ? 'Vous n’avez pas encore de modèle personnel : créez-en un avec « Nouveau », ou utilisez « En faire un modèle » depuis un outil.' : 'Aucun modèle trouvé')}</p>${searchQuery ? '<button type="button" onclick="clearSearch()" class="text-cyan-400 hover:underline font-semibold">Effacer la recherche</button>' : ''}
           </div>
         `;
         refreshIcons();
@@ -5789,12 +5805,16 @@ Votre conseiller France Travail
         activeTemplateId = filtered[0].id;
       }
 
+      let lastGrp = null;
       listContainer.innerHTML = filtered.map(tpl => {
+        const grp = isCommon(tpl) ? 'c' : 'p';
+        const head = grouped && grp !== lastGrp ? '<div class="tpl-grp">' + (grp === 'c' ? 'Modèles communs' : 'Mes modèles') + '<span>' + filtered.filter(t => (isCommon(t) ? 'c' : 'p') === grp).length + '</span></div>' : '';
+        lastGrp = grp;
         const isActive = tpl.id === activeTemplateId;
         const isFav = favorites.includes(tpl.id);
         const st = catStyle(tpl.category);
         const escapedId = escapeHtml(tpl.id);
-        return `
+        return head + `
           <div data-tpl-id="${escapedId}" onclick="selectTemplate('${escapedId}')" class="p-2.5 rounded-xl cursor-pointer transition-all border group ${
             isActive ? 'bg-blue-600/15 border-cyan-500/40 shadow-md' : 'bg-slate-900/60 hover:bg-slate-800/70 border-slate-800/80'
           }">
@@ -5824,6 +5844,9 @@ Votre conseiller France Travail
 
       refreshIcons();
     }
+
+    function setTplScope(sc) { try { localStorage.setItem('ft_tpl_scope', sc); } catch (e) {} renderTemplatesList(); try { renderActiveTemplate(); } catch (e) {} }
+    window.setTplScope = setTplScope;
 
     function selectTemplate(id) {
       activeTemplateId = id;
@@ -12576,7 +12599,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
       if (!rows || !rows.length || typeof templates === 'undefined') return;
       var add = 0, upd = 0, dead = parse(LSraw.get('ft_deleted_tpl'), []);
       rows.forEach(function (r) {
-        if (String(r.id).indexOf('__') === 0) { if (r.id === '__ft_faq' && r.template && r.template.items) { try { localStorage.setItem('ft_faq', JSON.stringify(r.template.items)); document.dispatchEvent(new Event('ft-faq')); } catch (e) {} return; } if (r.id === '__ft_labels' && r.template && r.template.labels) { try { localStorage.setItem('ft_labels', JSON.stringify(r.template.labels)); if (window.ftApplyLabels) window.ftApplyLabels(); } catch (e) {} } return; }
+        if (String(r.id).indexOf('__') === 0) { if (r.id === '__ft_regs' && r.template) { try { localStorage.setItem('ft_regs_dec', JSON.stringify(r.template.decisions || {})); document.dispatchEvent(new Event('ft-regs')); } catch (e) {} return; } if (r.id === '__ft_faq' && r.template && r.template.items) { try { localStorage.setItem('ft_faq', JSON.stringify(r.template.items)); document.dispatchEvent(new Event('ft-faq')); } catch (e) {} return; } if (r.id === '__ft_labels' && r.template && r.template.labels) { try { localStorage.setItem('ft_labels', JSON.stringify(r.template.labels)); if (window.ftApplyLabels) window.ftApplyLabels(); } catch (e) {} } return; }
         var t = r.template; if (!t || t.id == null || dead.indexOf(String(t.id)) > -1 || dead.indexOf(t.id) > -1) return;
         t.shared = true;
         var i = templates.findIndex(function (x) { return x.id === t.id; });
@@ -12637,6 +12660,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   window.ftPropCount = function () { return propCount; };
   document.addEventListener('ft-admin', function () { if (isAdmin) loadProps().catch(function () {}); });
   window.__ftRest = function (path, opts) { if (!sess) return Promise.reject(new Error('non connecté')); return ensureToken().then(function () { return api(path, opts || {}); }); };
+  window.__ftAnon = function (path) { return api(path, { auth: false }); };
   window.__ftUser = function () { return sess && sess.user ? { id: sess.user.id, email: sess.user.email } : null; };
   window.__ftSaveShared = function (id, payload) {
     if (!sess || !isAdmin) return Promise.reject(new Error('Réservé à l’administrateur'));
@@ -15121,6 +15145,18 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+.tpl-scope{display:flex;gap:3px;padding:3px;border-radius:9px;background:rgba(15,23,42,.7);border:1px solid rgba(51,65,85,.7);margin-bottom:6px}
+.tpl-scope button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:4px;height:26px;border:0;border-radius:6px;background:none;color:#94a3b8;font-weight:700;font-size:10.5px;cursor:pointer;white-space:nowrap}
+.tpl-scope button b{font-weight:700;font-size:9.5px;padding:0 5px;border-radius:999px;background:rgba(148,163,184,.15)}
+.tpl-scope button.on{background:linear-gradient(90deg,#2563eb,#06b6d4);color:#fff}
+.tpl-scope button.on b{background:rgba(255,255,255,.22)}
+.tpl-grp{display:flex;align-items:center;justify-content:space-between;margin:8px 4px 4px;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#67e8f9}
+.tpl-grp:first-child{margin-top:2px}
+.tpl-grp span{font-size:9.5px;color:#94a3b8;letter-spacing:0}
+html.theme-light .tpl-scope{background:#f1f5f9;border-color:#cbd5e1}
+html.theme-light .tpl-scope button{color:#475569}
+html.theme-light .tpl-scope button.on{color:#fff}
+html.theme-light .tpl-grp{color:#0369a1}
 .inv-old ul{list-style:disc;padding-left:18px;margin:0;display:grid;gap:6px}
 .inv-old b,.inv-old strong{color:#fff}
 .inv-old a{color:#67e8f9}
@@ -16038,6 +16074,122 @@ html.theme-light #ft-ip .ip-x,html.theme-light #ft-ip .ip-mini{background:#fff;c
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(hook, 400)); else setTimeout(hook, 400);
 })();
 </script>
+<!-- ================= Extension 35 : veille réglementaire (publication admin, diffusion après validation) ================= -->
+<style>
+#ft-regs-dlg{position:fixed;inset:0;z-index:99980;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.65);padding:16px}
+#ft-regs-dlg.on{display:flex}
+#ft-regs-dlg .rd-box{width:min(560px,100%);max-height:86vh;overflow:auto;border-radius:18px;border:1px solid #24345f;background:#081028;color:#e8eef9;padding:18px 20px}
+#ft-regs-dlg h3{margin:0 0 4px;font-size:16px;font-weight:800}
+#ft-regs-dlg .rd-k{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#67e8f9;margin-bottom:6px}
+#ft-regs-dlg ul{margin:10px 0;padding-left:18px;font-size:13.5px;line-height:1.5}
+#ft-regs-dlg a{color:#7dd3fc;font-size:12.5px}
+#ft-regs-dlg .rd-go{margin-top:14px;width:100%;height:40px;border:0;border-radius:10px;background:linear-gradient(90deg,#2563eb,#06b6d4);color:#fff;font-weight:700;cursor:pointer}
+html.theme-light #ft-regs-dlg .rd-box{background:#fff;color:#0f172a;border-color:#cbd5e1}
+.rg-up{border:1px solid rgba(51,65,85,.8);border-radius:12px;padding:12px;margin-bottom:10px;background:rgba(2,6,23,.35)}
+.rg-up h4{margin:0;font-size:13.5px;font-weight:800;color:#f1f5f9;display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.rg-up .rg-st{flex:none;font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px}
+.rg-st.p{background:rgba(251,191,36,.15);color:#fbbf24}.rg-st.ok{background:rgba(52,211,153,.15);color:#34d399}.rg-st.no{background:rgba(148,163,184,.15);color:#94a3b8}
+.rg-up .rg-m{font-size:11.5px;color:#94a3b8;margin:3px 0 6px}
+.rg-up ul{margin:4px 0 6px;padding-left:18px;font-size:12.5px;color:#cbd5e1;line-height:1.45}
+.rg-up a{color:#7dd3fc;font-size:12px}
+html.theme-light .rg-up{background:#f8fafc;border-color:#e2e8f0}html.theme-light .rg-up h4{color:#0f172a}html.theme-light .rg-up ul{color:#334155}
+</style>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const toast = (m, t) => { try { showToast(m, t || 'info'); } catch (e) {} };
+  const isAdmin = () => !!(window.__ftIsAdmin && window.__ftIsAdmin());
+  const LS = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+  const jget = (k, d) => { try { const v = JSON.parse(LS.get(k)); return v == null ? d : v; } catch (e) { return d; } };
+  let B = null; try { B = BAREME; } catch (e) {}
+  let UPD = [], ORIG = {}, applied = [];
+  const decs = () => jget('ft_regs_dec', {});
+  const getP = p => p.split('.').reduce((o, k) => (o == null ? undefined : o[k]), B);
+  const setP = (p, v) => { const ks = p.split('.'), last = ks.pop(); const o = ks.reduce((o, k) => (o[k] = o[k] && typeof o[k] === 'object' ? o[k] : {}), B); o[last] = v; };
+  const fmtV = v => typeof v === 'number' ? v.toLocaleString('fr-FR', { maximumFractionDigits: 4 }) : String(v);
+  const fmtD = d => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d || ''); return m ? m[3] + '/' + m[2] + '/' + m[1] : (d || ''); };
+  const state = u => decs()[u.id] || 'p';
+
+  function apply() {
+    if (!B) return;
+    Object.keys(ORIG).forEach(p => setP(p, ORIG[p]));
+    const adm = isAdmin(), d = decs(); applied = [];
+    UPD.slice().sort((a, b) => String(a.date).localeCompare(String(b.date))).forEach(u => {
+      const st = d[u.id];
+      if (!(st === 'ok' || (adm && st !== 'no'))) return;
+      Object.keys(u.bareme || {}).forEach(p => { if (!(p in ORIG)) ORIG[p] = getP(p); setP(p, u.bareme[p]); });
+      applied.push(u.id);
+    });
+    if (adm) {
+      const pend = UPD.filter(u => !d[u.id]);
+      if (pend.length && !sessionStorage.getItem('ft_regs_told')) { try { sessionStorage.setItem('ft_regs_told', '1'); } catch (e) {} toast(pend.length + ' mise(s) à jour réglementaire(s) appliquée(s) pour vous seul, en attente de votre validation (Espace administrateur)', 'info'); }
+    } else announce();
+    if (window.__ftRegsRender) window.__ftRegsRender();
+  }
+  function announce() {
+    const seen = jget('ft_regs_seen', []), d = decs();
+    const fresh = UPD.filter(u => d[u.id] === 'ok' && seen.indexOf(u.id) < 0);
+    if (!fresh.length) return;
+    let w = $('ft-regs-dlg'); if (!w) { w = document.createElement('div'); w.id = 'ft-regs-dlg'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); document.body.appendChild(w); }
+    w.innerHTML = '<div class="rd-box"><div class="rd-k">Mise à jour réglementaire</div>' + fresh.map(u => '<h3>' + esc(u.titre) + '</h3><div style="font-size:12px;color:#94a3b8">' + (u.effet ? 'En vigueur le ' + esc(fmtD(u.effet)) : '') + '</div><ul>' + (u.resume || []).map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>' + (u.sources || []).map(s => '<div><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.label) + ' ↗</a></div>').join('')).join('<hr style="border-color:rgba(255,255,255,.08);margin:14px 0">') + '<p style="font-size:12px;color:#94a3b8;margin-top:12px">Les simulateurs utilisent déjà ces nouvelles valeurs.</p><button type="button" class="rd-go">J’ai compris</button></div>';
+    w.classList.add('on');
+    w.querySelector('.rd-go').onclick = () => { LS.set('ft_regs_seen', JSON.stringify(seen.concat(fresh.map(u => u.id)))); w.classList.remove('on'); };
+  }
+  function loadDecsAnon() {
+    if (window.__ftUser && window.__ftUser()) return;
+    if (!window.__ftAnon) return;
+    window.__ftAnon('/rest/v1/shared_templates?select=template&id=eq.__ft_regs').then(r => { const t = r && r[0] && r[0].template; if (t && t.decisions) { LS.set('ft_regs_dec', JSON.stringify(t.decisions)); apply(); } }).catch(() => {});
+  }
+  function load() {
+    fetch('reglementation/maj.json?t=' + Date.now(), { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(j => {
+      UPD = (j && Array.isArray(j.updates)) ? j.updates.filter(u => u && u.id) : [];
+      apply(); loadDecsAnon();
+    }).catch(() => {});
+  }
+  window.ftRegsDecide = function (id, val) {
+    if (!isAdmin()) return toast('Réservé à l’administrateur', 'info');
+    const d = decs(); if (val) d[id] = val; else delete d[id];
+    const u = UPD.find(x => x.id === id);
+    if (val === 'ok' && !confirm('Diffuser « ' + (u ? u.titre : id) + ' » à tous les conseillers ?')) return;
+    window.__ftSaveShared('__ft_regs', { decisions: d }).then(() => {
+      LS.set('ft_regs_dec', JSON.stringify(d)); apply();
+      toast(val === 'ok' ? 'Mise à jour diffusée aux conseillers' : val === 'no' ? 'Mise à jour écartée' : 'Décision annulée', 'success');
+    }).catch(e => toast('Enregistrement impossible : ' + (e && e.message || e), 'error'));
+  };
+  /* Carte dans l’Espace administrateur */
+  window.__ftRegsRender = function () {
+    const host = $('ad-regs'); if (!host || !isAdmin()) return;
+    const d = decs(), pend = UPD.filter(u => !d[u.id]).length;
+    const list = UPD.slice().sort((a, b) => String(b.date).localeCompare(String(a.date))).map(u => {
+      const st = d[u.id] || 'p';
+      const rows = Object.keys(u.bareme || {}).map(p => '<tr><td>' + esc(p) + '</td><td class="n">' + esc(fmtV(p in ORIG ? ORIG[p] : getP(p))) + ' → <b>' + esc(fmtV(u.bareme[p])) + '</b></td></tr>').join('');
+      return '<div class="rg-up"><h4><span>' + esc(u.titre) + '</span><span class="rg-st ' + st + '">' + (st === 'ok' ? 'Diffusée' : st === 'no' ? 'Écartée' : 'En attente') + '</span></h4>' +
+        '<div class="rg-m">Publiée le ' + esc(fmtD(u.date)) + (u.effet ? ' · en vigueur le ' + esc(fmtD(u.effet)) : '') + '</div>' +
+        (u.resume && u.resume.length ? '<ul>' + u.resume.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>' : '') +
+        (rows ? '<table class="ad-tbl"><tr><th>Valeur du barème</th><th style="text-align:right">Avant → après</th></tr>' + rows + '</table>' : '') +
+        (u.code ? '<p class="ad-empty">Modification du code préparée dans la branche « ' + esc(u.code) + ' » : elle sera intégrée après votre validation.</p>' : '') +
+        (u.sources || []).map(s => '<div><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.label) + ' ↗</a></div>').join('') +
+        '<div class="ad-row" style="margin-top:8px">' + (st === 'p' ? '<button type="button" class="ad-btn pri" onclick="ftRegsDecide(\'' + esc(u.id) + '\',\'ok\')">Diffuser aux conseillers</button><button type="button" class="ad-btn" onclick="ftRegsDecide(\'' + esc(u.id) + '\',\'no\')">Écarter</button>' : '<button type="button" class="ad-btn" onclick="ftRegsDecide(\'' + esc(u.id) + '\',null)">Annuler la décision</button>') + '</div></div>';
+    }).join('');
+    const card = window.__ftAdCard || ((n, t, r, i) => '<div>' + i + '</div>');
+    host.innerHTML = card('★', 'Veille réglementaire', pend ? pend + ' en attente' : 'À jour', list || '<p class="ad-empty">Aucune mise à jour publiée par la veille pour le moment. La veille vérifie chaque semaine les textes officiels (Unédic, Légifrance, France Travail) ; dès qu’un changement est publié, il s’applique d’abord pour vous seul et apparaît ici pour validation.</p>');
+  };
+  const _fill = window.ftAdminFill;
+  window.ftAdminFill = function (card) {
+    window.__ftAdCard = card;
+    try { if (_fill) _fill.apply(this, arguments); } catch (e) { console.warn(e); }
+    const top = $('ad-usage'); if (top && !$('ad-regs')) { const h = document.createElement('div'); h.id = 'ad-regs'; top.parentNode.insertBefore(h, top); }
+    window.__ftRegsRender();
+  };
+  document.addEventListener('ft-admin', apply);
+  document.addEventListener('ft-regs', apply);
+  window.FT_ACTIONS = window.FT_ACTIONS || [];
+  window.FT_ACTIONS.push({ t: 'Veille réglementaire', s: 'Mises à jour en attente de validation (administrateur)', kw: 'veille réglementation mise à jour validation diffusion', when: isAdmin, run: () => switchNavTab('admin') });
+  load();
+  setInterval(() => { if (!document.hidden) load(); }, 30 * 60 * 1000);
+})();
+</script>
 <!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
 <style>
 #ft-news{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.6);backdrop-filter:blur(3px);opacity:0;transition:opacity .25s ease}
@@ -16070,6 +16222,10 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.6', date: '13/11/2026', items: [
+      'Mails (CVM) : la liste sépare « Mes modèles » et les « Modèles communs », avec un sélecteur Tous / Communs / Mes modèles et le nombre de chaque.',
+      'Veille réglementaire : quand un texte officiel change un montant ou une durée, le site est mis à jour et une fenêtre vous présente le changement et ses sources.'
+    ] },
     { v: '2026-11-13.5', date: '13/11/2026', items: [
       'Schémas : les étapes du projet professionnel sont présentées en cartes lisibles (le texte ne déborde plus), et une flèche mal placée de l’arbre de décision a été corrigée.'
     ] },
