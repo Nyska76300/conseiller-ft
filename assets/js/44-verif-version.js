@@ -29,7 +29,7 @@
     try { if (window.speechSynthesis && speechSynthesis.speaking) return true; } catch (e) {}
     return Date.now() - lastAct < 20000;
   }
-  function view() { return document.querySelector('[id^="view-"]:not(.hidden)'); }
+  function view() { return document.querySelector('[id^="view-"]:not(.hidden):not(.ft-split-b)'); }
   function scroller(v) { if (!v) return null; if (v.scrollHeight > v.clientHeight + 4 && /auto|scroll/.test(getComputedStyle(v).overflowY)) return v; var c = [].slice.call(v.querySelectorAll('.overflow-y-auto')).filter(function (x) { return x.offsetParent && x.scrollTop > 0; }); return c[0] || v.querySelector('.overflow-y-auto'); }
   function saveState() {
     var v = view(), st = { at: Date.now(), ver: latest, tab: (function () { try { return String(activeNavTab); } catch (e) { return ''; } })(), fields: {}, scroll: 0, tpl: (function () { try { return activeTemplateId; } catch (e) { return null; } })() };

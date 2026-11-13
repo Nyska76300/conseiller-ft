@@ -10,7 +10,7 @@
   }
   function center() {
     if (innerWidth > 640) return;
-    document.querySelectorAll('[id^="view-"]:not(.hidden) .hub-chips').forEach(box => {
+    document.querySelectorAll('[id^="view-"]:not(.hidden):not(.ft-split-b) .hub-chips').forEach(box => {
       const on = box.querySelector('.hub-tab.is-on'); if (!on) return;
       box.scrollLeft = on.offsetLeft - (box.clientWidth - on.offsetWidth) / 2;
     });

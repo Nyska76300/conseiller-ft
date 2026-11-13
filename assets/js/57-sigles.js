@@ -50,7 +50,7 @@
     root.dataset.sgDone = '1';
   }
   function run() {
-    const v = document.querySelector('[id^="view-"]:not(.hidden)'); if (!v || /view-(cvm|admin)/.test(v.id)) return;
+    const v = document.querySelector('[id^="view-"]:not(.hidden):not(.ft-split-b)'); if (!v || /view-(cvm|admin)/.test(v.id)) return;
     if (v.dataset.sgDone === '1' && v.querySelector('abbr.ft-sg')) return;
     v.dataset.sgDone = ''; mark(v);
   }

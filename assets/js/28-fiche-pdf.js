@@ -228,7 +228,7 @@
   window.addEventListener('scroll', () => tip(null), true);
   function glossActive() {
     const t = tab(); if (t === 'home' || t === 'cvm' || t === 'glossaire') return;
-    const v = document.querySelector('[id^="view-"]:not(.hidden):not(#view-home):not(#view-cvm)');
+    const v = document.querySelector('[id^="view-"]:not(.hidden):not(.ft-split-b):not(#view-home):not(#view-cvm)');
     if (v) glossify(v);
   }
 

@@ -672,7 +672,8 @@
 
         const savedTab = safeLS.getItem('ft_active_nav_tab');
         if (savedTab) {
-          activeNavTab = (/^(cvm|home|cfd|dossier|delais|bareme|droits|jour|glossaire|cns|sources|sjr|schemas)$/.test(savedTab)) ? savedTab : parseInt(savedTab, 10);
+          /* onglets numérotés (1 à 9) en nombre, tous les autres (formation, compare, faq, hub:…) tels quels */
+          activeNavTab = /^\d+$/.test(savedTab) ? parseInt(savedTab, 10) : savedTab;
         }
 
         const savedCollapsed = safeLS.getItem('ft_sidebar_collapsed');

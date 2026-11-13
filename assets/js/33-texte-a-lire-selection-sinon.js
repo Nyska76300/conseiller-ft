@@ -12,7 +12,7 @@
     if (sel.length >= 3) return sel;
     let tab = ''; try { tab = String(activeNavTab); } catch (e) {}
     if (tab === 'cvm') { const p = $('preview-body') || document.querySelector('#tab-content-cvm .prose, #tab-content-cvm'); if (p) return p.innerText.trim(); }
-    const view = document.querySelector('[id^="view-"]:not(.hidden)');
+    const view = document.querySelector('[id^="view-"]:not(.hidden):not(.ft-split-b)');
     if (!view) return '';
     const ta = [...view.querySelectorAll('.ft-mail textarea')].find(t => t.offsetParent && t.value.trim());
     if (ta) return ta.value.trim();

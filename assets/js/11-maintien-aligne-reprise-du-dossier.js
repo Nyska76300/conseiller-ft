@@ -64,7 +64,7 @@
   function strip(tab) {
     document.querySelectorAll('.mt-strip').forEach(x => x.remove()); return; /* liens « Modèles CVM associés » retirés à la demande */
     const kw = KW[String(tab)]; if (!kw || !window.__ftScore) return;
-    const v = document.querySelector('[id^="view-"]:not(.hidden)'); if (!v) return;
+    const v = document.querySelector('[id^="view-"]:not(.hidden):not(.ft-split-b)'); if (!v) return;
     const box = v.querySelector(':scope > .reg-wrap') || v;
     let s = box.querySelector(':scope > .mt-strip'); if (s) s.remove();
     const list = templates.map(t => ({ t: t, sc: kw.split(' ').reduce((n, w) => n + (window.__ftScore(w, t.title, t.title + ' ' + t.category + ' ' + (t.tags || []).join(' ')) > 0 ? 1 : 0), 0) })).filter(x => x.sc).sort((a, b) => b.sc - a.sc).slice(0, 4);

@@ -31,7 +31,7 @@
   function snapshot() {
     let tab = ''; try { tab = String(activeNavTab); } catch (e) { return; }
     if (!tab || SKIP.includes(tab)) return;
-    const view = document.querySelector('[id^="view-"]:not(.hidden)'); if (!view) return;
+    const view = document.querySelector('[id^="view-"]:not(.hidden):not(.ft-split-b)'); if (!view) return;
     const f = fieldsOf(view); if (!f) return;
     const name = (($('header-active-tab-name') || {}).textContent || tab).split('·').pop().trim();
     const L = get(), sig = tab + '|' + JSON.stringify(f.fields);

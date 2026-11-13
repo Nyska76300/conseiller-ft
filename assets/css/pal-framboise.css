@@ -1615,4 +1615,22 @@ html.theme-light .cp-modes button{border-color:#dad2d6;color:#4b3c44}
 html.ft-lite.theme-light .fh-card,html.ft-lite.theme-light .fh-chip,html.ft-lite.theme-light .fh-pin{box-shadow:0 1px 3px rgba(32,16,24,.12)!important}
 #ft-auth .fa-go{box-shadow:0 -10px 18px 6px #201018,0 8px 22px rgba(175,30,102,.35)}
 html.theme-light #ft-auth .fa-go{box-shadow:0 -10px 18px 6px #f8f2f5}
+.ft-split-host.ft-split>.ft-split-b{border-left:2px solid #4e303f}
+#ft-split-bar{background:#220d18;border:1px solid #573646;color:#dad2d6}
+#ft-split-bar b{color:#ebe6e9}
+#ft-split-bar button{border:1px solid #4b3c44;background:#2b131f;color:#ebe6e9}
+#ft-split-bar button:hover{border-color:#806e77}
+#ft-split-pick{background:rgba(13,3,8,.55)}
+#ft-split-pick .sp-box{background:#220d18;border:1px solid #573646;color:#ebe6e9}
+#ft-split-pick .sp-h button{color:#ab9ea5}
+#ft-split-pick input{border:1px solid #4b3c44;background:#220c17;color:#ebe6e9}
+#ft-split-pick .sp-list button{border:1px solid #4e303f;background:#2f1220;color:#ebe6e9}
+#ft-split-pick .sp-list button:hover,#ft-split-pick .sp-list button:focus-visible{border-color:#f2abdc}
+#ft-split-btn{border:1px solid #4e303f;color:#ab9ea5}
+#ft-split-btn:hover{color:#f8c8ea;border-color:#f2abdc}
+html.theme-light #ft-split-btn{border-color:#dad2d6;color:#5f5057}
+html.theme-light .ft-split-host.ft-split>.ft-split-b{border-left-color:#e9d2de}
+html.theme-light #ft-split-bar,html.theme-light #ft-split-pick .sp-box{border-color:#e9d2de;color:#201018}
+html.theme-light #ft-split-bar b{color:#201018}
+html.theme-light #ft-split-bar button,html.theme-light #ft-split-pick .sp-list button,html.theme-light #ft-split-pick input{background:#fbf9fa;border-color:#dad2d6;color:#201018}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(166,48,107,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(198,57,128,0.1),transparent 60%),linear-gradient(150deg,#0a0306 0%,#18070f 35%,#280b1a 70%,#3f1229 100%) fixed!important}

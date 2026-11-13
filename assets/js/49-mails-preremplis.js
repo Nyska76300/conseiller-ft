@@ -32,7 +32,7 @@
   function collect() {
     let tab = ''; try { tab = String(activeNavTab); } catch (e) { return null; }
     if (!tab || SKIP.includes(tab)) return null;
-    const view = document.querySelector('[id^="view-"]:not(.hidden)'); if (!view) return null;
+    const view = document.querySelector('[id^="view-"]:not(.hidden):not(.ft-split-b)'); if (!view) return null;
     const vals = [], seen = new Set();
     view.querySelectorAll('span, b, strong, div, p, td, dd, em').forEach(el => {
       if (vals.length >= 16 || el.children.length || !el.offsetParent) return;

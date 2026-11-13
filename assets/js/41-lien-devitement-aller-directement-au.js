@@ -3,7 +3,7 @@
   const a = document.createElement('a'); a.id = 'ft-skip'; a.href = '#'; a.textContent = 'Aller au contenu';
   a.addEventListener('click', e => {
     e.preventDefault();
-    const v = document.querySelector('[id^="view-"]:not(.hidden)'); if (!v) return;
+    const v = document.querySelector('[id^="view-"]:not(.hidden):not(.ft-split-b)'); if (!v) return;
     const t = v.querySelector('h1,h2,h3,[tabindex],input,select,button') || v;
     if (!t.hasAttribute('tabindex') && !/INPUT|SELECT|BUTTON|A|TEXTAREA/.test(t.tagName)) t.setAttribute('tabindex', '-1');
     t.focus();
