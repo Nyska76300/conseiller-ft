@@ -9,6 +9,8 @@ Cycle de vie d'une mise à jour :
 3. L'administrateur la relit dans **Espace administrateur → Veille réglementaire** et clique sur **Diffuser aux conseillers** (ou **Écarter**).
 4. La décision est enregistrée dans Supabase (`shared_templates`, ligne `__ft_regs`) : les conseillers reçoivent alors la mise à jour (barème appliqué + annonce).
 
+`verifie_le` (AAAA-MM-JJ) : date de la dernière vérification par la veille, mise à jour à chaque passage même sans changement. Elle alimente la pastille « À jour » en haut du site (verte si la vérification date de moins de 15 jours).
+
 Format d'une entrée :
 
 ```json

@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.16">
+  <meta name="ft-version" content="2026-11-13.17">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -1560,9 +1560,7 @@
             <h1 class="font-extrabold text-base md:text-lg tracking-tight text-white leading-tight whitespace-nowrap drop-shadow-sm">
               Espace Conseiller
             </h1>
-            <span class="hidden xl:inline-flex text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
-              Pro v2.5
-            </span>
+            <button type="button" id="ft-reg-pill" class="ft-rp ok" title="Réglementation à jour"><i></i><b>À jour</b></button>
           </div>
           <!-- Active Tab Quick Switcher in Header -->
           <button onclick="toggleBurgerMenu()" class="flex items-center gap-1.5 text-left text-[11px] text-slate-400 hover:text-cyan-300 transition-colors mt-0.5 group">
@@ -15297,6 +15295,14 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+.ft-rp{display:none;align-items:center;gap:6px;height:22px;padding:0 9px 0 7px;border-radius:999px;font-family:inherit;font-size:10.5px;font-weight:800;letter-spacing:.02em;cursor:pointer;white-space:nowrap;border:1px solid rgba(52,211,153,.4);background:rgba(16,185,129,.12);color:#6ee7b7}
+@media (min-width:1280px){.ft-rp{display:inline-flex}}
+.ft-rp i{width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.22);animation:rpPulse 2.4s ease-in-out infinite}
+@keyframes rpPulse{50%{box-shadow:0 0 0 5px rgba(16,185,129,.08)}}
+.ft-rp.warn{border-color:rgba(251,191,36,.5);background:rgba(245,158,11,.14);color:#fcd34d}.ft-rp.warn i{background:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.25)}
+.ft-rp.late{border-color:rgba(148,163,184,.45);background:rgba(148,163,184,.12);color:#cbd5e1}.ft-rp.late i{background:#94a3b8;box-shadow:none;animation:none}
+html.theme-light .ft-rp{background:#ecfdf5;color:#047857;border-color:#6ee7b7}html.theme-light .ft-rp.warn{background:#fffbeb;color:#b45309;border-color:#fcd34d}html.theme-light .ft-rp.late{background:#f1f5f9;color:#475569;border-color:#cbd5e1}
+@media (prefers-reduced-motion:reduce){.ft-rp i{animation:none}}
 #ft-auth .fa-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 #ft-auth .fa-sec{margin:16px 0 0;padding-top:12px;border-top:1px solid rgba(148,163,184,.2);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#67e8f9}
 #ft-auth form>.fa-sec:first-child{border-top:0;padding-top:0;margin-top:6px}
@@ -16412,6 +16418,7 @@ html.theme-light .rg-up{background:#f8fafc;border-color:#e2e8f0}html.theme-light
       if (pend.length && !sessionStorage.getItem('ft_regs_told')) { try { sessionStorage.setItem('ft_regs_told', '1'); } catch (e) {} toast(pend.length + ' mise(s) à jour réglementaire(s) appliquée(s) pour vous seul, en attente de votre validation (Espace administrateur)', 'info'); }
     } else announce();
     if (window.__ftRegsRender) window.__ftRegsRender();
+    pill();
   }
   function announce() {
     const seen = jget('ft_regs_seen', []), d = decs();
@@ -16427,9 +16434,27 @@ html.theme-light .rg-up{background:#f8fafc;border-color:#e2e8f0}html.theme-light
     if (!window.__ftAnon) return;
     window.__ftAnon('/rest/v1/shared_templates?select=template&id=eq.__ft_regs').then(r => { const t = r && r[0] && r[0].template; if (t && t.decisions) { LS.set('ft_regs_dec', JSON.stringify(t.decisions)); apply(); } }).catch(() => {});
   }
+  let LAST = null;
+  function pill() {
+    const p = $('ft-reg-pill'); if (!p) return;
+    const adm = isAdmin(), d = decs(), pend = UPD.filter(u => !d[u.id]).length;
+    let last = LAST ? new Date(LAST + 'T12:00') : null;
+    if (!last && B && B.verifie) { const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(B.verifie); if (m) last = new Date(+m[3], +m[2] - 1, +m[1]); }
+    const age = last ? Math.floor((Date.now() - last) / 864e5) : 999;
+    let cls = 'ok', txt = 'À jour';
+    if (adm && pend) { cls = 'warn'; txt = pend + ' à valider'; }
+    else if (age > 14) { cls = 'late'; txt = 'À vérifier'; }
+    const when = last ? last.toLocaleDateString('fr-FR') : '—';
+    const t = (cls === 'warn' ? pend + ' mise(s) à jour réglementaire(s) en attente de votre validation. ' : cls === 'late' ? 'La dernière vérification date de plus de deux semaines. ' : 'Réglementation à jour. ') + 'Dernière vérification automatique : ' + when + ' (veille chaque lundi sur Unédic, Légifrance et France Travail).' + (B && B.verifie ? ' Barème Unédic vérifié le ' + B.verifie + '.' : '');
+    p.className = 'ft-rp ' + cls; p.title = t; p.setAttribute('aria-label', t);
+    p.querySelector('b').textContent = txt;
+    p.onclick = () => { if (adm) switchNavTab('admin'); else try { switchNavTab('sources'); } catch (e) {} };
+  }
+  window.__ftRegPill = pill;
   function load() {
     fetch('reglementation/maj.json?t=' + Date.now(), { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(j => {
       UPD = (j && Array.isArray(j.updates)) ? j.updates.filter(u => u && u.id) : [];
+      LAST = j && j.verifie_le || null;
       apply(); loadDecsAnon();
     }).catch(() => {});
   }
@@ -16502,7 +16527,7 @@ html.theme-light .rg-up{background:#f8fafc;border-color:#e2e8f0}html.theme-light
   document.addEventListener('ft-regs', apply);
   window.FT_ACTIONS = window.FT_ACTIONS || [];
   window.FT_ACTIONS.push({ t: 'Veille réglementaire', s: 'Mises à jour en attente de validation (administrateur)', kw: 'veille réglementation mise à jour validation diffusion', when: isAdmin, run: () => switchNavTab('admin') });
-  load();
+  load(); setTimeout(pill, 300);
   setInterval(() => { if (!document.hidden) load(); }, 30 * 60 * 1000);
 })();
 </script>
@@ -16655,7 +16680,8 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
      (v = même valeur que la balise ft-version). */
   var NEWS = [
     { v: '2026-11-13.16', date: '13/11/2026', items: [
-      '« Menu Outils » s’appelle désormais « Menu ».'
+      '« Menu Outils » s’appelle désormais « Menu ».',
+      'En haut, à côté de « Espace Conseiller » : une pastille verte « À jour » indique que la réglementation a été vérifiée par la veille automatique hebdomadaire (date au survol).'
     ] },
     { v: '2026-11-13.13', date: '13/11/2026', items: [
       'Mon compte : menu du compte (rond avec vos initiales) → « Mon compte » pour modifier votre prénom, votre nom, votre adresse e-mail ou votre mot de passe.',
