@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.40', date: '13/11/2026', items: [
+      'Mises à jour automatiques : les nouvelles versions du site s’installent toutes seules, au premier moment calme (aucune saisie en cours) ; l’outil ouvert, les champs remplis et la position dans la page sont conservés.'
+    ] },
     { v: '2026-11-13.39', date: '13/11/2026', items: [
       'Mon activité : dans le menu de votre compte, vos outils et mails les plus utilisés, votre activité par semaine et vos scores de formation (visibles par vous seul).',
       'Thème automatique : dans Paramètres, « Auto » suit le réglage de votre appareil, « Horaire » passe en clair de 7 h à 19 h et en sombre le soir.',
