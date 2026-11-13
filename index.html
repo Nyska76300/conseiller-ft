@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.14">
+  <meta name="ft-version" content="2026-11-13.15">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12446,7 +12446,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   if (!SB_URL || !SB_KEY || !window.fetch) return;
 
   // Données synchronisées (aucune donnée de dossier ou d'allocataire)
-  var SYNC = ['ft_links', 'ft_deleted_tpl', 'ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use', 'ft_bareme_ack', 'ft_pins'];
+  var SYNC = ['ft_links', 'ft_deleted_tpl', 'ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use', 'ft_bareme_ack', 'ft_pins', 'ft_menu_favs'];
   var K_SESS = 'ft_sb_session', K_META = 'ft_sb_meta';
   var LSraw = {
     get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -12521,7 +12521,8 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   function parse(v, d) { try { var x = JSON.parse(v); return x == null ? d : x; } catch (e) { return d; } }
   function merge(localData, remoteData) {
     var out = {}; SYNC.forEach(function (k) { out[k] = remoteData[k] != null ? remoteData[k] : localData[k]; });
-    out.ft_pins = remoteData.ft_pins != null ? remoteData.ft_pins : '[]'; // « Mes outils » : propres à chaque compte, jamais repris d’un autre utilisateur du poste
+    out.ft_pins = remoteData.ft_pins != null ? remoteData.ft_pins : '[]';
+    out.ft_menu_favs = remoteData.ft_menu_favs != null ? remoteData.ft_menu_favs : '[]'; // « Mes outils » : propres à chaque compte, jamais repris d’un autre utilisateur du poste
     var dead = {}; parse(localData.ft_deleted_tpl, []).concat(parse(remoteData.ft_deleted_tpl, [])).forEach(function (id) { dead[id] = 1; });
     out.ft_deleted_tpl = JSON.stringify(Object.keys(dead));
     var lt = parse(localData.ft_templates, []), rt = parse(remoteData.ft_templates, []);
@@ -16556,6 +16557,8 @@ html.theme-light .rg-up{background:#f8fafc;border-color:#e2e8f0}html.theme-light
 #mh-favs .mh-fh svg{width:12px;height:12px;fill:currentColor}
 #mh-favs .space-y-1\.5>*+*{margin-top:.375rem}
 #mh-favs .ft-pen{display:none!important}
+#burger-tabs-list .mh-moved,#burger-tabs-list .mh-empty{display:none!important}
+#mh-favs .mh-moved{display:flex!important}
 #burger-tabs-list #mh-favs button[onclick]{padding-right:10px!important}
 html.theme-light #mh-favs{background:#fffbeb;border-color:#fcd34d}html.theme-light #mh-favs .mh-fh{color:#b45309}
 html.theme-light #burger-tabs-list .mh-st{color:#94a3b8}
@@ -16564,8 +16567,8 @@ html.theme-light #burger-tabs-list .mh-st{color:#94a3b8}
 (function () {
   const $ = id => document.getElementById(id);
   const STAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>';
-  const get = () => { try { const v = JSON.parse(localStorage.getItem('ft_pins') || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } };
-  const set = a => { const v = JSON.stringify(a); if (window.safeLS && safeLS.setItem) safeLS.setItem('ft_pins', v); else try { localStorage.setItem('ft_pins', v); } catch (e) {} try { window.dispatchEvent(new StorageEvent('storage', { key: 'ft_pins' })); } catch (e) {} };
+  const get = () => { try { const v = JSON.parse(localStorage.getItem('ft_menu_favs') || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } };
+  const set = a => { const v = JSON.stringify(a); if (window.safeLS && safeLS.setItem) safeLS.setItem('ft_menu_favs', v); else try { localStorage.setItem('ft_menu_favs', v); } catch (e) {} };
   const idOf = b => { if (b.closest('#ft-adm-sec')) return 'admin'; const m = /switchNavTab\('([^']+)'\)/.exec(b.getAttribute('onclick') || ''); return m ? m[1] : null; };
   function sync() {
     const list = $('burger-tabs-list'); if (!list) return;
@@ -16578,25 +16581,34 @@ html.theme-light #burger-tabs-list .mh-st{color:#94a3b8}
       if (!st) { st = document.createElement('span'); st.className = 'mh-st'; st.setAttribute('role', 'button'); st.innerHTML = STAR; b.appendChild(st); }
       const on = pins.includes(id);
       if (st.classList.contains('on') !== on) st.classList.toggle('on', on);
-      const t = on ? 'Retirer de mes favoris' : 'Ajouter à mes favoris (en haut du menu)';
+      const t = on ? 'Retirer des favoris du menu (il reprend sa place)' : 'Ajouter aux favoris du menu (il passe en haut, sous CVM Direct)';
       if (st.title !== t) { st.title = t; st.setAttribute('aria-label', t); }
       st.dataset.id = id;
+      /* un favori quitte sa place d’origine */
+      const el = b.parentNode && b.parentNode.classList && b.parentNode.classList.contains('ft-pen-wrap') ? b.parentNode : b;
+      const hide = on && (id !== 'admin' || isAdm);
+      if (el.classList.contains('mh-moved') !== hide) el.classList.toggle('mh-moved', hide);
+    });
+    list.querySelectorAll('.menu-sec, #ft-adm-sec').forEach(sec => {
+      const items = [...sec.querySelectorAll('button[onclick^="switchNavTab"], #ft-adm-sec button')];
+      const empty = items.length > 0 && items.every(b => (b.closest('.mh-moved')));
+      if (sec.classList.contains('mh-empty') !== empty) sec.classList.toggle('mh-empty', empty);
     });
     /* bloc « Mes favoris » juste sous CVM Direct */
     let act = ''; try { act = String(activeNavTab); } catch (e) {}
-    const favs = pins.filter(id => id.indexOf('tpl:') !== 0 && (id !== 'admin' || isAdm)).map(id => ({ id, src: btns.find(b => idOf(b) === id) })).filter(x => x.src);
+    const favs = pins.filter(id => id !== 'admin' || isAdm).map(id => ({ id, src: btns.find(b => idOf(b) === id) })).filter(x => x.src);
     let box = $('mh-favs');
     const sig = favs.map(x => x.id).join(',') + '|' + act + '|' + favs.map(x => (x.src.querySelector('.text-xs') || {}).textContent).join(',');
     if (!favs.length) { if (box) box.remove(); return; }
     if (!box || box.dataset.sig !== sig) {
       if (!box) { box = document.createElement('div'); box.id = 'mh-favs'; }
       box.dataset.sig = sig;
-      box.innerHTML = '<div class="mh-fh">' + STAR + 'Mes favoris</div><div class="space-y-1.5"></div>';
+      box.innerHTML = '<div class="mh-fh">' + STAR + 'Favoris du menu</div><div class="space-y-1.5"></div>';
       const inner = box.lastChild;
       favs.forEach(x => {
         const c = x.src.cloneNode(true); c.removeAttribute('id');
         if (x.id === 'admin') c.setAttribute('onclick', "switchNavTab('admin')");
-        c.querySelectorAll('.ft-pen').forEach(p => p.remove());
+        c.querySelectorAll('.ft-pen').forEach(p => p.remove()); c.classList.remove('mh-moved'); c.style.display = '';
         inner.appendChild(c);
       });
     }
@@ -16611,9 +16623,9 @@ html.theme-light #burger-tabs-list .mh-st{color:#94a3b8}
     const id = st.dataset.id, p = get(), i = p.indexOf(id);
     if (i < 0) p.push(id); else p.splice(i, 1);
     set(p); sync();
-    try { showToast(i < 0 ? 'Ajouté à vos favoris' : 'Retiré de vos favoris', 'success'); } catch (er) {}
+    try { showToast(i < 0 ? 'Ajouté aux favoris du menu' : 'Retiré des favoris du menu', 'success'); } catch (er) {}
   }, true);
-  window.addEventListener('storage', e => { if (e.key === 'ft_pins') sync(); });
+  window.addEventListener('storage', e => { if (e.key === 'ft_menu_favs') sync(); });
   document.addEventListener('ft-admin', () => setTimeout(sync, 60));
   if (window.ftOnDom) window.ftOnDom(sync);
   setTimeout(sync, 400);
@@ -16657,7 +16669,7 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
     ] },
     { v: '2026-11-13.12', date: '13/11/2026', items: [
       'Accueil : « Mes outils » devient « Mes favoris ». Vous pouvez y cocher des outils et aussi des mails (CVM) : un clic ouvre directement le mail.',
-      'Menu Outils : une étoile à côté de chaque outil permet de le mettre en favori ; vos favoris s’affichent en haut du menu, sous CVM Direct. Ces choix sont propres à votre compte.'
+      'Menu Outils : une étoile à côté de chaque outil le place dans « Favoris du menu », en haut sous CVM Direct (il quitte sa rubrique ; un nouveau clic l’y remet). Ces favoris sont indépendants de ceux de l’accueil et propres à votre compte.'
     ] },
     { v: '2026-11-13.10', date: '13/11/2026', items: [
       'Accueil, « Liens utiles » : maintenez un lien appuyé une demi-seconde (doigt ou souris) ; les liens se mettent à trembler comme sur iPhone et vous pouvez le faire glisser à sa nouvelle place. La roue crantée donne accès aux mêmes réglages. « Terminer » pour sortir. L’ordre est enregistré dans votre compte.'
