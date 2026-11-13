@@ -18,7 +18,8 @@
   function fix(root) {
     const MAP = { 'indus-range-duree': 'Nombre de mensualités (curseur)', 'retraite-input-statut-pension': 'Statut de la pension de retraite' };
     Object.keys(MAP).forEach(id => { const e = document.getElementById(id); if (e && !named(e)) e.setAttribute('aria-label', MAP[id]); });
-    (root || document).querySelectorAll('input:not([type=hidden]),select,textarea').forEach(e => {
+    (root || document).querySelectorAll('input:not([type=hidden]):not([data-a11y]),select:not([data-a11y]),textarea:not([data-a11y])').forEach(e => {
+      e.setAttribute('data-a11y', '1');
       if (named(e)) return;
       let lb = null;
       const prev = e.previousElementSibling; if (prev && prev.tagName === 'LABEL') lb = prev;
@@ -27,13 +28,14 @@
       const t = (lb && lb.textContent) || e.placeholder || (e.closest('[data-label]') || {}).dataset && e.closest('[data-label]') && e.closest('[data-label]').dataset.label;
       if (t && String(t).trim()) e.setAttribute('aria-label', String(t).trim().slice(0, 120));
     });
-    (root || document).querySelectorAll('button:not([aria-label]),[role=button]:not([aria-label])').forEach(b => {
-      if ((b.innerText || '').trim()) return;
+    (root || document).querySelectorAll('button:not([aria-label]):not([data-a11y]),[role=button]:not([aria-label]):not([data-a11y])').forEach(b => {
+      b.setAttribute('data-a11y', '1');
+      if ((b.textContent || '').trim()) return;
       if (b.title) { b.setAttribute('aria-label', b.title); return; }
       const ic = b.querySelector('[data-lucide]'); if (ic) b.setAttribute('aria-label', ic.getAttribute('data-lucide').replace(/-/g, ' '));
     });
     /* Onglets de rubrique : indiquer l’outil courant */
-    document.querySelectorAll('svg:not([aria-hidden]):not([role])').forEach(s => { if (s.closest('button,a')) s.setAttribute('aria-hidden', 'true'); });
+    (root || document).querySelectorAll('svg:not([aria-hidden]):not([role])').forEach(s => { if (s.closest('button,a')) s.setAttribute('aria-hidden', 'true'); });
   }
   /* Annonces des messages flash aux lecteurs d’écran */
   const live = document.createElement('div'); live.className = 'ft-sr'; live.setAttribute('role', 'status'); live.setAttribute('aria-live', 'polite'); document.body.appendChild(live);

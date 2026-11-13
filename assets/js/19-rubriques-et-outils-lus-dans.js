@@ -32,7 +32,7 @@
     }).filter(g => g.items.length);
   }
   function toolsHtml() {
-    const gs = groups().filter(g => !/référence|calcul/i.test(g.title)); if (!gs.length) return '';
+    const gs = groups(); if (!gs.length) return '';
     const ref = gs.find(g => /référence|calcul/i.test(g.title));
     if (ref) ref.items.push(
       { act: "document.getElementById('datecalc-toggle').click()", label: 'Dates', desc: 'Nombre de jours entre deux dates', icon: SVG(IC.cal) },

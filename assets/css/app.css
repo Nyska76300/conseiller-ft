@@ -1470,3 +1470,17 @@ html.theme-light .qc-err{color:#b91c1c}html.theme-light .qc-warn{color:#a16207}h
 .cp-acts{display:flex;justify-content:flex-end;margin-top:10px}
 @media (max-width:600px){.cp-r{grid-template-columns:1fr 1fr 1fr;font-size:12px}.cp-r span:first-child{grid-column:1/-1;font-weight:700;color:#94a3b8}.cp-hd span:first-child{display:none}.cp-d{text-align:left}}
 html.theme-light .cp-card{background:#fff;border-color:#e2e8f0}html.theme-light .cp-f input{background:#f8fafc;border-color:#cbd5e1;color:#0f172a}html.theme-light .cp-r{color:#0f172a;border-color:#e2e8f0}html.theme-light .cp-tab{border-color:#e2e8f0}html.theme-light .cp-hd{background:#f1f5f9}html.theme-light .cp-key{background:#f0f9ff}html.theme-light .cp-key span:nth-child(2),html.theme-light .cp-key span:nth-child(3){color:#0f172a}html.theme-light .cp-modes button{border-color:#cbd5e1;color:#334155}html.theme-light .cp-modes button.on{color:#fff}
+/* ---------- Accueil : colonnes de même hauteur ---------- */
+@media (min-width:1024px){
+  #view-home>.home-wrap.fh-on{align-items:stretch!important}
+  #view-home .fh-L>.fh-card:last-of-type,#view-home .fh-R>:last-child,#view-home .fh-tools>:last-child{flex:1 1 auto}
+  #view-home .fh-C>.fh-tools{flex:1 1 auto}
+  #view-home .fh-R>.home-top{flex:0 0 auto}
+}
+/* Écran moyen : la 3e colonne passe sous la 1re au lieu de laisser un grand vide */
+@media (min-width:1024px) and (max-width:1439px){
+  #view-home>.home-wrap.fh-on{display:grid!important;grid-template-columns:minmax(280px,330px) minmax(0,1fr);grid-template-rows:auto 1fr;column-gap:18px;row-gap:16px}
+  #view-home .fh-L{grid-column:1;grid-row:1;min-width:0}
+  #view-home .fh-R{grid-column:1;grid-row:2;min-width:0;width:auto}
+  #view-home .fh-C{grid-column:2;grid-row:1 / span 2;min-width:0}
+}
