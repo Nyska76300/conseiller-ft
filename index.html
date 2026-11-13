@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.23">
+  <meta name="ft-version" content="2026-11-13.24">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12413,6 +12413,7 @@ window.ftHeaderSearch = function () {
 #ft-auth .fa-msg.err{display:block;background:rgba(225,0,15,.15);border:1px solid rgba(248,113,113,.45);color:#fecaca}
 #ft-auth .fa-msg.ok{display:block;background:rgba(16,185,129,.15);border:1px solid rgba(52,211,153,.45);color:#a7f3d0}
 #ft-auth .fa-note{margin-top:14px;font-size:11.5px;color:#94a3b8}
+#ft-auth .fa-lnk{border:0;background:none;padding:0;color:#7dd3fc;text-decoration:underline;font:inherit;cursor:pointer}
 html.theme-light #ft-auth{background:rgba(15,23,42,.35)}
 html.theme-light #ft-auth .fa-box{background:linear-gradient(160deg,#fff,#e0f2fe);color:#0f172a;border-color:#bae6fd}
 html.theme-light #ft-auth p.fa-sub,html.theme-light #ft-auth .fa-links button{color:#1d4ed8}
@@ -12451,7 +12452,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   if (!SB_URL || !SB_KEY || !window.fetch) return;
 
   // Données synchronisées (aucune donnée de dossier ou d'allocataire)
-  var SYNC = ['ft_links', 'ft_deleted_tpl', 'ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use', 'ft_bareme_ack', 'ft_pins', 'ft_menu_favs'];
+  var SYNC = ['ft_links', 'ft_deleted_tpl', 'ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use', 'ft_bareme_ack', 'ft_pins', 'ft_menu_favs', 'ft_tour_done'];
   var K_SESS = 'ft_sb_session', K_META = 'ft_sb_meta';
   var LSraw = {
     get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -12607,7 +12608,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
       if (!rows || !rows.length || typeof templates === 'undefined') return;
       var add = 0, upd = 0, dead = parse(LSraw.get('ft_deleted_tpl'), []);
       rows.forEach(function (r) {
-        if (String(r.id).indexOf('__') === 0) { if (r.id === '__ft_regs' && r.template) { try { localStorage.setItem('ft_regs_dec', JSON.stringify(r.template.decisions || {})); document.dispatchEvent(new Event('ft-regs')); } catch (e) {} return; } if (r.id === '__ft_faq' && r.template && r.template.items) { try { localStorage.setItem('ft_faq', JSON.stringify(r.template.items)); document.dispatchEvent(new Event('ft-faq')); } catch (e) {} return; } if (r.id === '__ft_labels' && r.template && r.template.labels) { try { localStorage.setItem('ft_labels', JSON.stringify(r.template.labels)); if (window.ftApplyLabels) window.ftApplyLabels(); } catch (e) {} } return; }
+        if (String(r.id).indexOf('__') === 0) { if (r.id === '__ft_annonce' && r.template) { try { localStorage.setItem('ft_annonce', JSON.stringify(r.template)); document.dispatchEvent(new Event('ft-annonce')); } catch (e) {} return; } if (r.id === '__ft_regs' && r.template) { try { localStorage.setItem('ft_regs_dec', JSON.stringify(r.template.decisions || {})); document.dispatchEvent(new Event('ft-regs')); } catch (e) {} return; } if (r.id === '__ft_faq' && r.template && r.template.items) { try { localStorage.setItem('ft_faq', JSON.stringify(r.template.items)); document.dispatchEvent(new Event('ft-faq')); } catch (e) {} return; } if (r.id === '__ft_labels' && r.template && r.template.labels) { try { localStorage.setItem('ft_labels', JSON.stringify(r.template.labels)); if (window.ftApplyLabels) window.ftApplyLabels(); } catch (e) {} } return; }
         var t = r.template; if (!t || t.id == null || dead.indexOf(String(t.id)) > -1 || dead.indexOf(t.id) > -1) return;
         t.shared = true;
         var i = templates.findIndex(function (x) { return x.id === t.id; });
@@ -12737,7 +12738,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
       '<label for="fa-pass">Mot de passe</label><input id="fa-pass" type="password" autocomplete="current-password" required>' +
       '<button class="fa-go" type="submit">Se connecter</button></form><div class="fa-msg"></div>' +
       '<div class="fa-links"><button type="button" data-a="forgot">Mot de passe oublié ?</button><button type="button" data-a="signup">Créer un compte</button><button type="button" data-a="skip">Continuer sans compte</button></div>' +
-      '<p class="fa-note">Sans compte, les modèles restent enregistrés sur ce poste uniquement. Aucune donnée d’allocataire n’est synchronisée. Avec un compte, l’ouverture des outils est comptabilisée pour améliorer le site ; ces statistiques sont visibles par l’administrateur.</p>');
+      '<p class="fa-note">Sans compte, les modèles restent enregistrés sur ce poste uniquement. Aucune donnée d’allocataire n’est synchronisée. Avec un compte, l’ouverture des outils est comptabilisée pour améliorer le site ; ces statistiques sont visibles par l’administrateur. <button type="button" class="fa-lnk" data-a="privacy">Confidentialité</button></p>');
     if (note) msg(w, note);
     (meta.email ? w.querySelector('#fa-pass') : w.querySelector('#fa-mail')).focus();
     w.querySelector('form').onsubmit = function (ev) {
@@ -12755,6 +12756,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
         .catch(function (e) { b.disabled = false; b.textContent = 'Se connecter'; msg(w, frErr(e)); });
     };
     w.querySelector('[data-a="signup"]').onclick = function () { showSignup(w.querySelector('#fa-mail').value.trim()); };
+    w.querySelector('[data-a="privacy"]').onclick = function () { if (window.ftPrivacy) window.ftPrivacy(); };
     w.querySelector('[data-a="skip"]').onclick = function () { try { sessionStorage.setItem('ft_sb_skip', '1'); } catch (e) {} closeBox(); renderAcct(); };
     w.querySelector('[data-a="forgot"]').onclick = function () {
       var email = w.querySelector('#fa-mail').value.trim();
@@ -12783,7 +12785,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
       if (p1.length < 8) return msg(w, 'Le mot de passe doit contenir au moins 8 caractères.');
       if (p1 !== p2) return msg(w, 'Les deux mots de passe ne sont pas identiques.');
       b.disabled = true; b.textContent = 'Création…';
-      api('/auth/v1/signup?redirect_to=' + encodeURIComponent(location.origin + location.pathname), { method: 'POST', auth: false, body: { email: email, password: p1, data: { first_name: first, last_name: last, full_name: first + ' ' + last } } })
+      api('/auth/v1/signup?redirect_to=' + encodeURIComponent(location.origin + location.pathname), { method: 'POST', auth: false, body: { email: email, password: p1, data: { first_name: first, last_name: last, full_name: first + ' ' + last, invite: (function () { try { return sessionStorage.getItem('ft_invite') || ''; } catch (e) { return ''; } })() } } })
         .then(function (d) {
           meta.email = email; saveMeta();
           if (d && d.access_token && d.user) {
@@ -12798,6 +12800,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
         .catch(function (e) {
           b.disabled = false; b.textContent = 'Créer mon compte';
           var m = String(e && e.message || '');
+          if (/database error saving new user|INVITATION/i.test(String(e && e.message || ''))) return msg(w, 'La création de compte se fait sur invitation : utilisez le lien envoyé par l’administrateur du site (il a peut-être expiré ou déjà servi).');
           if (/signups? not allowed|signup.*disabled/i.test(m)) return msg(w, 'La création de compte est désactivée pour le moment. Contactez l’administrateur du site.');
           if (/already registered|already exists|user_already_exists/i.test(m + (e.code || ''))) return msg(w, 'Un compte existe déjà avec cette adresse. Utilisez « Mot de passe oublié ? » si besoin.');
           if (/invalid.*email|email.*invalid/i.test(m)) return msg(w, 'Adresse e-mail invalide.');
@@ -12861,6 +12864,10 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
     };
   }
   window.ftAccount = function () { showAccount(); };
+  window.ftSignup = function () { showSignup(); };
+  window.ftReloadShared = function () { loadShared(); };
+  setInterval(function () { if (sess) loadShared(); }, 15 * 60 * 1000);
+  window.ftLoggedIn = function () { return !!sess; };
   window.__ftUserName = function () { return sess && sess.user ? (sess.user.name || '') : ''; };
   /* Profil sans nom : on rafraîchit depuis Supabase puis on propose de le compléter */
   function checkName() {
@@ -12921,12 +12928,12 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
       '</button><div class="fa-menu"' + (open ? '' : ' hidden') + '>' +
       (sess ? (uname ? '<strong>' + esc(uname) + '</strong><div class="fa-st">' + esc(email) + '</div>' : '<strong>' + esc(email) + '</strong>') + (isAdmin ? '<div class="fa-st">Administrateur des modèles communs</div>' : '') : '<strong>Compte conseiller</strong>') +
       '<div class="fa-st">' + esc(st) + '</div>' +
-      (sess ? '<button type="button" data-a="me">Mon compte : nom, e-mail, mot de passe</button><button type="button" data-a="sync">Synchroniser maintenant</button>' +
+      (sess ? '<button type="button" data-a="me">Mon compte : nom, e-mail, mot de passe</button><button type="button" data-a="notif">' + (window.ftNotifOn && window.ftNotifOn() ? 'Désactiver les notifications' : 'Activer les notifications') + '</button><button type="button" data-a="tour">Revoir la visite guidée</button><button type="button" data-a="privacy">Confidentialité</button><button type="button" data-a="sync">Synchroniser maintenant</button>' +
         (isAdmin ? '<button type="button" data-a="admin">Espace administrateur</button>' : '') + (isAdmin ? '<button type="button" data-a="props">Propositions des collègues' + (propCount ? ' (' + propCount + ')' : '') + '</button>' : '<button type="button" data-a="prop">Proposer le modèle ouvert à l’équipe</button>') + (isAdmin ? '<button type="button" data-a="pub">Publier le modèle ouvert pour tous</button><button type="button" data-a="unpub">Retirer le modèle ouvert des communs</button>' : '') +
         '<button type="button" data-a="out" class="fa-out">Se déconnecter</button>'
         : '<button type="button" data-a="in">Se connecter</button>') + '</div>';
     host.querySelector('button').onclick = function (e) { e.stopPropagation(); if (!sess) { showLogin(); return; } var m = host.querySelector('.fa-menu'); m.hidden = !m.hidden; };
-    var act = { sync: function () { meta.dirty = true; sync('push').then(loadShared); }, pub: window.ftSharePublish, unpub: window.ftShareRemove, prop: function () { window.ftPropose(); }, props: function () { window.ftProposals(); }, admin: function () { switchNavTab('admin'); }, me: function () { showAccount(); }, out: logout, in: function () { showLogin(); } };
+    var act = { sync: function () { meta.dirty = true; sync('push').then(loadShared); }, pub: window.ftSharePublish, unpub: window.ftShareRemove, prop: function () { window.ftPropose(); }, props: function () { window.ftProposals(); }, admin: function () { switchNavTab('admin'); }, me: function () { showAccount(); }, tour: function () { if (window.ftTour) window.ftTour(true); }, notif: function () { if (window.ftEnableNotifs) window.ftEnableNotifs(); }, privacy: function () { if (window.ftPrivacy) window.ftPrivacy(); }, out: logout, in: function () { showLogin(); } };
     host.querySelectorAll('.fa-menu [data-a]').forEach(function (b) { b.onclick = function () { host.querySelector('.fa-menu').hidden = true; act[b.dataset.a](); }; });
   }
 
@@ -15214,10 +15221,27 @@ html.theme-light #ft-gtip b{color:#0369a1}
   /* ================= Notifications et pastille de l’icône ================= */
   const canNotif = 'Notification' in window && 'serviceWorker' in navigator;
   const notifOn = () => canNotif && Notification.permission === 'granted' && ls.get('ft_notif') === '1';
-  function notify(title, body, tag) {
+  function notify(title, body, tag, go) {
     if (!notifOn()) return;
-    navigator.serviceWorker.ready.then(r => r.showNotification(title, { body: body, tag: tag, icon: 'icons/icon-192.png', badge: 'icons/icon-192.png' })).catch(() => { try { new Notification(title, { body: body, tag: tag }); } catch (e) {} });
+    navigator.serviceWorker.ready.then(r => r.showNotification(title, { body: body, tag: tag, icon: 'icons/icon-192.png', badge: 'icons/icon-192.png', data: { go: go || '' } })).catch(() => { try { const n = new Notification(title, { body: body, tag: tag }); n.onclick = () => { window.focus(); ftGo(go); }; } catch (e) {} });
   }
+  window.ftNotify = notify;
+  window.ftNotifOn = notifOn;
+  /* Clic sur une notification : on ouvre ce qui la concerne */
+  function ftGo(go) {
+    if (!go) return;
+    setTimeout(() => {
+      try {
+        if (go === 'news') { if (window.ftShowNews) window.ftShowNews(); }
+        else if (go === 'reload') location.replace(location.pathname + '?v=' + Date.now());
+        else if (go === 'admin') switchNavTab('admin');
+        else if (go === 'home') switchNavTab('home');
+      } catch (e) {}
+    }, 400);
+  }
+  window.ftGo = ftGo;
+  if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.ftGo) ftGo(e.data.ftGo); });
+  (function () { const m = /[?&]go=([a-z]+)/.exec(location.search); if (m) { try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {} setTimeout(() => ftGo(m[1]), 1200); } })();
   window.ftEnableNotifs = function () {
     if (!canNotif) { toast('Les notifications ne sont pas disponibles ici. Sur iPhone, installez d’abord le site sur l’écran d’accueil.', 'info'); return; }
     if (ls.get('ft_notif') === '1' && Notification.permission === 'granted') { ls.set('ft_notif', '0'); toast('Notifications désactivées', 'info'); menuLabel(); return; }
@@ -15230,12 +15254,12 @@ html.theme-light #ft-gtip b{color:#0369a1}
   function latestNews() { try { const n = (window.FT_NEWS || []); return n[0]; } catch (e) { return null; } }
   function checkNotifs() {
     const meta = document.querySelector('meta[name="ft-version"]'), v = meta && meta.content;
-    if (v && ls.get('ft_notif_v') && ls.get('ft_notif_v') !== v) { const n = latestNews(); notify('Espace Conseiller mis à jour', n && n.items ? n.items[0] : 'De nouvelles fonctions sont disponibles.', 'ft-news'); }
+    if (v && ls.get('ft_notif_v') && ls.get('ft_notif_v') !== v) { const n = latestNews(); notify('Espace Conseiller mis à jour', n && n.items ? n.items[0] : 'De nouvelles fonctions sont disponibles.', 'ft-news', 'news'); }
     if (v) ls.set('ft_notif_v', v);
     badge();
   }
   let props = 0;
-  document.addEventListener('ft-props', e => { const n = +e.detail || 0; if (n > props && notifOn() && document.hidden) notify('Proposition de modèle', n + ' proposition(s) de collègues à valider', 'ft-props'); props = n; badge(); });
+  document.addEventListener('ft-props', e => { const n = +e.detail || 0; if (n > props && notifOn() && document.hidden) notify('Proposition de modèle', n + ' proposition(s) de collègues à valider', 'ft-props', 'admin'); props = n; badge(); });
   function badge() {
     const due = document.querySelector('#view-home .fh-alert') ? 1 : 0;
     const n = props + due;
@@ -16463,6 +16487,13 @@ html.theme-light .rg-up{background:#f8fafc;border-color:#e2e8f0}html.theme-light
       Object.keys(u.bareme || {}).forEach(p => { if (!(p in ORIG)) ORIG[p] = getP(p); setP(p, u.bareme[p]); });
       applied.push(u.id);
     });
+    try {
+      const nn = jget('ft_regs_notified', []), fresh = UPD.filter(u => nn.indexOf(u.id) < 0 && (adm ? !d[u.id] : d[u.id] === 'ok'));
+      if (fresh.length && window.ftNotify && window.ftNotifOn && window.ftNotifOn()) {
+        window.ftNotify(adm ? 'Mise à jour réglementaire à valider' : 'Mise à jour réglementaire', fresh.map(u => u.titre).join(' · '), 'ft-regs', adm ? 'admin' : 'home');
+        LS.set('ft_regs_notified', JSON.stringify(nn.concat(fresh.map(u => u.id))));
+      }
+    } catch (e) {}
     if (adm) {
       const pend = UPD.filter(u => !d[u.id]);
       if (pend.length && !sessionStorage.getItem('ft_regs_told')) { try { sessionStorage.setItem('ft_regs_told', '1'); } catch (e) {} toast(pend.length + ' mise(s) à jour réglementaire(s) appliquée(s) pour vous seul, en attente de votre validation (Espace administrateur)', 'info'); }
@@ -16699,6 +16730,257 @@ html.theme-light #burger-tabs-list .mh-st{color:#94a3b8}
   setTimeout(sync, 400);
 })();
 </script>
+<!-- ================= Extension 38 : annonces, confidentialité, visite guidée, invitations, notifications ================= -->
+<style>
+#ft-ann{display:flex;align-items:flex-start;gap:10px;padding:9px 14px;font-size:13px;line-height:1.45;border-bottom:1px solid rgba(56,189,248,.35);background:linear-gradient(90deg,rgba(37,99,235,.28),rgba(6,182,212,.18));color:#e0f2fe;flex:none;z-index:25}
+#ft-ann.imp{border-color:rgba(251,191,36,.5);background:linear-gradient(90deg,rgba(180,83,9,.4),rgba(120,53,15,.25));color:#fef3c7}
+#ft-ann .an-i{flex:none;font-size:15px;line-height:1.3}
+#ft-ann .an-t{flex:1;min-width:0;white-space:pre-line}
+#ft-ann .an-t b{font-weight:800;margin-right:4px}
+#ft-ann .an-x{flex:none;border:0;background:rgba(255,255,255,.1);color:inherit;width:26px;height:26px;border-radius:8px;cursor:pointer;font-size:15px;line-height:1}
+html.theme-light #ft-ann{background:#e0f2fe;color:#0c4a6e;border-color:#7dd3fc}html.theme-light #ft-ann.imp{background:#fef3c7;color:#78350f;border-color:#fcd34d}
+#ft-priv,#ft-tour-tip{color:#e8eef9}
+#ft-priv{position:fixed;inset:0;z-index:99985;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.65)}
+#ft-priv.on{display:flex}
+#ft-priv .pv-box{width:min(620px,100%);max-height:86vh;overflow:auto;border-radius:18px;border:1px solid #24345f;background:#081028;padding:20px 22px}
+#ft-priv h2{margin:0 0 4px;font-size:18px}#ft-priv h3{margin:16px 0 4px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#67e8f9}
+#ft-priv p,#ft-priv li{font-size:13.5px;line-height:1.55;color:#cbd5e1}#ft-priv ul{padding-left:18px;margin:4px 0}
+#ft-priv .pv-ok{margin-top:16px;width:100%;height:40px;border:0;border-radius:10px;background:linear-gradient(90deg,#2563eb,#06b6d4);color:#fff;font-weight:700;cursor:pointer}
+html.theme-light #ft-priv .pv-box{background:#fff;border-color:#cbd5e1;color:#0f172a}html.theme-light #ft-priv p,html.theme-light #ft-priv li{color:#334155}html.theme-light #ft-priv h3{color:#0369a1}
+#ft-tour{position:fixed;inset:0;z-index:99970;pointer-events:none}
+#ft-tour .tr-hole{position:fixed;border-radius:14px;box-shadow:0 0 0 9999px rgba(2,6,23,.68),0 0 0 3px #22d3ee,0 0 24px 4px rgba(34,211,238,.55);transition:all .35s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+#ft-tour .tr-hole.none{box-shadow:0 0 0 9999px rgba(2,6,23,.68);width:0!important;height:0!important}
+#ft-tour-tip{position:fixed;z-index:99971;width:min(340px,calc(100vw - 24px));padding:16px 16px 12px;border-radius:16px;background:linear-gradient(160deg,#1e3a8a,#0f172a 75%);border:1px solid rgba(96,165,250,.45);box-shadow:0 20px 50px rgba(0,0,0,.5);transition:top .35s,left .35s;pointer-events:auto}
+#ft-tour-tip .tt-k{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#67e8f9}
+#ft-tour-tip h4{margin:4px 0 6px;font-size:16px;font-weight:800;color:#fff}
+#ft-tour-tip p{margin:0;font-size:13.5px;line-height:1.5;color:#dbeafe}
+#ft-tour-tip .tt-b{display:flex;align-items:center;gap:8px;margin-top:14px}
+#ft-tour-tip .tt-b button{height:34px;padding:0 12px;border-radius:9px;border:1px solid rgba(148,163,184,.4);background:transparent;color:#e2e8f0;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer}
+#ft-tour-tip .tt-b .tt-n{margin-left:auto;border:0;background:linear-gradient(90deg,#2563eb,#06b6d4);color:#fff}
+#ft-tour-tip .tt-b .tt-s{border:0;color:#94a3b8;padding:0 4px}
+#ft-tour-tip .tt-dots{display:flex;gap:4px;margin-left:4px}#ft-tour-tip .tt-dots i{width:6px;height:6px;border-radius:50%;background:rgba(148,163,184,.4)}#ft-tour-tip .tt-dots i.on{background:#22d3ee}
+.inv-out{display:flex;gap:12px;align-items:center;margin:8px 0;padding:10px;border-radius:12px;background:rgba(2,6,23,.5);border:1px dashed rgba(103,232,249,.4)}
+.inv-out img{width:112px;height:112px;border-radius:8px;background:#fff;padding:4px;flex:none}
+.inv-out code{display:block;font-size:12px;word-break:break-all;color:#a5f3fc}
+.ad-in{height:34px;border-radius:9px;border:1px solid #334155;background:#0b1222;color:#e2e8f0;padding:0 8px;font-family:inherit;font-size:13px}
+textarea.ad-in{height:auto;min-height:70px;padding:8px;width:100%;resize:vertical}
+html.theme-light .ad-in{background:#fff;color:#0f172a;border-color:#cbd5e1}html.theme-light .inv-out{background:#f8fafc}html.theme-light .inv-out code{color:#0369a1}
+#ft-news .ftn-go{margin-left:6px;padding:2px 8px!important;font-size:11.5px!important;border-radius:999px!important;background:rgba(34,211,238,.15)!important;color:#67e8f9!important;border:1px solid rgba(34,211,238,.35)!important;white-space:nowrap}
+#ft-news .ftn-ok{background:linear-gradient(90deg,#2563eb,#06b6d4)!important}
+html.theme-light #ft-news .ftn-go{color:#0369a1!important;background:#e0f2fe!important}
+</style>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const toast = (m, t) => { try { showToast(m, t || 'info'); } catch (e) {} };
+  const isAdmin = () => !!(window.__ftIsAdmin && window.__ftIsAdmin());
+  const LS = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+  const jget = (k, d) => { try { const v = JSON.parse(LS.get(k)); return v == null ? d : v; } catch (e) { return d; } };
+  const today = () => new Date().toISOString().slice(0, 10);
+  const notify = (t, b, tag, go) => { try { window.ftNotify && window.ftNotify(t, b, tag, go); } catch (e) {} };
+
+  /* ===================== Annonce de l’administrateur ===================== */
+  function annonce() {
+    const a = jget('ft_annonce', null), hd = document.querySelector('body > header, header.h-14');
+    let bar = $('ft-ann');
+    const live = a && a.active && a.text && (!a.until || today() <= a.until);
+    if (!live || LS.get('ft_ann_x') === a.id) { if (bar) bar.remove(); return; }
+    if (!bar) { bar = document.createElement('div'); bar.id = 'ft-ann'; bar.setAttribute('role', 'status'); if (hd && hd.parentNode) hd.parentNode.insertBefore(bar, hd.nextSibling); else document.body.prepend(bar); }
+    if (bar.dataset.id === a.id) return;
+    bar.dataset.id = a.id; bar.className = a.level === 'imp' ? 'imp' : '';
+    bar.innerHTML = '<span class="an-i" aria-hidden="true">' + (a.level === 'imp' ? '⚠️' : '📣') + '</span><div class="an-t"><b>' + (a.level === 'imp' ? 'Important' : 'Annonce') + '</b>' + esc(a.text) + '</div><button type="button" class="an-x" aria-label="Masquer l’annonce" title="Masquer">×</button>';
+    bar.querySelector('.an-x').onclick = () => { LS.set('ft_ann_x', a.id); bar.remove(); };
+    if (LS.get('ft_ann_n') !== a.id) { LS.set('ft_ann_n', a.id); notify(a.level === 'imp' ? 'Annonce importante' : 'Annonce', a.text, 'ft-ann'); }
+  }
+  document.addEventListener('ft-annonce', annonce);
+  function anonShared() {
+    if (window.ftLoggedIn && window.ftLoggedIn()) return;
+    if (!window.__ftAnon) return;
+    window.__ftAnon('/rest/v1/shared_templates?select=id,template&id=eq.__ft_annonce').then(r => { const t = r && r[0] && r[0].template; if (t) { LS.set('ft_annonce', JSON.stringify(t)); annonce(); } }).catch(() => {});
+  }
+  function annCard(card) {
+    const a = jget('ft_annonce', {}) || {};
+    const live = a.active && a.text && (!a.until || today() <= a.until);
+    return card('📣', 'Annonce aux conseillers', live ? 'En ligne' : 'Aucune',
+      '<p class="ad-empty">Le message s’affiche en bandeau en haut du site chez tous les conseillers (et en notification pour ceux qui les ont activées), jusqu’à sa date de fin ou son retrait.</p>' +
+      '<textarea class="ad-in" id="an-txt" maxlength="400" placeholder="Ex. : Nouvelle règle démission au 1er janvier, voir la fiche mise à jour.">' + esc(live ? a.text : '') + '</textarea>' +
+      '<div class="ad-row" style="margin-top:8px;flex-wrap:wrap;gap:8px"><select class="ad-in" id="an-lvl"><option value="info"' + (a.level !== 'imp' ? ' selected' : '') + '>Information</option><option value="imp"' + (a.level === 'imp' ? ' selected' : '') + '>Important</option></select>' +
+      '<label class="ad-empty" style="display:flex;align-items:center;gap:6px">Jusqu’au <input type="date" class="ad-in" id="an-until" value="' + esc(live ? (a.until || '') : '') + '"></label></div>' +
+      '<div class="ad-row" style="margin-top:8px"><button type="button" class="ad-btn pri" data-an="pub">Publier</button>' + (live ? '<button type="button" class="ad-btn" data-an="off">Retirer</button>' : '') + '</div>');
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('[data-an]'); if (!b || !isAdmin()) return;
+    const off = b.dataset.an === 'off';
+    const txt = ($('an-txt') || {}).value || '';
+    if (!off && !txt.trim()) return toast('Écrivez le message de l’annonce', 'info');
+    const a = off ? Object.assign({}, jget('ft_annonce', {}), { active: false }) : { id: Date.now().toString(36), text: txt.trim(), level: ($('an-lvl') || {}).value || 'info', until: ($('an-until') || {}).value || '', date: today(), active: true };
+    if (!off && !confirm('Publier cette annonce pour tous les conseillers ?')) return;
+    window.__ftSaveShared('__ft_annonce', a).then(() => { LS.set('ft_annonce', JSON.stringify(a)); LS.set('ft_ann_n', a.id); annonce(); toast(off ? 'Annonce retirée' : 'Annonce publiée', 'success'); if (window.ftAdminRefresh) window.ftAdminRefresh(); else try { switchNavTab('admin'); } catch (er) {} })
+      .catch(er => toast('Publication impossible : ' + (er && er.message || er), 'error'));
+  });
+
+  /* ===================== Confidentialité ===================== */
+  window.ftPrivacy = function () {
+    let d = $('ft-priv'); if (!d) { d = document.createElement('div'); d.id = 'ft-priv'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true'); document.body.appendChild(d); }
+    d.innerHTML = '<div class="pv-box"><h2>Confidentialité</h2><p>Ce qui est enregistré quand vous utilisez l’Espace Conseiller, et pourquoi.</p>' +
+      '<h3>Aucune donnée d’allocataire</h3><p>Les montants, dates et informations saisis dans les simulateurs restent dans votre navigateur. Ils ne sont ni envoyés ni conservés sur un serveur.</p>' +
+      '<h3>Votre compte</h3><ul><li>Prénom, nom, adresse e-mail et mot de passe (chiffré) : pour vous connecter.</li><li>Vos préférences (thème, favoris, liens utiles) et vos modèles de mails personnels : pour les retrouver sur tous vos postes.</li></ul>' +
+      '<h3>Statistiques d’utilisation</h3><ul><li>Quand vous êtes connecté : l’outil ouvert, le modèle de mail ouvert ou copié (son titre, pas son contenu) et la date.</li><li>Visibles uniquement par l’administrateur du site, pour l’améliorer.</li><li>Supprimées automatiquement au bout d’un an.</li></ul>' +
+      '<h3>Services extérieurs</h3><ul><li>Comptes et synchronisation : Supabase.</li><li>Interprète vocal : le texte dicté est envoyé à un service de traduction en ligne (Google Traduction, ou MyMemory en secours). N’y dictez pas de données personnelles.</li><li>Hébergement des pages : GitHub Pages.</li></ul>' +
+      '<h3>Vos droits</h3><p>Vous pouvez modifier vos informations dans « Mon compte ». Pour consulter ou supprimer vos données, ou supprimer votre compte, contactez l’administrateur du site.</p>' +
+      '<button type="button" class="pv-ok">Fermer</button></div>';
+    d.classList.add('on');
+    d.onclick = e => { if (e.target === d || e.target.closest('.pv-ok')) d.classList.remove('on'); };
+  };
+
+  /* ===================== Visite guidée ===================== */
+  const vis = el => el && el.offsetParent !== null && el.getBoundingClientRect().width > 0;
+  const pick = sels => { for (const s of sels) { const el = document.querySelector(s); if (vis(el)) return el; } return null; };
+  const STEPS = [
+    { k: 'Bienvenue', h: 'L’Espace Conseiller en 1 minute', p: 'Cinq repères pour aller plus vite au quotidien. Vous pourrez revoir cette visite depuis le menu de votre compte.', el: () => null },
+    { k: 'Accueil', h: 'Mes favoris', p: 'Vos outils préférés en un clic. Le bouton à droite (« Choisir » ou « Modifier ») permet de cocher ceux que vous utilisez le plus, CVM Direct compris.', el: () => pick(['#view-home .fh-pins']) },
+    { k: 'Navigation', h: 'Le menu', p: 'Tous les outils, classés par thème. L’étoile à droite d’un outil le place en haut du menu, dans « Favoris du menu ».', el: () => pick(['#burger-menu-btn', '#ft-tabbar [data-t="tools"]']) },
+    { k: 'Mails', h: 'Modèles de mails (CVM)', p: 'Choisissez un modèle, complétez les champs, copiez. Les simulateurs rédigent aussi le mail à l’allocataire automatiquement.', el: () => pick(['#ft-tabbar [data-t="cvm"]', '#burger-menu-btn']) },
+    { k: 'Accueil du public', h: 'Interprète vocal', p: 'Pour un allocataire qui parle une autre langue : chacun parle à son tour, la phrase est traduite et lue à voix haute.', el: () => pick(['#ft-tts', '#ft-more-btn']) },
+    { k: 'Astuce', h: 'Rechercher partout', p: 'Ctrl+K (ou la loupe) : un outil, une règle, un modèle de mail… tapez quelques lettres.', el: () => pick(['.ft-hsearch', '#ft-tabbar [data-t="search"]', '#ft-header-search']) }
+  ];
+  let ti = 0;
+  function tourDraw() {
+    let ov = $('ft-tour'), tip = $('ft-tour-tip');
+    if (!ov) { ov = document.createElement('div'); ov.id = 'ft-tour'; ov.innerHTML = '<div class="tr-hole"></div>'; document.body.appendChild(ov); }
+    if (!tip) { tip = document.createElement('div'); tip.id = 'ft-tour-tip'; tip.setAttribute('role', 'dialog'); tip.setAttribute('aria-live', 'polite'); document.body.appendChild(tip); }
+    const st = STEPS[ti], el = st.el(), hole = ov.firstChild;
+    tip.innerHTML = '<div class="tt-k">' + esc(st.k) + ' · ' + (ti + 1) + '/' + STEPS.length + '</div><h4>' + esc(st.h) + '</h4><p>' + esc(st.p) + '</p>' +
+      '<div class="tt-b">' + (ti ? '<button type="button" data-tt="prev">Précédent</button>' : '<button type="button" class="tt-s" data-tt="end">Passer</button>') +
+      '<span class="tt-dots">' + STEPS.map((s, i) => '<i class="' + (i === ti ? 'on' : '') + '"></i>').join('') + '</span>' +
+      '<button type="button" class="tt-n" data-tt="next">' + (ti === STEPS.length - 1 ? 'Terminer' : 'Suivant') + '</button></div>';
+    const W = innerWidth, H = innerHeight, tw = tip.offsetWidth, th = tip.offsetHeight;
+    if (el) {
+      el.scrollIntoView({ block: 'nearest' });
+      const r = el.getBoundingClientRect(), pad = 6;
+      hole.classList.remove('none');
+      Object.assign(hole.style, { left: (r.left - pad) + 'px', top: (r.top - pad) + 'px', width: (r.width + pad * 2) + 'px', height: (Math.min(r.height, H * .5) + pad * 2) + 'px' });
+      let top = r.bottom + 14; if (top + th > H - 10) top = Math.max(10, r.top - th - 14);
+      let left = Math.min(Math.max(10, r.left), W - tw - 10);
+      Object.assign(tip.style, { top: top + 'px', left: left + 'px' });
+    } else {
+      hole.classList.add('none'); Object.assign(hole.style, { left: (W / 2) + 'px', top: (H / 2) + 'px' });
+      Object.assign(tip.style, { top: Math.max(10, (H - th) / 2) + 'px', left: Math.max(10, (W - tw) / 2) + 'px' });
+    }
+    tip.querySelector('.tt-n').focus();
+  }
+  function tourEnd() { const a = $('ft-tour'), b = $('ft-tour-tip'); if (a) a.remove(); if (b) b.remove(); const v = '1'; if (window.safeLS && safeLS.setItem) safeLS.setItem('ft_tour_done', v); else LS.set('ft_tour_done', v); window.removeEventListener('resize', tourDraw); }
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('#ft-tour-tip [data-tt]'); if (!b) return;
+    const a = b.dataset.tt;
+    if (a === 'end' || (a === 'next' && ti === STEPS.length - 1)) return tourEnd();
+    ti += a === 'next' ? 1 : -1; tourDraw();
+  });
+  document.addEventListener('keydown', e => { if (!$('ft-tour-tip')) return; if (e.key === 'Escape') tourEnd(); else if (e.key === 'ArrowRight' && ti < STEPS.length - 1) { ti++; tourDraw(); } else if (e.key === 'ArrowLeft' && ti) { ti--; tourDraw(); } });
+  window.ftTour = function () { try { switchNavTab('home'); } catch (e) {} try { if (typeof isBurgerMenuOpen !== 'undefined' && isBurgerMenuOpen) toggleBurgerMenu(false); } catch (e) {} ti = 0; setTimeout(() => { tourDraw(); window.addEventListener('resize', tourDraw); }, 250); };
+  function maybeTour(tries) {
+    if (LS.get('ft_tour_done')) return;
+    const busy = $('ft-auth') || $('ft-news') || $('ft-tour') || document.querySelector('#ft-regs-dlg.on, #ft-pins-dlg.on');
+    let tab = ''; try { tab = String(activeNavTab); } catch (e) {}
+    if (busy || tab !== 'home' || document.hidden) { if ((tries || 0) < 40) setTimeout(() => maybeTour((tries || 0) + 1), 3000); return; }
+    window.ftTour();
+  }
+  window.FT_ACTIONS = window.FT_ACTIONS || [];
+  window.FT_ACTIONS.push({ t: 'Visite guidée', s: 'Découvrir l’Espace Conseiller en 6 étapes', kw: 'visite guidée aide découvrir tutoriel prise en main', run: () => setTimeout(window.ftTour, 150) });
+  window.FT_ACTIONS.push({ t: 'Confidentialité', s: 'Données enregistrées et services utilisés', kw: 'confidentialité rgpd données personnelles vie privée', run: () => setTimeout(window.ftPrivacy, 120) });
+
+  /* ===================== Invitations (administrateur) ===================== */
+  const rnd = n => { const a = 'abcdefghjkmnpqrstuvwxyz23456789'; let s = ''; const r = new Uint32Array(n); crypto.getRandomValues(r); r.forEach(x => { s += a[x % a.length]; }); return s; };
+  const invLink = c => location.origin + location.pathname + '?invite=' + encodeURIComponent(c);
+  const dtt = d => d ? new Date(d).toLocaleDateString('fr-FR') : '—';
+  function invCard(card) {
+    return card('✉', 'Invitations', '', '<div id="ivt-body"><p class="ad-empty">Chargement…</p></div>');
+  }
+  function invLoad() {
+    const host = $('ivt-body'); if (!host || !window.__ftRest) return;
+    Promise.all([window.__ftRest('/rest/v1/invites?select=*&order=created_at.desc&limit=30'), window.__ftRest('/rest/v1/app_settings?select=key,value&key=eq.invite_only')]).then(([rows, st]) => {
+      const only = !(st && st[0] && st[0].value === false);
+      host.innerHTML =
+        '<div class="ad-row" style="justify-content:space-between;flex-wrap:wrap;gap:8px"><span class="ad-empty">Inscriptions : <b>' + (only ? 'sur invitation uniquement' : 'ouvertes à tous') + '</b></span><button type="button" class="ad-btn" data-inv="mode" data-v="' + (only ? '0' : '1') + '">' + (only ? 'Ouvrir à tous' : 'Passer sur invitation') + '</button></div>' +
+        '<div class="ad-row" style="margin-top:8px;flex-wrap:wrap;gap:8px"><input class="ad-in" id="ivt-note" placeholder="Pour qui ? (ex. Équipe Rouen)" style="flex:1;min-width:150px">' +
+        '<select class="ad-in" id="ivt-max"><option value="1">1 personne</option><option value="5">5 personnes</option><option value="20">20 personnes</option><option value="100">100 personnes</option></select>' +
+        '<select class="ad-in" id="ivt-days"><option value="7">7 jours</option><option value="30" selected>30 jours</option><option value="90">90 jours</option></select>' +
+        '<button type="button" class="ad-btn pri" data-inv="new">Créer le lien</button></div><div id="ivt-out"></div>' +
+        (rows && rows.length ? '<table class="ad-tbl" style="margin-top:8px"><tr><th>Invitation</th><th style="text-align:right">Utilisée</th><th style="text-align:right">Expire</th><th></th></tr>' + rows.map(r => '<tr><td>' + esc(r.note || r.code) + '</td><td class="n">' + r.uses + ' / ' + r.max_uses + '</td><td class="n">' + dtt(r.expires_at) + '</td><td class="n"><button type="button" class="ad-btn" data-inv="show" data-c="' + esc(r.code) + '">Lien</button> <button type="button" class="ad-btn" data-inv="del" data-c="' + esc(r.code) + '">×</button></td></tr>').join('') + '</table>' : '<p class="ad-empty" style="margin-top:8px">Aucune invitation pour le moment.</p>');
+    }).catch(e => { host.innerHTML = '<p class="ad-empty">' + (/relation|does not exist|404|PGRST/i.test(String(e && e.message)) ? 'Invitations non installées : exécutez le script supabase/annonces_invitations.sql dans Supabase.' : 'Chargement impossible : ' + esc(e && e.message || e)) + '</p>'; });
+  }
+  function invShow(code) {
+    const o = $('ivt-out'); if (!o) return;
+    const link = invLink(code);
+    o.innerHTML = '<div class="inv-out"><img alt="QR code de l’invitation" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=' + encodeURIComponent(link) + '"><div style="min-width:0"><code>' + esc(link) + '</code><div class="ad-row" style="margin-top:8px"><button type="button" class="ad-btn pri" data-inv="copy" data-l="' + esc(link) + '">Copier le lien</button>' + (navigator.share ? '<button type="button" class="ad-btn" data-inv="share" data-l="' + esc(link) + '">Partager</button>' : '') + '</div><p class="ad-empty" style="margin-top:6px">À envoyer au collègue : il crée son compte avec ce lien. Le QR code se scanne avec l’appareil photo du téléphone.</p></div></div>';
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('[data-inv]'); if (!b || !isAdmin()) return;
+    const a = b.dataset.inv;
+    if (a === 'copy') { navigator.clipboard.writeText(b.dataset.l).then(() => toast('Lien copié', 'success')); return; }
+    if (a === 'share') { navigator.share({ title: 'Invitation Espace Conseiller', text: 'Créez votre compte sur l’Espace Conseiller :', url: b.dataset.l }).catch(() => {}); return; }
+    if (a === 'show') { invShow(b.dataset.c); return; }
+    if (a === 'del') { if (!confirm('Supprimer ce lien d’invitation ?')) return; window.__ftRest('/rest/v1/invites?code=eq.' + encodeURIComponent(b.dataset.c), { method: 'DELETE' }).then(invLoad).catch(er => toast('Suppression impossible : ' + er.message, 'error')); return; }
+    if (a === 'mode') { window.__ftRest('/rest/v1/app_settings', { method: 'POST', prefer: 'resolution=merge-duplicates', body: { key: 'invite_only', value: b.dataset.v === '1' } }).then(() => { toast(b.dataset.v === '1' ? 'Inscriptions sur invitation uniquement' : 'Inscriptions ouvertes à tous', 'success'); invLoad(); }).catch(er => toast('Enregistrement impossible : ' + er.message, 'error')); return; }
+    if (a === 'new') {
+      const code = rnd(10), days = +(($('ivt-days') || {}).value || 30);
+      const body = { code, note: ($('ivt-note') || {}).value || '', max_uses: +(($('ivt-max') || {}).value || 1), expires_at: new Date(Date.now() + days * 864e5).toISOString() };
+      window.__ftRest('/rest/v1/invites', { method: 'POST', body }).then(() => { invLoad(); setTimeout(() => invShow(code), 350); toast('Lien d’invitation créé', 'success'); }).catch(er => toast('Création impossible : ' + er.message, 'error'));
+    }
+  });
+  /* Lien d’invitation reçu : on garde le code et on ouvre la création de compte */
+  (function () {
+    const m = /[?&]invite=([A-Za-z0-9_-]{4,40})/.exec(location.search); if (!m) return;
+    try { sessionStorage.setItem('ft_invite', m[1]); history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
+    const go = n => { if (window.ftLoggedIn && window.ftLoggedIn()) return; if (window.ftSignup) { window.ftSignup(); setTimeout(() => toast('Invitation reçue : créez votre compte', 'success'), 300); } else if (n < 20) setTimeout(() => go(n + 1), 300); };
+    setTimeout(() => go(0), 900);
+  })();
+
+  /* ===================== Cartes de l’Espace administrateur ===================== */
+  const _fill = window.ftAdminFill;
+  window.ftAdminFill = function (card) {
+    try { if (_fill) _fill.apply(this, arguments); } catch (e) { console.warn(e); }
+    const B = $('ad-first-b');
+    if (B && !$('ad-annonce')) { const h = document.createElement('div'); h.id = 'ad-annonce'; B.insertBefore(h, B.firstChild); }
+    if ($('ad-annonce')) $('ad-annonce').innerHTML = annCard(card);
+    const A = $('ad-first-a');
+    if (A && !$('ad-invites')) { const h = document.createElement('div'); h.id = 'ad-invites'; A.appendChild(h); h.innerHTML = invCard(card); invLoad(); }
+    /* purge automatique (au plus une fois par jour) */
+    if (LS.get('ft_purge_d') !== today() && window.__ftRpc) { LS.set('ft_purge_d', today()); window.__ftRpc('admin_purge', { days: 365 }).catch(() => {}); }
+  };
+
+  /* ===================== Notifications ===================== */
+  /* Liens « Voir › » dans « Quoi de neuf » */
+  const LINKS = [
+    [/^Visite guid/i, 'Lancer', () => window.ftTour && window.ftTour()],
+    [/^Notifications/i, 'Activer', () => window.ftEnableNotifs && window.ftEnableNotifs(), () => !(window.ftNotifOn && window.ftNotifOn())],
+    [/^Confidentialit/i, 'Lire', () => window.ftPrivacy && window.ftPrivacy()],
+    [/^Quoi de neuf/i, '', null, () => false],
+    [/^(Apparence|Fiabilit)/i, '', null, () => false],
+    [/interpr[eè]te/i, 'Ouvrir', () => window.ftInterp && window.ftInterp()],
+    [/Mon compte/i, 'Ouvrir', () => window.ftAccount && window.ftAccount()],
+    [/Espace administrateur|veille r[ée]glementaire|statistiques/i, 'Ouvrir', () => switchNavTab('admin'), isAdmin],
+    [/Conditions et ARE/i, 'Ouvrir', () => switchNavTab(1)],
+    [/Trop-per[cç]u/i, 'Ouvrir', () => switchNavTab(6)],
+    [/Sch[ée]mas/i, 'Ouvrir', () => switchNavTab('schemas')],
+    [/invalidit[ée]/i, 'Ouvrir', () => switchNavTab('invalidite')],
+    [/\bATI\b/i, 'Ouvrir', () => switchNavTab('ati')],
+    [/\bCSP\b/i, 'Ouvrir', () => switchNavTab(4)],
+    [/Mails?\s*\(CVM\)|\bCVM\b|mod[eè]les? de mails?/i, 'Ouvrir', () => switchNavTab('cvm')],
+    [/Liens utiles|Mes favoris|Accueil/i, 'Voir', () => switchNavTab('home')],
+    [/« ?Menu ?»|Menu Outils|\bmenu\b/i, 'Voir', () => { try { toggleBurgerMenu(true); } catch (e) {} }],
+    [/Annonce/i, 'Voir', () => switchNavTab('admin'), isAdmin]
+  ];
+  window.ftNewsLink = function (txt) { const l = LINKS.find(x => x[0].test(txt)); if (!l || (l[3] && !l[3]()) || !l[2]) return null; return { label: l[1], run: l[2] }; };
+
+  /* Démarrage */
+  annonce();
+  setTimeout(anonShared, 1500);
+  setTimeout(() => maybeTour(0), 2500);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) annonce(); });
+})();
+</script>
 <!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
 <style>
 #ft-news{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.6);backdrop-filter:blur(3px);opacity:0;transition:opacity .25s ease}
@@ -16731,6 +17013,12 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.24', date: '13/11/2026', items: [
+      'Visite guidée : à la première connexion, six étapes présentent l’essentiel (favoris, menu, mails, interprète, recherche). À revoir depuis le menu de votre compte.',
+      'Notifications : activez-les depuis le menu de votre compte (ou « ⋯ » sur téléphone) pour être prévenu des nouveautés, des annonces et des mises à jour réglementaires ; un clic ouvre directement le bon endroit.',
+      'Quoi de neuf : chaque nouveauté a maintenant un raccourci « Ouvrir › » vers l’outil concerné.',
+      'Confidentialité : une page explique ce qui est enregistré (menu du compte ou écran de connexion).'
+    ] },
     { v: '2026-11-13.23', date: '13/11/2026', items: [
       'Mails générés : mise en page corrigée dans « Conditions et ARE » et la CSP (le mail s’affichait dans une colonne très étroite et passait sous les résultats). Le cadre du mail s’agrandit maintenant selon la longueur du texte, et les boutons ne se coupent plus sur deux lignes.'
     ] },
@@ -16966,6 +17254,7 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
 
   function open(list) {
     if (!list.length || document.getElementById('ft-news')) return;
+    open.links = [];
     var last = document.activeElement;
     var w = document.createElement('div');
     w.id = 'ft-news';
@@ -16973,7 +17262,7 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
     w.innerHTML = '<div class="ftn-box"><header><div class="ftn-ico" aria-hidden="true">✨</div><div>' +
       '<h2 id="ftn-title">Quoi de neuf ?</h2><p class="ftn-sub">' + (open.manual ? 'Les dernières mises à jour du site' : list.length > 1 ? list.length + ' mises à jour depuis votre dernière visite' : 'Mise à jour du ' + esc(list[0].date)) + '</p></div></header>' +
       '<div class="ftn-body">' + list.map(function (e) {
-        return (list.length > 1 ? '<h3>' + esc(e.date) + '</h3>' : '') + '<ul>' + e.items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+        return (list.length > 1 ? '<h3>' + esc(e.date) + '</h3>' : '') + '<ul>' + e.items.map(function (x) { var lk = window.ftNewsLink ? window.ftNewsLink(x) : null; if (lk) { open.links = open.links || []; open.links.push(lk.run); } return '<li>' + esc(x) + (lk ? ' <button type="button" class="ftn-go" data-go="' + (open.links.length - 1) + '">' + esc(lk.label) + ' ›</button>' : '') + '</li>'; }).join('') + '</ul>';
       }).join('') + '</div>' +
       '<footer><button type="button" class="ftn-more">Voir le journal</button><button type="button" class="ftn-ok">J’ai compris</button></footer></div>';
     document.body.appendChild(w);
@@ -16988,6 +17277,7 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
     function onKey(ev) { if (ev.key === 'Escape') { ev.stopPropagation(); close(); } }
     document.addEventListener('keydown', onKey, true);
     ok.addEventListener('click', close);
+    w.addEventListener('click', function (ev) { var g = ev.target.closest && ev.target.closest('.ftn-go'); if (!g) return; var fn = (open.links || [])[+g.dataset.go]; close(); if (fn) setTimeout(function () { try { fn(); } catch (e) {} }, 300); });
     w.addEventListener('click', function (ev) { if (ev.target === w) close(); });
     w.querySelector('.ftn-more').addEventListener('click', function () {
       close();
@@ -17014,8 +17304,8 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
 #ft-update{position:fixed;left:50%;bottom:20px;transform:translate(-50%,140%);z-index:99999;display:flex;align-items:center;gap:12px;max-width:calc(100vw - 24px);padding:12px 14px 12px 16px;border-radius:14px;background:linear-gradient(135deg,#1e3a8a,#0f172a);color:#f1f5f9;border:1px solid rgba(147,197,253,.35);box-shadow:0 12px 32px rgba(0,0,0,.35);font:500 14px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;transition:transform .35s ease}
 #ft-update.show{transform:translate(-50%,0)}
 #ft-update button{border:0;border-radius:10px;cursor:pointer;font:inherit}
-#ft-update .ftu-go{background:#e1000f;color:#fff;padding:8px 14px;font-weight:700;white-space:nowrap}
-#ft-update .ftu-go:hover{background:#b8000c}
+#ft-update .ftu-go{background:linear-gradient(90deg,#2563eb,#06b6d4);color:#fff;padding:8px 14px;font-weight:700;white-space:nowrap}
+#ft-update .ftu-go:hover{filter:brightness(1.08)}
 #ft-update .ftu-x{background:transparent;color:#cbd5e1;padding:6px 8px;font-size:18px;line-height:1}
 html.theme-light #ft-update{background:linear-gradient(135deg,#ffffff,#e0f2fe);color:#0f172a;border-color:#93c5fd;box-shadow:0 12px 32px rgba(15,23,42,.18)}
 html.theme-light #ft-update .ftu-x{color:#475569}
@@ -17041,7 +17331,7 @@ html.theme-light #ft-update .ftu-x{color:#475569}
     if (u.searchParams.has('v')) { u.searchParams.delete('v'); history.replaceState(null, '', u.pathname + u.search + u.hash); }
   } catch (e) {}
 
-  function show() { bar.hidden = false; requestAnimationFrame(function () { bar.classList.add('show'); }); }
+  function show() { bar.hidden = false; requestAnimationFrame(function () { bar.classList.add('show'); }); try { if (window.ftNotify && latest && localStorage.getItem('ft_ver_notified') !== latest) { localStorage.setItem('ft_ver_notified', latest); window.ftNotify('Nouvelle version de l’Espace Conseiller', 'Touchez pour recharger et voir les nouveautés.', 'ft-ver', 'reload'); } } catch (e) {} }
   function hide() { bar.classList.remove('show'); setTimeout(function () { bar.hidden = true; }, 400); }
 
   function check() {

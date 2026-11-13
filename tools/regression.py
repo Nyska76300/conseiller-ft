@@ -28,7 +28,7 @@ with sync_playwright() as p:
         for vp in ({'width': 1366, 'height': 860}, {'width': 390, 'height': 760}):
             mob = vp['width'] < 500
             c = b.new_context(viewport=vp, is_mobile=mob, has_touch=mob)
-            c.add_init_script("try{localStorage.setItem('ft_news_seen','9999-01-01.1');sessionStorage.setItem('ft_sb_skip','1');"
+            c.add_init_script("try{localStorage.setItem('ft_news_seen','9999-01-01.1');localStorage.setItem('ft_tour_done','1');sessionStorage.setItem('ft_sb_skip','1');"
                               + ("localStorage.setItem('ft_theme','light');" if theme == 'light' else '')
                               + f"localStorage.setItem('ft_labels',JSON.stringify({LABELS}))" + "}catch(e){}")
             pg = c.new_page(); errs = []
