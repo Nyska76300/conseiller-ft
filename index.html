@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.12">
+  <meta name="ft-version" content="2026-11-13.13">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12489,8 +12489,10 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
         });
       });
   }
+  function userOf(u) { var m = (u && u.user_metadata) || {}; return { id: u.id, email: u.email, first: m.first_name || '', last: m.last_name || '', name: m.full_name || [m.first_name, m.last_name].filter(Boolean).join(' ') }; }
+  function capName(t) { return String(t || '').trim().replace(/\s+/g, ' ').toLowerCase().replace(/(^|[\s'’-])(\p{L})/gu, function (a, b, c) { return b + c.toUpperCase(); }); }
   function keepSession(d) {
-    sess = { access_token: d.access_token, refresh_token: d.refresh_token, expires_at: d.expires_at || (Math.floor(Date.now() / 1000) + (d.expires_in || 3600)), user: { id: d.user.id, email: d.user.email } };
+    sess = { access_token: d.access_token, refresh_token: d.refresh_token, expires_at: d.expires_at || (Math.floor(Date.now() / 1000) + (d.expires_in || 3600)), user: userOf(d.user) };
     jset(K_SESS, sess);
   }
   function ensureToken() {
@@ -12741,7 +12743,8 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
         .then(function (d) {
           keepSession(d); meta.email = email; saveMeta();
           try { sessionStorage.removeItem('ft_sb_skip'); } catch (e) {}
-          closeBox(); renderAcct(); toast('Connecté : ' + email, 'success');
+          closeBox(); renderAcct(); toast(sess.user.name ? 'Bonjour ' + (sess.user.first || sess.user.name) + ' !' : 'Connecté : ' + email, 'success');
+          if (!sess.user.name) setTimeout(function () { if (!document.getElementById('ft-auth')) showAccount(true); }, 1200);
           return sync('start').then(loadShared);
         })
         .catch(function (e) { b.disabled = false; b.textContent = 'Se connecter'; msg(w, frErr(e)); });
@@ -12758,26 +12761,29 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   }
   function showSignup(prefill) {
     var w = box('<h2>Créer un compte</h2><p class="fa-sub">Vos modèles de mails, favoris et liens vous suivront sur tous les postes.</p>' +
-      '<form><label for="fa-smail">E-mail professionnel</label><input id="fa-smail" type="email" autocomplete="email" required value="' + esc(prefill || '') + '">' +
+      '<form><div class="fa-2"><div><label for="fa-sfirst">Prénom</label><input id="fa-sfirst" type="text" autocomplete="given-name" required maxlength="40"></div><div><label for="fa-slast">Nom</label><input id="fa-slast" type="text" autocomplete="family-name" required maxlength="40"></div></div>' +
+      '<label for="fa-smail">E-mail professionnel</label><input id="fa-smail" type="email" autocomplete="email" required value="' + esc(prefill || '') + '">' +
       '<label for="fa-sp1">Mot de passe (8 caractères minimum)</label><input id="fa-sp1" type="password" autocomplete="new-password" minlength="8" required>' +
       '<label for="fa-sp2">Confirmer le mot de passe</label><input id="fa-sp2" type="password" autocomplete="new-password" minlength="8" required>' +
       '<button class="fa-go" type="submit">Créer mon compte</button></form><div class="fa-msg"></div>' +
       '<div class="fa-links"><button type="button" data-a="back">J’ai déjà un compte</button></div>' +
       '<p class="fa-note">Aucune donnée d’allocataire n’est enregistrée dans votre compte.</p>');
-    w.querySelector(prefill ? '#fa-sp1' : '#fa-smail').focus();
+    w.querySelector('#fa-sfirst').focus();
     w.querySelector('[data-a="back"]').onclick = function () { showLogin(); };
     w.querySelector('form').onsubmit = function (ev) {
       ev.preventDefault();
       var email = w.querySelector('#fa-smail').value.trim(), p1 = w.querySelector('#fa-sp1').value, p2 = w.querySelector('#fa-sp2').value, b = w.querySelector('.fa-go');
+      var first = capName(w.querySelector('#fa-sfirst').value), last = capName(w.querySelector('#fa-slast').value);
+      if (!first || !last) return msg(w, 'Indiquez votre prénom et votre nom.');
       if (p1.length < 8) return msg(w, 'Le mot de passe doit contenir au moins 8 caractères.');
       if (p1 !== p2) return msg(w, 'Les deux mots de passe ne sont pas identiques.');
       b.disabled = true; b.textContent = 'Création…';
-      api('/auth/v1/signup?redirect_to=' + encodeURIComponent(location.origin + location.pathname), { method: 'POST', auth: false, body: { email: email, password: p1 } })
+      api('/auth/v1/signup?redirect_to=' + encodeURIComponent(location.origin + location.pathname), { method: 'POST', auth: false, body: { email: email, password: p1, data: { first_name: first, last_name: last, full_name: first + ' ' + last } } })
         .then(function (d) {
           meta.email = email; saveMeta();
           if (d && d.access_token && d.user) {
             keepSession(d); try { sessionStorage.removeItem('ft_sb_skip'); } catch (e) {}
-            closeBox(); renderAcct(); toast('Compte créé : ' + email, 'success');
+            closeBox(); renderAcct(); toast('Bienvenue ' + first + ' !', 'success');
             return sync('start').then(loadShared);
           }
           b.disabled = false; b.textContent = 'Créer mon compte';
@@ -12793,6 +12799,72 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
           msg(w, frErr(e));
         });
     };
+  }
+  /* ---------- Mon compte : nom, e-mail, mot de passe ---------- */
+  function showAccount(first) {
+    if (!sess) return showLogin();
+    var u = sess.user;
+    var w = box('<h2>' + (first ? 'Complétez votre profil' : 'Mon compte') + '</h2><p class="fa-sub">' + (first ? 'Indiquez votre prénom et votre nom : ils remplacent votre adresse e-mail dans le site.' : 'Modifiez vos informations. L’ancien mot de passe est demandé pour changer d’adresse ou de mot de passe.') + '</p>' +
+      '<form autocomplete="off"><div class="fa-sec">Identité</div><div class="fa-2"><div><label for="fa-afirst">Prénom</label><input id="fa-afirst" type="text" autocomplete="given-name" required maxlength="40" value="' + esc(u.first || '') + '"></div><div><label for="fa-alast">Nom</label><input id="fa-alast" type="text" autocomplete="family-name" required maxlength="40" value="' + esc(u.last || '') + '"></div></div>' +
+      (first ? '' : '<div class="fa-sec">Adresse e-mail</div><label for="fa-amail">E-mail</label><input id="fa-amail" type="email" autocomplete="email" value="' + esc(u.email) + '">' +
+      '<div class="fa-sec">Mot de passe</div><label for="fa-anew">Nouveau mot de passe <small>(laisser vide pour ne pas le changer)</small></label><input id="fa-anew" type="password" autocomplete="new-password" minlength="8">' +
+      '<label for="fa-anew2">Confirmer le nouveau mot de passe</label><input id="fa-anew2" type="password" autocomplete="new-password" minlength="8">' +
+      '<label for="fa-acur">Mot de passe actuel <small>(obligatoire pour changer l’e-mail ou le mot de passe)</small></label><input id="fa-acur" type="password" autocomplete="current-password">') +
+      '<button class="fa-go" type="submit">Enregistrer</button></form><div class="fa-msg"></div>' +
+      '<div class="fa-links"><button type="button" data-a="close">' + (first ? 'Plus tard' : 'Fermer') + '</button>' + (first ? '' : '<button type="button" data-a="out">Se déconnecter</button>') + '</div>');
+    w.querySelector('#fa-afirst').focus();
+    w.querySelector('[data-a="close"]').onclick = function () { closeBox(); if (first) try { sessionStorage.setItem('ft_name_later', '1'); } catch (e) {} };
+    var o = w.querySelector('[data-a="out"]'); if (o) o.onclick = function () { closeBox(); logout(); };
+    w.addEventListener('click', function (e) { if (e.target === w) closeBox(); });
+    w.querySelector('form').onsubmit = function (ev) {
+      ev.preventDefault();
+      var f = capName(w.querySelector('#fa-afirst').value), l = capName(w.querySelector('#fa-alast').value);
+      var me = w.querySelector('#fa-amail'), nm = me ? me.value.trim() : u.email;
+      var p1 = w.querySelector('#fa-anew') ? w.querySelector('#fa-anew').value : '', p2 = w.querySelector('#fa-anew2') ? w.querySelector('#fa-anew2').value : '', cur = w.querySelector('#fa-acur') ? w.querySelector('#fa-acur').value : '';
+      if (!f || !l) return msg(w, 'Indiquez votre prénom et votre nom.');
+      var chMail = nm && nm.toLowerCase() !== String(u.email).toLowerCase(), chPass = !!p1, chName = f !== u.first || l !== u.last;
+      if (chPass && p1.length < 8) return msg(w, 'Le nouveau mot de passe doit contenir au moins 8 caractères.');
+      if (chPass && p1 !== p2) return msg(w, 'Les deux nouveaux mots de passe ne sont pas identiques.');
+      if ((chMail || chPass) && !cur) return msg(w, 'Saisissez votre mot de passe actuel pour changer l’e-mail ou le mot de passe.');
+      if (!chMail && !chPass && !chName) { closeBox(); return; }
+      var b = w.querySelector('.fa-go'); b.disabled = true; b.textContent = 'Enregistrement…';
+      var chk = (chMail || chPass) ? api('/auth/v1/token?grant_type=password', { method: 'POST', auth: false, body: { email: u.email, password: cur } }).then(keepSession).catch(function (e) { var er = new Error('cur'); er.cur = true; throw er; }) : ensureToken();
+      var done = [];
+      chk.then(function () {
+        if (!chName) return;
+        return api('/auth/v1/user', { method: 'PUT', body: { data: { first_name: f, last_name: l, full_name: f + ' ' + l } } }).then(function (d) { sess.user = userOf(d); jset(K_SESS, sess); done.push('nom'); });
+      }).then(function () {
+        if (!chPass) return;
+        return api('/auth/v1/user', { method: 'PUT', body: { password: p1 } }).then(function () { done.push('mot de passe'); });
+      }).then(function () {
+        if (!chMail) return;
+        return api('/auth/v1/user?redirect_to=' + encodeURIComponent(location.origin + location.pathname), { method: 'PUT', body: { email: nm } }).then(function () { done.push('e-mail'); });
+      }).then(function () {
+        renderAcct(); try { document.dispatchEvent(new Event('ft-me')); } catch (e) {}
+        b.disabled = false; b.textContent = 'Enregistrer';
+        if (chMail) { w.querySelector('form').style.display = 'none'; msg(w, (done.length > 1 ? 'Modifications enregistrées. ' : '') + 'Pour finaliser le changement d’adresse, cliquez sur le lien envoyé à ' + nm + ' (un e-mail peut aussi être envoyé à votre ancienne adresse). En attendant, continuez à vous connecter avec ' + u.email + '.', true); return; }
+        closeBox(); toast(first ? 'Merci ' + f + ' !' : 'Compte mis à jour', 'success');
+      }).catch(function (e) {
+        b.disabled = false; b.textContent = 'Enregistrer';
+        var m = String(e && e.message || '');
+        if (e && e.cur) return msg(w, 'Mot de passe actuel incorrect.');
+        if (/same.*password|different from the old/i.test(m)) return msg(w, 'Le nouveau mot de passe doit être différent de l’ancien.');
+        if (/reauthenticat/i.test(m)) return msg(w, 'Pour des raisons de sécurité, déconnectez-vous puis reconnectez-vous avant de changer de mot de passe.');
+        if (/already.*registered|email_exists|already been registered/i.test(m + (e.code || ''))) return msg(w, 'Cette adresse e-mail est déjà utilisée par un autre compte.');
+        msg(w, (done.length ? 'Enregistré : ' + done.join(', ') + '. ' : '') + frErr(e));
+      });
+    };
+  }
+  window.ftAccount = function () { showAccount(); };
+  window.__ftUserName = function () { return sess && sess.user ? (sess.user.name || '') : ''; };
+  /* Profil sans nom : on rafraîchit depuis Supabase puis on propose de le compléter */
+  function checkName() {
+    if (!sess) return;
+    api('/auth/v1/user').then(function (u) {
+      if (!sess) return; var nu = userOf(u); nu.id = sess.user.id || nu.id; sess.user = nu; jset(K_SESS, sess); renderAcct();
+      var later = false; try { later = !!sessionStorage.getItem('ft_name_later'); } catch (e) {}
+      if (!nu.name && !later && !document.getElementById('ft-auth')) showAccount(true);
+    }).catch(function () {});
   }
   function showSetPassword(kind) {
     var w = box('<h2>' + (kind === 'invite' ? 'Bienvenue !' : 'Nouveau mot de passe') + '</h2><p class="fa-sub">Choisissez votre mot de passe pour ' + esc(sess.user.email) + '.</p>' +
@@ -12832,23 +12904,24 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
       document.addEventListener('click', function (e) { if (!host.contains(e.target)) { var m = host.querySelector('.fa-menu'); if (m) m.hidden = true; } });
     }
     var open = host.querySelector('.fa-menu') && !host.querySelector('.fa-menu').hidden;
-    var email = sess ? sess.user.email : '';
+    var email = sess ? sess.user.email : '', uname = sess ? (sess.user.name || '') : '';
+    var initials = uname ? uname.split(' ').map(function (x) { return x.charAt(0); }).join('').slice(0, 2).toUpperCase() : email.charAt(0).toUpperCase();
     var dot = !sess ? '' : (status === 'ok' ? 'ok' : status === 'busy' ? 'busy' : status === 'err' ? 'err' : '');
     var st = !sess ? 'Non connecté : modèles enregistrés sur ce poste uniquement.' :
       status === 'busy' ? 'Synchronisation en cours…' :
       status === 'err' ? 'Échec de synchronisation : ' + status_detail + ' Vos modifications sont gardées et seront renvoyées.' :
       lastOk ? 'Modèles synchronisés à ' + lastOk.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) + '.' : 'Connecté.';
     host.innerHTML = '<button type="button" aria-haspopup="true" title="' + esc(sess ? 'Compte : ' + email : 'Se connecter') + '">' +
-      (sess ? '<span class="fa-av">' + esc(email.charAt(0).toUpperCase()) + '</span><span class="fa-dot ' + dot + '"></span>' + (isAdmin && propCount ? '<span class="fa-pc">' + propCount + '</span>' : '') : '<span class="fa-name">Se connecter</span><span class="fa-dot"></span>') +
+      (sess ? '<span class="fa-av' + (initials.length > 1 ? ' two' : '') + '">' + esc(initials) + '</span><span class="fa-dot ' + dot + '"></span>' + (isAdmin && propCount ? '<span class="fa-pc">' + propCount + '</span>' : '') : '<span class="fa-name">Se connecter</span><span class="fa-dot"></span>') +
       '</button><div class="fa-menu"' + (open ? '' : ' hidden') + '>' +
-      (sess ? '<strong>' + esc(email) + '</strong>' + (isAdmin ? '<div class="fa-st">Administrateur des modèles communs</div>' : '') : '<strong>Compte conseiller</strong>') +
+      (sess ? (uname ? '<strong>' + esc(uname) + '</strong><div class="fa-st">' + esc(email) + '</div>' : '<strong>' + esc(email) + '</strong>') + (isAdmin ? '<div class="fa-st">Administrateur des modèles communs</div>' : '') : '<strong>Compte conseiller</strong>') +
       '<div class="fa-st">' + esc(st) + '</div>' +
-      (sess ? '<button type="button" data-a="sync">Synchroniser maintenant</button>' +
+      (sess ? '<button type="button" data-a="me">Mon compte : nom, e-mail, mot de passe</button><button type="button" data-a="sync">Synchroniser maintenant</button>' +
         (isAdmin ? '<button type="button" data-a="admin">Espace administrateur</button>' : '') + (isAdmin ? '<button type="button" data-a="props">Propositions des collègues' + (propCount ? ' (' + propCount + ')' : '') + '</button>' : '<button type="button" data-a="prop">Proposer le modèle ouvert à l’équipe</button>') + (isAdmin ? '<button type="button" data-a="pub">Publier le modèle ouvert pour tous</button><button type="button" data-a="unpub">Retirer le modèle ouvert des communs</button>' : '') +
         '<button type="button" data-a="out" class="fa-out">Se déconnecter</button>'
         : '<button type="button" data-a="in">Se connecter</button>') + '</div>';
     host.querySelector('button').onclick = function (e) { e.stopPropagation(); if (!sess) { showLogin(); return; } var m = host.querySelector('.fa-menu'); m.hidden = !m.hidden; };
-    var act = { sync: function () { meta.dirty = true; sync('push').then(loadShared); }, pub: window.ftSharePublish, unpub: window.ftShareRemove, prop: function () { window.ftPropose(); }, props: function () { window.ftProposals(); }, admin: function () { switchNavTab('admin'); }, out: logout, in: function () { showLogin(); } };
+    var act = { sync: function () { meta.dirty = true; sync('push').then(loadShared); }, pub: window.ftSharePublish, unpub: window.ftShareRemove, prop: function () { window.ftPropose(); }, props: function () { window.ftProposals(); }, admin: function () { switchNavTab('admin'); }, me: function () { showAccount(); }, out: logout, in: function () { showLogin(); } };
     host.querySelectorAll('.fa-menu [data-a]').forEach(function (b) { b.onclick = function () { host.querySelector('.fa-menu').hidden = true; act[b.dataset.a](); }; });
   }
 
@@ -12887,7 +12960,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
       history.replaceState(null, '', location.pathname + location.search);
       sess = { access_token: p.access_token, refresh_token: p.refresh_token, expires_at: +p.expires_at || Math.floor(Date.now() / 1000) + (+p.expires_in || 3600), user: { id: '', email: '' } };
       api('/auth/v1/user').then(function (u) {
-        sess.user = { id: u.id, email: u.email }; jset(K_SESS, sess); meta.email = u.email; saveMeta(); renderAcct();
+        sess.user = userOf(u); jset(K_SESS, sess); meta.email = u.email; saveMeta(); renderAcct();
         if (p.type === 'recovery' || p.type === 'invite') showSetPassword(p.type); else sync('start').then(loadShared);
       }).catch(function () { sess = null; LSraw.del(K_SESS); showLogin('Ce lien a expiré. Demandez un nouvel e-mail.'); });
       return;
@@ -12895,7 +12968,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
     if (/error_description=/.test(h)) { history.replaceState(null, '', location.pathname + location.search); showLogin('Ce lien n’est plus valide ou a expiré. Demandez un nouvel e-mail.'); return; }
     renderAcct();
     if (!sess) { var skip = false; try { skip = !!sessionStorage.getItem('ft_sb_skip'); } catch (e) {} if (!skip) showLogin(); return; }
-    sync('start').then(loadShared);
+    sync('start').then(loadShared).then(function () { setTimeout(checkName, 800); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(start, 50); }); else setTimeout(start, 50);
 
@@ -15235,6 +15308,12 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+#ft-auth .fa-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#ft-auth .fa-sec{margin:16px 0 0;padding-top:12px;border-top:1px solid rgba(148,163,184,.2);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#67e8f9}
+#ft-auth form>.fa-sec:first-child{border-top:0;padding-top:0;margin-top:6px}
+#ft-auth label small{font-weight:500;color:#94a3b8}
+#ft-acct .fa-av.two{font-size:9.5px;letter-spacing:-.02em}
+html.theme-light #ft-auth .fa-sec{color:#0369a1}
 #ft-pins-dlg .pd-tabs{display:flex;gap:4px;margin:10px 14px 0;padding:3px;border-radius:10px;background:rgba(255,255,255,.05)}
 #ft-pins-dlg .pd-tabs button{flex:1;height:32px;border:0;border-radius:8px;background:none;color:#94a3b8;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer}
 #ft-pins-dlg .pd-tabs button.on{background:linear-gradient(90deg,#2563eb,#06b6d4);color:#fff}
@@ -15940,8 +16019,10 @@ html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5
       if (!rows.length) { b.innerHTML = '<p class="ad-empty">Pas encore d’activité enregistrée sur cette période. Les chiffres apparaîtront au fil des connexions.</p>'; return; }
       const kind = t => String(t).indexOf('mail:') === 0 ? 'mail' : String(t).indexOf('copie:') === 0 ? 'copie' : 'outil';
       const tplName = t => String(t).replace(/^(mail|copie):/, '');
-      const short = e => String(e || '').split('@')[0];
-      const ini = e => short(e).charAt(0).toUpperCase() || '?';
+      const NM = {}; rows.forEach(r => { if (r.name) NM[r.email] = r.name; }); Object.assign(window.__ftNames = window.__ftNames || {}, NM);
+      const disp = e => (window.__ftNames && window.__ftNames[e]) || e;
+      const short = e => (window.__ftNames && window.__ftNames[e]) || String(e || '').split('@')[0];
+      const ini = e => { const n = (window.__ftNames && window.__ftNames[e]); return n ? n.split(' ').map(x => x.charAt(0)).join('').slice(0, 2).toUpperCase() : (String(e || '').charAt(0).toUpperCase() || '?'); };
       const sum = a => a.reduce((s, r) => s + r.uses, 0);
       const tools = rows.filter(r => kind(r.tool) === 'outil'), opens = rows.filter(r => kind(r.tool) === 'mail'), copies = rows.filter(r => kind(r.tool) === 'copie');
       /* Regroupements */
@@ -15956,7 +16037,7 @@ html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5
       const nd = Math.min(per, 90);
       for (let i = nd - 1; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const k = d.toISOString().slice(0, 10); days.push([k, map[k] ? +map[k].uses : 0, map[k] ? +map[k].users : 0]); }
       const mx = Math.max(1, ...days.map(d => d[1]));
-      const who = users => Object.entries(users).sort((a, c) => (typeof c[1] === 'object' ? c[1].o + c[1].c : c[1]) - (typeof a[1] === 'object' ? a[1].o + a[1].c : a[1])).map(([e, v]) => '<span class="st-who" title="' + esc(e) + '"><i>' + esc(ini(e)) + '</i>' + esc(short(e)) + ' <b>' + (typeof v === 'object' ? (v.c ? v.c + ' copie' + (v.c > 1 ? 's' : '') + ' · ' : '') + v.o + ' ouv.' : v) + '</b></span>').join('');
+      const who = users => Object.entries(users).sort((a, c) => (typeof c[1] === 'object' ? c[1].o + c[1].c : c[1]) - (typeof a[1] === 'object' ? a[1].o + a[1].c : a[1])).map(([e, v]) => '<span class="st-who" title="' + esc(disp(e) + (disp(e) !== e ? ' · ' + e : '')) + '"><i>' + esc(ini(e)) + '</i>' + esc(short(e)) + ' <b>' + (typeof v === 'object' ? (v.c ? v.c + ' copie' + (v.c > 1 ? 's' : '') + ' · ' : '') + v.o + ' ouv.' : v) + '</b></span>').join('');
       const kpi = (l, v, sub, c) => '<div class="st-kpi ' + (c || '') + '"><span>' + l + '</span><b>' + v + '</b><em>' + sub + '</em></div>';
       const topM = M[0], topT = T[0];
       b.className = '';
@@ -15978,7 +16059,7 @@ html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5
         '<div class="st-sec">👤 Par conseiller</div>' +
         '<div class="st-grid">' + U.map((u, i) => {
           const tl = u.tools.slice().sort((a, c) => c.uses - a.uses), ml = Object.values(u.mails).sort((a, c) => (c.c * 3 + c.o) - (a.c * 3 + a.o));
-          return '<div class="st-tile st-user"><div class="st-uh"><span class="st-av">' + esc(ini(u.email)) + '</span><div><h4>' + esc(u.email) + '</h4><p class="st-last">Dernière activité : ' + dtt(u.last) + '</p></div></div>' +
+          return '<div class="st-tile st-user"><div class="st-uh"><span class="st-av">' + esc(ini(u.email)) + '</span><div><h4 title="' + esc(u.email) + '">' + esc(disp(u.email)) + '</h4>' + (disp(u.email) !== u.email ? '<p class="st-last">' + esc(u.email) + '</p>' : '') + '<p class="st-last">Dernière activité : ' + dtt(u.last) + '</p></div></div>' +
             '<div class="st-nums"><div><b>' + u.uses + '</b><span>actions</span></div><div><b>' + tl.length + '</b><span>outils</span></div><div><b>' + ml.length + '</b><span>mails</span></div><div><b>' + u.copies + '</b><span>copiés</span></div></div>' +
             '<div class="st-lbl">Mails les plus utilisés</div><div class="st-list">' + (ml.length ? ml.slice(0, 4).map(m => '<div><span>' + esc(m.k) + '</span><b>' + (m.c ? m.c + ' copie' + (m.c > 1 ? 's' : '') + ' · ' : '') + m.o + ' ouv.</b></div>').join('') : '<div><span class="ad-empty">Aucun</span></div>') + '</div>' +
             '<div class="st-lbl">Outils les plus utilisés</div><div class="st-list">' + (tl.length ? tl.slice(0, 4).map(t => '<div><span>' + esc(name(t.tool)) + '</span><b>' + t.uses + '</b></div>').join('') : '<div><span class="ad-empty">Aucun</span></div>') + '</div>' +
@@ -15993,7 +16074,8 @@ html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5
     host.innerHTML = card('👤', 'Comptes', '', '<div id="us-body" class="ad-empty">Chargement…</div>');
     window.__ftRpc('admin_users').then(rows => {
       rows = rows || []; const b = $('us-body'); b.className = '';
-      b.innerHTML = '<table class="ad-tbl"><tr><th>Conseiller</th><th style="text-align:right">Inscrit</th><th style="text-align:right">Connexion</th><th style="text-align:right">Modèles perso</th></tr>' + rows.map(r => '<tr><td>' + esc(r.email) + '</td><td class="n">' + dt(r.created_at) + '</td><td class="n">' + dtt(r.last_sign_in) + '</td><td class="n">' + (r.own_templates || 0) + '</td></tr>').join('') + '</table><p class="ad-empty" style="margin-top:6px">' + rows.length + ' compte(s).</p>';
+      rows.forEach(r => { if (r.name) (window.__ftNames = window.__ftNames || {})[r.email] = r.name; });
+      b.innerHTML = '<table class="ad-tbl"><tr><th>Conseiller</th><th style="text-align:right">Inscrit</th><th style="text-align:right">Connexion</th><th style="text-align:right">Modèles perso</th></tr>' + rows.map(r => '<tr><td>' + (r.name ? '<b>' + esc(r.name) + '</b><div class="ad-empty" style="font-size:11px">' + esc(r.email) + '</div>' : esc(r.email) + (('name' in r) ? ' <span class="ad-empty" style="font-size:11px">(nom non renseigné)</span>' : '')) + '</td><td class="n">' + dt(r.created_at) + '</td><td class="n">' + dtt(r.last_sign_in) + '</td><td class="n">' + (r.own_templates || 0) + '</td></tr>').join('') + '</table><p class="ad-empty" style="margin-top:6px">' + rows.length + ' compte(s).</p>';
     }).catch(e => { $('us-body').textContent = missing(e) ? 'Non installé : script supabase/admin_stats.sql.' : 'Chargement impossible.'; });
   }
   function ideas(card) {
@@ -16004,7 +16086,7 @@ html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5
       rows = rows || []; const b = $('id-body'); b.className = '';
       const open = rows.filter(r => !r.done).length;
       host.querySelector('.text-cyan-400').textContent = open + ' à traiter'; try { document.dispatchEvent(new Event('ft-regs')); } catch (e) {}
-      b.innerHTML = rows.length ? rows.map(r => '<div class="id-it' + (r.done ? ' done' : '') + '" data-id="' + esc(r.id) + '"><div class="id-h"><span class="id-k">' + esc(K[r.kind] || r.kind) + '</span><span>' + esc(r.email || '') + ' · ' + dtt(r.created_at) + '</span></div><div class="id-m">' + esc(r.message) + '</div>' + (r.page ? '<div class="id-h"><span>Page : ' + esc(r.page) + '</span></div>' : '') + '<div class="ad-row" style="margin-top:6px">' + (r.email ? '<a class="ad-btn" href="mailto:' + esc(r.email) + '?subject=' + encodeURIComponent('Votre suggestion sur l’Espace Conseiller') + '">Répondre</a>' : '') + '<button type="button" class="ad-btn" data-a="done">' + (r.done ? 'Rouvrir' : 'Marquer traité') + '</button><button type="button" class="ad-btn" data-a="del">Supprimer</button></div></div>').join('') : '<p class="ad-empty">Aucun message pour l’instant. Les conseillers écrivent via « Suggérer une amélioration » (FAQ, recherche, menu « ⋯ »).</p>';
+      b.innerHTML = rows.length ? rows.map(r => '<div class="id-it' + (r.done ? ' done' : '') + '" data-id="' + esc(r.id) + '"><div class="id-h"><span class="id-k">' + esc(K[r.kind] || r.kind) + '</span><span>' + esc((window.__ftNames && window.__ftNames[r.email]) || r.email || '') + ' · ' + dtt(r.created_at) + '</span></div><div class="id-m">' + esc(r.message) + '</div>' + (r.page ? '<div class="id-h"><span>Page : ' + esc(r.page) + '</span></div>' : '') + '<div class="ad-row" style="margin-top:6px">' + (r.email ? '<a class="ad-btn" href="mailto:' + esc(r.email) + '?subject=' + encodeURIComponent('Votre suggestion sur l’Espace Conseiller') + '">Répondre</a>' : '') + '<button type="button" class="ad-btn" data-a="done">' + (r.done ? 'Rouvrir' : 'Marquer traité') + '</button><button type="button" class="ad-btn" data-a="del">Supprimer</button></div></div>').join('') : '<p class="ad-empty">Aucun message pour l’instant. Les conseillers écrivent via « Suggérer une amélioration » (FAQ, recherche, menu « ⋯ »).</p>';
       b.onclick = e => {
         const btn = e.target.closest('button[data-a]'); if (!btn) return; const it = btn.closest('.id-it'), id = it.dataset.id, r = rows.find(x => String(x.id) === id);
         const p = btn.dataset.a === 'del' ? window.__ftRest('/rest/v1/site_feedback?id=eq.' + encodeURIComponent(id), { method: 'DELETE' }) : window.__ftRest('/rest/v1/site_feedback?id=eq.' + encodeURIComponent(id), { method: 'PATCH', prefer: 'return=minimal', body: { done: !r.done } });
@@ -16553,6 +16635,10 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.13', date: '13/11/2026', items: [
+      'Mon compte : menu du compte (rond avec vos initiales) → « Mon compte » pour modifier votre prénom, votre nom, votre adresse e-mail ou votre mot de passe.',
+      'Création de compte : le prénom et le nom sont demandés. Si votre compte n’a pas encore de nom, le site vous propose de le compléter.'
+    ] },
     { v: '2026-11-13.12', date: '13/11/2026', items: [
       'Accueil : « Mes outils » devient « Mes favoris ». Vous pouvez y cocher des outils et aussi des mails (CVM) : un clic ouvre directement le mail.',
       'Menu Outils : une étoile à côté de chaque thématique permet de la mettre en favori ; vos thématiques favorites s’affichent en haut du menu. Ces choix sont propres à votre compte.'
