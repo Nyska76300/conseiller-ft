@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.15">
+  <meta name="ft-version" content="2026-11-13.16">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -1495,7 +1495,7 @@
           <i data-lucide="compass" class="w-4 h-4"></i>
         </div>
         <div>
-          <h2 class="text-xs font-bold text-white uppercase tracking-wider">Navigation Outils</h2>
+          <h2 class="text-xs font-bold text-white uppercase tracking-wider">Menu</h2>
           <p class="text-[10px] text-slate-400">10 modules &amp; simulateurs</p>
         </div>
       </div>
@@ -1538,9 +1538,9 @@
       </button>
 
       <!-- Burger Menu Button -->
-      <button id="burger-menu-btn" onclick="toggleBurgerMenu()" class="p-2 rounded-lg text-cyan-400 hover:text-white bg-slate-800/90 hover:bg-slate-700 border border-slate-700 transition-all flex items-center gap-2 shadow-sm" title="Menu des Outils / Simulateurs (Ctrl+M)">
+      <button id="burger-menu-btn" onclick="toggleBurgerMenu()" class="p-2 rounded-lg text-cyan-400 hover:text-white bg-slate-800/90 hover:bg-slate-700 border border-slate-700 transition-all flex items-center gap-2 shadow-sm" title="Menu (Ctrl+M)">
         <i data-lucide="menu" id="burger-icon" class="w-4 h-4"></i>
-        <span class="text-xs font-bold hidden sm:inline">Menu Outils</span>
+        <span class="text-xs font-bold hidden sm:inline">Menu</span>
       </button>
 
       <!-- Toggle Sidebar Button (CVM Folder view) -->
@@ -13122,7 +13122,7 @@ html.theme-light .lk-form{background:#eff6ff}
 html.theme-light .lk-form input{background:#fff;border-color:#cbd5e1;color:#0f172a}
 /* ---------- « Mes données » : uniquement sur la page Mails ---------- */
 html[data-tab]:not([data-tab="cvm"]) #data-btn{display:none!important}
-/* ---------- Menu Outils élargi (+2 cm) ---------- */
+/* ---------- Menu élargi (+2 cm) ---------- */
 #burger-nav-drawer{width:396px!important;max-width:94vw!important}
 /* ---------- Calculatrice agrandie ---------- */
 #floating-calculator{width:420px!important;max-width:94vw!important}
@@ -13389,7 +13389,7 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
   const LOOK = [[/invalidit/i, 'acc', 'fh-c6'], [/ouverture/i, 'clip', 'fh-c1'], [/ans|création|cumul/i, 'brief', 'fh-c2'], [/fin de droits|passage/i, 'hour', 'fh-c3'], [/situation/i, 'shield', 'fh-c4'], [/référence|calcul/i, 'book', 'fh-c5']];
   const look = t => LOOK.find(l => l[0].test(t)) || [0, 'folder', 'fh-c1'];
 
-  /* ---------- Rubriques et outils (lus dans le menu Outils) ---------- */
+  /* ---------- Rubriques et outils (lus dans le menu) ---------- */
   function groups() {
     const list = $('burger-tabs-list'); if (!list) return [];
     return [...list.querySelectorAll('.menu-sec')].map(sec => {
@@ -13658,7 +13658,7 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
   }
 
 
-  /* ---------- Menu Outils : rubriques dans l'ordre voulu, outils par ordre alphabétique ---------- */
+  /* ---------- Menu : rubriques dans l'ordre voulu, outils par ordre alphabétique ---------- */
   const SEC_ORDER = [/ouverture/i, /ans|création/i, /situation/i, /fin de droits/i, /invalidit/i, /référence|calcul/i];
   const secRank = t => { const i = SEC_ORDER.findIndex(r => r.test(t)); return i < 0 ? 99 : i; };
   const lbl = b => ((b.querySelector('.text-xs') || b).textContent || '').trim();
@@ -13695,7 +13695,7 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
     // Outils : configuration (recherche Ctrl+K, en-tête)
     try { NAV_TABS_CONFIG.forEach(t => { const id = 't:' + t.id; if (!(id in ORIG)) ORIG[id] = t.name; t.name = L[id] || ORIG[id]; }); } catch (e) {}
     const setTxt = (el, key, base) => { if (!el) return; if (el.dataset.lbOrig == null) el.dataset.lbOrig = base != null ? base : el.textContent.trim(); const v = L[key] || el.dataset.lbOrig; if (el.textContent.trim() !== v) el.textContent = v; };
-    // Menu Outils
+    // Menu
     document.querySelectorAll('#burger-tabs-list button[onclick]').forEach(b => {
       const m = /switchNavTab\('([^']+)'\)/.exec(b.getAttribute('onclick') || ''); if (!m) return;
       setTxt(b.querySelector('.text-xs'), 't:' + m[1]);
@@ -14063,7 +14063,7 @@ html.theme-light .inv-card a{color:#1d4ed8}
     return r;
   };
 
-  /* Menu Outils : dans la rubrique « Ouverture de droits » */
+  /* Menu : dans la rubrique « Ouverture de droits » */
   const isOuv = el => /ouverture/i.test((el && (el.dataset.lbOrig || el.textContent)) || '');
   if (typeof renderBurgerTabs === 'function') {
     const _rb = renderBurgerTabs;
@@ -14400,7 +14400,7 @@ html.theme-light .fr-src{color:#64748b} html.theme-light .fr-src a{color:#0369a1
     return r;
   };
 
-  /* Menu Outils : rubrique « Situations particulières » (copie du style d’un outil voisin) */
+  /* Menu : rubrique « Situations particulières » (copie du style d’un outil voisin) */
   if (typeof renderBurgerTabs === 'function') {
     const _rb = renderBurgerTabs;
     renderBurgerTabs = function () {
@@ -15134,7 +15134,8 @@ html.theme-light #ft-gtip b{color:#0369a1}
     [...list.children].map(el => el.matches && el.matches('button[onclick^="switchNavTab"]') ? el : (el.classList && el.classList.contains('ft-pen-wrap') ? el.querySelector('button[onclick^="switchNavTab"]') : null)).filter(Boolean).forEach(b => {
       const m = /switchNavTab\('([^']+)'\)/.exec(b.getAttribute('onclick') || ''); if (!m || m[1] === 'home' || out.some(t => t.id === m[1])) return;
       const lb = b.querySelector('.text-xs'), svg = b.querySelector('svg');
-      out.push({ id: m[1], label: (lb ? lb.textContent : b.textContent).trim(), group: 'Autres outils', icon: svg ? svg.outerHTML.replace(/\sclass="[^"]*"/, '') : '' });
+      const it = { id: m[1], label: (lb ? lb.textContent : b.textContent).trim(), group: m[1] === 'cvm' ? 'Mails' : 'Autres outils', icon: svg ? svg.outerHTML.replace(/\sclass="[^"]*"/, '') : '' };
+      if (m[1] === 'cvm') out.unshift(it); else out.push(it);
     });
     if (window.__ftIsAdmin && window.__ftIsAdmin()) out.push({ id: 'admin', label: 'Espace administrateur', group: 'Administration (vous seul)', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>' });
     return out;
@@ -15146,9 +15147,9 @@ html.theme-light #ft-gtip b{color:#0369a1}
     const hero = document.querySelector('#view-home .fh-C .home-hero'); if (!hero) return;
     let c = document.querySelector('#view-home .fh-pins');
     if (!c) { c = document.createElement('section'); c.className = 'fh-card fh-pins fh-c5'; hero.parentNode.insertBefore(c, hero.nextSibling); }
-    const tools = allTools().concat(allMails()), pins = getPins().map(id => tools.find(t => t.id === id)).filter(Boolean);
+    const tools = allTools(), pins = getPins().map(id => tools.find(t => t.id === id)).filter(Boolean);
     const html = '<div class="fh-gh"><span class="fh-gi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg></span><h3>Mes favoris</h3><button type="button" class="fh-pin-edit">' + (pins.length ? 'Modifier' : 'Choisir') + '</button></div>' +
-      (pins.length ? '<div class="fh-chips">' + pins.map(t => '<button type="button" class="fh-chip fh-pin ' + (t.tid != null ? 'fh-c2 fh-pin-mail' : t.id === 'admin' ? 'fh-c6' : pinCol(t.group)) + '" data-id="' + esc(t.id) + '" title="' + esc(t.tid != null ? 'Mail : ' + t.label : t.group) + '"><span class="fh-ci">' + t.icon + '</span><span class="fh-cl">' + esc(t.label) + '</span></button>').join('') + '</div>' : '<p class="fh-pin-empty">Cochez les outils et les mails (CVM) que vous utilisez le plus pour les retrouver ici en un geste.</p>');
+      (pins.length ? '<div class="fh-chips">' + pins.map(t => '<button type="button" class="fh-chip fh-pin ' + (t.tid != null ? 'fh-c2 fh-pin-mail' : t.id === 'admin' ? 'fh-c6' : pinCol(t.group)) + '" data-id="' + esc(t.id) + '" title="' + esc(t.tid != null ? 'Mail : ' + t.label : t.group) + '"><span class="fh-ci">' + t.icon + '</span><span class="fh-cl">' + esc(t.label) + '</span></button>').join('') + '</div>' : '<p class="fh-pin-empty">Cochez les outils que vous utilisez le plus (CVM Direct compris) pour les retrouver ici en un geste.</p>');
     if (c.dataset.h !== html) { c.innerHTML = html; c.dataset.h = html; }
   }
   document.addEventListener('click', e => {
@@ -15156,38 +15157,28 @@ html.theme-light #ft-gtip b{color:#0369a1}
     if (p) { const id = p.dataset.id; if (id.indexOf('tpl:') === 0) { const tid = id.slice(4); switchNavTab('cvm'); setTimeout(() => { try { const t = templates.find(x => String(x.id) === tid); if (t) { try { if (typeof currentCategory !== 'undefined') { currentCategory = 'all'; } } catch (er) {} try { localStorage.setItem('ft_tpl_scope', 'all'); } catch (er) {} selectTemplate(t.id); } } catch (er) {} }, 60); } else switchNavTab(id); return; }
     if (e.target.closest && e.target.closest('.fh-pins .fh-pin-edit')) openPins();
   });
-  function openPins(mode) {
+  function openPins() {
     let d = $('ft-pins-dlg'); if (!d) { d = document.createElement('div'); d.id = 'ft-pins-dlg'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true'); document.body.appendChild(d); }
-    const tools = allTools(), mails = allMails().sort((a, b) => (b.mine - a.mine) || a.label.localeCompare(b.label, 'fr')), pins = getPins();
-    let tab = mode === 'mails' ? 'mails' : 'tools', q = '';
-    const box = it => '<label data-s="' + esc((it.label + ' ' + it.group).toLowerCase()) + '"><input type="checkbox" value="' + esc(it.id) + '"' + (getPins().includes(it.id) ? ' checked' : '') + '><span class="pd-l">' + esc(it.label) + (it.tid != null && it.group ? '<small>' + esc(it.group) + '</small>' : '') + '</span></label>';
+    const tools = allTools();
+    let q = '';
+    const box = it => '<label><input type="checkbox" value="' + esc(it.id) + '"' + (getPins().includes(it.id) ? ' checked' : '') + '><span class="pd-l">' + esc(it.label) + '</span></label>';
     function list() {
       const nq = q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       const match = it => !nq || (it.label + ' ' + it.group).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(nq);
       let last = '', html = '';
-      if (tab === 'tools') tools.filter(match).forEach(t => { if (t.group !== last) html += '<div class="pd-g">' + esc(last = t.group) + '</div>'; html += box(t); });
-      else { const a = mails.filter(m => m.mine && match(m)), b = mails.filter(m => !m.mine && match(m)); if (a.length) html += '<div class="pd-g">Mes modèles</div>' + a.map(box).join(''); if (b.length) html += '<div class="pd-g">Modèles communs</div>' + b.map(box).join(''); }
+      tools.filter(match).forEach(t => { if (t.group !== last) html += '<div class="pd-g">' + esc(last = t.group) + '</div>'; html += box(t); });
       return html || '<p class="pd-none">Aucun résultat.</p>';
     }
-    const n = k => getPins().filter(id => k === 'mails' ? id.indexOf('tpl:') === 0 : id.indexOf('tpl:') !== 0).length;
-    function draw() {
-      d.innerHTML = '<div class="pd-box"><div class="pd-h"><h3>Mes favoris</h3><button type="button" class="pd-x" aria-label="Fermer">×</button></div>' +
-        '<div class="pd-tabs"><button type="button" data-t="tools" class="' + (tab === 'tools' ? 'on' : '') + '">Outils <b>' + n('tools') + '</b></button><button type="button" data-t="mails" class="' + (tab === 'mails' ? 'on' : '') + '">Mails (CVM) <b>' + n('mails') + '</b></button></div>' +
-        '<div class="pd-q"><input type="search" placeholder="' + (tab === 'mails' ? 'Rechercher un mail…' : 'Rechercher un outil…') + '" value="' + esc(q) + '"></div>' +
-        '<div class="pd-list">' + list() + '</div></div>';
-    }
-    draw(); d.classList.add('on');
-    d.onclick = e => {
-      if (e.target === d || e.target.closest('.pd-x')) { d.classList.remove('on'); return; }
-      const t = e.target.closest('.pd-tabs [data-t]'); if (t) { tab = t.dataset.t; q = ''; draw(); }
-    };
+    d.innerHTML = '<div class="pd-box"><div class="pd-h"><h3>Mes favoris</h3><button type="button" class="pd-x" aria-label="Fermer">×</button></div>' +
+      '<div class="pd-q"><input type="search" placeholder="Rechercher un outil…"></div><div class="pd-list">' + list() + '</div></div>';
+    d.classList.add('on');
+    d.onclick = e => { if (e.target === d || e.target.closest('.pd-x')) d.classList.remove('on'); };
     d.oninput = e => { if (e.target.matches('.pd-q input')) { q = e.target.value; d.querySelector('.pd-list').innerHTML = list(); } };
     d.onchange = e => {
       if (e.target.type !== 'checkbox') return;
-      const id = e.target.value, cur = getPins().filter(x => x !== id);
+      const id = e.target.value, cur = getPins().filter(x => x !== id && x.indexOf('tpl:') !== 0);
       if (e.target.checked) cur.push(id);
       setPins(cur); pinsCard();
-      d.querySelectorAll('.pd-tabs b').forEach((b, k) => { b.textContent = n(k ? 'mails' : 'tools'); });
     };
   }
   window.ftOpenPins = openPins;
@@ -15802,7 +15793,7 @@ html.theme-light .ad-btn{background:#fff;border-color:#cbd5e1;color:#0f172a} htm
       '</div><div class="lg:col-span-6 space-y-4">' +
       card('3', 'Barème', due ? 'À vérifier' : 'À jour', '<table class="ad-tbl"><tr><td>Montants vérifiés le</td><td class="n">' + esc(B.verifie || '—') + '</td></tr><tr><td>Dernière échéance de revalorisation</td><td class="n">' + cp.toLocaleDateString('fr-FR') + '</td></tr><tr><td>Prochaine échéance</td><td class="n">' + next.toLocaleDateString('fr-FR') + '</td></tr><tr><td>État</td><td class="n" style="color:' + (due ? '#fbbf24' : '#34d399') + '">' + (due ? 'À contrôler' : 'Rien à faire') + '</td></tr></table><div class="ad-row">' + (due ? '<button type="button" class="ad-btn pri" id="ad-ack">C’est vérifié</button>' : '') + '<a class="ad-btn" href="https://www.unedic.org/publications" target="_blank" rel="noopener">Paramètres Unédic</a><button type="button" class="ad-btn" onclick="switchNavTab(\'echeances\')">Échéances</button></div>') +
       card('4', 'Modèles communs', shared + ' publié(s)', '<p class="ad-empty">Pour publier un modèle pour tous : ouvrez-le dans la page Mails, puis l’icône « équipe » ou le menu du compte. Pour en retirer un : menu du compte → « Retirer le modèle ouvert des communs ».</p><div class="ad-row"><button type="button" class="ad-btn" onclick="switchNavTab(\'cvm\')">Ouvrir la page Mails</button></div>') +
-      card('5', 'Noms renommés', Object.keys(L).length + ' changement(s)', (lab ? '<table class="ad-tbl"><tr><th>Élément</th><th>Nom affiché</th></tr>' + lab + '</table>' : '<p class="ad-empty">Aucun renommage.</p>') + '<p class="ad-empty">Pour renommer : survolez un nom dans le menu Outils et cliquez sur le crayon.</p>') +
+      card('5', 'Noms renommés', Object.keys(L).length + ' changement(s)', (lab ? '<table class="ad-tbl"><tr><th>Élément</th><th>Nom affiché</th></tr>' + lab + '</table>' : '<p class="ad-empty">Aucun renommage.</p>') + '<p class="ad-empty">Pour renommer : survolez un nom dans le menu et cliquez sur le crayon.</p>') +
       card('6', 'Site', 'Version ' + esc(ver), '<table class="ad-tbl"><tr><td>Version en ligne</td><td class="n">' + esc(ver) + '</td></tr><tr><td>Cas de contrôle des calculs</td><td class="n" id="ad-cases">…</td></tr></table><div class="ad-row"><button type="button" class="ad-btn" onclick="switchNavTab(\'sources\')">Sources et vérification</button><button type="button" class="ad-btn" onclick="window.ftShowNews && ftShowNews()">Quoi de neuf ?</button></div>') +
       '<div id="ad-faq"></div></div></div>';
     try { window.ftAdminFill && window.ftAdminFill(card); } catch (e) { console.warn(e); }
@@ -15967,7 +15958,7 @@ html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5
   }
   document.addEventListener('input', e => { if (e.target && e.target.id === 'faq-q') faqRender(); });
   document.addEventListener('ft-faq', faqRender);
-  /* Menu Outils : rubrique « Autres outils », sous « Ma journée » */
+  /* Menu : rubrique « Autres outils », sous « Ma journée » */
   if (typeof renderBurgerTabs === 'function') {
     const _rb = renderBurgerTabs;
     renderBurgerTabs = function () {
@@ -16544,7 +16535,7 @@ html.theme-light .rg-up{background:#f8fafc;border-color:#e2e8f0}html.theme-light
   setTimeout(sync, 500);
 })();
 </script>
-<!-- ================= Extension 37 : outils favoris dans le Menu Outils (par conseiller) ================= -->
+<!-- ================= Extension 37 : outils favoris dans le Menu (par conseiller) ================= -->
 <style>
 #burger-tabs-list button[onclick] .mh-st,#ft-adm-sec button .mh-st{margin-left:auto;align-self:center;flex:none;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:#475569;cursor:pointer}
 #burger-tabs-list .mh-st svg{width:15px;height:15px}
@@ -16663,13 +16654,16 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.16', date: '13/11/2026', items: [
+      '« Menu Outils » s’appelle désormais « Menu ».'
+    ] },
     { v: '2026-11-13.13', date: '13/11/2026', items: [
       'Mon compte : menu du compte (rond avec vos initiales) → « Mon compte » pour modifier votre prénom, votre nom, votre adresse e-mail ou votre mot de passe.',
       'Création de compte : le prénom et le nom sont demandés. Si votre compte n’a pas encore de nom, le site vous propose de le compléter.'
     ] },
     { v: '2026-11-13.12', date: '13/11/2026', items: [
-      'Accueil : « Mes outils » devient « Mes favoris ». Vous pouvez y cocher des outils et aussi des mails (CVM) : un clic ouvre directement le mail.',
-      'Menu Outils : une étoile à côté de chaque outil le place dans « Favoris du menu », en haut sous CVM Direct (il quitte sa rubrique ; un nouveau clic l’y remet). Ces favoris sont indépendants de ceux de l’accueil et propres à votre compte.'
+      'Accueil : « Mes outils » devient « Mes favoris ». Vous pouvez y cocher vos outils, y compris CVM Direct.',
+      'Menu : une étoile à côté de chaque outil le place dans « Favoris du menu », en haut sous CVM Direct (il quitte sa rubrique ; un nouveau clic l’y remet). Ces favoris sont indépendants de ceux de l’accueil et propres à votre compte.'
     ] },
     { v: '2026-11-13.10', date: '13/11/2026', items: [
       'Accueil, « Liens utiles » : maintenez un lien appuyé une demi-seconde (doigt ou souris) ; les liens se mettent à trembler comme sur iPhone et vous pouvez le faire glisser à sa nouvelle place. La roue crantée donne accès aux mêmes réglages. « Terminer » pour sortir. L’ordre est enregistré dans votre compte.'
@@ -16697,7 +16691,7 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
       'Démission : la fiche détaillée d’un motif (ex. reconversion professionnelle) reste lisible en entier, délais et point de vigilance l’un sous l’autre.'
     ] },
     { v: '2026-11-12.49', date: '12/11/2026', items: [
-      'Nouvelle page « Questions fréquentes » (menu Outils, « Autres outils ») : installer l’appli, compte, données, modèles communs, fiches PDF.',
+      'Nouvelle page « Questions fréquentes » (menu, « Autres outils ») : installer l’appli, compte, données, modèles communs, fiches PDF.',
       'Bouton « Suggérer une amélioration » (FAQ, recherche Ctrl+K, menu « ⋯ » du téléphone) : idées, erreurs et questions arrivent directement à l’administrateur.',
       'Avec un compte, l’ouverture des outils et des modèles est désormais comptabilisée pour améliorer le site (aucune donnée d’allocataire).'
     ] },
@@ -16787,7 +16781,7 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
       'Fond de page : dégradé de bleu plus marqué sur tout le site, en thème sombre comme en thème clair.'
     ] },
     { v: '2026-11-12.22', date: '12/11/2026', items: [
-      'La pension d’invalidité rejoint la rubrique « Ouverture de droits » (menu Outils, onglets de la rubrique et accueil).'
+      'La pension d’invalidité rejoint la rubrique « Ouverture de droits » (menu, onglets de la rubrique et accueil).'
     ] },
     { v: '2026-11-12.21', date: '12/11/2026', items: [
       'Pension d’invalidité : le calcul du cumul avec l’ARE s’ouvre en premier, avant les règles.'
@@ -16804,31 +16798,31 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
       'Barre du haut : le bouton « Mes données : sauvegarde et confidentialité » n’apparaît plus que sur la page des mails (CVM Direct).'
     ] },
     { v: '2026-11-12.17', date: '12/11/2026', items: [
-      'Accueil : la carte « Références et calculs » est retirée (toujours accessible par le menu Outils).',
+      'Accueil : la carte « Références et calculs » est retirée (toujours accessible par le menu).',
       'Accueil : nouveaux boutons de simulateurs, plus modernes : icône colorée, effet au survol et flèche d’accès.'
     ] },
     { v: '2026-11-12.16', date: '12/11/2026', items: [
       'Calculatrice agrandie : grandes touches et affichage plus lisible.',
       'Conditions et ARE : le référentiel affiche bien les 6 conditions (affiliation, privation involontaire, inscription dans les 12 mois, recherche active, âge, aptitude et résidence).',
       'Accueil plus sobre : une carte par rubrique avec les outils sous forme de boutons courts, sans les sections en double.',
-      'Menu Outils élargi de 2 cm.',
+      'Menu élargi de 2 cm.',
       'Sources et vérification : petites cartes avec le titre et le statut ; le détail et la source s’affichent au survol de la souris.'
     ] },
     { v: '2026-11-12.15', date: '12/11/2026', items: [
       'Accueil : le bouton « Nouveau dossier » passe en bleu.',
-      'Les onglets en haut de chaque rubrique sont classés par ordre alphabétique, comme le menu Outils.'
+      'Les onglets en haut de chaque rubrique sont classés par ordre alphabétique, comme le menu.'
     ] },
     { v: '2026-11-12.14', date: '12/11/2026', items: [
-      'Administrateur : un crayon à côté de chaque outil et de chaque rubrique du menu Outils permet de les renommer directement.'
+      'Administrateur : un crayon à côté de chaque outil et de chaque rubrique du menu permet de les renommer directement.'
     ] },
     { v: '2026-11-12.13', date: '12/11/2026', items: [
       'Accueil : la carte « Derniers outils » est remplacée par « Liens utiles ». Le bouton « Gérer » permet d’ajouter, de modifier ou de supprimer vos liens (Unédic déjà présent). Les liens sont enregistrés dans votre compte.'
     ] },
     { v: '2026-11-12.12', date: '12/11/2026', items: [
-      'Administrateur : les noms des outils et des rubriques du menu (par exemple « Parcours dossier ») peuvent être renommés depuis le menu Outils, avec le crayon à côté de chaque nom. Les nouveaux noms s’affichent chez tous les conseillers connectés.'
+      'Administrateur : les noms des outils et des rubriques du menu (par exemple « Parcours dossier ») peuvent être renommés depuis le menu, avec le crayon à côté de chaque nom. Les nouveaux noms s’affichent chez tous les conseillers connectés.'
     ] },
     { v: '2026-11-12.11', date: '12/11/2026', items: [
-      'Menu Outils : les outils de chaque rubrique sont classés par ordre alphabétique, et « Situations particulières » passe au-dessus de « Fin de droits et passages ». L’accueil suit le même ordre.',
+      'Menu : les outils de chaque rubrique sont classés par ordre alphabétique, et « Situations particulières » passe au-dessus de « Fin de droits et passages ». L’accueil suit le même ordre.',
       'Mails : le crayon (renommer) et la corbeille (supprimer) de chaque catégorie sont maintenant toujours visibles dans le volet des catégories.'
     ] },
     { v: '2026-11-12.10', date: '12/11/2026', items: [
