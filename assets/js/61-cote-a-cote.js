@@ -19,8 +19,30 @@
     /* la vue active ne doit jamais rester cachée par erreur */
     h.classList.toggle('ft-split', !!ok);
     if (ok) { partner.el.classList.remove('hidden'); partner.el.classList.add('ft-split-b'); watch(partner.el); }
-    bar(ok); btnState();
+    bar(ok); btnState(); setTimeout(fit, 60);
   }
+  /* Mises en page à colonnes trop étroites dans une moitié d’écran : on les passe en une colonne */
+  function fit() {
+    const h = host(); if (!h) return;
+    const on = h.classList.contains('ft-split');
+    document.querySelectorAll('.ft-sp1,.ft-spcol').forEach(e => { if (!on || !e.closest('.ft-split-host.ft-split')) e.classList.remove('ft-sp1', 'ft-spcol'); });
+    if (!on) return;
+    h.querySelectorAll(':scope > [id^="view-"]:not(.hidden)').forEach(v => {
+      v.querySelectorAll('div,section,form,main,aside').forEach(e => {
+        if (e.classList.contains('ft-sp1') || e.classList.contains('ft-spcol')) return;
+        const r = e.getBoundingClientRect(); if (r.width < 120) return;
+        const s = getComputedStyle(e);
+        if (s.display === 'grid') {
+          const t = s.gridTemplateColumns.split(' ').map(parseFloat).filter(x => !isNaN(x));
+          if (t.length > 1 && Math.min(...t) < 250) e.classList.add('ft-sp1');
+        } else if (s.display === 'flex' && s.flexDirection === 'row' && s.flexWrap === 'nowrap' && !e.closest('#view-cvm')) {
+          const k = [...e.children].filter(x => x.getBoundingClientRect().width > 0);
+          if (k.length > 1 && k.some(x => x.getBoundingClientRect().width < 170 && x.textContent.trim().length > 120)) e.classList.add('ft-spcol');
+        }
+      });
+    });
+  }
+  if (window.ftOnDom) window.ftOnDom(() => { if (partner) fit(); });
   /* certains outils se cachent eux-mêmes un instant après un changement d’onglet : on garde le second outil visible */
   let mo = null, watched = null;
   function watch(el) {

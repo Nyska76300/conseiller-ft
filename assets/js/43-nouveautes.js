@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.55', date: '13/11/2026', items: [
+      'Côte à côte optimisé : chaque outil se met en page selon sa demi-largeur (colonnes empilées, plus rien de coupé). CVM Direct : catégories en icônes, liste resserrée, le mail garde la place.'
+    ] },
     { v: '2026-11-13.54', date: '13/11/2026', items: [
       'Deux outils côte à côte sur grand écran : bouton « À côté » sous le titre (ou Ctrl+K « côte à côte »). Le second outil reste ouvert quand vous changez d’outil à gauche.',
       'Thèmes de couleurs : textes et boutons aussi lisibles que dans le thème Océan, en clair comme en sombre.',

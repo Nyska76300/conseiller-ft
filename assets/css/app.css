@@ -1551,3 +1551,31 @@ html.theme-light #ft-split-bar,html.theme-light #ft-split-pick .sp-box{backgroun
 html.theme-light #ft-split-bar b{color:#0f172a}
 html.theme-light #ft-split-bar button,html.theme-light #ft-split-pick .sp-list button,html.theme-light #ft-split-pick input{background:#f8fafc;border-color:#cbd5e1;color:#0f172a}
 @media (min-width:1280px) and (max-width:1700px){.ft-split-row>button:first-child>span.md\:inline,.ft-split-row>button:first-child>span.text-slate-500{display:none!important}}
+/* Côte à côte : chaque outil se met en page selon SA largeur (et non celle de l’écran) */
+.ft-split-host.ft-split>[id^="view-"]:not(.hidden){container-type:inline-size;container-name:ftsplit;overflow-x:hidden}
+@container ftsplit (max-width:980px){
+  [class*="lg:grid-cols-"],[class*="xl:grid-cols-"]{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  [class*="lg:col-span-"],[class*="xl:col-span-"]{grid-column:auto!important}
+  [class*="lg:flex-row"],[class*="xl:flex-row"]{flex-direction:column!important}
+  [class*="lg:w-"],[class*="xl:w-"]{width:100%!important}
+  [class*="lg:sticky"],[class*="xl:sticky"]{position:static!important}
+}
+@container ftsplit (max-width:760px){
+  [class*="md:grid-cols-"],[class*="lg:grid-cols-"],[class*="xl:grid-cols-"],[class*="sm:grid-cols-3"],[class*="sm:grid-cols-4"]{grid-template-columns:minmax(0,1fr)!important}
+  [class*="md:col-span-"]{grid-column:auto!important}
+  [class*="md:flex-row"]{flex-direction:column!important}
+  [class*="md:w-"]{width:100%!important}
+  [class*="md:sticky"]{position:static!important}
+}
+/* CVM Direct à moitié d’écran : catégories en icônes, liste des mails resserrée, le mail garde la place restante */
+.ft-split-host.ft-split #view-cvm #left-nav-menu{width:56px!important;min-width:56px!important}
+.ft-split-host.ft-split #view-cvm #left-nav-menu .sidebar-label,.ft-split-host.ft-split #view-cvm #sidebar-header-title,.ft-split-host.ft-split #view-cvm #sidebar-reset-btn,.ft-split-host.ft-split #view-cvm #left-nav-menu .cat-sort-btn{display:none!important}
+.ft-split-host.ft-split #view-cvm aside.tpl-col{width:clamp(200px,32cqw,260px)!important;min-width:0!important;flex:0 0 auto!important}
+.ft-split-host.ft-split #view-cvm>main{min-width:0!important;flex:1 1 0!important}
+.ft-split-host.ft-split .ft-sp1{grid-template-columns:minmax(0,1fr)!important}
+.ft-split-host.ft-split .ft-sp1>*{grid-column:auto!important;grid-row:auto!important}
+.ft-split-host.ft-split .ft-spcol{flex-direction:column!important}
+.ft-split-host.ft-split .ft-spcol>*{width:auto!important;max-width:none!important}
+.ft-split-host.ft-split #view-cvm aside.tpl-col{width:clamp(220px,38cqw,290px)!important}
+.ft-split-host.ft-split #view-cvm #templates-list button>div:first-child>div:first-child:has(svg){display:none!important}
+@media (max-width:1439px){#ft-split-btn span{display:none}#ft-split-btn{padding:2px 6px}}
