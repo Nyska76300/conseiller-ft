@@ -2,7 +2,8 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
-    { v: '2026-11-13.49', date: '13/11/2026', items: [
+    { v: '2026-11-13.50', date: '13/11/2026', items: [
+      'Le mode entretien (Ctrl+J) est retiré.',
       'Affichage allégé appliqué pour tous : défilement fluide partout.',
       'Nouvel accueil : à gauche dossier, liens et repères ; au centre les outils ; à droite Mes favoris, CVM favoris et Quoi de neuf.',
       'Accueil épuré : plus de tuiles étirées avec du vide, la tuile « Reprendre » est retirée.',

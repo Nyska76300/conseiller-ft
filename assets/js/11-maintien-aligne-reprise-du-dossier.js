@@ -1,4 +1,4 @@
-/* ================= Extension 16 : Maintien aligné, reprise du dossier, mails associés, export complet, mode entretien ================= */
+/* ================= Extension 16 : Maintien aligné, reprise du dossier, mails associés, export complet ================= */
 (function () {
   'use strict';
   const $ = id => document.getElementById(id);
@@ -114,18 +114,12 @@
     return _imp(input, mode);
   };
 
-  /* ---------- 5. Mode entretien et raccourcis ---------- */
-  function entretien(on) {
-    const h = document.documentElement; const v = on == null ? !h.classList.contains('entretien') : !!on;
-    h.classList.toggle('entretien', v);
-    try { safeLS.setItem('ft_entretien', v ? '1' : '0'); } catch (e) {}
-    showToast(v ? 'Mode entretien activé : affichage resserré' : 'Mode entretien désactivé', 'info');
-  }
-  try { if (safeLS.getItem('ft_entretien') === '1') document.documentElement.classList.add('entretien'); } catch (e) {}
-  window.ftEntretien = entretien;
+  /* ---------- 5. Raccourcis ---------- */
+  /* mode entretien retiré : on efface l’ancien réglage */
+  try { safeLS.removeItem ? safeLS.removeItem('ft_entretien') : localStorage.removeItem('ft_entretien'); } catch (e) {}
+  document.documentElement.classList.remove('entretien');
   window.FT_ACTIONS = window.FT_ACTIONS || [];
   window.FT_ACTIONS.push(
-    { t: 'Mode entretien', s: 'Affichage resserré pendant un appel (Ctrl+J)', kw: 'compact appel resserré', run: () => entretien() },
     { t: 'Sauvegarder mes données', s: 'Télécharger modèles, historique et réglages', kw: 'export sauvegarde backup', run: () => ftExportData() },
     { t: 'Copier la fiche de synthèse', s: 'Dernier dossier calculé', kw: 'dossier fiche copier', when: () => !!prof(), run: () => ftFpCopy() },
     { t: 'Imprimer cet écran', s: 'Impression ou PDF', kw: 'pdf imprimer', run: () => window.print() }
@@ -133,7 +127,6 @@
   const HUBKEYS = { '1': 'hub:ouverture', '2': 'hub:ans', '3': 'hub:fin', '4': 'hub:situations', '5': 'hub:calculs', '6': 'jour', '0': 'home', c: 'cvm', j: 'jour' };
   window.addEventListener('keydown', e => {
     const inField = /INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || '');
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'j') { e.preventDefault(); entretien(); return; }
     if (e.altKey && !e.ctrlKey && !e.metaKey && HUBKEYS[e.key.toLowerCase()] && !(inField && e.key.length === 1 && /[a-z]/i.test(e.key))) { e.preventDefault(); switchNavTab(HUBKEYS[e.key.toLowerCase()]); }
   }, true);
 

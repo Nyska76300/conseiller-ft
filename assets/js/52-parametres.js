@@ -106,7 +106,7 @@
         row('Contraste renforcé', 'Textes et bordures plus marqués', yn('hc', a.hc)) +
         row('Lecture facilitée', 'Lettres et lignes plus espacées', yn('easy', P.easy)) +
         row('Réduire les animations', 'Pas d’effets de mouvement ni de fondu', yn('motion', P.motion)) +
-        row('Mode entretien', 'Affichage resserré pour les rendez-vous (Ctrl+J)', yn('entretien', document.documentElement.classList.contains('entretien'))) + '</section>' +
+        '</section>' +
       '<section><h3>Démarrage</h3>' +
         row('Page à l’ouverture', '', seg('start', P.start, [['home', 'Accueil'], ['cvm', 'Mails'], ['last', 'Dernier outil']])) + '</section>' +
       '<section><h3>Notifications</h3>' +
@@ -144,7 +144,6 @@
       if (k === 'theme') { P.themeMode = (v === 'system' || v === 'hours') ? v : ''; save(); autoTheme(true); if (!P.themeMode) { try { applyTheme(v); } catch (er) {} } }
       else if (k === 'ts') window.ftA11y && window.ftA11y('ts', +v);
       else if (k === 'hc') window.ftA11y && window.ftA11y('hc', v === '1');
-      else if (k === 'entretien') { try { ftEntretien(v === '1'); } catch (er) {} }
       else { P[k] = (k === 'start' || k === 'pal' || k === 'lite') ? v : v === '1'; save(); apply(); if (k === 'start' && v !== 'home') toast(v === 'cvm' ? 'Le site s’ouvrira sur la page Mails' : 'Le site s’ouvrira sur le dernier outil utilisé', 'success'); }
       render(); return;
     }
