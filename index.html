@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.9">
+  <meta name="ft-version" content="2026-11-13.10">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -13383,11 +13383,12 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
   function linksHtml() {
     const L = getLinks();
     let rows = L.map((l, i) => lkForm && lkForm.i === i ? formHtml(l) :
-      '<div class="lk-row"><a class="lk-a" href="' + esc(normUrl(l.u)) + '" target="_blank" rel="noopener noreferrer"><span class="lk-ico">' + LK_ICO + '</span><span class="lk-t"><b>' + esc(l.t || host(l.u)) + '</b><small>' + esc(host(normUrl(l.u))) + '</small></span></a>' +
+      '<div class="lk-row" data-i="' + i + '"><a class="lk-a" draggable="false" href="' + esc(normUrl(l.u)) + '" target="_blank" rel="noopener noreferrer"><span class="lk-ico">' + LK_ICO + '</span><span class="lk-t"><b>' + esc(l.t || host(l.u)) + '</b><small>' + esc(host(normUrl(l.u))) + '</small></span></a>' +
       (lkEdit ? '<button type="button" class="lk-btn" data-lk="edit" data-i="' + i + '" aria-label="Modifier ' + esc(l.t) + '" title="Modifier"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button type="button" class="lk-btn lk-del" data-lk="del" data-i="' + i + '" aria-label="Supprimer ' + esc(l.t) + '" title="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>' : '') + '</div>').join('');
     if (!L.length && !lkForm) rows = '<p class="lk-empty">Aucun lien. Cliquez sur « Gérer » pour en ajouter.</p>';
     if (lkForm && lkForm.i === -1) rows += formHtml({ t: '', u: '' });
-    return '<section class="fh-card fh-links" aria-label="Liens utiles"><div class="fh-dh"><span class="fh-dico">' + LK_ICO + '</span><h2>Liens utiles</h2><button type="button" class="lk-manage" data-lk="toggle">' + (lkEdit ? 'Terminer' : 'Gérer') + '</button></div>' +
+    return '<section class="fh-card fh-links' + (lkEdit && !lkForm ? ' lk-jiggle' : '') + '" aria-label="Liens utiles"><div class="fh-dh"><span class="fh-dico">' + LK_ICO + '</span><h2>Liens utiles</h2><button type="button" class="lk-manage" data-lk="toggle">' + (lkEdit ? 'Terminer' : 'Gérer') + '</button></div>' +
+      (lkEdit && !lkForm && L.length > 1 ? '<p class="lk-hint">Faites glisser un lien pour changer l’ordre.</p>' : (!lkEdit && L.length > 1 ? '<p class="lk-hint lk-hint2">Astuce : maintenez un lien appuyé pour le déplacer.</p>' : '')) +
       '<div class="lk-list">' + rows + '</div>' + (lkEdit && !lkForm ? '<button type="button" class="fh-btn2 lk-add" data-lk="add">+ Ajouter un lien</button>' : '') + '</section>';
   }
   function formHtml(l) {
@@ -13414,6 +13415,62 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
     setLinks(L); lkForm = null; renderLinks();
     try { showToast('Lien enregistré', 'success'); } catch (er) {}
   });
+
+  /* ---------- Déplacement des liens « façon Apple » : appui long → mode édition qui tremble, puis glisser-déposer ---------- */
+  let lp = null, drag = null, eatClick = false;
+  const rowsNow = () => [...document.querySelectorAll('#view-home .fh-links .lk-row')];
+  function startDrag(row, y) {
+    const rows = rowsNow(); if (rows.length < 2) return;
+    const i = rows.indexOf(row); if (i < 0) return;
+    const rects = rows.map(r => r.getBoundingClientRect());
+    const step = rects.length > 1 ? rects[1].top - rects[0].top : rects[0].height + 6;
+    drag = { rows, i, to: i, y0: y, rects, step };
+    row.classList.add('lk-drag');
+    document.querySelector('#view-home .fh-links').classList.add('lk-dragging');
+    try { navigator.vibrate && navigator.vibrate(8); } catch (e) {}
+  }
+  function moveDrag(y) {
+    if (!drag) return;
+    const d = drag, dy = y - d.y0, n = d.rows.length;
+    const minDy = -d.i * d.step, maxDy = (n - 1 - d.i) * d.step;
+    const cy = Math.max(minDy - d.step * .4, Math.min(maxDy + d.step * .4, dy));
+    d.rows[d.i].style.transform = 'translateY(' + cy + 'px) scale(1.03)';
+    const to = Math.max(0, Math.min(n - 1, d.i + Math.round(cy / d.step)));
+    if (to !== d.to) { d.to = to; try { navigator.vibrate && navigator.vibrate(4); } catch (e) {} }
+    d.rows.forEach((r, k) => { if (k === d.i) return; let sh = 0; if (d.i < to && k > d.i && k <= to) sh = -d.step; if (d.i > to && k < d.i && k >= to) sh = d.step; r.style.transform = sh ? 'translateY(' + sh + 'px)' : ''; });
+  }
+  function endDrag() {
+    if (!drag) return;
+    const d = drag; drag = null;
+    if (d.to !== d.i) { const L = getLinks(); const [m] = L.splice(d.i, 1); L.splice(d.to, 0, m); setLinks(L); }
+    renderLinks();
+  }
+  document.addEventListener('pointerdown', e => {
+    const row = e.target.closest && e.target.closest('#view-home .fh-links .lk-row');
+    if (!row || e.button > 0 || e.target.closest('.lk-btn')) return;
+    const sec = row.closest('.fh-links');
+    if (sec.classList.contains('lk-jiggle')) { e.preventDefault(); eatClick = true; startDrag(row, e.clientY); return; }
+    /* hors mode édition : appui long de 0,5 s */
+    const i = +row.dataset.i, x0 = e.clientX, y0 = e.clientY;
+    lp = { x0, y0, t: setTimeout(() => {
+      lp = null; eatClick = true; lkEdit = true; lkForm = null; renderLinks();
+      const r = document.querySelector('#view-home .fh-links .lk-row[data-i="' + i + '"]'); if (r) startDrag(r, y0);
+    }, 480) };
+  }, true);
+  document.addEventListener('pointermove', e => {
+    if (lp && (Math.abs(e.clientX - lp.x0) > 8 || Math.abs(e.clientY - lp.y0) > 8)) { clearTimeout(lp.t); lp = null; }
+    if (drag) { e.preventDefault(); moveDrag(e.clientY); }
+  }, { passive: false, capture: true });
+  const up = () => { if (lp) { clearTimeout(lp.t); lp = null; } if (drag) endDrag(); };
+  document.addEventListener('pointerup', up, true);
+  document.addEventListener('pointercancel', up, true);
+  document.addEventListener('touchmove', e => { if (drag) e.preventDefault(); }, { passive: false });
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('#view-home .fh-links .lk-a'); if (!a) return;
+    if (eatClick || a.closest('.lk-jiggle')) { e.preventDefault(); e.stopPropagation(); }
+    eatClick = false;
+  }, true);
+  document.addEventListener('contextmenu', e => { if (e.target.closest && e.target.closest('#view-home .fh-links .lk-row')) e.preventDefault(); });
 
   /* Repères de l’accueil en 4 blocs : ouverture, allocation, différés, cumul et autres */
   function repHtml() {
@@ -15145,6 +15202,20 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+.fh-links .lk-row{transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.fh-links .lk-a{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.lk-jiggle .lk-row{touch-action:none;cursor:grab}
+.lk-jiggle .lk-row:nth-child(odd) .lk-a{animation:lkJig .26s ease-in-out infinite alternate}
+.lk-jiggle .lk-row:nth-child(even) .lk-a{animation:lkJig .26s ease-in-out -.13s infinite alternate-reverse}
+@keyframes lkJig{from{transform:rotate(-.7deg)}to{transform:rotate(.7deg)}}
+.lk-dragging .lk-row .lk-a{animation:none}
+.fh-links .lk-row.lk-drag{transition:none;z-index:5;position:relative;cursor:grabbing}
+.fh-links .lk-row.lk-drag .lk-a{box-shadow:0 14px 30px rgba(0,0,0,.45);border-color:#67e8f9;background:rgba(15,23,42,.98)}
+.lk-hint{margin:-2px 0 0;font-size:11.5px;color:#93c5fd}
+.lk-hint2{color:#64748b}
+@media (prefers-reduced-motion:reduce){.lk-jiggle .lk-row .lk-a{animation:none!important}}
+html.theme-light .fh-links .lk-row.lk-drag .lk-a{background:#fff}
+html.theme-light .lk-hint{color:#0369a1}html.theme-light .lk-hint2{color:#94a3b8}
 .ad-first-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px}
 .ad-first-grid>div{display:flex;flex-direction:column;gap:16px;min-width:0}
 @media (max-width:1023px){.ad-first-grid{grid-template-columns:1fr}}
@@ -16377,6 +16448,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.10', date: '13/11/2026', items: [
+      'Accueil, « Liens utiles » : maintenez un lien appuyé une demi-seconde (doigt ou souris) ; les liens se mettent à trembler comme sur iPhone et vous pouvez le faire glisser à sa nouvelle place. « Terminer » pour sortir. L’ordre est enregistré dans votre compte.'
+    ] },
     { v: '2026-11-13.6', date: '13/11/2026', items: [
       'Mails (CVM) : la liste sépare « Mes modèles » et les « Modèles communs », avec un sélecteur Tous / Communs / Mes modèles et le nombre de chaque.',
       'Veille réglementaire : quand un texte officiel change un montant ou une durée, le site est mis à jour et une fenêtre vous présente le changement et ses sources.'
