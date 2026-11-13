@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.21">
+  <meta name="ft-version" content="2026-11-13.23">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -14192,7 +14192,7 @@ html.theme-light .fr-src{color:#64748b} html.theme-light .fr-src a{color:#0369a1
   const resCard = (title, ref, inner) => sec('✓', title, inner, ref).replace('bg-indigo-500/20 text-indigo-400', 'bg-cyan-500/20 text-cyan-400');
   const cols = (left, right) => '<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5"><div class="lg:col-span-6 space-y-4">' + left + '</div><div class="lg:col-span-6 space-y-4">' + right + '</div></div>';
   const mailPanel = key => '<section class="ft-mail" data-mail="' + key + '"><div class="ft-mail-h"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>Mail à l’allocataire</h3><span class="ft-mail-tag">Généré automatiquement, modifiable avant copie</span><div class="ft-mail-btns"><button type="button" class="ft-mail-copy">Copier le mail</button></div></div><div class="ft-mail-body"><textarea aria-label="Mail à l’allocataire" spellcheck="true"></textarea></div></section>';
-  const setMail = (key, txt) => { const ta = document.querySelector('.ft-mail[data-mail="' + key + '"] textarea'); if (ta && !ta.dataset.edited) ta.value = txt; };
+  const setMail = (key, txt) => { const ta = document.querySelector('.ft-mail[data-mail="' + key + '"] textarea'); if (ta && !ta.dataset.edited) { ta.value = txt; try { window.ftMailFit && window.ftMailFit(ta); } catch (e) {} } };
   document.addEventListener('input', e => { if (e.target.matches && e.target.matches('.fr-view .ft-mail textarea')) e.target.dataset.edited = '1'; });
   const U = {
     ati: 'https://www.unedic.org/indemnisation/fiches-thematiques/allocation-des-travailleurs-independants-ati',
@@ -14518,6 +14518,15 @@ html.theme-light .fr-src{color:#64748b} html.theme-light .fr-src a{color:#0369a1
   } catch (e) {}
 })();
 </script>
+<script>
+/* Hauteur automatique des mails générés : tout le texte visible, sans ascenseur interne (jusqu’à 70 % de l’écran) */
+window.ftMailFit = function (ta) {
+  if (!ta || !ta.offsetParent) return;
+  ta.style.height = 'auto';
+  ta.style.height = Math.max(140, Math.min(ta.scrollHeight + 4, Math.round(window.innerHeight * 0.7))) + 'px';
+};
+document.addEventListener('input', e => { if (e.target.matches && e.target.matches('.ft-mail textarea')) window.ftMailFit(e.target); });
+</script>
 <!-- ================= Extension 28 : mail automatique pour chaque simulateur ================= -->
 <style>
 .ft-mail{margin:18px 0 8px;padding:16px 18px;border-radius:14px;border:1px solid #24345f;background:rgba(12,24,60,.78)}
@@ -14667,7 +14676,7 @@ html.theme-light .ft-mail-btns .ft-mail-copy{color:#fff}
     { key: 'ans', tab: '3', host: () => document.querySelector('#ans-subview-sim > div') },
     { key: 'cns', tab: 'cns', split: true, show: () => !!$('cns-out'), host: () => document.querySelector('#view-cns .reg-wrap') },
     { key: 'cspSim', tab: '4', host: () => document.querySelector('#csp-subview-sim > div') },
-    { key: 'cspRec', tab: '4', host: () => document.querySelector('#csp-subview-reclass > div') },
+    { key: 'cspRec', tab: '4', host: () => document.querySelector('#csp-subview-reclass > div[class*="grid-cols"]') || document.querySelector('#csp-subview-reclass > div') },
     { key: 'droits', tab: 'droits', split: true, host: () => document.querySelector('#view-droits .reg-wrap') },
     { key: 'cfd', tab: 'cfd', host: () => $('cfd-panel') ? $('cfd-panel').parentElement : null },
     { key: 'sjr', tab: 'sjr', split: true, show: () => !!($('sj-pane-sjr') && $('sj-pane-sjr').offsetParent), host: () => document.querySelector('#view-sjr .reg-wrap') }
@@ -14675,7 +14684,15 @@ html.theme-light .ft-mail-btns .ft-mail-copy{color:#fff}
   const ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>';
   const dirty = {};
   function ensure(sp) {
-    const host = sp.host(); if (!host) return null;
+    let host = sp.host(); if (!host) return null;
+    /* Outils en deux colonnes (grille à 12 colonnes, colonne de droite collante) : le mail va sous la colonne de saisie */
+    /* (sur ordinateur ; sur téléphone il reste en bas, après les résultats) */
+    if (/grid-cols-12/.test(host.className) && host.firstElementChild && /col-span/.test(host.firstElementChild.className)) {
+      const grid = host, col = host.firstElementChild, wide = window.innerWidth >= 1024;
+      host = wide ? col : grid;
+      const other = (wide ? grid : col).querySelector(':scope > .ft-mail[data-mail="' + sp.key + '"]');
+      if (other) host.appendChild(other);
+    }
     let p = host.querySelector(':scope > .ft-mail[data-mail="' + sp.key + '"]');
     if (!p) {
       p = document.createElement('section'); p.className = 'ft-mail'; p.dataset.mail = sp.key;
@@ -14685,6 +14702,8 @@ html.theme-light .ft-mail-btns .ft-mail-copy{color:#fff}
     if (sp.split) host.classList.add('ft-split');
     return p;
   }
+  let rzT = null, rzW = window.innerWidth >= 1024;
+  window.addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(() => { const w = window.innerWidth >= 1024; if (w === rzW) return; rzW = w; SPOTS.forEach(sp => { try { ensure(sp); } catch (e) {} }); }, 200); });
   function fill(sp, force) {
     const p = ensure(sp); if (!p) return;
     p.hidden = !!(sp.show && !sp.show());
@@ -14696,6 +14715,7 @@ html.theme-light .ft-mail-btns .ft-mail-copy{color:#fff}
     let ta = body.querySelector('textarea');
     if (!ta) { body.innerHTML = '<textarea aria-label="Mail à l’allocataire" spellcheck="true"></textarea>'; ta = body.querySelector('textarea'); ta.addEventListener('input', () => { dirty[sp.key] = true; }); }
     if (ta.value !== txt) ta.value = txt;
+    try { window.ftMailFit && window.ftMailFit(ta); } catch (e) {}
     dirty[sp.key] = false; p.querySelector('.ft-mail-regen').classList.remove('is-warn'); p.querySelector('.ft-mail-copy').disabled = false;
   }
   let tmr = null;
@@ -15305,6 +15325,15 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+.ft-mail-h .ft-mail-btns{flex-wrap:wrap;justify-content:flex-end}
+.ft-mail-btns button{white-space:nowrap}
+.ft-split>.ft-mail .ft-mail-btns,.ft-mail .ft-mail-btns:only-child{margin-left:0;width:100%;justify-content:flex-start}
+.ft-split>.ft-mail .ft-mail-btns button{height:32px;padding:0 10px;font-size:12px}
+.ft-split>.ft-mail .ft-mail-btns .ft-mail-copy{margin-left:auto}
+@media (max-width:640px){.ft-mail .ft-mail-btns{margin-left:0;width:100%;justify-content:flex-start}.ft-mail-btns button{height:34px;padding:0 10px;font-size:12px}.ft-mail-btns .ft-mail-copy{margin-left:auto}}
+.ft-mail textarea{resize:vertical;overflow-y:auto}
+/* Mail généré : toujours sur toute la largeur quand l’outil est en grille à 12 colonnes */
+[class*="grid-cols-12"]>.ft-mail{grid-column:1/-1}
 /* Effet néon léger sur les icônes */
 svg.lucide,button svg,a svg,.fh-gi svg,.fh-ci svg,.fh-dico svg,.lk-ico svg,.st-who i,.fa-av{filter:drop-shadow(0 0 1.5px currentColor) drop-shadow(0 0 5px color-mix(in srgb,currentColor 45%,transparent))}
 @supports not (color: color-mix(in srgb, red 50%, blue)){svg.lucide,button svg,a svg,.fh-gi svg,.fh-ci svg,.fh-dico svg,.lk-ico svg{filter:drop-shadow(0 0 2px currentColor)}}
@@ -16702,6 +16731,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.23', date: '13/11/2026', items: [
+      'Mails générés : mise en page corrigée dans « Conditions et ARE » et la CSP (le mail s’affichait dans une colonne très étroite et passait sous les résultats). Le cadre du mail s’agrandit maintenant selon la longueur du texte, et les boutons ne se coupent plus sur deux lignes.'
+    ] },
     { v: '2026-11-13.21', date: '13/11/2026', items: [
       'Apparence : les icônes ont un léger effet néon, et l’étoile « Mes favoris » de l’accueil est dorée.'
     ] },
