@@ -2,11 +2,10 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
-    { v: '2026-11-13.45', date: '13/11/2026', items: [
-      'Site plus fluide : défilement et survol nettement allégés (moins de calculs d’ombres et de halos à chaque image).',
+    { v: '2026-11-13.46', date: '13/11/2026', items: [
+      'Site beaucoup plus fluide : une boucle cachée redessinait l’accueil et le menu plusieurs fois par seconde, c’est corrigé. Défilement et survol allégés.',
       'Affichage allégé : s’active tout seul sur un poste lent, ou à la demande dans Paramètres.',
-      'Accueil sur ordinateur : les rubriques d’outils se répartissent dans les trois colonnes, sans grand vide sur les côtés.',
-      'Personnaliser l’accueil : choisissez les tuiles affichées et leur place (bouton en bas de l’accueil).'
+      'Accueil sur ordinateur : les rubriques d’outils se répartissent dans les trois colonnes, sans grand vide sur les côtés.'
     ] },
     { v: '2026-11-13.41', date: '13/11/2026', items: [
       'Que faire si… : décrivez une situation (« reprise d’un CDD », « trop-perçu contesté »…) dans la recherche ou depuis l’accueil : le bon outil, le bon mail et le point clé s’affichent.',

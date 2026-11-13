@@ -17,7 +17,7 @@
       if (st.classList.contains('on') !== on) st.classList.toggle('on', on);
       const t = on ? 'Retirer des favoris du menu (il reprend sa place)' : 'Ajouter aux favoris du menu (il passe en haut, sous CVM Direct)';
       if (st.title !== t) { st.title = t; st.setAttribute('aria-label', t); }
-      st.dataset.id = id;
+      if (st.dataset.id !== id) st.dataset.id = id;
       /* un favori quitte sa place d’origine */
       const el = b.parentNode && b.parentNode.classList && b.parentNode.classList.contains('ft-pen-wrap') ? b.parentNode : b;
       const hide = on && (id !== 'admin' || isAdm);

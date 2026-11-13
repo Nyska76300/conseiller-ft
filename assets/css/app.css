@@ -1505,7 +1505,7 @@ html.theme-light .cp-card{background:#fff;border-color:#e2e8f0}html.theme-light 
 .ft-rp i{animation:none!important}
 .animate-pulse{animation-iteration-count:3!important}
 /* Barres toujours visibles : fond presque opaque sans flou (le flou se recalcule à chaque image du défilement) */
-header.h-14,#ft-tabbar,.adp-tabs,.hub-bar{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+header.h-14,#ft-tabbar,.adp-tabs,.hub-bar,#burger-backdrop,#sidebar-backdrop{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 /* Affichage allégé (Paramètres, ou automatique sur appareil lent) */
 html.ft-lite *,html.ft-lite *::before,html.ft-lite *::after{filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;text-shadow:none!important;transition-property:opacity,transform!important;animation-iteration-count:1!important}
 html.ft-lite .fh-card,html.ft-lite .st-kpis>*,html.ft-lite .st-tile,html.ft-lite #view-admin .rounded-xl,html.ft-lite .ag-t,html.ft-lite .qz-card,html.ft-lite .hc-row,html.ft-lite .hub-card,html.ft-lite .home-quick-card,html.ft-lite .data-card,html.ft-lite .fh-chip,html.ft-lite .fh-pin{box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 2px 4px rgba(0,0,0,.35)!important;background-image:none!important}
@@ -1514,30 +1514,3 @@ html.ft-lite .fh-chip:hover,html.ft-lite .fh-pin:hover{transform:none!important}
 /* ---------- Accueil : rubriques d’outils réparties dans les colonnes de côté ---------- */
 #view-home .fh-sum.fh-sum-side>.fh-grp .fh-chips{grid-template-columns:minmax(0,1fr)!important}
 #view-home .fh-sum-side{align-content:start}
-/* ---------- Accueil personnalisé ---------- */
-#view-home .fh-hide{display:none!important}
-.fh-custom{margin-left:auto;border:1px dashed #334155;background:transparent;color:#94a3b8;border-radius:10px;padding:6px 12px;font:600 12.5px/1.2 inherit;cursor:pointer}
-.fh-custom:hover{color:#e2e8f0;border-color:#64748b}
-html.fh-edit-on #view-home .fh-editing{outline:2px dashed color-mix(in srgb,#22d3ee 55%,transparent);outline-offset:3px;position:relative}
-html.fh-edit-on #view-home .fh-editing>:not(.fh-edtools){pointer-events:none}
-html.fh-edit-on #view-home .fh-off{opacity:.4}
-.fh-edtools{display:flex;align-items:center;gap:6px;margin:-2px 0 10px;padding:6px 8px;border-radius:10px;background:#0b1530;border:1px solid #1e3a5f;font-size:12.5px;color:#cbd5e1}
-.fh-edtools b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fh-edtools button{min-width:32px;height:30px;border-radius:8px;border:1px solid #334155;background:#111c3a;color:#e2e8f0;font:600 13px/1 inherit;cursor:pointer;padding:0 8px}
-.fh-edtools button:disabled{opacity:.35;cursor:default}
-.fh-edtools button[aria-pressed="false"]{color:#fbbf24;border-color:#78350f}
-.fh-drag{cursor:grab;font-size:18px;line-height:1;padding:0 4px;touch-action:none;user-select:none;color:#67e8f9}
-.fh-ghost{position:fixed!important;z-index:99990;pointer-events:none;opacity:.85;transform:rotate(1deg);box-shadow:0 18px 40px -10px rgba(0,0,0,.6)!important}
-.fh-dragging{opacity:.3}
-#view-home .fh-drop{box-shadow:0 -4px 0 #22d3ee!important}
-#view-home .fh-col.fh-drop{box-shadow:inset 0 -4px 0 #22d3ee!important}
-#fh-editbar{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9000;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;max-width:min(860px,calc(100vw - 24px));padding:10px 14px;border-radius:14px;background:#0b1530;border:1px solid #22d3ee;color:#e2e8f0;font-size:13px;box-shadow:0 18px 40px -12px rgba(0,0,0,.7)}
-#fh-editbar[hidden]{display:none}
-#fh-editbar>div{display:flex;gap:8px;margin-left:auto}
-#fh-editbar button{height:34px;padding:0 12px;border-radius:9px;border:1px solid #334155;background:#111c3a;color:#e2e8f0;font:600 13px/1 inherit;cursor:pointer}
-#fh-editbar button.pri{background:#0891b2;border-color:#0891b2;color:#fff}
-@media (max-width:767px){#fh-editbar{bottom:calc(72px + env(safe-area-inset-bottom))}#fh-editbar>span{font-size:12px}}
-html.theme-light .fh-edtools,html.theme-light #fh-editbar{background:#fff;border-color:#bae6fd;color:#0f172a}
-html.theme-light .fh-edtools button,html.theme-light #fh-editbar button{background:#f8fafc;border-color:#cbd5e1;color:#0f172a}
-html.theme-light #fh-editbar button.pri{background:#0891b2;color:#fff}
-html.theme-light .fh-custom{border-color:#cbd5e1;color:#475569}

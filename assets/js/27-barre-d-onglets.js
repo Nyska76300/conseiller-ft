@@ -52,7 +52,7 @@
       anchor.parentNode.insertBefore(b, anchor.nextSibling);
     }
     const tb = $('btn-team');
-    if (tb) { const adm = window.__ftIsAdmin && window.__ftIsAdmin(); tb.title = adm ? 'Publier ce modèle pour tous les conseillers' : 'Proposer ce modèle à l’équipe'; tb.setAttribute('aria-label', tb.title); }
+    if (tb) { const adm = window.__ftIsAdmin && window.__ftIsAdmin(); const t = adm ? 'Publier ce modèle pour tous les conseillers' : 'Proposer ce modèle à l’équipe'; if (tb.title !== t) { tb.title = t; tb.setAttribute('aria-label', t); } }
     if (canShare) document.querySelectorAll('.ft-mail .ft-mail-btns').forEach(g => {
       if (g.querySelector('.ft-mail-share')) return;
       const b = document.createElement('button'); b.type = 'button'; b.className = 'ft-mail-share'; b.textContent = 'Partager';

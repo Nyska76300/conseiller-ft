@@ -71,9 +71,9 @@
     if (!pins && !L) return;
     let cur = document.querySelector('#view-home .fh-hist');
     const h = html();
-    if (cur && cur.outerHTML !== h) { const t = document.createElement('div'); t.innerHTML = h; cur.replaceWith(t.firstChild); cur = document.querySelector('#view-home .fh-hist'); }
-    if (!cur) { const t = document.createElement('div'); t.innerHTML = h; cur = t.firstChild; }
-    if (window.__ftHomeCustom && window.__ftHomeCustom() && cur.isConnected) return; /* accueil personnalisé : la tuile garde sa place */
+    /* on compare au dernier contenu dessiné (pas à outerHTML, que d’autres scripts enrichissent : sinon boucle sans fin) */
+    if (cur && cur._h !== h) { const t = document.createElement('div'); t.innerHTML = h; cur.replaceWith(t.firstChild); cur = document.querySelector('#view-home .fh-hist'); cur._h = h; }
+    if (!cur) { const t = document.createElement('div'); t.innerHTML = h; cur = t.firstChild; cur._h = h; }
     if (pins) { const rem = document.getElementById('ft-rem-home'); const after = rem && rem.previousElementSibling === pins ? rem : pins; if (after.nextElementSibling !== cur) after.after(cur); }
     else if (cur.parentNode !== L) L.appendChild(cur);
   }

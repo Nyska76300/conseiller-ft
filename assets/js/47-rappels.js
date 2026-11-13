@@ -105,8 +105,7 @@
     if (!up.length || !anchor) { if (c) c.remove(); return; }
     if (!c) { c = document.createElement('section'); c.id = 'ft-rem-home'; c.className = 'rm-home'; }
     const pins = document.querySelector('#view-home .fh-pins');
-    if (window.__ftHomeCustom && window.__ftHomeCustom() && c.isConnected) { /* accueil personnalisé : la tuile garde sa place */ }
-    else if (pins && pins.nextElementSibling !== c) pins.after(c); else if (!pins && c.parentNode !== anchor.parentNode) anchor.parentNode.insertBefore(c, anchor);
+    if (pins && pins.nextElementSibling !== c) pins.after(c); else if (!pins && c.parentNode !== anchor.parentNode) anchor.parentNode.insertBefore(c, anchor);
     c.innerHTML = '<div class="rm-home-h"><span>⏰ Prochains rappels</span><button type="button" data-rh="all">Tout voir ›</button></div>' + up.map(x => '<button type="button" class="rm-home-it" data-rh="all"><b>' + esc(fmt(x.due_at)) + '</b><span>' + esc(x.body) + '</span></button>').join('');
     c.onclick = e => { if (e.target.closest('[data-rh]')) window.ftReminders(); };
   }
