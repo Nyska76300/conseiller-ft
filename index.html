@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.26">
+  <meta name="ft-version" content="2026-11-13.28">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -9409,7 +9409,7 @@ Votre conseiller France Travail
       cumul: { remun: 0.70, arce: 0.60, arretNonSalarie: 0.60, base: 30 },
       csp: { aspMin: 22.99, taux: 0.75, idrMois: 12, plafond: 0.5, primeMois: 10 },
       retenues: { csg: 0.062, crds: 0.005, assiette: 0.9825, retraiteCompl: 0.03, seuilCsgCrds: 61, seuilRc: 32.13 },
-      solidarite: { ass: 19.48, ata: 13.73, effet: '01/04/2026' },
+      solidarite: { ass: 19.48, ata: 13.73, assMayotte: 9.75, coefSeul: 70, coefCouple: 110, effet: '01/04/2026', verifie: '13/11/2026' },
       /* Paramètres des autres simulateurs (contrôlés par la veille hebdomadaire, comme le reste du barème) */
       ati: { forfait: 26.30, plancher: 19.73, forfaitMayotte: 19.73, plancherMayotte: 13.15, seuilRevenus: 10000, duree: 182, verifie: '13/10/2026' },
       rff: { plafondMensuel: 769.49, verifie: '05/10/2026' },
@@ -14237,6 +14237,57 @@ html.theme-light .fr-src{color:#64748b} html.theme-light .fr-src a{color:#0369a1
   };
 
   /* ---------- ATI ---------- */
+  /* ---------- Allocation de solidarité spécifique (ASS) et ATA ---------- */
+  window.ftAssCompute = function (p) {
+    const S = BAREME.solidarite, j = p.mayotte ? S.assMayotte : S.ass;
+    const plafond = Math.round((p.couple ? S.coefCouple : S.coefSeul) * j * 100) / 100;
+    const max = Math.round(30 * j * 100) / 100, res = Math.max(0, +p.ressources || 0);
+    let du = Math.round(Math.min(max, plafond - res) * 100) / 100;
+    const sousJour = du > 0 && du < j;
+    if (du <= 0 || sousJour) du = 0;
+    return { j, plafond, max, du, jour: Math.round(du / 30 * 100) / 100, tauxPlein: res <= plafond - max, sousJour, seuilPlein: Math.round((plafond - max) * 100) / 100 };
+  };
+  function assSim() {
+    return cols(
+      sec('1', 'Fin de droits et activité antérieure', grid(
+        field('Situation au regard de l’ARE', sel('ass-are', [['fin', 'Droits ARE épuisés (ou RFF terminée)'], ['50', '50 ans ou plus, encore indemnisé : option pour l’ASS'], ['non', 'Droits ARE encore ouverts (moins de 50 ans)']])) +
+        field('Années d’activité salariée dans les 10 ans avant la fin du contrat', inp('ass-ans', 'number', 'Ex. 6', ' min="0" max="10" step="0.5" inputmode="decimal"')) +
+        field('Enfants élevés (activité interrompue pour les élever)', sel('ass-enf', [['0', 'Aucun'], ['1', '1 enfant'], ['2', '2 enfants'], ['3', '3 enfants ou plus']])) +
+        field('Recherche effective d’emploi, aptitude et résidence en France', sel('ass-rech', [['oui', 'Oui'], ['non', 'Non']]))), '5 ans sur 10') +
+      sec('2', 'Ressources du foyer', grid(
+        field('Situation familiale', sel('ass-fam', [['seul', 'Personne seule'], ['couple', 'En couple (marié, pacsé, concubin)']])) +
+        field('Lieu de résidence', sel('ass-zone', [['metro', 'Métropole et DOM'], ['mayotte', 'Mayotte']])) +
+        field('Ressources mensuelles moyennes du foyer sur 12 mois (€)', inp('ass-res', 'number', 'Ex. 900', ' min="0" step="1" inputmode="decimal"'))) +
+        note('Moyenne des 12 mois avant la demande, pour tout le foyer. Exclus : prestations familiales, aides au logement, pension alimentaire versée, allocation chômage précédemment perçue. Inclus : autres revenus du foyer, pension alimentaire reçue.'), 'Plafond = ' + BB().solidarite.coefSeul + ' ou ' + BB().solidarite.coefCouple + ' × montant journalier'),
+      '<div id="ass-res-out" class="space-y-4"></div>' + mailPanel('ass'));
+  }
+  function assRun() {
+    const zone = val('ass-zone'), r = ftAssCompute({ couple: val('ass-fam') === 'couple', ressources: num('ass-res'), mayotte: zone === 'mayotte' });
+    const req = Math.max(2, 5 - (+val('ass-enf') || 0)), ans = num('ass-ans'), has = $('ass-ans') && $('ass-ans').value !== '';
+    const are = val('ass-are');
+    const c = [
+      [are === 'non' ? 'ko' : 'ok', '1. Fin des droits à l’ARE', are === 'fin' ? 'Droits épuisés' : are === '50' ? 'Option possible à partir de 50 ans' : 'Les droits ARE doivent d’abord être épuisés'],
+      [!has ? 'wa' : ans >= req ? 'ok' : 'ko', '2. ' + req + ' ans d’activité salariée sur 10 ans', (req < 5 ? 'Réduit d’un an par enfant élevé (3 ans maximum). ' : '') + (has ? ans + ' an(s) déclaré(s)' : 'Durée à saisir')],
+      [val('ass-rech') === 'oui' ? 'ok' : 'ko', '3. Recherche d’emploi, aptitude, résidence', ''],
+      [r.du > 0 ? 'ok' : 'ko', '4. Ressources sous le plafond', 'Plafond ' + eur(r.plafond) + ' par mois' + (r.sousJour ? ' : montant calculé inférieur au montant journalier, non versé' : '')]
+    ];
+    const ko = c.some(x => x[0] === 'ko'), wa = c.some(x => x[0] === 'wa');
+    $('ass-res-out').innerHTML = verdict(ko ? 'ko' : wa ? 'wa' : 'ok', ko ? 'ASS non attribuable' : wa ? 'À confirmer' : r.tauxPlein ? 'Taux plein' : 'Taux réduit', ko ? 'CONDITIONS DE L’ASS NON REMPLIES' : wa ? 'ÉLIGIBILITÉ À CONFIRMER' : 'ALLOCATION DE SOLIDARITÉ SPÉCIFIQUE', ko ? 'Au moins une condition manque : voir le détail ci-dessous.' : 'Attribuée par périodes de 6 mois renouvelables, à demander dans l’espace personnel.', 'Montants au ' + BB().solidarite.effet) +
+      sec('✓', 'Conditions', conds(c.map(x => chk(x[0], x[1], x[2]))), 'France Travail') +
+      sec('€', 'Montant de l’ASS', tiles([['ASS mensuelle (30 j)', eur(r.du), r.tauxPlein ? 'Taux plein' : r.du ? 'Plafond − ressources' : 'Non versée', 'text-cyan-300'], ['Montant journalier', eur(r.du ? r.jour : 0), 'Taux plein : ' + eur(r.j), 'text-white']]) +
+        rows([['Plafond de ressources du foyer', eur(r.plafond)], ['Taux plein si ressources jusqu’à', eur(r.seuilPlein)], ['Ressources déclarées', eur(num('ass-res'))], ['Allocation versée', eur(r.du), 'text-emerald-400']]) +
+        note('L’ASS est différentielle : plafond − ressources, sans dépasser 30 × ' + eur(r.j) + '. Non versée si le résultat est inférieur au montant journalier. Non imposable.'), zone === 'mayotte' ? 'Mayotte' : 'Métropole et DOM');
+    setMail('ass', ko ? '' : 'Votre demande d’allocation de solidarité spécifique (ASS) a été étudiée.\n\nAu vu des ressources déclarées pour votre foyer (' + eur(num('ass-res')) + ' par mois en moyenne), votre allocation s’élèverait à ' + eur(r.du) + ' pour un mois de 30 jours' + (r.tauxPlein ? ', soit le taux plein' : '') + '.\n\nL’ASS est attribuée pour 6 mois, renouvelables. Pensez à faire votre demande de renouvellement depuis votre espace personnel, environ un mois avant la fin de la période.\n\nSi vous reprenez une activité, vous pouvez cumuler intégralement votre salaire et l’ASS pendant 3 mois (tout mois travaillé, même partiellement, compte). Au-delà, si l’activité se poursuit, le versement de l’ASS s’interrompt et vous pourrez vous orienter vers la prime d’activité auprès de la CAF ou de la MSA.\n\nPensez à déclarer tout changement de situation ou de ressources.');
+  }
+  function assRegles() {
+    const S = BB().solidarite;
+    return cols(
+      sec('1', 'Conditions d’attribution', '<ul class="fr-ul"><li>Avoir <b>épuisé ses droits à l’ARE</b> (ou à la RFF). À partir de <b>50 ans</b>, un allocataire de l’ARE peut opter pour l’ASS avant la fin de ses droits.</li><li><b>5 ans d’activité salariée</b> (temps plein ou partiel) dans les <b>10 ans</b> précédant la fin du dernier contrat ; <b>réduits d’1 an par enfant</b> élevé, dans la limite de 3 ans. Service national et formation professionnelle comptent.</li><li>Être apte au travail, rechercher effectivement un emploi et résider en France.</li><li>Ressources du foyer sous le plafond.</li></ul>', 'service-public.fr') +
+      sec('2', 'Montant et plafonds au ' + S.effet, '<ul class="fr-ul"><li>Montant journalier : <b>' + eur(S.ass) + '</b>, soit <b>' + eur(30 * S.ass) + '</b> pour 30 jours (' + eur(S.assMayotte) + ' par jour à Mayotte).</li><li>Plafond de ressources : <b>' + eur(S.coefSeul * S.ass) + '</b> par mois pour une personne seule (' + S.coefSeul + ' × montant journalier), <b>' + eur(S.coefCouple * S.ass) + '</b> pour un couple (' + S.coefCouple + ' ×).</li><li>Montant versé = plafond − ressources mensuelles, dans la limite du taux plein ; non versé si le résultat est inférieur au montant journalier.</li><li>Ressources : moyenne des 12 mois avant la demande, pour tout le foyer ; prestations familiales, aides au logement et pension alimentaire versée exclues.</li></ul>', 'Décret 2026-219'),
+      sec('3', 'Durée, renouvellement et cumul', '<ul class="fr-ul"><li>Attribuée par <b>périodes de 6 mois</b>, renouvelables sans limite tant que les conditions sont remplies ; renouvellement dans l’espace personnel.</li><li>Reprise d’activité : <b>cumul intégral pendant 3 mois</b>, consécutifs ou non ; tout mois civil travaillé, même partiellement, est décompté. Si l’activité se poursuit ensuite, l’ASS est interrompue (relais possible par la prime d’activité). Nouvelle période de cumul après 3 mois civils consécutifs sans activité.</li><li>Cumul ASS et AAH : il prend fin le <b>1er janvier 2027</b> pour les derniers bénéficiaires concernés.</li></ul>', 'Décret 2017-826') +
+      sec('4', 'Allocation temporaire d’attente (ATA)', '<ul class="fr-ul"><li><b>Plus aucune ouverture de droit depuis le 1er septembre 2017.</b> Seules les personnes qui la percevaient à cette date continuent à la recevoir, jusqu’à expiration de leurs droits.</li><li>Montant journalier au ' + S.effet + ' : <b>' + eur(S.ata) + '</b>, soit ' + eur(30 * S.ata) + ' pour 30 jours.</li><li>Pour les demandeurs d’asile, l’allocation applicable est l’ADA, versée par l’OFII.</li></ul>', 'France Travail') +
+      '<div class="fr-src">Sources : ' + src('France Travail : ASS', 'https://www.francetravail.fr/candidat/mes-droits-aux-aides-et-allocati/aides-financieres-et-autres-allo/autres-allocations/lallocation-de-solidarite-specif.html') + ' · ' + src('service-public.fr F12484', 'https://www.service-public.gouv.fr/particuliers/vosdroits/F12484') + ' · ' + src('France Travail : ATA', 'https://www.francetravail.fr/candidat/mes-droits-aux-aides-et-allocati/aides-financieres-et-autres-allo/autres-allocations/lallocation-temporaire-dattente.html') + '</div>');
+  }
   function atiSim() {
     return cols(
       sec('1', 'Revenus de l’activité perdue', grid(field('Revenus déclarés, année N-1 (€)', inp('ati-n1', 'number', 'Ex. 12000', ' min="0" step="1" inputmode="decimal"')) + field('Revenus déclarés, année N-2 (€)', inp('ati-n2', 'number', 'Ex. 9000', ' min="0" step="1" inputmode="decimal"'))), 'Seuil ' + e0(BB().ati.seuilRevenus) + '') +
@@ -14374,6 +14425,7 @@ html.theme-light .fr-src{color:#64748b} html.theme-light .fr-src a{color:#0369a1
   /* ---------- Vues ---------- */
   const VIEWS = [
     { id: 'ati', hue: 'orange', title: 'Travailleurs indépendants (ATI)', sub: 'Conditions, montant de ' + eur(BB().ati.plancher) + ' à ' + eur(BB().ati.forfait) + ' par jour, ' + BB().ati.duree + ' jours, cumuls.', desc: 'Allocation des travailleurs indépendants : éligibilité et montant', badge: 'ATI', icon: 'briefcase', color: 'bg-orange-500/15 text-orange-400 border-orange-500/30', kw: 'ati travailleur indépendant liquidation redressement auto-entrepreneur micro-entreprise non salarié', path: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>', tabs: [['sim', 'Éligibilité et montant', atiSim, atiRun, ['ati-n1', 'ati-n2', 'ati-2ans', 'ati-motif', 'ati-rsa', 'ati-12m', 'ati-5a']], ['regles', 'Règles et cumuls', atiRegles]] },
+    { id: 'ass', hue: 'teal', title: 'Fin de droits : ASS et ATA', sub: 'Allocation de solidarité spécifique : conditions, plafonds, montant différentiel, renouvellement et cumul ; repères sur l’ATA.', desc: 'Allocation de solidarité spécifique et ATA : conditions et montant', badge: 'ASS', icon: 'life-buoy', color: 'bg-teal-500/15 text-teal-400 border-teal-500/30', kw: 'ass allocation de solidarité spécifique fin de droits solidarité ata allocation temporaire d attente plafond ressources 5 ans 10 ans', path: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="m4.93 4.93 4.24 4.24M14.83 9.17l4.24-4.24M14.83 14.83l4.24 4.24M9.17 14.83l-4.24 4.24"/>', tabs: [['sim', 'Éligibilité et montant', assSim, assRun, ['ass-are', 'ass-ans', 'ass-enf', 'ass-rech', 'ass-fam', 'ass-zone', 'ass-res']], ['regles', 'Règles, ATA et cumul', assRegles]] },
     { id: 'aref', hue: 'violet', title: 'Formation : AREF et RFF', sub: 'Indemnisation pendant la formation, allongement des 55 ans et plus, relais par la RFF.', desc: 'AREF, allongement seniors, rémunération de fin de formation', badge: 'AREF', icon: 'graduation-cap', color: 'bg-violet-500/15 text-violet-400 border-violet-500/30', kw: 'aref are-f formation rff fin de formation cpf stage', path: '<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>', tabs: [['sim', 'Fin des droits pendant la formation', arefSim, arefRun, ['rff-aj', 'rff-fd', 'rff-ff', 'rff-elig']], ['regles', 'Règles', arefRegles]] },
     { id: 'sanctions', hue: 'rose', title: 'Sanctions et radiations', sub: 'Suspension-remobilisation depuis juin 2025, durées, procédure, mail d’information.', desc: 'Suspension-remobilisation, durées et mail d’information', badge: 'Décret 2025', icon: 'gavel', color: 'bg-red-500/15 text-red-400 border-red-500/30', kw: 'sanction radiation suspension remobilisation manquement contrat d engagement suppression', path: '<path d="m14 13-7.5 7.5a2.1 2.1 0 0 1-3-3L11 10"/><path d="m16 16 6-6M8 8l6-6M9 7l8 8M21 11l-8-8"/>', tabs: [['regles', 'Règles et mail', sancRegles, sancRun, ['sa-motif', 'sa-part', 'sa-duree', 'sa-action']]] },
     { id: 'casparts', hue: 'sky', title: 'Frontaliers, intermittents, résidence', sub: 'Repères et textes pour les situations à règles spécifiques.', desc: 'Frontaliers, annexes 8 et 10, condition de résidence', badge: 'Repères', icon: 'globe', color: 'bg-sky-500/15 text-sky-400 border-sky-500/30', kw: 'frontalier suisse luxembourg u1 intermittent spectacle annexe 8 10 507 heures résidence étranger u2', path: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>', tabs: [['regles', 'Repères', casRegles]] }
@@ -14507,6 +14559,7 @@ html.theme-light .fr-src{color:#64748b} html.theme-light .fr-src a{color:#0369a1
   /* Sources et cas de contrôle */
   try {
     (window.FT_SOURCES || []).push(
+      ['ASS', 'Conditions, plafonds, montant', '5 ans d’activité sur 10 (−1 an par enfant, 3 max) ; ' + eur(BB().solidarite.ass) + '/j ; plafonds ' + BB().solidarite.coefSeul + ' et ' + BB().solidarite.coefCouple + ' × montant journalier ; cumul intégral 3 mois ; ATA fermée depuis 2017 (' + eur(BB().solidarite.ata) + '/j)', 'Décret 2026-219 ; service-public F12484 (vérifié le 13/11/2026)', 'ok'],
       ['ATI', 'Conditions, montant, cumuls', '2 ans d’activité, cessation involontaire, ' + e0(BB().ati.seuilRevenus) + ' de revenus, ressources < RSA ; ' + eur(BB().ati.plancher) + ' à ' + eur(BB().ati.forfait) + ' par jour, ' + BB().ati.duree + ' jours, sans différé', 'Unédic, fiche ATI (13/10/2026)', 'ok'],
       ['Formation', 'AREF et RFF', 'Plancher ' + eur(BB().are.formation) + '/j ; allongement 55 ans et plus jusqu’à 137 jours ; RFF plafonnée à ' + eur(BB().rff.plafondMensuel) + '/mois', 'Unédic, fiche ARE-F (05/10/2026) ; France Travail, RFF', 'ok'],
       ['Trop-perçus', 'Prescription et recours', '3 ans, 10 ans en cas de fraude ; indus < ' + e0(BB().indu.seuilRecup) + ' non récupérés ; remise, contestation, médiateur, contrainte', 'justice.fr ; France Travail', 'ok'],
@@ -14516,6 +14569,10 @@ html.theme-light .fr-src{color:#64748b} html.theme-light .fr-src a{color:#0369a1
   } catch (e) {}
   try {
     FT_CASES.push(
+      { n: 'ASS : personne seule sans ressources → taux plein (30 j)', run: () => ftAssCompute({ ressources: 0 }).du, get exp() { return Math.round(30 * BAREME.solidarite.ass * 100) / 100; }, d: 2 },
+      { n: 'ASS : personne seule, 1 000 € de ressources → plafond − ressources', run: () => ftAssCompute({ ressources: 1000 }).du, get exp() { return Math.round((BAREME.solidarite.coefSeul * BAREME.solidarite.ass - 1000) * 100) / 100; }, d: 2 },
+      { n: 'ASS : couple, 1 600 € de ressources → plafond − ressources', run: () => ftAssCompute({ couple: true, ressources: 1600 }).du, get exp() { return Math.min(Math.round(30 * BAREME.solidarite.ass * 100) / 100, Math.round((BAREME.solidarite.coefCouple * BAREME.solidarite.ass - 1600) * 100) / 100); }, d: 2 },
+      { n: 'ASS : reliquat inférieur au montant journalier → non versée', run: () => ftAssCompute({ ressources: BAREME.solidarite.coefSeul * BAREME.solidarite.ass - 5 }).du, exp: 0, d: 2 },
       { n: 'ATI : revenus élevés → forfait journalier', run: () => ftAtiCompute({ n1: 1e6, n2: 1e6 }).jour, get exp() { return BAREME.ati.forfait; }, d: 2 },
       { n: 'ATI : revenus 10 000 € + 6 000 € → moyenne 666,67 €/mois → 21,92 €/jour', run: () => ftAtiCompute({ n1: 10000, n2: 6000 }).jour, exp: 21.92, d: 2 },
       { n: 'ATI : plancher journalier', run: () => ftAtiCompute({ n1: 10000, n2: 0 }).jour, get exp() { return BAREME.ati.plancher; }, d: 2 },
@@ -15361,6 +15418,18 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+.st-wide2{grid-column:1/-1}
+.ev-bars{display:flex;align-items:flex-end;gap:10px;height:130px;padding-top:6px}
+.ev-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%}
+.ev-pair{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px}
+.ev-pair i{display:block;width:40%;max-width:22px;border-radius:5px 5px 2px 2px}
+.ev-pair i.a,.ev-leg i.a{background:linear-gradient(180deg,#22d3ee,#2563eb)}
+.ev-pair i.u,.ev-leg i.u{background:linear-gradient(180deg,#c084fc,#7c3aed)}
+.ev-col span{font-size:10.5px;color:#94a3b8;text-transform:capitalize}
+.ev-leg{display:flex;gap:14px;font-size:11px;color:#94a3b8}.ev-leg span{display:flex;align-items:center;gap:5px}.ev-leg i{display:inline-block;width:10px;height:10px;border-radius:3px}
+.ev-up{color:#34d399!important}.ev-down{color:#f87171!important}
+.st-list b small{font-weight:500;color:#64748b}
+#header-active-tab-name{display:inline-block;max-width:min(300px,22vw);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
 .fh-chip .fh-cl,.hub-tab,.st-tile h4{overflow-wrap:anywhere;-webkit-hyphens:auto;hyphens:auto}
 .ft-mail-h .ft-mail-btns{flex-wrap:wrap;justify-content:flex-end}
 .ft-mail-btns button{white-space:nowrap}
@@ -16091,6 +16160,34 @@ html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5
   window.ftAdminFill = function (card) {
     usage(card); users(card); ideas(card); faqAdmin(card);
   };
+  function evo(name, short) {
+    const host = $('au-evo'); if (!host) return;
+    const mk = (y, m) => y + '-' + String(m + 1).padStart(2, '0');
+    const now = new Date(), months = []; for (let i = 5; i >= 0; i--) { const d = new Date(now.getFullYear(), now.getMonth() - i, 1); months.push(mk(d.getFullYear(), d.getMonth())); }
+    const lab = k => new Date(k + '-15').toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '');
+    Promise.all([window.__ftRpc('admin_monthly_users', { months: 6 }), window.__ftRpc('admin_usage', { days: 30 }), window.__ftRpc('admin_usage', { days: 60 }), window.__ftRpc('admin_users').catch(() => [])]).then(([mu, u30, u60, users]) => {
+      const M = {}; (mu || []).forEach(r => { M[String(r.month).slice(0, 7)] = r; });
+      const ser = months.map(k => ({ k, a: +(M[k] && M[k].actions) || 0, u: +(M[k] && M[k].users) || 0 }));
+      const mxA = Math.max(1, ...ser.map(x => x.a)), mxU = Math.max(1, ...ser.map(x => x.u));
+      const bars = '<div class="ev-bars">' + ser.map(x => '<div class="ev-col" title="' + lab(x.k) + ' : ' + x.a + ' action(s), ' + x.u + ' conseiller(s) actif(s)"><div class="ev-pair"><i class="a" style="height:' + Math.max(2, Math.round(x.a / mxA * 100)) + '%"></i><i class="u" style="height:' + Math.max(2, Math.round(x.u / mxU * 100)) + '%"></i></div><span>' + lab(x.k) + '</span></div>').join('') + '</div><div class="ev-leg"><span><i class="a"></i>Actions</span><span><i class="u"></i>Conseillers actifs</span></div>';
+      const cur = ser[5], prev = ser[4], pct = (a, b) => b ? Math.round((a - b) / b * 100) : (a ? 100 : 0);
+      /* Tendances : 30 derniers jours contre les 30 précédents */
+      const agg = rows => { const m = {}; (rows || []).forEach(r => { const t = String(r.tool); if (/^(hub:|admin$)/.test(t)) return; m[t] = (m[t] || 0) + (+r.uses || 0); }); return m; };
+      const A = agg(u30), B60 = agg(u60), P = {}; Object.keys(B60).forEach(k => { P[k] = B60[k] - (A[k] || 0); });
+      const keys = [...new Set([...Object.keys(A), ...Object.keys(P)])];
+      const d = keys.map(k => ({ k, now: A[k] || 0, before: P[k] || 0, diff: (A[k] || 0) - (P[k] || 0) })).filter(x => x.now + x.before >= 2);
+      const up = d.filter(x => x.diff > 0).sort((a, b) => b.diff - a.diff).slice(0, 5), down = d.filter(x => x.diff < 0).sort((a, b) => a.diff - b.diff).slice(0, 5);
+      const li = (x, c) => '<div><span>' + esc(name(x.k)) + '</span><b class="' + c + '">' + (x.diff > 0 ? '+' : '') + x.diff + ' <small>(' + x.before + ' → ' + x.now + ')</small></b></div>';
+      /* Adoption */
+      const cnt = (users || []).length, created = {}; (users || []).forEach(r => { const k = String(r.created_at || '').slice(0, 7); created[k] = (created[k] || 0) + 1; });
+      const active30 = new Set((u30 || []).map(r => r.email)).size;
+      host.innerHTML =
+        '<div class="st-tile st-wide2"><h4>Activité par mois<span>6 derniers mois</span></h4>' + bars + '<p class="st-last">Ce mois-ci : ' + cur.a + ' action(s) (' + (pct(cur.a, prev.a) >= 0 ? '+' : '') + pct(cur.a, prev.a) + ' % par rapport au mois dernier), ' + cur.u + ' conseiller(s) actif(s).</p></div>' +
+        '<div class="st-tile"><h4>En hausse<span>30 j vs 30 j précédents</span></h4><div class="st-list">' + (up.length ? up.map(x => li(x, 'ev-up')).join('') : '<div><span class="ad-empty">Pas de hausse notable</span></div>') + '</div></div>' +
+        '<div class="st-tile"><h4>En baisse<span>30 j vs 30 j précédents</span></h4><div class="st-list">' + (down.length ? down.map(x => li(x, 'ev-down')).join('') : '<div><span class="ad-empty">Pas de baisse notable</span></div>') + '</div></div>' +
+        '<div class="st-tile"><h4>Adoption</h4><div class="st-nums"><div><b>' + cnt + '</b><span>comptes</span></div><div><b>' + active30 + '</b><span>actifs 30 j</span></div><div><b>' + (cnt ? Math.round(active30 / cnt * 100) : 0) + ' %</b><span>taux d’usage</span></div></div><div class="st-lbl">Nouveaux comptes</div><div class="st-list">' + months.slice(-3).reverse().map(k => '<div><span>' + lab(k) + ' ' + k.slice(0, 4) + '</span><b>' + (created[k] || 0) + '</b></div>').join('') + '</div></div>';
+    }).catch(e => { host.innerHTML = '<p class="ad-empty">' + (/admin_monthly|PGRST202|42883|404/.test(String(e && (e.message || e.code))) ? 'Évolution non installée : exécutez le script supabase/evolution.sql dans Supabase.' : 'Chargement impossible : ' + esc(e && e.message || e)) + '</p>'; });
+  }
   function usage(card) {
     const host = $('ad-usage'); if (!host) return;
     host.innerHTML = '<div class="st-head"><h3>Statistiques d’utilisation</h3><span class="au-per">' + [7, 30, 90, 365].map(d => '<button type="button" data-d="' + d + '" class="' + (d === per ? 'on' : '') + '">' + (d === 365 ? '1 an' : d + ' j') + '</button>').join('') + '</span></div><div id="au-body" class="ad-empty">Chargement…</div>';
@@ -16133,6 +16230,7 @@ html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5
           kpi('Outil n° 1', topT ? topT.uses : 0, esc(topT ? name(topT.k) : '—'), 'c6') +
         '</div>' +
         '<div class="st-tile st-wide"><h4>Activité jour par jour<span>' + nd + ' derniers jours</span></h4><div class="au-chart">' + days.map(d => '<i style="height:' + Math.max(2, Math.round(d[1] / mx * 100)) + '%" data-t="' + new Date(d[0] + 'T12:00').toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) + ' : ' + d[1] + ' action(s), ' + d[2] + ' conseiller(s)"></i>').join('') + '</div><div class="au-axis"><span>' + new Date(days[0][0] + 'T12:00').toLocaleDateString('fr-FR') + '</span><span>aujourd’hui</span></div></div>' +
+        '<div class="st-sec">📈 Évolution</div><div id="au-evo" class="st-grid"><p class="ad-empty">Chargement…</p></div>' +
         '<div class="st-sec">✉ Mails (CVM) les plus utilisés</div>' +
         '<div class="st-grid">' + (M.length ? M.slice(0, 12).map((m, i) => '<div class="st-tile"><div class="st-rank">' + (i + 1) + '</div><h4 title="' + esc(m.k) + '">' + esc(m.k) + '</h4><div class="st-nums"><div><b>' + m.copy + '</b><span>copié' + (m.copy > 1 ? 's' : '') + '</span></div><div><b>' + m.open + '</b><span>ouvert' + (m.open > 1 ? 's' : '') + '</span></div><div><b>' + Object.keys(m.users).length + '</b><span>conseiller' + (Object.keys(m.users).length > 1 ? 's' : '') + '</span></div></div><div class="st-bar"><i style="width:' + Math.max(4, Math.round((m.copy * 3 + m.open) / (M[0].copy * 3 + M[0].open) * 100)) + '%"></i></div><div class="st-whos">' + who(m.users) + '</div><p class="st-last">Dernière utilisation : ' + dtt(m.last) + '</p></div>').join('') : '<p class="ad-empty">Aucun mail ouvert sur la période.</p>') + '</div>' +
         (M.length > 12 ? '<details class="st-more"><summary>Voir les ' + (M.length - 12) + ' autres modèles</summary><table class="ad-tbl"><tr><th>Modèle</th><th style="text-align:right">Copiés</th><th style="text-align:right">Ouverts</th><th>Par</th></tr>' + M.slice(12).map(m => '<tr><td>' + esc(m.k) + '</td><td class="n">' + m.copy + '</td><td class="n">' + m.open + '</td><td>' + Object.keys(m.users).map(short).map(esc).join(', ') + '</td></tr>').join('') + '</table></details>' : '') +
@@ -16148,6 +16246,7 @@ html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5
             ((tl.length > 4 || ml.length > 4) ? '<details class="st-more"><summary>Tout voir</summary><div class="st-list">' + ml.slice(4).map(m => '<div><span>✉ ' + esc(m.k) + '</span><b>' + (m.c ? m.c + ' c. · ' : '') + m.o + ' o.</b></div>').join('') + tl.slice(4).map(t => '<div><span>' + esc(name(t.tool)) + '</span><b>' + t.uses + '</b></div>').join('') + '</div></details>' : '') +
             '</div>';
         }).join('') + '</div>' +
+        '' + (setTimeout(() => evo(name, short), 0) && '') +
         '<p class="ad-empty" style="margin-top:10px">« Copié » = le conseiller a copié le mail pour l’envoyer ; « ouvert » = il l’a consulté. Le classement des mails compte une copie comme trois ouvertures. Les copies sont enregistrées à partir de cette version.</p>';
     }).catch(e => { $('au-body').textContent = missing(e) ? 'Statistiques détaillées non installées : exécutez le script supabase/admin_stats.sql dans Supabase.' : 'Chargement impossible : ' + (e && e.message || e); });
   }
@@ -17043,6 +17142,174 @@ html.theme-light #ft-news .ftn-go{color:#0369a1!important;background:#e0f2fe!imp
   setTimeout(() => { wrap(); center(); }, 500);
 })();
 </script>
+<!-- ================= Extension 40 : derniers calculs (sur ce poste) ================= -->
+<style>
+.hc-list{display:flex;flex-direction:column;gap:6px}
+.hc-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;border:1px solid rgba(71,85,105,.5);background:rgba(2,6,23,.35)}
+.hc-row .hc-t{flex:1;min-width:0}
+.hc-row .hc-n{display:block;font-size:13px;font-weight:700;color:#f1f5f9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hc-row .hc-s{display:block;font-size:11.5px;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hc-row button{flex:none;border:1px solid rgba(71,85,105,.7);background:transparent;color:#67e8f9;border-radius:9px;height:30px;padding:0 10px;font-family:inherit;font-weight:700;font-size:12px;cursor:pointer}
+.hc-row button.hc-x{color:#94a3b8;width:30px;padding:0}
+.hc-row button:hover{border-color:#67e8f9}
+.hc-empty{font-size:12.5px;color:#94a3b8;margin:0}
+.hc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:11px;color:#64748b}
+.hc-foot button{border:0;background:none;color:#94a3b8;font:inherit;text-decoration:underline;cursor:pointer}
+html.theme-light .hc-row{background:#f8fafc;border-color:#e2e8f0}html.theme-light .hc-row .hc-n{color:#0f172a}html.theme-light .hc-row button{color:#0369a1;border-color:#cbd5e1}
+</style>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const KEY = 'ft_calc_hist', MAX = 10;
+  const SKIP = ['home', 'cvm', 'admin', 'faq', 'glossaire', 'sources', 'jour', 'schemas', 'bareme', 'echeances'];
+  const get = () => { try { const v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } };
+  const set = a => { try { localStorage.setItem(KEY, JSON.stringify(a.slice(0, MAX))); } catch (e) {} };
+  const OK_TYPES = /^(number|date|month|range|checkbox|radio)$/;
+  function fieldsOf(view) {
+    const out = {}, labels = []; let changed = false;
+    view.querySelectorAll('input[id], select[id]').forEach(el => {
+      if (el.closest('.ft-mail, .hub-bar, #ft-ip, .lk-form')) return;
+      if (el.tagName === 'INPUT' && !OK_TYPES.test(el.type)) return;
+      if (el.type === 'checkbox' || el.type === 'radio') { out[el.id] = el.checked; if (el.checked !== el.defaultChecked) changed = true; return; }
+      if (el.tagName === 'SELECT') { out[el.id] = el.value; const d = [...el.options].findIndex(o => o.defaultSelected); if (el.selectedIndex !== (d < 0 ? 0 : d)) changed = true; return; }
+      out[el.id] = el.value;
+      if (el.value !== '' && el.value !== el.defaultValue) {
+        changed = true;
+        if (labels.length < 3) {
+          let lb = el.labels && el.labels[0];
+          for (let p = el.parentElement, n = 0; !lb && p && n < 4; p = p.parentElement, n++) lb = p.querySelector('label');
+          let t = (lb ? lb.textContent : (/^[\d\s.,]*$/.test(el.placeholder || '') ? '' : el.placeholder || '')).replace(/\s*\(.*?\)\s*/g, ' ').replace(/[*:]/g, '').replace(/\s+/g, ' ').trim();
+          if (t.length > 28) t = t.slice(0, 27) + '…';
+          const v = el.type === 'date' ? new Date(el.value + 'T12:00').toLocaleDateString('fr-FR') : (+el.value).toLocaleString('fr-FR');
+          labels.push((t ? t + ' ' : '') + v);
+        }
+      }
+    });
+    return changed ? { fields: out, summary: labels.join(' · ') } : null;
+  }
+  function snapshot() {
+    let tab = ''; try { tab = String(activeNavTab); } catch (e) { return; }
+    if (!tab || SKIP.includes(tab)) return;
+    const view = document.querySelector('[id^="view-"]:not(.hidden)'); if (!view) return;
+    const f = fieldsOf(view); if (!f) return;
+    const name = (($('header-active-tab-name') || {}).textContent || tab).split('·').pop().trim();
+    const L = get(), sig = tab + '|' + JSON.stringify(f.fields);
+    const i = L.findIndex(x => x.sig === sig);
+    if (i > -1) L.splice(i, 1);
+    const prevSame = L.length && L[0].tab === tab && Date.now() - L[0].at < 10 * 60 * 1000;
+    if (prevSame) L.shift(); /* même outil il y a peu : on garde la version la plus récente */
+    L.unshift({ tab, name, at: Date.now(), fields: f.fields, summary: f.summary, sig });
+    set(L); render();
+  }
+  function restore(i) {
+    const e = get()[i]; if (!e) return;
+    switchNavTab(/^\d+$/.test(e.tab) ? +e.tab : e.tab);
+    const apply = pass => {
+      Object.keys(e.fields).forEach(id => {
+        const el = $(id); if (!el) return;
+        const v = e.fields[id];
+        if (pass === 0 && el.tagName !== 'SELECT' && el.type !== 'checkbox' && el.type !== 'radio') return;
+        if (el.type === 'checkbox' || el.type === 'radio') { if (el.checked !== v) { el.checked = v; el.dispatchEvent(new Event('change', { bubbles: true })); } }
+        else if (el.value !== v) { el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); }
+      });
+    };
+    setTimeout(() => { apply(0); setTimeout(() => { apply(1); try { showToast('Calcul repris : ' + e.name, 'success'); } catch (er) {} }, 150); }, 250);
+  }
+  const ago = t => { const m = Math.round((Date.now() - t) / 60000); if (m < 1) return 'à l’instant'; if (m < 60) return 'il y a ' + m + ' min'; const h = Math.round(m / 60); if (h < 24) return 'il y a ' + h + ' h'; const d = new Date(t); return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); };
+  const ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>';
+  function html() {
+    const L = get();
+    return '<section class="fh-card fh-hist" aria-label="Derniers calculs"><div class="fh-dh"><span class="fh-dico">' + ICO + '</span><h2>Derniers calculs</h2></div>' +
+      (L.length ? '<div class="hc-list">' + L.slice(0, 6).map((e, i) => '<div class="hc-row"><div class="hc-t"><span class="hc-n">' + esc(e.name) + '</span><span class="hc-s">' + esc(ago(e.at)) + (e.summary ? ' · ' + esc(e.summary) : '') + '</span></div><button type="button" data-hc="go" data-i="' + i + '">Reprendre</button><button type="button" class="hc-x" data-hc="del" data-i="' + i + '" aria-label="Retirer ce calcul" title="Retirer">×</button></div>').join('') + '</div>' +
+        '<div class="hc-foot"><span>Sur ce poste uniquement, sans nom d’allocataire.</span><button type="button" data-hc="clear">Tout effacer</button></div>'
+        : '<p class="hc-empty">Les simulations que vous faites apparaîtront ici pour être reprises en un clic (sur ce poste uniquement).</p>') + '</section>';
+  }
+  function render() {
+    const L = document.querySelector('#view-home .fh-L'); if (!L) return;
+    const cur = L.querySelector(':scope > .fh-hist'), h = html();
+    if (cur) { if (cur.outerHTML !== h) cur.outerHTML = h; return; }
+    const lk = L.querySelector(':scope > .fh-links'), tmp = document.createElement('div'); tmp.innerHTML = h;
+    if (lk && lk.nextSibling) L.insertBefore(tmp.firstChild, lk.nextSibling); else L.appendChild(tmp.firstChild);
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('[data-hc]'); if (!b) return;
+    const a = b.dataset.hc, i = +b.dataset.i;
+    if (a === 'go') restore(i);
+    else if (a === 'del') { const L = get(); L.splice(i, 1); set(L); render(); }
+    else if (a === 'clear') { if (confirm('Effacer l’historique des calculs de ce poste ?')) { set([]); render(); } }
+  });
+  const _sw = switchNavTab;
+  switchNavTab = function () { try { snapshot(); } catch (e) {} return _sw.apply(this, arguments); };
+  document.addEventListener('visibilitychange', () => { if (document.hidden) try { snapshot(); } catch (e) {} });
+  window.addEventListener('pagehide', () => { try { snapshot(); } catch (e) {} });
+  window.ftCalcHistory = { get, snapshot, restore };
+  window.FT_ACTIONS = window.FT_ACTIONS || [];
+  window.FT_ACTIONS.push({ t: 'Derniers calculs', s: 'Reprendre une simulation récente (sur ce poste)', kw: 'historique derniers calculs reprendre simulation récente', run: () => { switchNavTab('home'); setTimeout(() => { const c = document.querySelector('#view-home .fh-hist'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200); } });
+  if (window.ftOnDom) window.ftOnDom(render);
+  setTimeout(render, 600);
+})();
+</script>
+<!-- ================= Extension 41 : accessibilité ================= -->
+<style>
+#ft-skip{position:fixed;left:12px;top:-60px;z-index:100000;padding:10px 14px;border-radius:10px;background:#2563eb;color:#fff;font-weight:700;font-size:14px;text-decoration:none;transition:top .15s}
+#ft-skip:focus{top:12px;outline:3px solid #fbbf24;outline-offset:2px}
+:where(button,a,input,select,textarea,[role=button],[tabindex]):focus-visible{outline:2px solid #fbbf24!important;outline-offset:2px!important}
+/* Contraste : les gris les plus pâles un peu plus lisibles sur fond sombre */
+html:not(.theme-light) .text-slate-500{color:#8b9ab1!important}
+html:not(.theme-light) .text-slate-600{color:#7d8ca3!important}
+html:not(.theme-light) ::placeholder{color:#7d8ca3}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+.ft-sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+<script>
+(function () {
+  /* Lien d’évitement : aller directement au contenu de l’outil ouvert */
+  const a = document.createElement('a'); a.id = 'ft-skip'; a.href = '#'; a.textContent = 'Aller au contenu';
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const v = document.querySelector('[id^="view-"]:not(.hidden)'); if (!v) return;
+    const t = v.querySelector('h1,h2,h3,[tabindex],input,select,button') || v;
+    if (!t.hasAttribute('tabindex') && !/INPUT|SELECT|BUTTON|A|TEXTAREA/.test(t.tagName)) t.setAttribute('tabindex', '-1');
+    t.focus();
+  });
+  document.body.insertBefore(a, document.body.firstChild);
+  const main = document.querySelector('main') || (document.querySelector('[id^="view-"]') || {}).parentElement;
+  if (main && !main.getAttribute('role') && main.tagName !== 'MAIN') main.setAttribute('role', 'main');
+
+  /* Noms accessibles : relie chaque champ à son libellé, nomme les boutons à icône */
+  const named = e => (e.labels && e.labels.length) || e.getAttribute('aria-label') || e.getAttribute('aria-labelledby') || e.title;
+  let uid = 0;
+  function fix(root) {
+    const MAP = { 'indus-range-duree': 'Nombre de mensualités (curseur)', 'retraite-input-statut-pension': 'Statut de la pension de retraite' };
+    Object.keys(MAP).forEach(id => { const e = document.getElementById(id); if (e && !named(e)) e.setAttribute('aria-label', MAP[id]); });
+    (root || document).querySelectorAll('input:not([type=hidden]),select,textarea').forEach(e => {
+      if (named(e)) return;
+      let lb = null;
+      const prev = e.previousElementSibling; if (prev && prev.tagName === 'LABEL') lb = prev;
+      for (let p = e.parentElement, n = 0; !lb && p && n < 3; p = p.parentElement, n++) { const l = p.querySelector(':scope > label'); if (l && !l.htmlFor && !l.contains(e)) lb = l; }
+      if (lb && !lb.htmlFor) { if (!e.id) e.id = 'ft-f' + (++uid); lb.htmlFor = e.id; return; }
+      const t = (lb && lb.textContent) || e.placeholder || (e.closest('[data-label]') || {}).dataset && e.closest('[data-label]') && e.closest('[data-label]').dataset.label;
+      if (t && String(t).trim()) e.setAttribute('aria-label', String(t).trim().slice(0, 120));
+    });
+    (root || document).querySelectorAll('button:not([aria-label]),[role=button]:not([aria-label])').forEach(b => {
+      if ((b.innerText || '').trim()) return;
+      if (b.title) { b.setAttribute('aria-label', b.title); return; }
+      const ic = b.querySelector('[data-lucide]'); if (ic) b.setAttribute('aria-label', ic.getAttribute('data-lucide').replace(/-/g, ' '));
+    });
+    /* Onglets de rubrique : indiquer l’outil courant */
+    document.querySelectorAll('svg:not([aria-hidden]):not([role])').forEach(s => { if (s.closest('button,a')) s.setAttribute('aria-hidden', 'true'); });
+  }
+  /* Annonces des messages flash aux lecteurs d’écran */
+  const live = document.createElement('div'); live.className = 'ft-sr'; live.setAttribute('role', 'status'); live.setAttribute('aria-live', 'polite'); document.body.appendChild(live);
+  if (typeof showToast === 'function') {
+    const _t = showToast;
+    window.showToast = showToast = function (m) { try { live.textContent = ''; setTimeout(() => { live.textContent = String(m); }, 30); } catch (e) {} return _t.apply(this, arguments); };
+  }
+  fix();
+  if (window.ftOnDom) window.ftOnDom(() => fix());
+})();
+</script>
 <!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
 <style>
 #ft-news{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.6);backdrop-filter:blur(3px);opacity:0;transition:opacity .25s ease}
@@ -17075,6 +17342,11 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.28', date: '13/11/2026', items: [
+      'Nouvel outil « Fin de droits : ASS et ATA » (Situations particulières) : conditions (5 ans sur 10, réduction par enfant), plafonds seul et couple, montant différentiel, renouvellement, cumul 3 mois, repères ATA, avec mail à l’allocataire.',
+      'Accueil : « Derniers calculs » garde vos 10 dernières simulations sur ce poste (sans nom d’allocataire) ; « Reprendre » rouvre l’outil avec les mêmes valeurs.',
+      'Accessibilité : chaque champ est relié à son libellé, lien « Aller au contenu » au clavier (Tab), contour visible sur l’élément actif, textes gris plus contrastés, animations réduites si votre appareil le demande.'
+    ] },
     { v: '2026-11-13.25', date: '13/11/2026', items: [
       'Téléphone : les onglets des rubriques défilent sur une ligne et les modes (Simulateur / Règles et calculs) passent dessous en entier ; les sélecteurs (CSP, trop-perçu…) s’affichent sur deux lignes au lieu d’être coupés ; les listes déroulantes ne débordent plus.',
       'Application installée : elle se met à jour toute seule à l’ouverture quand une nouvelle version est disponible.'
