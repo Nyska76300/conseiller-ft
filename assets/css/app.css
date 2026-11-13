@@ -1478,9 +1478,19 @@ html.theme-light .cp-card{background:#fff;border-color:#e2e8f0}html.theme-light 
   #view-home .fh-R>.home-top{flex:0 0 auto}
 }
 /* Écran moyen : la 3e colonne passe sous la 1re au lieu de laisser un grand vide */
-@media (min-width:1024px) and (max-width:1439px){
+@media (min-width:1024px) and (max-width:1199px){
   #view-home>.home-wrap.fh-on{display:grid!important;grid-template-columns:minmax(280px,330px) minmax(0,1fr);grid-template-rows:auto 1fr;column-gap:18px;row-gap:16px}
   #view-home .fh-L{grid-column:1;grid-row:1;min-width:0}
   #view-home .fh-R{grid-column:1;grid-row:2;min-width:0;width:auto}
   #view-home .fh-C{grid-column:2;grid-row:1 / span 2;min-width:0}
+}
+/* Ordinateur : toujours 3 colonnes sur l’accueil */
+@media (min-width:1200px){
+  #view-home>.home-wrap.fh-on{display:grid!important;grid-template-columns:clamp(250px,21vw,320px) minmax(0,1fr) clamp(270px,23vw,350px);column-gap:18px;align-items:stretch!important}
+  #view-home .fh-L{grid-column:1;grid-row:1;min-width:0}
+  #view-home .fh-C{grid-column:2;grid-row:1;min-width:0}
+  #view-home .fh-R{grid-column:3;grid-row:1;min-width:0;width:auto}
+}
+@media (min-width:1200px) and (max-width:1439px){
+  #view-home .fh-C .fh-chips{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
