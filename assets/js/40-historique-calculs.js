@@ -68,16 +68,6 @@
   function render() {
     /* « Derniers calculs » n’est plus affiché sur l’accueil (l’historique reste accessible par la recherche) */
     document.querySelectorAll('#view-home .fh-hist').forEach(x => x.remove()); return;
-    /* Juste sous « Mes favoris » (sinon dans la colonne de droite) */
-    const pins = document.querySelector('#view-home .fh-pins'), L = document.querySelector('#view-home .fh-L');
-    if (!pins && !L) return;
-    let cur = document.querySelector('#view-home .fh-hist');
-    const h = html();
-    /* on compare au dernier contenu dessiné (pas à outerHTML, que d’autres scripts enrichissent : sinon boucle sans fin) */
-    if (cur && cur._h !== h) { const t = document.createElement('div'); t.innerHTML = h; cur.replaceWith(t.firstChild); cur = document.querySelector('#view-home .fh-hist'); cur._h = h; }
-    if (!cur) { const t = document.createElement('div'); t.innerHTML = h; cur = t.firstChild; cur._h = h; }
-    if (pins) { const rem = document.getElementById('ft-rem-home'); const after = rem && rem.previousElementSibling === pins ? rem : pins; if (after.nextElementSibling !== cur) after.after(cur); }
-    else if (cur.parentNode !== L) L.appendChild(cur);
   }
   document.addEventListener('click', e => {
     const b = e.target.closest && e.target.closest('[data-hc]'); if (!b) return;

@@ -5,7 +5,7 @@
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const toast = (m, t) => { try { showToast(m, t || 'info'); } catch (e) {} };
   const KEY = 'ft_prefs';
-  const DEF = { neon: true, neonLvl: 50, depth: 60, themeMode: '', motion: false, easy: false, start: 'home', pal: '', lite: '' };
+  const DEF = { themeMode: '', motion: false, easy: false, start: 'home', pal: '' };
   const PALS = [['', 'Océan', '#2563eb', '#22d3ee'], ['emeraude', 'Émeraude', '#059669', '#34d399'], ['sarcelle', 'Sarcelle', '#0d9488', '#2dd4bf'], ['amethyste', 'Améthyste', '#7c3aed', '#c084fc'], ['framboise', 'Framboise', '#db2777', '#f472b6'], ['ardoise', 'Ardoise', '#475569', '#94a3b8']];
   function setPal(p) {
     const h = document.documentElement, old = document.getElementById('ft-pal');
@@ -15,40 +15,7 @@
   const P = (() => { try { return Object.assign({}, DEF, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { return Object.assign({}, DEF); } })();
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(P)); } catch (e) {} };
   /* Intensité des néons : 0 = aucun, 50 = réglage d’origine, 100 = très lumineux */
-  const SEL = 'svg.lucide,button svg,a svg,.fh-gi svg,.fh-ci svg,.fh-dico svg,.lk-ico svg,.st-who i,.fa-av';
-  const lvl = () => (P.neon === false && P.neonLvl === 50) ? 0 : Math.max(0, Math.min(100, +P.neonLvl || 0));
-  function neonCss() {
-    let st = document.getElementById('ft-neon-css');
-    if (!st) { st = document.createElement('style'); st.id = 'ft-neon-css'; document.head.appendChild(st); }
-    const v = lvl(), k = v / 50, pre = s => SEL.split(',').map(x => s + x).join(',');
-    if (v === 50) { st.textContent = ''; return; }
-    if (!v) { st.textContent = pre('html ') + '{filter:none!important}'; return; }
-    const r1 = (1.5 * k).toFixed(2), r2 = (5 * k).toFixed(2), m = Math.min(95, Math.round(45 * k)), r3 = (2 * k).toFixed(2), m2 = Math.min(90, Math.round(35 * k));
-    st.textContent = pre('html ') + '{filter:drop-shadow(0 0 ' + (3 * k).toFixed(2) + 'px color-mix(in srgb,currentColor ' + Math.min(95, Math.round(65 * Math.sqrt(k))) + '%,transparent))}' +
-      pre('html.theme-light ') + '{filter:drop-shadow(0 0 ' + r3 + 'px color-mix(in srgb,currentColor ' + m2 + '%,transparent))}' +
-      '.sc-fig svg,.au-chart svg,.inv-table svg,#ft-reg-pill svg{filter:none!important}';
-  }
-  /* Profondeur des tuiles : ombres en plusieurs couches, reflet en haut, légère élévation au survol */
-  const TILES = '.fh-card,.st-kpis>*,.st-tile,#view-admin .rounded-xl,.ag-t,.qz-card,.qz-intro,.hc-row,.bug-it,.rm-it,.hub-card,.home-quick-card,.data-card';
-  const HOVER = '.fh-chip,.fh-pin,.hc-row,.ag-t,.home-quick-card,.hub-card';
-  function depthCss() {
-    let st = document.getElementById('ft-depth-css');
-    if (!st) { st = document.createElement('style'); st.id = 'ft-depth-css'; document.head.appendChild(st); }
-    const v = Math.max(20, Math.min(100, P.depth == null ? 60 : +P.depth)), k = v / 50;
-    const f = n => (n * k).toFixed(2), a = n => Math.min(0.9, n * k).toFixed(3);
-    const dark = 'inset 0 1px 0 rgba(255,255,255,' + a(0.07) + '),0 ' + f(1) + 'px ' + f(2) + 'px rgba(0,0,0,' + a(0.3) + '),0 ' + f(6) + 'px ' + f(14) + 'px -' + f(3) + 'px rgba(0,0,0,' + a(0.35) + '),0 ' + f(14) + 'px ' + f(24) + 'px -' + f(10) + 'px rgba(0,0,0,' + a(0.45) + ')';
-    const light = 'inset 0 1px 0 rgba(255,255,255,' + a(0.8) + '),0 ' + f(1) + 'px ' + f(2) + 'px rgba(15,23,42,' + a(0.06) + '),0 ' + f(6) + 'px ' + f(14) + 'px -' + f(3) + 'px rgba(15,23,42,' + a(0.08) + '),0 ' + f(14) + 'px ' + f(24) + 'px -' + f(10) + 'px rgba(15,23,42,' + a(0.12) + ')';
-    const pre = (p, sel) => sel.split(',').map(x => p + x).join(',');
-    st.textContent = pre('html ', TILES) + '{box-shadow:' + dark + '!important}' + pre('html.theme-light ', TILES) + '{box-shadow:' + light + '!important}' +
-      pre('html ', HOVER) + '{transition:transform .18s ease,box-shadow .18s ease}' +
-      '@media (hover:hover){' + pre('html ', HOVER.split(',').map(x => x + ':hover').join(',')) + '{transform:translateY(-' + f(1.5) + 'px);box-shadow:' + dark.replace(/rgba\(0,0,0,([\d.]+)\)/g, (m, x) => 'rgba(0,0,0,' + Math.min(0.9, x * 1.35).toFixed(3) + ')') + '!important}}' +
-      pre('html ', '.fh-card,.st-kpis>*,.ag-t,.qz-card') + '{background-image:linear-gradient(180deg,rgba(255,255,255,' + a(0.035) + '),rgba(255,255,255,0) 40%)}' +
-      /* Relief permanent des tuiles cliquables (outils, favoris, menu) */
-      pre('html ', '.fh-chip,.fh-pin,#burger-tabs-list button[onclick],.hc-row,.pm-pal button') + '{box-shadow:inset 0 1px 0 rgba(255,255,255,' + a(0.06) + '),0 ' + f(1) + 'px ' + f(1.5) + 'px rgba(0,0,0,' + a(0.28) + '),0 ' + f(3) + 'px ' + f(8) + 'px -' + f(2) + 'px rgba(0,0,0,' + a(0.32) + ');transform:translateY(-' + f(0.5) + 'px)}' +
-      pre('html.theme-light ', '.fh-chip,.fh-pin,#burger-tabs-list button[onclick],.hc-row,.pm-pal button') + '{box-shadow:inset 0 1px 0 rgba(255,255,255,' + a(0.9) + '),0 ' + f(1) + 'px ' + f(1.5) + 'px rgba(15,23,42,' + a(0.07) + '),0 ' + f(3) + 'px ' + f(8) + 'px -' + f(2) + 'px rgba(15,23,42,' + a(0.1) + ')}' +
-      pre('html ', '.fh-chip:active,.fh-pin:active,#burger-tabs-list button[onclick]:active') + '{transform:translateY(0);box-shadow:inset 0 1px 2px rgba(0,0,0,' + a(0.3) + ')}' +
-      'html.reduce-motion .fh-chip:hover,html.reduce-motion .fh-pin:hover{transform:none}';
-  }
+
   /* Appareil lent (poste sans carte graphique, bureau à distance…) : on mesure la cadence d’affichage
      quelques secondes après l’ouverture et pendant le premier défilement ; sous ~35 images/s, l’affichage allégé s’active. */
   function apply() {
@@ -126,8 +93,6 @@
       w = document.createElement('div'); w.id = 'ft-prefs'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-labelledby', 'pm-t');
       document.body.appendChild(w);
       w.addEventListener('click', onClick);
-      w.addEventListener('input', e => { if (e.target.id === 'pm-depth') { P.depth = +e.target.value; const o = document.getElementById('pm-depth-v'); if (o) o.textContent = P.depth; depthCss(); return; } if (e.target.id !== 'pm-neon') return; P.neonLvl = +e.target.value; P.neon = P.neonLvl > 0; const o = document.getElementById('pm-neon-v'); if (o) o.textContent = P.neonLvl; neonCss(); });
-      w.addEventListener('change', e => { if (e.target.id === 'pm-neon' || e.target.id === 'pm-depth') save(); });
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && !w.hidden) close(); });
     }
     return w;
@@ -144,7 +109,7 @@
       if (k === 'theme') { P.themeMode = (v === 'system' || v === 'hours') ? v : ''; save(); autoTheme(true); if (!P.themeMode) { try { applyTheme(v); } catch (er) {} } }
       else if (k === 'ts') window.ftA11y && window.ftA11y('ts', +v);
       else if (k === 'hc') window.ftA11y && window.ftA11y('hc', v === '1');
-      else { P[k] = (k === 'start' || k === 'pal' || k === 'lite') ? v : v === '1'; save(); apply(); if (k === 'start' && v !== 'home') toast(v === 'cvm' ? 'Le site s’ouvrira sur la page Mails' : 'Le site s’ouvrira sur le dernier outil utilisé', 'success'); }
+      else { P[k] = (k === 'start' || k === 'pal') ? v : v === '1'; save(); apply(); if (k === 'start' && v !== 'home') toast(v === 'cvm' ? 'Le site s’ouvrira sur la page Mails' : 'Le site s’ouvrira sur le dernier outil utilisé', 'success'); }
       render(); return;
     }
     const b = e.target.closest('[data-pm]'); if (!b) return;

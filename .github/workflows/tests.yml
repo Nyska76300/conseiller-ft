@@ -27,6 +27,8 @@ jobs:
         run: python tools/palettes.py --check
       - name: Lancer les tests (calculs, outils, affichage)
         run: python tools/regression.py
+      - name: Relire les modèles de mails (champs, fautes, liens)
+        run: python tools/mails.py --online
       - name: Vérifier la lisibilité des thèmes de couleurs
         run: python tools/contrast.py --strict
       - name: Récupérer les captures du dernier passage

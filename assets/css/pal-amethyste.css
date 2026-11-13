@@ -1633,4 +1633,20 @@ html.theme-light .ft-split-host.ft-dual>.ft-split-b{border-left-color:#dfd4ec}
 html.theme-light #ft-split-bar,html.theme-light #ft-split-pick .sp-box{border-color:#dfd4ec;color:#1a1125}
 html.theme-light #ft-split-bar b{color:#1a1125}
 html.theme-light #ft-split-bar button,html.theme-light #ft-split-pick .sp-list button,html.theme-light #ft-split-pick input{background:#faf9fb;border-color:#d6d2db;color:#1a1125}
+#dynamic-inputs-grid .cv-row::after{color:#dad1fb}
+#dynamic-inputs-grid .cv-badge{color:#d179f2;background:rgba(209,121,242,.12);border:1px solid rgba(209,121,242,.3)}
+#dynamic-inputs-grid .cv-auto input{border-color:rgba(209,121,242,.55)!important;background-color:rgba(143,25,176,.08)!important}
+html.theme-light #dynamic-inputs-grid .cv-badge{color:#78218f;background:#f6f3fa;border-color:#e1d7ed}
+html.theme-light #dynamic-inputs-grid .cv-row::after{color:#906ff1}
+html.theme-light .text-slate-400,html.theme-light .text-slate-500,html.theme-light .sidebar-label.text-slate-400,html.theme-light #filtered-count-badge{color:#595261!important}
+html.theme-light #view-home .fh-bv,html.theme-light #view-home .fh-pin-empty,html.theme-light #view-home .fh-ndate{color:#595261!important}
+html.theme-light #vars-count-tag,html.theme-light #current-date-stamp,html.theme-light #print-area .px-6>span{color:#595261!important}
+html.theme-light #view-od .text-slate-300,html.theme-light #view-od label.cursor-pointer,html.theme-light #sim-financial-card span.block,html.theme-light #sim-financial-card .text-\[10px\],html.theme-light #sim-bareme-tag,html.theme-light #od-btn-mode-ref span,html.theme-light #calc-diff-supra{color:#4f4757!important}
+html.theme-light #active-cat-badge{color:#2a2134!important}
+html.theme-light #vertical-filters-container .w-full>div.flex>span.sidebar-label{color:#453d4e!important}
+html.theme-light #view-cvm aside.tpl-col>div.p-2 span{color:#4f4757!important}
+html.theme-light #sidebar-footer .sidebar-label,html.theme-light #vertical-filters-container .pt-2 .sidebar-label{color:#4f4757!important}
+html.theme-light #view-formation h2 .text-\[10px\]{color:#641b77!important;background:#efe9f5!important}
+.qz-intro .qz-th button.on em{color:#140d1d!important;background:#e8e3fd!important}
+html.theme-light .qz-intro .qz-th button.on em{background:#6234e1!important}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(103,48,166,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(123,57,198,0.1),transparent 60%),linear-gradient(150deg,#06030a 0%,#0f0718 35%,#190b28 70%,#27123f 100%) fixed!important}

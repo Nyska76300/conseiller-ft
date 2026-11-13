@@ -666,7 +666,7 @@
       ['Indu consécutif à une régularisation', 'Recours gracieux préalable dans un délai de 2 mois à compter de la notification de l’indu, adressé au directeur général (décret n° 2016-1592, publié au Journal officiel du 26/11/2016). Source ancienne : vérifier le texte en vigueur.', '']
     ]) + note('Aucune des pages consultées ne chiffre le délai de saisine du médiateur ou du tribunal : se reporter à la notification de la décision.');
   }
-  const CATS = ['Créateurs d\'entreprise', 'Modification AE', 'Complément ARE', 'Trop-perçu', 'Recours IPR'];
+  const CATS = ['Créateurs d\'entreprise', 'Documents', 'Complément ARE', 'Trop-perçu', 'IPR, sanctions et fraude'];
   function cvmLinks() {
     return CATS.map(c => {
       const l = templates.filter(t => t.category === c);

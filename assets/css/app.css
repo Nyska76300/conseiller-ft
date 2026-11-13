@@ -687,12 +687,6 @@ html.theme-light #ft-gtip b{color:#0369a1}
 .ft-mail textarea{resize:vertical;overflow-y:auto}
 /* Mail généré : toujours sur toute la largeur quand l’outil est en grille à 12 colonnes */
 [class*="grid-cols-12"]>.ft-mail{grid-column:1/-1}
-/* Effet néon léger sur les icônes */
-svg.lucide,button svg,a svg,.fh-gi svg,.fh-ci svg,.fh-dico svg,.lk-ico svg,.st-who i,.fa-av{filter:drop-shadow(0 0 3px color-mix(in srgb,currentColor 65%,transparent))}
-@supports not (color: color-mix(in srgb, red 50%, blue)){svg.lucide,button svg,a svg,.fh-gi svg,.fh-ci svg,.fh-dico svg,.lk-ico svg{filter:drop-shadow(0 0 2px currentColor)}}
-.sc-fig svg,.au-chart svg,.inv-table svg,#ft-reg-pill svg{filter:none!important}
-html.theme-light svg.lucide,html.theme-light button svg,html.theme-light a svg,html.theme-light .fh-gi svg,html.theme-light .fh-ci svg,html.theme-light .fh-dico svg,html.theme-light .lk-ico svg{filter:drop-shadow(0 0 2px color-mix(in srgb,currentColor 35%,transparent))}
-@media (prefers-reduced-transparency:reduce){svg.lucide,button svg,a svg{filter:none}}
 #view-home .fh-pins .fh-gi{color:#fbbf24!important;background:rgba(251,191,36,.16)!important;border-color:rgba(251,191,36,.35)!important}
 #view-home .fh-pins .fh-gi svg{fill:#fbbf24;stroke:#f59e0b}
 html.theme-light #view-home .fh-pins .fh-gi{color:#d97706!important;background:#fef3c7!important}
@@ -1474,9 +1468,6 @@ html.theme-light .cp-card{background:#fff;border-color:#e2e8f0}html.theme-light 
 @media (min-width:1024px){
   /* hauteurs naturelles : pas de tuile étirée avec du vide dedans */
   #view-home>.home-wrap.fh-on{align-items:start!important}
-  /* mesure des hauteurs naturelles pendant la répartition */
-  #view-home>.home-wrap.fh-meas{align-items:start!important}
-  #view-home>.home-wrap.fh-meas .fh-col>*,#view-home>.home-wrap.fh-meas .fh-tools{flex:0 0 auto!important}
 }
 /* Écran moyen : la 3e colonne passe sous la 1re au lieu de laisser un grand vide */
 @media (min-width:1024px) and (max-width:1199px){
@@ -1507,9 +1498,7 @@ html.ft-lite *,html.ft-lite *::before,html.ft-lite *::after{filter:none!importan
 html.ft-lite .fh-card,html.ft-lite .st-kpis>*,html.ft-lite .st-tile,html.ft-lite #view-admin .rounded-xl,html.ft-lite .ag-t,html.ft-lite .qz-card,html.ft-lite .hc-row,html.ft-lite .hub-card,html.ft-lite .home-quick-card,html.ft-lite .data-card,html.ft-lite .fh-chip,html.ft-lite .fh-pin{box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 2px 4px rgba(0,0,0,.35)!important;background-image:none!important}
 html.ft-lite.theme-light .fh-card,html.ft-lite.theme-light .fh-chip,html.ft-lite.theme-light .fh-pin{box-shadow:0 1px 3px rgba(15,23,42,.12)!important}
 html.ft-lite .fh-chip:hover,html.ft-lite .fh-pin:hover{transform:none!important}
-/* ---------- Accueil : rubriques d’outils réparties dans les colonnes de côté ---------- */
-#view-home .fh-sum.fh-sum-side>.fh-grp .fh-chips{grid-template-columns:minmax(0,1fr)!important}
-#view-home .fh-sum-side{align-content:start}
+
 /* Le défilement reste dans la zone sous la souris (il ne se reporte pas sur le reste du site) */
 html,body{overscroll-behavior:none}
 [id^="view-"],.overflow-y-auto,.overflow-auto{overscroll-behavior:contain}
@@ -1579,3 +1568,28 @@ html.theme-light #ft-split-bar button,html.theme-light #ft-split-pick .sp-list b
 .ft-split-host.ft-dual #view-cvm aside.tpl-col{width:clamp(220px,38cqw,290px)!important}
 .ft-split-host.ft-dual #view-cvm #templates-list button>div:first-child>div:first-child:has(svg){display:none!important}
 @media (max-width:1439px){#ft-split-btn span{display:none}#ft-split-btn{padding:2px 6px}}
+/* ---------- CVM : champs à compléter ---------- */
+#dynamic-inputs-grid label{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.25;min-height:1.25em;display:flex!important;align-items:flex-end;gap:6px;flex-wrap:wrap}
+#dynamic-inputs-grid>div{display:flex;flex-direction:column;justify-content:flex-end}
+#dynamic-inputs-grid .cv-row{position:relative;display:flex;align-items:stretch}
+#dynamic-inputs-grid .cv-row>input.cv-date{padding-right:34px}
+#dynamic-inputs-grid .cv-cal{position:absolute;right:2px;top:50%;transform:translateY(-50%);width:28px;height:26px;opacity:0;cursor:pointer;border:0;padding:0}
+#dynamic-inputs-grid .cv-row::after{content:'';position:absolute;right:9px;top:50%;width:14px;height:14px;transform:translateY(-50%);pointer-events:none;background:currentColor;color:#67e8f9;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E") center/contain no-repeat}
+#dynamic-inputs-grid input.cv-bad{border-color:#f87171!important;box-shadow:0 0 0 1px rgba(248,113,113,.35)}
+#dynamic-inputs-grid .cv-badge{font-size:9.5px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:#a78bfa;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.3);border-radius:5px;padding:0 5px;line-height:15px}
+#dynamic-inputs-grid .cv-auto input{border-color:rgba(167,139,250,.55)!important;background-color:rgba(124,58,237,.08)!important}
+html.theme-light #dynamic-inputs-grid .cv-badge{color:#6d28d9;background:#f5f3ff;border-color:#ddd6fe}
+html.theme-light #dynamic-inputs-grid .cv-row::after{color:#0891b2}
+/* ---------- Thème clair : textes secondaires plus lisibles (contraste ≥ 4,5) ---------- */
+html.theme-light .text-slate-400,html.theme-light .text-slate-500,html.theme-light .sidebar-label.text-slate-400,html.theme-light #filtered-count-badge{color:#4a5568!important}
+html.theme-light #view-home .fh-bv,html.theme-light #view-home .fh-pin-empty,html.theme-light #view-home .fh-ndate{color:#4a5568!important}
+html.theme-light #vars-count-tag,html.theme-light #current-date-stamp,html.theme-light #print-area .px-6>span{color:#4a5568!important}
+html.theme-light #view-od .text-slate-300,html.theme-light #view-od label.cursor-pointer,html.theme-light #sim-financial-card span.block,html.theme-light #sim-financial-card .text-\[10px\],html.theme-light #sim-bareme-tag,html.theme-light #od-btn-mode-ref span,html.theme-light #calc-diff-supra{color:#3f4b5e!important}
+html.theme-light #calc-total-differe{color:#92400e!important}
+html.theme-light #active-cat-badge{color:#1f2937!important}
+html.theme-light #vertical-filters-container .w-full>div.flex>span.sidebar-label{color:#334155!important}
+html.theme-light #view-cvm aside.tpl-col>div.p-2 span{color:#3f4b5e!important}
+html.theme-light #sidebar-footer .sidebar-label,html.theme-light #vertical-filters-container .pt-2 .sidebar-label{color:#3f4b5e!important}
+html.theme-light #view-formation h2 .text-\[10px\]{color:#5b21b6!important;background:#ede9fe!important}
+.qz-intro .qz-th button.on em{color:#0b1220!important;background:#a5f3fc!important;opacity:1!important}
+html.theme-light .qz-intro .qz-th button.on em{color:#fff!important;background:#0e7490!important}

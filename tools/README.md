@@ -24,3 +24,8 @@ en sombre et en clair. Un thème ne doit jamais être moins lisible qu'Océan (s
 `python3 tools/visual.py [sortie] [référence]` : captures des pages clés (ordinateur sombre, téléphone clair, horloge figée).
 Échoue sur erreur JavaScript, image cassée ou élément essentiel manquant ; signale les icônes non dessinées ;
 compare aux captures du passage précédent (cache GitHub) et joint les images de différences à l'exécution.
+
+## mails.py — relecture des modèles de mails
+`python3 tools/mails.py [--online]` : vérifie chaque modèle officiel de CVM Direct (champs {{…}} tous définis et utilisés,
+libellés clairs, titres et identifiants uniques, catégories existantes, fautes connues, mots répétés). Signale aussi les dates
+ou montants écrits en dur, la ponctuation douteuse et, avec `--online`, les liens qui ne répondent pas.

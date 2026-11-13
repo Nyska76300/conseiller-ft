@@ -1633,4 +1633,20 @@ html.theme-light .ft-split-host.ft-dual>.ft-split-b{border-left-color:#d7d9db}
 html.theme-light #ft-split-bar,html.theme-light #ft-split-pick .sp-box{border-color:#d7d9db;color:#141517}
 html.theme-light #ft-split-bar b{color:#141517}
 html.theme-light #ft-split-bar button,html.theme-light #ft-split-pick .sp-list button,html.theme-light #ft-split-pick input{background:#fafafa;border-color:#d3d4d5;color:#141517}
+#dynamic-inputs-grid .cv-row::after{color:#a8e1e3}
+#dynamic-inputs-grid .cv-badge{color:#a093dc;background:rgba(160,147,220,.12);border:1px solid rgba(160,147,220,.3)}
+#dynamic-inputs-grid .cv-auto input{border-color:rgba(160,147,220,.55)!important;background-color:rgba(98,66,177,.08)!important}
+html.theme-light #dynamic-inputs-grid .cv-badge{color:#543d89;background:#f4f4f5;border-color:#d9dbdd}
+html.theme-light #dynamic-inputs-grid .cv-row::after{color:#34919d}
+html.theme-light .text-slate-400,html.theme-light .text-slate-500,html.theme-light .sidebar-label.text-slate-400,html.theme-light #filtered-count-badge{color:#545456!important}
+html.theme-light #view-home .fh-bv,html.theme-light #view-home .fh-pin-empty,html.theme-light #view-home .fh-ndate{color:#545456!important}
+html.theme-light #vars-count-tag,html.theme-light #current-date-stamp,html.theme-light #print-area .px-6>span{color:#545456!important}
+html.theme-light #view-od .text-slate-300,html.theme-light #view-od label.cursor-pointer,html.theme-light #sim-financial-card span.block,html.theme-light #sim-financial-card .text-\[10px\],html.theme-light #sim-bareme-tag,html.theme-light #od-btn-mode-ref span,html.theme-light #calc-diff-supra{color:#494a4c!important}
+html.theme-light #active-cat-badge{color:#242526!important}
+html.theme-light #vertical-filters-container .w-full>div.flex>span.sidebar-label{color:#3f4042!important}
+html.theme-light #view-cvm aside.tpl-col>div.p-2 span{color:#494a4c!important}
+html.theme-light #sidebar-footer .sidebar-label,html.theme-light #vertical-filters-container .pt-2 .sidebar-label{color:#494a4c!important}
+html.theme-light #view-formation h2 .text-\[10px\]{color:#463371!important;background:#ebeced!important}
+.qz-intro .qz-th button.on em{color:#0f1011!important;background:#c9edee!important}
+html.theme-light .qz-intro .qz-th button.on em{background:#29636c!important}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(98,106,116,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(117,126,138,0.1),transparent 60%),linear-gradient(150deg,#060607 0%,#0e0f11 35%,#17191c 70%,#25282c 100%) fixed!important}

@@ -95,6 +95,8 @@ def main():
     total = {th: sum(1 for (t_, pl, _, _), it in res.items() if t_ == th and pl == 'ocean' and it['v'] < it['need']) for th in ('dark', 'light')}
     rep = ['## Lisibilité des thèmes', '', '| Thème | Mode | Textes moins lisibles qu’Océan |', '|---|---|---|'] + lines
     rep += ['', f"Textes sous le seuil WCAG dans Océan (référence) : sombre {total['dark']}, clair {total['light']}."]
+    if '--ocean' in sys.argv:
+        rep += ['', '### Océan sous le seuil', ''] + [f"- {th} / {t} : « {it['txt']} » {it['v']} (seuil {it['need']}) {k.split('|')[0][-70:]}" for (th, pl, t, k), it in res.items() if pl == 'ocean' and it['v'] < it['need']]
     if bad:
         rep += ['', '### Détail', ''] + [f"- {th} / {pl} / onglet {t} : « {tx} » {v} (Océan {rv}, seuil {nd})" for th, pl, t, tx, v, rv, nd in bad[:80]]
     print('\n'.join(rep))

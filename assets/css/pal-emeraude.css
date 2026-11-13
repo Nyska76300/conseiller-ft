@@ -1633,4 +1633,20 @@ html.theme-light .ft-split-host.ft-dual>.ft-split-b{border-left-color:#bae1d4}
 html.theme-light #ft-split-bar,html.theme-light #ft-split-pick .sp-box{border-color:#bae1d4;color:#0b1813}
 html.theme-light #ft-split-bar b{color:#0b1813}
 html.theme-light #ft-split-bar button,html.theme-light #ft-split-pick .sp-list button,html.theme-light #ft-split-pick input{background:#f8fafa;border-color:#ccd6d3;color:#0b1813}
+#dynamic-inputs-grid .cv-row::after{color:#72eea6}
+#dynamic-inputs-grid .cv-badge{color:#16afa4;background:rgba(22,175,164,.12);border:1px solid rgba(22,175,164,.3)}
+#dynamic-inputs-grid .cv-auto input{border-color:rgba(22,175,164,.55)!important;background-color:rgba(17,98,96,.08)!important}
+html.theme-light #dynamic-inputs-grid .cv-badge{color:#155353;background:#ecf7f3;border-color:#bfe2d7}
+html.theme-light #dynamic-inputs-grid .cv-row::after{color:#139950}
+html.theme-light .text-slate-400,html.theme-light .text-slate-500,html.theme-light .sidebar-label.text-slate-400,html.theme-light #filtered-count-badge{color:#4a5753!important}
+html.theme-light #view-home .fh-bv,html.theme-light #view-home .fh-pin-empty,html.theme-light #view-home .fh-ndate{color:#4a5753!important}
+html.theme-light #vars-count-tag,html.theme-light #current-date-stamp,html.theme-light #print-area .px-6>span{color:#4a5753!important}
+html.theme-light #view-od .text-slate-300,html.theme-light #view-od label.cursor-pointer,html.theme-light #sim-financial-card span.block,html.theme-light #sim-financial-card .text-\[10px\],html.theme-light #sim-bareme-tag,html.theme-light #od-btn-mode-ref span,html.theme-light #calc-diff-supra{color:#3f4d49!important}
+html.theme-light #active-cat-badge{color:#192823!important}
+html.theme-light #vertical-filters-container .w-full>div.flex>span.sidebar-label{color:#34433e!important}
+html.theme-light #view-cvm aside.tpl-col>div.p-2 span{color:#3f4d49!important}
+html.theme-light #sidebar-footer .sidebar-label,html.theme-light #vertical-filters-container .pt-2 .sidebar-label{color:#3f4d49!important}
+html.theme-light #view-formation h2 .text-\[10px\]{color:#124545!important;background:#def0ea!important}
+.qz-intro .qz-th button.on em{color:#08120f!important;background:#aef6cc!important}
+html.theme-light .qz-intro .qz-th button.on em{background:#13693b!important}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(48,166,127,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(57,198,151,0.1),transparent 60%),linear-gradient(150deg,#030a08 0%,#071812 35%,#0b281e 70%,#123f30 100%) fixed!important}

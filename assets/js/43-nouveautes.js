@@ -2,6 +2,14 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.58', date: '13/11/2026', items: [
+      'CVM : les mails n’ont plus de dates, montants ou durées d’anciens dossiers dans le texte : ce sont des champs à compléter.',
+      'CVM : champs intelligents — saisie rapide des dates (01082026 → 01/08/2026), calendrier, alerte si la date est invalide, montants mis en forme, et calculs automatiques (délai d’attente, 1er jour indemnisable, capital ARCE, totaux…). Un champ calculé reste modifiable.',
+      'CVM : libellés des champs en entier, et un champ vide apparaît dans le mail avec son libellé.',
+      'CVM : catégories regroupées (18 au lieu de 28, plus de « Divers ») et fautes corrigées.',
+      'Les mails officiels se mettent à jour automatiquement sur votre poste (sauf ceux que vous avez modifiés).',
+      'Thème clair : textes secondaires plus lisibles.'
+    ] },
     { v: '2026-11-13.57', date: '13/11/2026', items: [
       'CVM Direct : les champs à compléter portent maintenant un nom clair selon le mail (ex. « Date de la démission », « Montant du trop-perçu », « 1er jour indemnisable ») au lieu de « DATE (2) », « X » ou d’une valeur d’exemple.',
       'Les montants différents d’un même mail ont chacun leur champ (ex. régularisation de trop-perçu sur deux mois).',
