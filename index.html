@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.11">
+  <meta name="ft-version" content="2026-11-13.12">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -11473,7 +11473,7 @@ Votre conseiller France Travail
       const hub = HUBS.find(h => h.id === id);
       if (!hub) { const tab = NAV_TABS_CONFIG.find(t => String(t.id) === id); if (!tab) return ''; n++; const head = (id === 'jour') ? '<div class="menu-sec-h" style="margin-top:12px">Autres outils</div>' : ''; return head + item(id, tab.name, tab); }
       const rows = hub.members.map(m => { const tab = NAV_TABS_CONFIG.find(t => String(t.id) === String(m[0])); if (!tab) return ''; n++; return item(m[0], m[1], tab); }).join('');
-      return '<div class="menu-sec"><div class="menu-sec-h">' + esc(hub.name) + '</div><div class="space-y-1.5">' + rows + '</div></div>';
+      return '<div class="menu-sec" data-hub="' + esc(hub.id) + '"><div class="menu-sec-h">' + esc(hub.name) + '</div><div class="space-y-1.5">' + rows + '</div></div>';
     }).join('');
     const p = Array.from(document.querySelectorAll('p')).find(x => /modules\s*&\s*simulateurs/.test(x.textContent));
     if (p) p.textContent = n + ' outils en ' + HUBS.length + ' rubriques';
@@ -12446,7 +12446,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   if (!SB_URL || !SB_KEY || !window.fetch) return;
 
   // Données synchronisées (aucune donnée de dossier ou d'allocataire)
-  var SYNC = ['ft_links', 'ft_deleted_tpl', 'ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use', 'ft_bareme_ack', 'ft_pins'];
+  var SYNC = ['ft_links', 'ft_deleted_tpl', 'ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use', 'ft_bareme_ack', 'ft_pins', 'ft_fav_hubs'];
   var K_SESS = 'ft_sb_session', K_META = 'ft_sb_meta';
   var LSraw = {
     get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -12519,7 +12519,8 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   function parse(v, d) { try { var x = JSON.parse(v); return x == null ? d : x; } catch (e) { return d; } }
   function merge(localData, remoteData) {
     var out = {}; SYNC.forEach(function (k) { out[k] = remoteData[k] != null ? remoteData[k] : localData[k]; });
-    out.ft_pins = remoteData.ft_pins != null ? remoteData.ft_pins : '[]'; // « Mes outils » : propres à chaque compte, jamais repris d’un autre utilisateur du poste
+    out.ft_pins = remoteData.ft_pins != null ? remoteData.ft_pins : '[]';
+    out.ft_fav_hubs = remoteData.ft_fav_hubs != null ? remoteData.ft_fav_hubs : '[]'; // « Mes outils » : propres à chaque compte, jamais repris d’un autre utilisateur du poste
     var dead = {}; parse(localData.ft_deleted_tpl, []).concat(parse(remoteData.ft_deleted_tpl, [])).forEach(function (id) { dead[id] = 1; });
     out.ft_deleted_tpl = JSON.stringify(Object.keys(dead));
     var lt = parse(localData.ft_templates, []), rt = parse(remoteData.ft_templates, []);
@@ -13602,7 +13603,9 @@ html.theme-light #preview-body a.ft-link{color:#1d4ed8}
       if (sorted.some((b, i) => b !== btns[i])) { sorted.forEach(b => host.appendChild(b)); changed = true; }
     });
     const ttl = x => { const h = x.querySelector('.menu-sec-h') || x; return h.dataset.lbOrig || h.textContent; };
-    const ordered = secs.slice().sort((a, b) => secRank(ttl(a)) - secRank(ttl(b)));
+    let favH = []; try { favH = JSON.parse(localStorage.getItem('ft_fav_hubs') || '[]') || []; } catch (e) {}
+    const rk = x => { const f = favH.indexOf(x.dataset.hub); return f > -1 ? -1000 + f : secRank(ttl(x)); };
+    const ordered = secs.slice().sort((a, b) => rk(a) - rk(b));
     if (ordered.some((x, i) => x !== secs[i])) {
       const anchor = secs[secs.length - 1].nextSibling;
       ordered.forEach(x => list.insertBefore(x, anchor));
@@ -15057,33 +15060,63 @@ html.theme-light #ft-gtip b{color:#0369a1}
         out.push({ id: m[1], label: (lb ? lb.textContent : b.textContent).trim(), group: g, icon: svg ? svg.outerHTML.replace(/\sclass="[^"]*"/, '') : '' });
       });
     });
+    [...list.children].map(el => el.matches && el.matches('button[onclick^="switchNavTab"]') ? el : (el.classList && el.classList.contains('ft-pen-wrap') ? el.querySelector('button[onclick^="switchNavTab"]') : null)).filter(Boolean).forEach(b => {
+      const m = /switchNavTab\('([^']+)'\)/.exec(b.getAttribute('onclick') || ''); if (!m || m[1] === 'home' || out.some(t => t.id === m[1])) return;
+      const lb = b.querySelector('.text-xs'), svg = b.querySelector('svg');
+      out.push({ id: m[1], label: (lb ? lb.textContent : b.textContent).trim(), group: 'Autres outils', icon: svg ? svg.outerHTML.replace(/\sclass="[^"]*"/, '') : '' });
+    });
+    if (window.__ftIsAdmin && window.__ftIsAdmin()) out.push({ id: 'admin', label: 'Espace administrateur', group: 'Administration (vous seul)', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>' });
     return out;
   }
+  const MAIL_ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>';
+  function allMails() { try { return (templates || []).map(t => ({ id: 'tpl:' + t.id, tid: t.id, label: t.title || '(sans titre)', group: t.category || '', mine: !(t.isOfficial || t.shared), icon: MAIL_ICO })); } catch (e) { return []; } }
   const pinCol = g => /invalidit/i.test(g) ? 'fh-c6' : /ouverture|droits/i.test(g) && !/fin de droits/i.test(g) ? 'fh-c1' : /ans|création|cumul/i.test(g) ? 'fh-c2' : /fin de droits|passage/i.test(g) ? 'fh-c3' : /situation/i.test(g) ? 'fh-c4' : /référence|calcul/i.test(g) ? 'fh-c5' : 'fh-c1';
   function pinsCard() {
     const hero = document.querySelector('#view-home .fh-C .home-hero'); if (!hero) return;
     let c = document.querySelector('#view-home .fh-pins');
     if (!c) { c = document.createElement('section'); c.className = 'fh-card fh-pins fh-c5'; hero.parentNode.insertBefore(c, hero.nextSibling); }
-    const tools = allTools(), pins = getPins().map(id => tools.find(t => t.id === id)).filter(Boolean);
-    const html = '<div class="fh-gh"><span class="fh-gi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg></span><h3>Mes outils</h3><button type="button" class="fh-pin-edit">' + (pins.length ? 'Modifier' : 'Choisir') + '</button></div>' +
-      (pins.length ? '<div class="fh-chips">' + pins.map(t => '<button type="button" class="fh-chip fh-pin ' + pinCol(t.group) + '" data-id="' + esc(t.id) + '" title="' + esc(t.group) + '"><span class="fh-ci">' + t.icon + '</span><span class="fh-cl">' + esc(t.label) + '</span></button>').join('') + '</div>' : '<p class="fh-pin-empty">Épinglez les outils que vous utilisez le plus pour les retrouver ici en un geste.</p>');
+    const tools = allTools().concat(allMails()), pins = getPins().map(id => tools.find(t => t.id === id)).filter(Boolean);
+    const html = '<div class="fh-gh"><span class="fh-gi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg></span><h3>Mes favoris</h3><button type="button" class="fh-pin-edit">' + (pins.length ? 'Modifier' : 'Choisir') + '</button></div>' +
+      (pins.length ? '<div class="fh-chips">' + pins.map(t => '<button type="button" class="fh-chip fh-pin ' + (t.tid != null ? 'fh-c2 fh-pin-mail' : t.id === 'admin' ? 'fh-c6' : pinCol(t.group)) + '" data-id="' + esc(t.id) + '" title="' + esc(t.tid != null ? 'Mail : ' + t.label : t.group) + '"><span class="fh-ci">' + t.icon + '</span><span class="fh-cl">' + esc(t.label) + '</span></button>').join('') + '</div>' : '<p class="fh-pin-empty">Cochez les outils et les mails (CVM) que vous utilisez le plus pour les retrouver ici en un geste.</p>');
     if (c.dataset.h !== html) { c.innerHTML = html; c.dataset.h = html; }
   }
   document.addEventListener('click', e => {
-    const p = e.target.closest && e.target.closest('.fh-pins .fh-pin'); if (p) { switchNavTab(p.dataset.id); return; }
+    const p = e.target.closest && e.target.closest('.fh-pins .fh-pin');
+    if (p) { const id = p.dataset.id; if (id.indexOf('tpl:') === 0) { const tid = id.slice(4); switchNavTab('cvm'); setTimeout(() => { try { const t = templates.find(x => String(x.id) === tid); if (t) { try { if (typeof currentCategory !== 'undefined') { currentCategory = 'all'; } } catch (er) {} try { localStorage.setItem('ft_tpl_scope', 'all'); } catch (er) {} selectTemplate(t.id); } } catch (er) {} }, 60); } else switchNavTab(id); return; }
     if (e.target.closest && e.target.closest('.fh-pins .fh-pin-edit')) openPins();
   });
-  function openPins() {
+  function openPins(mode) {
     let d = $('ft-pins-dlg'); if (!d) { d = document.createElement('div'); d.id = 'ft-pins-dlg'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true'); document.body.appendChild(d); }
-    const tools = allTools(), pins = getPins(); let last = '';
-    d.innerHTML = '<div class="pd-box"><div class="pd-h"><h3>Mes outils épinglés</h3><button type="button" class="pd-x" aria-label="Fermer">×</button></div><div class="pd-list">' +
-      tools.map(t => (t.group !== last ? '<div class="pd-g">' + esc(last = t.group) + '</div>' : '') + '<label><input type="checkbox" value="' + esc(t.id) + '"' + (pins.includes(t.id) ? ' checked' : '') + '>' + esc(t.label) + '</label>').join('') + '</div></div>';
-    d.classList.add('on');
-    d.onclick = e => { if (e.target === d || e.target.closest('.pd-x')) { d.classList.remove('on'); } };
+    const tools = allTools(), mails = allMails().sort((a, b) => (b.mine - a.mine) || a.label.localeCompare(b.label, 'fr')), pins = getPins();
+    let tab = mode === 'mails' ? 'mails' : 'tools', q = '';
+    const box = it => '<label data-s="' + esc((it.label + ' ' + it.group).toLowerCase()) + '"><input type="checkbox" value="' + esc(it.id) + '"' + (getPins().includes(it.id) ? ' checked' : '') + '><span class="pd-l">' + esc(it.label) + (it.tid != null && it.group ? '<small>' + esc(it.group) + '</small>' : '') + '</span></label>';
+    function list() {
+      const nq = q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const match = it => !nq || (it.label + ' ' + it.group).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(nq);
+      let last = '', html = '';
+      if (tab === 'tools') tools.filter(match).forEach(t => { if (t.group !== last) html += '<div class="pd-g">' + esc(last = t.group) + '</div>'; html += box(t); });
+      else { const a = mails.filter(m => m.mine && match(m)), b = mails.filter(m => !m.mine && match(m)); if (a.length) html += '<div class="pd-g">Mes modèles</div>' + a.map(box).join(''); if (b.length) html += '<div class="pd-g">Modèles communs</div>' + b.map(box).join(''); }
+      return html || '<p class="pd-none">Aucun résultat.</p>';
+    }
+    const n = k => getPins().filter(id => k === 'mails' ? id.indexOf('tpl:') === 0 : id.indexOf('tpl:') !== 0).length;
+    function draw() {
+      d.innerHTML = '<div class="pd-box"><div class="pd-h"><h3>Mes favoris</h3><button type="button" class="pd-x" aria-label="Fermer">×</button></div>' +
+        '<div class="pd-tabs"><button type="button" data-t="tools" class="' + (tab === 'tools' ? 'on' : '') + '">Outils <b>' + n('tools') + '</b></button><button type="button" data-t="mails" class="' + (tab === 'mails' ? 'on' : '') + '">Mails (CVM) <b>' + n('mails') + '</b></button></div>' +
+        '<div class="pd-q"><input type="search" placeholder="' + (tab === 'mails' ? 'Rechercher un mail…' : 'Rechercher un outil…') + '" value="' + esc(q) + '"></div>' +
+        '<div class="pd-list">' + list() + '</div></div>';
+    }
+    draw(); d.classList.add('on');
+    d.onclick = e => {
+      if (e.target === d || e.target.closest('.pd-x')) { d.classList.remove('on'); return; }
+      const t = e.target.closest('.pd-tabs [data-t]'); if (t) { tab = t.dataset.t; q = ''; draw(); }
+    };
+    d.oninput = e => { if (e.target.matches('.pd-q input')) { q = e.target.value; d.querySelector('.pd-list').innerHTML = list(); } };
     d.onchange = e => {
+      if (e.target.type !== 'checkbox') return;
       const id = e.target.value, cur = getPins().filter(x => x !== id);
       if (e.target.checked) cur.push(id);
       setPins(cur); pinsCard();
+      d.querySelectorAll('.pd-tabs b').forEach((b, k) => { b.textContent = n(k ? 'mails' : 'tools'); });
     };
   }
   window.ftOpenPins = openPins;
@@ -15126,7 +15159,7 @@ html.theme-light #ft-gtip b{color:#0369a1}
       b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span></span>';
       b.addEventListener('click', ev => { ev.stopPropagation(); H.classList.remove('ft-more-on'); setTimeout(window.ftEnableNotifs, 30); });
       const pinsB = document.createElement('button'); pinsB.type = 'button'; pinsB.setAttribute('role', 'menuitem'); pinsB.dataset.k = 'pins';
-      pinsB.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg><span>Mes outils épinglés</span>';
+      pinsB.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg><span>Mes favoris</span>';
       pinsB.addEventListener('click', ev => { ev.stopPropagation(); H.classList.remove('ft-more-on'); setTimeout(openPins, 30); });
       const hr = m.querySelector('hr'); m.insertBefore(b, hr || null); m.insertBefore(pinsB, hr || null);
     }
@@ -15202,6 +15235,17 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+#ft-pins-dlg .pd-tabs{display:flex;gap:4px;margin:10px 14px 0;padding:3px;border-radius:10px;background:rgba(255,255,255,.05)}
+#ft-pins-dlg .pd-tabs button{flex:1;height:32px;border:0;border-radius:8px;background:none;color:#94a3b8;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer}
+#ft-pins-dlg .pd-tabs button.on{background:linear-gradient(90deg,#2563eb,#06b6d4);color:#fff}
+#ft-pins-dlg .pd-tabs b{font-size:11px;margin-left:4px;padding:0 6px;border-radius:999px;background:rgba(255,255,255,.15)}
+#ft-pins-dlg .pd-q{padding:10px 14px 0}
+#ft-pins-dlg .pd-q input{width:100%;height:36px;border-radius:9px;border:1px solid #24345f;background:#0a1430;color:#e8eef9;padding:0 10px;font-family:inherit;font-size:13.5px}
+#ft-pins-dlg .pd-l{display:flex;flex-direction:column;min-width:0}
+#ft-pins-dlg .pd-l small{font-size:11px;color:#94a3b8}
+#ft-pins-dlg .pd-none{color:#94a3b8;font-size:13px;padding:10px}
+html.theme-light #ft-pins-dlg .pd-q input{background:#fff;border-color:#cbd5e1;color:#0f172a}
+html.theme-light #ft-pins-dlg .pd-tabs{background:#f1f5f9}
 .fh-links .lk-manage.lk-gear{width:32px;height:32px;padding:0;display:grid;place-items:center;border-radius:9px}
 .fh-links .lk-manage.lk-gear svg{width:17px;height:17px;transition:transform .4s}
 .fh-links .lk-manage.lk-gear:hover svg{transform:rotate(60deg)}
@@ -16420,6 +16464,63 @@ html.theme-light .rg-up{background:#f8fafc;border-color:#e2e8f0}html.theme-light
   setTimeout(sync, 500);
 })();
 </script>
+<!-- ================= Extension 37 : thématiques favorites dans le Menu Outils (par conseiller) ================= -->
+<style>
+#burger-tabs-list .mh-star{margin-left:auto;flex:none;width:26px;height:26px;border-radius:8px;border:1px solid transparent;background:none;color:#64748b;display:grid;place-items:center;cursor:pointer;padding:0}
+#burger-tabs-list .mh-star svg{width:15px;height:15px}
+#burger-tabs-list .mh-star:hover{color:#fbbf24;border-color:rgba(251,191,36,.4)}
+#burger-tabs-list .mh-star.on{color:#fbbf24}
+#burger-tabs-list .mh-star.on svg{fill:#fbbf24}
+#burger-tabs-list .menu-sec.mh-fav{border-left:2px solid rgba(251,191,36,.6);padding-left:6px}
+#burger-tabs-list .mh-favh{display:flex;align-items:center;gap:6px;padding:2px 6px 6px;font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fbbf24}
+html.theme-light #burger-tabs-list .mh-favh{color:#b45309}
+</style>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const STAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>';
+  const get = () => { try { const v = JSON.parse(localStorage.getItem('ft_fav_hubs') || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } };
+  const set = a => { const v = JSON.stringify(a); if (window.safeLS && safeLS.setItem) safeLS.setItem('ft_fav_hubs', v); else try { localStorage.setItem('ft_fav_hubs', v); } catch (e) {} };
+  function sync() {
+    const list = $('burger-tabs-list'); if (!list) return;
+    const secs = [...list.querySelectorAll(':scope > .menu-sec[data-hub]')]; if (!secs.length) return;
+    const fav = get();
+    secs.forEach(sec => {
+      const id = sec.dataset.hub, h = sec.querySelector('.menu-sec-h'); if (!h) return;
+      let b = h.querySelector('.mh-star');
+      if (!b) { b = document.createElement('button'); b.type = 'button'; b.className = 'mh-star'; b.dataset.hub = id; b.innerHTML = STAR; h.appendChild(b); }
+      const on = fav.includes(id);
+      if (b.classList.contains('on') !== on) b.classList.toggle('on', on);
+      const t = on ? 'Retirer des thématiques favorites' : 'Mettre en favori : cette thématique s’affichera en haut du menu';
+      if (b.title !== t) { b.title = t; b.setAttribute('aria-label', t); b.setAttribute('aria-pressed', String(on)); }
+      if (sec.classList.contains('mh-fav') !== on) sec.classList.toggle('mh-fav', on);
+    });
+    /* Les thématiques favorites passent en tête, dans l’ordre où elles ont été choisies */
+    const favSecs = fav.map(id => secs.find(s => s.dataset.hub === id)).filter(Boolean);
+    let head = list.querySelector(':scope > .mh-favh');
+    if (!favSecs.length) { if (head) head.remove(); return; }
+    if (!head) { head = document.createElement('div'); head.className = 'mh-favh'; head.innerHTML = STAR.replace('<svg ', '<svg width="12" height="12" style="fill:currentColor" ') + 'Mes thématiques favorites'; }
+    const first = list.querySelector(':scope > .menu-sec[data-hub]');
+    if (first && !first.classList.contains('mh-fav')) {
+      /* tri pas encore appliqué (pas de tri d’administrateur) : on place nous-mêmes les favoris */
+      favSecs.slice().reverse().forEach(el => list.insertBefore(el, first));
+    }
+    const f1 = list.querySelector(':scope > .menu-sec.mh-fav');
+    if (f1 && f1.previousElementSibling !== head) list.insertBefore(head, f1);
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('#burger-tabs-list .mh-star'); if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    const id = b.dataset.hub, fav = get(), i = fav.indexOf(id);
+    if (i < 0) fav.push(id); else fav.splice(i, 1);
+    set(fav); sync();
+    try { showToast(i < 0 ? 'Thématique ajoutée à vos favoris' : 'Thématique retirée de vos favoris', 'success'); } catch (er) {}
+  }, true);
+  window.addEventListener('storage', e => { if (e.key === 'ft_fav_hubs') sync(); });
+  if (window.ftOnDom) window.ftOnDom(sync);
+  setTimeout(sync, 400);
+})();
+</script>
 <!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
 <style>
 #ft-news{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.6);backdrop-filter:blur(3px);opacity:0;transition:opacity .25s ease}
@@ -16452,6 +16553,10 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.12', date: '13/11/2026', items: [
+      'Accueil : « Mes outils » devient « Mes favoris ». Vous pouvez y cocher des outils et aussi des mails (CVM) : un clic ouvre directement le mail.',
+      'Menu Outils : une étoile à côté de chaque thématique permet de la mettre en favori ; vos thématiques favorites s’affichent en haut du menu. Ces choix sont propres à votre compte.'
+    ] },
     { v: '2026-11-13.10', date: '13/11/2026', items: [
       'Accueil, « Liens utiles » : maintenez un lien appuyé une demi-seconde (doigt ou souris) ; les liens se mettent à trembler comme sur iPhone et vous pouvez le faire glisser à sa nouvelle place. La roue crantée donne accès aux mêmes réglages. « Terminer » pour sortir. L’ordre est enregistré dans votre compte.'
     ] },
