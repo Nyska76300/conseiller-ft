@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.17">
+  <meta name="ft-version" content="2026-11-13.18">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -15300,8 +15300,9 @@ html.theme-light #ft-gtip b{color:#0369a1}
 .ft-rp i{width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.22);animation:rpPulse 2.4s ease-in-out infinite}
 @keyframes rpPulse{50%{box-shadow:0 0 0 5px rgba(16,185,129,.08)}}
 .ft-rp.warn{border-color:rgba(251,191,36,.5);background:rgba(245,158,11,.14);color:#fcd34d}.ft-rp.warn i{background:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.25)}
-.ft-rp.late{border-color:rgba(148,163,184,.45);background:rgba(148,163,184,.12);color:#cbd5e1}.ft-rp.late i{background:#94a3b8;box-shadow:none;animation:none}
-html.theme-light .ft-rp{background:#ecfdf5;color:#047857;border-color:#6ee7b7}html.theme-light .ft-rp.warn{background:#fffbeb;color:#b45309;border-color:#fcd34d}html.theme-light .ft-rp.late{background:#f1f5f9;color:#475569;border-color:#cbd5e1}
+.ft-rp.late{border-color:rgba(248,113,113,.5);background:rgba(239,68,68,.14);color:#fca5a5}.ft-rp.late i{background:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.25)}
+.ft-rp.ro{cursor:default}
+html.theme-light .ft-rp{background:#ecfdf5;color:#047857;border-color:#6ee7b7}html.theme-light .ft-rp.warn{background:#fffbeb;color:#b45309;border-color:#fcd34d}html.theme-light .ft-rp.late{background:#fef2f2;color:#b91c1c;border-color:#fca5a5}
 @media (prefers-reduced-motion:reduce){.ft-rp i{animation:none}}
 #ft-auth .fa-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 #ft-auth .fa-sec{margin:16px 0 0;padding-top:12px;border-top:1px solid rgba(148,163,184,.2);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#67e8f9}
@@ -16446,9 +16447,10 @@ html.theme-light .rg-up{background:#f8fafc;border-color:#e2e8f0}html.theme-light
     else if (age > 14) { cls = 'late'; txt = 'À vérifier'; }
     const when = last ? last.toLocaleDateString('fr-FR') : '—';
     const t = (cls === 'warn' ? pend + ' mise(s) à jour réglementaire(s) en attente de votre validation. ' : cls === 'late' ? 'La dernière vérification date de plus de deux semaines. ' : 'Réglementation à jour. ') + 'Dernière vérification automatique : ' + when + ' (veille chaque lundi sur Unédic, Légifrance et France Travail).' + (B && B.verifie ? ' Barème Unédic vérifié le ' + B.verifie + '.' : '');
-    p.className = 'ft-rp ' + cls; p.title = t; p.setAttribute('aria-label', t);
+    p.className = 'ft-rp ' + cls + (adm ? '' : ' ro'); p.title = t; p.setAttribute('aria-label', t);
+    if (adm) p.removeAttribute('tabindex'); else p.setAttribute('tabindex', '-1');
     p.querySelector('b').textContent = txt;
-    p.onclick = () => { if (adm) switchNavTab('admin'); else try { switchNavTab('sources'); } catch (e) {} };
+    p.onclick = adm ? () => switchNavTab('admin') : null;
   }
   window.__ftRegPill = pill;
   function load() {
@@ -16524,6 +16526,7 @@ html.theme-light .rg-up{background:#f8fafc;border-color:#e2e8f0}html.theme-light
   document.addEventListener('ft-props', () => setTimeout(todo, 50));
   document.addEventListener('ft-regs', () => setTimeout(todo, 50));
   document.addEventListener('ft-admin', apply);
+  document.addEventListener('ft-admin', () => setTimeout(pill, 50));
   document.addEventListener('ft-regs', apply);
   window.FT_ACTIONS = window.FT_ACTIONS || [];
   window.FT_ACTIONS.push({ t: 'Veille réglementaire', s: 'Mises à jour en attente de validation (administrateur)', kw: 'veille réglementation mise à jour validation diffusion', when: isAdmin, run: () => switchNavTab('admin') });
