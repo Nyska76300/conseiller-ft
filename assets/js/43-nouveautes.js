@@ -2,6 +2,11 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.57', date: '13/11/2026', items: [
+      'CVM Direct : les champs à compléter portent maintenant un nom clair selon le mail (ex. « Date de la démission », « Montant du trop-perçu », « 1er jour indemnisable ») au lieu de « DATE (2) », « X » ou d’une valeur d’exemple.',
+      'Les montants différents d’un même mail ont chacun leur champ (ex. régularisation de trop-perçu sur deux mois).',
+      'Ménage : 6 mails en double ou dépassés retirés (109 → 103 modèles).'
+    ] },
     { v: '2026-11-13.56', date: '13/11/2026', items: [
       'Côte à côte : chaque outil défile bien jusqu’en bas.',
       'Côte à côte optimisé : chaque outil se met en page selon sa demi-largeur (colonnes empilées, plus rien de coupé). CVM Direct : catégories en icônes, liste resserrée, le mail garde la place.'
