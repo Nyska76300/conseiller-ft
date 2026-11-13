@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.24">
+  <meta name="ft-version" content="2026-11-13.25">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -15349,6 +15349,7 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+.fh-chip .fh-cl,.hub-tab,.st-tile h4{overflow-wrap:anywhere;-webkit-hyphens:auto;hyphens:auto}
 .ft-mail-h .ft-mail-btns{flex-wrap:wrap;justify-content:flex-end}
 .ft-mail-btns button{white-space:nowrap}
 .ft-split>.ft-mail .ft-mail-btns,.ft-mail .ft-mail-btns:only-child{margin-left:0;width:100%;justify-content:flex-start}
@@ -16981,6 +16982,55 @@ html.theme-light #ft-news .ftn-go{color:#0369a1!important;background:#e0f2fe!imp
   document.addEventListener('visibilitychange', () => { if (!document.hidden) annonce(); });
 })();
 </script>
+<!-- ================= Extension 39 : affichage téléphone (barres d’onglets et en-têtes) ================= -->
+<style>
+.hub-chips{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;flex:0 1 auto}
+@media (max-width:640px){
+  .hub-bar{flex-wrap:wrap!important;overflow:visible!important;row-gap:8px;padding-top:8px!important;padding-bottom:8px!important}
+  .hub-bar>.hub-chips{flex:1 1 100%!important;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;padding:2px 2px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent)}
+  .hub-chips::-webkit-scrollbar{display:none}
+  .hub-chips>*{flex:none;scroll-snap-align:center}
+  .hub-bar>.hub-sub{flex:1 1 100%!important;width:100%;justify-content:center;margin:0!important}
+  .hub-bar>.hub-sub .rg-tabs{flex-wrap:nowrap;width:100%;justify-content:center}
+  .hub-bar>.hub-sub .rg-tab{flex:1 1 0;text-align:center;white-space:nowrap}
+  /* En-têtes des outils : titre et onglets passent à la ligne au lieu d’être coupés */
+  [id^="view-"] select,[id^="view-"] input:not([type=checkbox]):not([type=radio]){max-width:100%;min-width:0}
+  [id^="view-"]>div.border-b:not(.hub-bar){flex-wrap:wrap;height:auto!important;row-gap:10px}
+  [id^="view-"]>div.border-b:not(.hub-bar)>div{min-width:0;max-width:100%}
+  [id^="view-"]>div.border-b:not(.hub-bar) h2{flex-wrap:wrap;row-gap:4px}
+  [id^="view-"]>div.border-b:not(.hub-bar) h2>span{min-width:0}
+  /* Sélecteurs de mode (Conditions / Règles / Simulateur…) : sur plusieurs lignes plutôt que coupés */
+  [id^="view-"] div.flex.items-center.bg-slate-950{flex-wrap:wrap;max-width:100%;row-gap:4px}
+  [id^="view-"] div.flex.items-center.bg-slate-950>button{flex:1 1 auto;justify-content:center;white-space:nowrap;min-width:0}
+  [id^="view-"]>div.border-b:not(.hub-bar)>div.flex.items-center.gap-2:last-child{width:100%}
+  [id^="view-"]>div.border-b:not(.hub-bar)>div.flex.items-center.gap-2:last-child>div.bg-slate-950{width:100%}
+}
+</style>
+<script>
+(function () {
+  /* Sur téléphone, les onglets de la rubrique défilent sur une ligne et les modes (Simulateur / Règles…) passent sur la ligne suivante, en entier */
+  function wrap() {
+    document.querySelectorAll('.hub-bar').forEach(bar => {
+      if (bar.querySelector(':scope > .hub-chips')) return;
+      const box = document.createElement('div'); box.className = 'hub-chips';
+      [...bar.children].filter(c => c.classList.contains('hub-tab') || c.classList.contains('hub-name')).forEach(c => box.appendChild(c));
+      bar.insertBefore(box, bar.firstChild);
+    });
+  }
+  function center() {
+    if (innerWidth > 640) return;
+    document.querySelectorAll('[id^="view-"]:not(.hidden) .hub-chips').forEach(box => {
+      const on = box.querySelector('.hub-tab.is-on'); if (!on) return;
+      box.scrollLeft = on.offsetLeft - (box.clientWidth - on.offsetWidth) / 2;
+    });
+  }
+  wrap();
+  const _sw = switchNavTab;
+  switchNavTab = function () { const r = _sw.apply(this, arguments); setTimeout(() => { wrap(); center(); }, 30); return r; };
+  if (window.ftOnDom) window.ftOnDom(wrap);
+  setTimeout(() => { wrap(); center(); }, 500);
+})();
+</script>
 <!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
 <style>
 #ft-news{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.6);backdrop-filter:blur(3px);opacity:0;transition:opacity .25s ease}
@@ -17013,6 +17063,10 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.25', date: '13/11/2026', items: [
+      'Téléphone : les onglets des rubriques défilent sur une ligne et les modes (Simulateur / Règles et calculs) passent dessous en entier ; les sélecteurs (CSP, trop-perçu…) s’affichent sur deux lignes au lieu d’être coupés ; les listes déroulantes ne débordent plus.',
+      'Application installée : elle se met à jour toute seule à l’ouverture quand une nouvelle version est disponible.'
+    ] },
     { v: '2026-11-13.24', date: '13/11/2026', items: [
       'Visite guidée : à la première connexion, six étapes présentent l’essentiel (favoris, menu, mails, interprète, recherche). À revoir depuis le menu de votre compte.',
       'Notifications : activez-les depuis le menu de votre compte (ou « ⋯ » sur téléphone) pour être prévenu des nouveautés, des annonces et des mises à jour réglementaires ; un clic ouvre directement le bon endroit.',
@@ -17335,7 +17389,7 @@ html.theme-light #ft-update .ftu-x{color:#475569}
   function hide() { bar.classList.remove('show'); setTimeout(function () { bar.hidden = true; }, 400); }
 
   function check() {
-    if (Date.now() - last < 60000) return;
+    if (Date.now() - last < 20000) return;
     last = Date.now();
     fetch(location.pathname + '?check=' + Date.now(), { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.text() : ''; })
@@ -17343,6 +17397,14 @@ html.theme-light #ft-update .ftu-x{color:#475569}
         var m = html.match(/<meta name="ft-version" content="([^"]+)"/);
         if (!m || !current || m[1] === current || m[1] === dismissed) return;
         latest = m[1];
+        /* Appli installée (iPhone, Android, Mac) : on recharge tout seul si rien n'est en cours de saisie */
+        var app = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone;
+        var ae = document.activeElement, typing = ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName) && ae.value;
+        if (app && !typing && !document.querySelector('.ft-mail textarea[data-edited]')) {
+          try { if (window.showToast) showToast('Mise à jour de l’application…', 'info'); } catch (e) {}
+          setTimeout(function () { location.replace(location.pathname + '?v=' + encodeURIComponent(latest) + location.hash); }, 900);
+          return;
+        }
         show();
       })
       .catch(function () {}); // hors ligne : on réessaiera plus tard
