@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.7">
+  <meta name="ft-version" content="2026-11-13.8">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -15145,6 +15145,50 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+.st-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.st-head h3{margin:0;font-size:15px;font-weight:800;color:#fff}
+.st-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:12px}
+@media (max-width:1100px){.st-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:640px){.st-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.st-kpi{padding:12px;border-radius:14px;border:1px solid rgba(51,65,85,.8);background:rgba(15,23,42,.9);border-top:3px solid #3b82f6;min-width:0}
+.st-kpi.c2{border-top-color:#06b6d4}.st-kpi.c3{border-top-color:#8b5cf6}.st-kpi.c4{border-top-color:#10b981}.st-kpi.c5{border-top-color:#f59e0b}.st-kpi.c6{border-top-color:#ec4899}
+.st-kpi span{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8}
+.st-kpi b{display:block;font-size:24px;font-weight:900;color:#fff;margin-top:2px}
+.st-kpi em{display:block;font-style:normal;font-size:11px;color:#67e8f9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st-sec{margin:18px 2px 8px;font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#93c5fd}
+.st-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.st-tile{position:relative;padding:14px;border-radius:14px;border:1px solid rgba(51,65,85,.8);background:rgba(15,23,42,.9);min-width:0;display:flex;flex-direction:column;gap:8px}
+.st-wide{margin-bottom:4px}
+.st-tile h4{margin:0;font-size:13.5px;font-weight:800;color:#f1f5f9;padding-right:30px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.st-tile h4 span{float:right;font-size:10.5px;font-weight:600;color:#94a3b8}
+.st-rank{position:absolute;top:12px;right:12px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;background:linear-gradient(90deg,#2563eb,#06b6d4)}
+.st-nums{display:flex;gap:6px}
+.st-nums div{flex:1;text-align:center;padding:6px 4px;border-radius:10px;background:rgba(2,6,23,.5)}
+.st-nums b{display:block;font-size:17px;font-weight:900;color:#fff}
+.st-nums span{display:block;font-size:10px;color:#94a3b8}
+.st-bar{height:5px;border-radius:9px;background:rgba(148,163,184,.15);overflow:hidden}
+.st-bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#2563eb,#06b6d4)}
+.st-whos{display:flex;flex-wrap:wrap;gap:4px}
+.st-who{display:inline-flex;align-items:center;gap:4px;padding:2px 7px 2px 2px;border-radius:999px;background:rgba(30,41,59,.9);border:1px solid rgba(51,65,85,.9);font-size:10.5px;color:#cbd5e1;max-width:100%}
+.st-who i{width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:9px;font-weight:800;color:#fff;background:#4f46e5}
+.st-who b{color:#67e8f9;font-weight:700}
+.st-last{margin:0;font-size:10.5px;color:#64748b}
+.st-uh{display:flex;align-items:center;gap:10px}
+.st-uh h4{padding-right:0;-webkit-line-clamp:1;word-break:break-all}
+.st-av{flex:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;background:linear-gradient(135deg,#6366f1,#06b6d4)}
+.st-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#93c5fd;margin-top:2px}
+.st-list{display:flex;flex-direction:column;gap:3px}
+.st-list div{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#cbd5e1}
+.st-list span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.st-list b{flex:none;color:#67e8f9;font-weight:700;font-size:11px}
+.st-more summary{cursor:pointer;font-size:11.5px;font-weight:700;color:#67e8f9;margin:6px 0}
+html.theme-light .st-head h3,html.theme-light .st-kpi b,html.theme-light .st-nums b,html.theme-light .st-tile h4{color:#0f172a}
+html.theme-light .st-kpi,html.theme-light .st-tile{background:#fff;border-color:#e2e8f0}
+html.theme-light .st-nums div{background:#f1f5f9}
+html.theme-light .st-who{background:#f1f5f9;border-color:#e2e8f0;color:#334155}
+html.theme-light .st-who b,html.theme-light .st-list b,html.theme-light .st-kpi em{color:#0369a1}
+html.theme-light .st-list div{color:#334155}
+html.theme-light .st-sec,html.theme-light .st-lbl{color:#0369a1}
 #ft-adm-sec .ft-pen{display:none!important}
 .tpl-scope{display:flex;gap:3px;padding:3px;border-radius:9px;background:rgba(15,23,42,.7);border:1px solid rgba(51,65,85,.7);margin-bottom:6px}
 .tpl-scope button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:4px;height:26px;border:0;border-radius:6px;background:none;color:#94a3b8;font-weight:700;font-size:10.5px;cursor:pointer;white-space:nowrap}
@@ -15634,7 +15678,7 @@ html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5
   const toast = (m, t) => { try { showToast(m, t || 'info'); } catch (e) {} };
   const isAdmin = () => !!(window.__ftIsAdmin && window.__ftIsAdmin());
   const user = () => window.__ftUser && window.__ftUser();
-  const name = id => { if (String(id).indexOf('mail:') === 0) return '✉ ' + String(id).slice(5); try { return (NAV_TABS_CONFIG.find(t => String(t.id) === String(id)) || {}).name || id; } catch (e) { return id; } };
+  const name = id => { if (String(id).indexOf('mail:') === 0) return '✉ ' + String(id).slice(5); if (String(id).indexOf('copie:') === 0) return '📋 ' + String(id).slice(6); try { return (NAV_TABS_CONFIG.find(t => String(t.id) === String(id)) || {}).name || id; } catch (e) { return id; } };
   const dt = d => d ? new Date(d).toLocaleDateString('fr-FR') : '—';
   const dtt = d => d ? new Date(d).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
   const missing = e => /PGRST20[25]|42883|42P01|does not exist|HTTP 404/.test(String(e && (e.message || e.code) || ''));
@@ -15659,6 +15703,10 @@ html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5
   if (typeof selectTemplate === 'function') {
     const _st = selectTemplate;
     selectTemplate = function (id) { const r = _st.apply(this, arguments); try { const t = templates.find(x => x.id === id); if (t) { last = ''; log('mail:' + t.title); } } catch (e) {} return r; };
+  }
+  if (typeof copyCurrentMail === 'function') {
+    const _cp = copyCurrentMail;
+    copyCurrentMail = function () { const r = _cp.apply(this, arguments); try { const t = templates.find(x => x.id === activeTemplateId); if (t) { last = ''; log('copie:' + t.title); last = ''; } } catch (e) {} return r; };
   }
 
   /* ================= Boîte à idées ================= */
@@ -15749,29 +15797,60 @@ html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5
   };
   function usage(card) {
     const host = $('ad-usage'); if (!host) return;
-    host.innerHTML = card('★', 'Utilisation par conseiller', '<span class="au-per">' + [7, 30, 90].map(d => '<button type="button" data-d="' + d + '" class="' + (d === per ? 'on' : '') + '">' + d + ' j</button>').join('') + '</span>', '<div id="au-body" class="ad-empty">Chargement…</div>');
+    host.innerHTML = '<div class="st-head"><h3>Statistiques d’utilisation</h3><span class="au-per">' + [7, 30, 90, 365].map(d => '<button type="button" data-d="' + d + '" class="' + (d === per ? 'on' : '') + '">' + (d === 365 ? '1 an' : d + ' j') + '</button>').join('') + '</span></div><div id="au-body" class="ad-empty">Chargement…</div>';
     host.querySelector('.au-per').onclick = e => { const b = e.target.closest('[data-d]'); if (b) { per = +b.dataset.d; usage(card); } };
     Promise.all([window.__ftRpc('admin_usage', { days: per }), window.__ftRpc('admin_daily', { days: per })]).then(([rows, daily]) => {
-      rows = rows || []; daily = daily || [];
+      rows = (rows || []).map(r => Object.assign({}, r, { uses: +r.uses || 0 })); daily = daily || [];
       const b = $('au-body');
-      if (!rows.length) { b.innerHTML = '<p class="ad-empty">Pas encore d’activité enregistrée sur cette période. Le journal démarre avec cette version : les chiffres apparaîtront au fil des connexions.</p>'; return; }
-      const byU = {}; rows.forEach(r => { const u = byU[r.email] = byU[r.email] || { email: r.email, uses: 0, tools: [], last: null }; u.uses += +r.uses; u.tools.push(r); if (!u.last || r.last_at > u.last) u.last = r.last_at; });
+      if (!rows.length) { b.innerHTML = '<p class="ad-empty">Pas encore d’activité enregistrée sur cette période. Les chiffres apparaîtront au fil des connexions.</p>'; return; }
+      const kind = t => String(t).indexOf('mail:') === 0 ? 'mail' : String(t).indexOf('copie:') === 0 ? 'copie' : 'outil';
+      const tplName = t => String(t).replace(/^(mail|copie):/, '');
+      const short = e => String(e || '').split('@')[0];
+      const ini = e => short(e).charAt(0).toUpperCase() || '?';
+      const sum = a => a.reduce((s, r) => s + r.uses, 0);
+      const tools = rows.filter(r => kind(r.tool) === 'outil'), opens = rows.filter(r => kind(r.tool) === 'mail'), copies = rows.filter(r => kind(r.tool) === 'copie');
+      /* Regroupements */
+      const group = (list, key) => { const m = {}; list.forEach(r => { const k = key(r); const g = m[k] = m[k] || { k, uses: 0, users: {}, last: null }; g.uses += r.uses; g.users[r.email] = (g.users[r.email] || 0) + r.uses; if (!g.last || r.last_at > g.last) g.last = r.last_at; }); return Object.values(m).sort((a, c) => c.uses - a.uses); };
+      const mails = {}; opens.concat(copies).forEach(r => { const k = tplName(r.tool); const g = mails[k] = mails[k] || { k, open: 0, copy: 0, users: {}, last: null }; if (kind(r.tool) === 'mail') g.open += r.uses; else g.copy += r.uses; const u = g.users[r.email] = g.users[r.email] || { o: 0, c: 0 }; if (kind(r.tool) === 'mail') u.o += r.uses; else u.c += r.uses; if (!g.last || r.last_at > g.last) g.last = r.last_at; });
+      const M = Object.values(mails).sort((a, c) => (c.copy * 3 + c.open) - (a.copy * 3 + a.open));
+      const T = group(tools, r => r.tool);
+      const byU = {}; rows.forEach(r => { const u = byU[r.email] = byU[r.email] || { email: r.email, uses: 0, tools: [], mails: {}, copies: 0, last: null }; u.uses += r.uses; if (kind(r.tool) === 'outil') u.tools.push(r); else { const k = tplName(r.tool); const m = u.mails[k] = u.mails[k] || { k, o: 0, c: 0 }; if (kind(r.tool) === 'mail') m.o += r.uses; else { m.c += r.uses; u.copies += r.uses; } } if (!u.last || r.last_at > u.last) u.last = r.last_at; });
       const U = Object.values(byU).sort((a, c) => c.uses - a.uses);
-      const byT = {}; rows.forEach(r => { byT[r.tool] = (byT[r.tool] || 0) + +r.uses; });
-      const topT = Object.entries(byT).sort((a, c) => c[1] - a[1]);
-      const tot = rows.reduce((s, r) => s + +r.uses, 0);
-      // graphique jour par jour
-      const days = []; const map = {}; daily.forEach(d => { map[String(d.day).slice(0, 10)] = d; });
-      for (let i = per - 1; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const k = d.toISOString().slice(0, 10); days.push([k, map[k] ? +map[k].uses : 0, map[k] ? +map[k].users : 0]); }
+      /* Graphique */
+      const days = [], map = {}; daily.forEach(d => { map[String(d.day).slice(0, 10)] = d; });
+      const nd = Math.min(per, 90);
+      for (let i = nd - 1; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const k = d.toISOString().slice(0, 10); days.push([k, map[k] ? +map[k].uses : 0, map[k] ? +map[k].users : 0]); }
       const mx = Math.max(1, ...days.map(d => d[1]));
+      const who = users => Object.entries(users).sort((a, c) => (typeof c[1] === 'object' ? c[1].o + c[1].c : c[1]) - (typeof a[1] === 'object' ? a[1].o + a[1].c : a[1])).map(([e, v]) => '<span class="st-who" title="' + esc(e) + '"><i>' + esc(ini(e)) + '</i>' + esc(short(e)) + ' <b>' + (typeof v === 'object' ? (v.c ? v.c + ' copie' + (v.c > 1 ? 's' : '') + ' · ' : '') + v.o + ' ouv.' : v) + '</b></span>').join('');
+      const kpi = (l, v, sub, c) => '<div class="st-kpi ' + (c || '') + '"><span>' + l + '</span><b>' + v + '</b><em>' + sub + '</em></div>';
+      const topM = M[0], topT = T[0];
       b.className = '';
-      b.innerHTML = '<div class="au-kpis"><div class="au-k"><span>Conseillers actifs</span><b>' + U.length + '</b><em>sur ' + per + ' jours</em></div><div class="au-k"><span>Ouvertures</span><b>' + tot + '</b><em>' + (tot / per).toFixed(1).replace('.', ',') + ' par jour</em></div><div class="au-k"><span>Outil n° 1</span><b>' + (topT[0] ? topT[0][1] : 0) + '</b><em>' + esc(topT[0] ? name(topT[0][0]) : '—') + '</em></div><div class="au-k"><span>Le plus actif</span><b>' + U[0].uses + '</b><em>' + esc(U[0].email) + '</em></div></div>' +
-        '<div style="margin-top:14px"><div class="au-chart">' + days.map(d => '<i style="height:' + Math.max(2, Math.round(d[1] / mx * 100)) + '%" data-t="' + new Date(d[0] + 'T12:00').toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) + ' : ' + d[1] + ' ouverture(s), ' + d[2] + ' conseiller(s)"></i>').join('') + '</div><div class="au-axis"><span>' + new Date(days[0][0] + 'T12:00').toLocaleDateString('fr-FR') + '</span><span>aujourd’hui</span></div></div>' +
-        '<table class="ad-tbl" style="margin-top:14px"><tr><th>Conseiller</th><th style="text-align:right">Ouvertures</th><th style="text-align:right">Outils</th><th>Plus utilisés</th><th style="text-align:right">Dernière activité</th></tr>' +
-        U.map((u, i) => { const tl = u.tools.slice().sort((a, c) => c.uses - a.uses); return '<tr class="au-user" data-i="' + i + '"><td><b>' + esc(u.email) + '</b></td><td class="n">' + u.uses + '</td><td class="n">' + tl.length + '</td><td>' + tl.slice(0, 3).map(t => '<span class="au-pill">' + esc(name(t.tool)) + ' · ' + t.uses + '</span>').join('') + '</td><td class="n">' + dtt(u.last) + '</td></tr><tr class="au-det" data-for="' + i + '" hidden><td colspan="5">' + tl.map(t => '<span class="au-pill">' + esc(name(t.tool)) + ' · ' + t.uses + ' · ' + dt(t.last_at) + '</span>').join('') + '</td></tr>'; }).join('') + '</table>' +
-        '<p class="ad-empty" style="margin-top:8px">Cliquez sur un conseiller pour voir le détail de tous ses outils et modèles. Les lignes « ✉ » sont des modèles de mail ouverts.</p>' +
-        '<table class="ad-tbl" style="margin-top:12px"><tr><th>Outil ou modèle</th><th style="text-align:right">Ouvertures</th><th style="text-align:right">Conseillers</th></tr>' + topT.slice(0, 15).map(([t, n]) => '<tr><td>' + esc(name(t)) + '<div class="ad-bar" style="width:' + Math.max(4, Math.round(n / topT[0][1] * 100)) + '%"></div></td><td class="n">' + n + '</td><td class="n">' + rows.filter(r => r.tool === t).length + '</td></tr>').join('') + '</table>';
-      b.onclick = e => { const tr = e.target.closest('.au-user'); if (!tr) return; const d = b.querySelector('.au-det[data-for="' + tr.dataset.i + '"]'); if (d) d.hidden = !d.hidden; };
+      b.innerHTML =
+        '<div class="st-kpis">' +
+          kpi('Conseillers actifs', U.length, 'sur la période', 'c1') +
+          kpi('Ouvertures d’outils', sum(tools), (sum(tools) / per).toFixed(1).replace('.', ',') + ' par jour', 'c2') +
+          kpi('Mails ouverts', sum(opens), M.length + ' modèle(s) différents', 'c3') +
+          kpi('Mails copiés', sum(copies), 'envoyés aux usagers', 'c4') +
+          kpi('Mail n° 1', topM ? topM.copy + topM.open : 0, esc(topM ? topM.k : '—'), 'c5') +
+          kpi('Outil n° 1', topT ? topT.uses : 0, esc(topT ? name(topT.k) : '—'), 'c6') +
+        '</div>' +
+        '<div class="st-tile st-wide"><h4>Activité jour par jour<span>' + nd + ' derniers jours</span></h4><div class="au-chart">' + days.map(d => '<i style="height:' + Math.max(2, Math.round(d[1] / mx * 100)) + '%" data-t="' + new Date(d[0] + 'T12:00').toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) + ' : ' + d[1] + ' action(s), ' + d[2] + ' conseiller(s)"></i>').join('') + '</div><div class="au-axis"><span>' + new Date(days[0][0] + 'T12:00').toLocaleDateString('fr-FR') + '</span><span>aujourd’hui</span></div></div>' +
+        '<div class="st-sec">✉ Mails (CVM) les plus utilisés</div>' +
+        '<div class="st-grid">' + (M.length ? M.slice(0, 12).map((m, i) => '<div class="st-tile"><div class="st-rank">' + (i + 1) + '</div><h4 title="' + esc(m.k) + '">' + esc(m.k) + '</h4><div class="st-nums"><div><b>' + m.copy + '</b><span>copié' + (m.copy > 1 ? 's' : '') + '</span></div><div><b>' + m.open + '</b><span>ouvert' + (m.open > 1 ? 's' : '') + '</span></div><div><b>' + Object.keys(m.users).length + '</b><span>conseiller' + (Object.keys(m.users).length > 1 ? 's' : '') + '</span></div></div><div class="st-bar"><i style="width:' + Math.max(4, Math.round((m.copy * 3 + m.open) / (M[0].copy * 3 + M[0].open) * 100)) + '%"></i></div><div class="st-whos">' + who(m.users) + '</div><p class="st-last">Dernière utilisation : ' + dtt(m.last) + '</p></div>').join('') : '<p class="ad-empty">Aucun mail ouvert sur la période.</p>') + '</div>' +
+        (M.length > 12 ? '<details class="st-more"><summary>Voir les ' + (M.length - 12) + ' autres modèles</summary><table class="ad-tbl"><tr><th>Modèle</th><th style="text-align:right">Copiés</th><th style="text-align:right">Ouverts</th><th>Par</th></tr>' + M.slice(12).map(m => '<tr><td>' + esc(m.k) + '</td><td class="n">' + m.copy + '</td><td class="n">' + m.open + '</td><td>' + Object.keys(m.users).map(short).map(esc).join(', ') + '</td></tr>').join('') + '</table></details>' : '') +
+        '<div class="st-sec">🧮 Outils les plus utilisés</div>' +
+        '<div class="st-grid">' + (T.length ? T.slice(0, 12).map((t, i) => '<div class="st-tile"><div class="st-rank">' + (i + 1) + '</div><h4>' + esc(name(t.k)) + '</h4><div class="st-nums"><div><b>' + t.uses + '</b><span>ouverture' + (t.uses > 1 ? 's' : '') + '</span></div><div><b>' + Object.keys(t.users).length + '</b><span>conseiller' + (Object.keys(t.users).length > 1 ? 's' : '') + '</span></div></div><div class="st-bar"><i style="width:' + Math.max(4, Math.round(t.uses / T[0].uses * 100)) + '%"></i></div><div class="st-whos">' + who(t.users) + '</div><p class="st-last">Dernière ouverture : ' + dtt(t.last) + '</p></div>').join('') : '<p class="ad-empty">Aucun outil ouvert sur la période.</p>') + '</div>' +
+        '<div class="st-sec">👤 Par conseiller</div>' +
+        '<div class="st-grid">' + U.map((u, i) => {
+          const tl = u.tools.slice().sort((a, c) => c.uses - a.uses), ml = Object.values(u.mails).sort((a, c) => (c.c * 3 + c.o) - (a.c * 3 + a.o));
+          return '<div class="st-tile st-user"><div class="st-uh"><span class="st-av">' + esc(ini(u.email)) + '</span><div><h4>' + esc(u.email) + '</h4><p class="st-last">Dernière activité : ' + dtt(u.last) + '</p></div></div>' +
+            '<div class="st-nums"><div><b>' + u.uses + '</b><span>actions</span></div><div><b>' + tl.length + '</b><span>outils</span></div><div><b>' + ml.length + '</b><span>mails</span></div><div><b>' + u.copies + '</b><span>copiés</span></div></div>' +
+            '<div class="st-lbl">Mails les plus utilisés</div><div class="st-list">' + (ml.length ? ml.slice(0, 4).map(m => '<div><span>' + esc(m.k) + '</span><b>' + (m.c ? m.c + ' copie' + (m.c > 1 ? 's' : '') + ' · ' : '') + m.o + ' ouv.</b></div>').join('') : '<div><span class="ad-empty">Aucun</span></div>') + '</div>' +
+            '<div class="st-lbl">Outils les plus utilisés</div><div class="st-list">' + (tl.length ? tl.slice(0, 4).map(t => '<div><span>' + esc(name(t.tool)) + '</span><b>' + t.uses + '</b></div>').join('') : '<div><span class="ad-empty">Aucun</span></div>') + '</div>' +
+            ((tl.length > 4 || ml.length > 4) ? '<details class="st-more"><summary>Tout voir</summary><div class="st-list">' + ml.slice(4).map(m => '<div><span>✉ ' + esc(m.k) + '</span><b>' + (m.c ? m.c + ' c. · ' : '') + m.o + ' o.</b></div>').join('') + tl.slice(4).map(t => '<div><span>' + esc(name(t.tool)) + '</span><b>' + t.uses + '</b></div>').join('') + '</div></details>' : '') +
+            '</div>';
+        }).join('') + '</div>' +
+        '<p class="ad-empty" style="margin-top:10px">« Copié » = le conseiller a copié le mail pour l’envoyer ; « ouvert » = il l’a consulté. Le classement des mails compte une copie comme trois ouvertures. Les copies sont enregistrées à partir de cette version.</p>';
     }).catch(e => { $('au-body').textContent = missing(e) ? 'Statistiques détaillées non installées : exécutez le script supabase/admin_stats.sql dans Supabase.' : 'Chargement impossible : ' + (e && e.message || e); });
   }
   function users(card) {
