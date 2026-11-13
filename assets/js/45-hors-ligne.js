@@ -5,7 +5,7 @@
   const toast = (m, t) => { try { showToast(m, t || 'info'); } catch (e) {} };
 
   function files() {
-    const out = new Set(['./', 'manifest.webmanifest', 'lucide.min.js', 'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png'].map(p => new URL(p, location.href).href));
+    const out = new Set(['./', 'manifest.webmanifest', 'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png'].map(p => new URL(p, location.href).href));
     document.querySelectorAll('script[src], link[rel="stylesheet"][href], link[rel~="icon"][href]').forEach(el => {
       const u = new URL(el.getAttribute('src') || el.getAttribute('href'), location.href);
       if (u.origin === location.origin) out.add(u.href);

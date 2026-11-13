@@ -1219,3 +1219,53 @@ html.theme-light .hs-it b,html.theme-light .hs-h{color:#27101b}
 html.theme-light .act-kpi div{background:#fcf9fb;border-color:#f1e4eb}
 html.theme-light .act-kpi strong,html.theme-light .act-ml li{color:#27101b}
 html.theme-light .act-h{color:#c8138a}
+#ft-sit{background:rgba(18,3,10,.65)}
+.sit-c{color:#e3ceda;background:rgba(248,167,223,.08);border-left:3px solid #f8a7df}
+.sit-a{border:1px solid #563747;background:rgba(18,3,10,.45);color:#f1e4eb}
+.sit-a em{color:#bb98aa}
+.sit-a:hover{border-color:#f8a7df}
+.sit-n{color:#bb98aa}
+.sit-li{border:1px solid rgba(86,55,71,.7);color:#f1e4eb}
+.sit-li span{color:#fdc6ec}
+.sit-home{color:#feddf4}
+.sit-home b{color:#fdc6ec}
+.sit-home span{color:#bb98aa}
+html.theme-light .sit-q{color:#27101b}
+html.theme-light .sit-c{color:#563747;background:#fff9fd}
+html.theme-light .sit-a,html.theme-light .sit-li{border-color:#f1e4eb;color:#27101b}
+html.theme-light .sit-home,html.theme-light .sit-home b{color:#c8138a}
+abbr.ft-sg{text-decoration-color:rgba(253,198,236,.6)}
+abbr.ft-sg:focus-visible{outline:2px solid #f8a7df}
+.ft-sg-pop{background:#290b19;border:1px solid #7e2c57;color:#f1e4eb}
+.ft-sg-pop b{color:#fdc6ec}
+.ft-sg-pop p{color:#e3ceda}
+html.theme-light .ft-sg-pop{border-color:#e3ceda;color:#27101b}
+html.theme-light .ft-sg-pop b{color:#c8138a}
+html.theme-light .ft-sg-pop p{color:#563747}
+.qc-info{color:#bb98aa}
+.qc-tag{background:#3b202e;color:#bb98aa}
+.cl-chip{border:1px solid #563747;color:#f1e4eb}
+.cl-more summary{color:#fdc6ec}
+html.theme-light .cl-chip{border-color:#e3ceda;color:#27101b}
+.cp-modes button{border:1px solid #563747;color:#e3ceda}
+.cp-modes button.on{background:#f00294;border-color:#f00294}
+.cp-card{border:1px solid rgba(86,55,71,.8);background:rgba(39,16,27,.6)}
+.cp-ab>div{border:1px dashed #563747}
+.cp-ab h4{color:#fdb2e0}
+.cp-f span{color:#bb98aa}
+.cp-f input{border:1px solid #563747;background:#12030a;color:#f9f3f6}
+.cp-f small{color:#8f677c}
+.cp-tab{border:1px solid #3b202e}
+.cp-r{border-top:1px solid #3b202e;color:#f1e4eb}
+.cp-hd{background:rgba(18,3,10,.5);color:#bb98aa}
+.cp-key{background:rgba(246,102,192,.08)}
+.cp-note{color:#bb98aa}
+@media (max-width:600px){.cp-r span:first-child{color:#bb98aa}}
+html.theme-light .cp-card{border-color:#f1e4eb}
+html.theme-light .cp-f input{background:#fcf9fb;border-color:#e3ceda;color:#27101b}
+html.theme-light .cp-r{color:#27101b;border-color:#f1e4eb}
+html.theme-light .cp-tab{border-color:#f1e4eb}
+html.theme-light .cp-hd{background:#f9f3f6}
+html.theme-light .cp-key{background:#fef5fb}
+html.theme-light .cp-key span:nth-child(2),html.theme-light .cp-key span:nth-child(3){color:#27101b}
+html.theme-light .cp-modes button{border-color:#e3ceda;color:#563747}

@@ -190,6 +190,8 @@
     [/^Confidentialit/i, 'Lire', () => window.ftPrivacy && window.ftPrivacy()],
     [/^Mes rappels/i, 'Ouvrir', () => window.ftReminders && window.ftReminders()],
     [/^Paramètres/i, 'Ouvrir', () => window.ftSettings && window.ftSettings()],
+    [/^Que faire si/i, 'Essayer', () => window.ftSituations && window.ftSituations()],
+    [/^Comparer deux/i, 'Ouvrir', () => switchNavTab('compare')],
     [/^Mon activité/i, 'Ouvrir', () => window.ftMyActivity && window.ftMyActivity()],
     [/^Thème automatique|^Relief/i, 'Régler', () => window.ftSettings && window.ftSettings()],
     [/^Couleurs/i, 'Choisir', () => window.ftSettings && window.ftSettings()],

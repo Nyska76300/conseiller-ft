@@ -98,8 +98,8 @@
   const PLAIN = [[/\bSJR\b/g, 'salaire journalier de référence'], [/\bAJ\b/g, 'allocation par jour'], [/\bARE\b/g, 'allocation chômage'], [/\bICCP\b/g, 'indemnité de congés payés'], [/\bsupra-?légal(e|es)?\b/gi, 'indemnités au-delà du minimum légal'], [/\bASS\b/g, 'allocation de solidarité'], [/\bATI\b/g, 'allocation des travailleurs indépendants'], [/\bAREF\b/g, 'allocation pendant la formation'], [/\bRFF\b/g, 'rémunération de fin de formation'], [/\bCSP\b/g, 'contrat de sécurisation professionnelle'], [/\bFCT\b/g, 'fin de contrat'], [/\bPJI\b/g, 'premier jour indemnisé']];
   const plain = t => PLAIN.reduce((s, [r, v]) => s.replace(r, v), String(t || '')).replace(/^\w/, c => c.toUpperCase());
   let fs = 1;
-  window.ftUsagerView = function (mailText) {
-    const S = window.ftPrefill && window.ftPrefill.collect ? window.ftPrefill.collect() : null;
+  window.ftUsagerView = function (mailText, opt) {
+    const S = opt && opt.vals ? { name: opt.name || 'Simulation', vals: opt.vals } : (window.ftPrefill && window.ftPrefill.collect ? window.ftPrefill.collect() : null);
     const seen = new Set();
     const vals = S ? S.vals.filter(v => {
       if (!v.l || v.l.length < 3 || /^[\d\s,.]+\s*(€|jours?|mois|j)?$/i.test(v.l.trim()) || /seuil|minimal|minimum l|maximum théorique|barème|plafond de ressources/i.test(v.l)) return false;

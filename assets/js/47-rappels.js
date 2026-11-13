@@ -15,6 +15,16 @@
   const fmt = iso => new Date(iso).toLocaleString('fr-FR', { weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
   const missing = e => /PGRST20[25]|42P01|does not exist|HTTP 404/.test(String(e && (e.message || e.code) || ''));
   let LIST = [];
+  /* Ajout à l’agenda (iPhone, Outlook, Google) : fichier .ics */
+  function ics(due, body) {
+    const d = new Date(due), z = x => x.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    const end = new Date(d.getTime() + 15 * 60000), uid = Date.now().toString(36) + '@espace-conseiller';
+    const txt = String(body).replace(/[\\;,]/g, m => '\\' + m).replace(/\n/g, '\\n');
+    const data = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Espace Conseiller//FR', 'CALSCALE:GREGORIAN', 'BEGIN:VEVENT', 'UID:' + uid, 'DTSTAMP:' + z(new Date()), 'DTSTART:' + z(d), 'DTEND:' + z(end), 'SUMMARY:' + txt, 'DESCRIPTION:Rappel créé dans l’Espace Conseiller', 'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + txt, 'TRIGGER:PT0M', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    const blob = new Blob([data], { type: 'text/calendar;charset=utf-8' }), u = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = u; a.download = 'rappel.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000);
+  }
+  window.ftReminderIcs = ics;
 
   function box() {
     let w = $('ft-rem');
@@ -45,6 +55,7 @@
       '<label>Quand</label><div class="rm-quick">' + QUICK.map((q, i) => '<button type="button" data-q="' + i + '"' + (i === 2 ? ' class="on"' : '') + '>' + q[0] + '</button>').join('') + '</div>' +
       '<input type="datetime-local" id="rm-when" aria-label="Date et heure du rappel" value="' + local(QUICK[2][1]()) + '">' +
       (curName && cur !== 'home' ? '<label class="rm-chk"><input type="checkbox" id="rm-go" checked> Ouvrir « ' + esc(curName) + ' » en touchant la notification</label>' : '') +
+      '<label class="rm-chk"><input type="checkbox" id="rm-ics"> Ajouter aussi à mon agenda (iPhone, Outlook…)</label>' +
       '<div class="rm-row"><button type="submit" class="ad-btn pri">Programmer le rappel</button></div></form>' +
       '<h3 class="rm-sub">À venir</h3><div id="rm-list"><p class="rm-p">Chargement…</p></div></div>';
     const nb = $('rm-notif'); if (nb) nb.onclick = () => { if (window.ftEnableNotifs) window.ftEnableNotifs(); setTimeout(() => { if (notifOn()) { const x = w.querySelector('.rm-warn'); if (x) x.remove(); } }, 2500); };
@@ -63,7 +74,7 @@
       const go = $('rm-go') && $('rm-go').checked ? 't-' + cur : '';
       const btn = $('rm-form').querySelector('[type="submit"]'); btn.disabled = true;
       window.__ftRest('/rest/v1/reminders', { method: 'POST', prefer: 'return=representation', body: { due_at: when.toISOString(), body: txt, go } })
-        .then(() => { toast('Rappel programmé : ' + fmt(when.toISOString()), 'success'); $('rm-txt').value = ''; btn.disabled = false; load(); })
+        .then(() => { if ($('rm-ics') && $('rm-ics').checked) ics(when.toISOString(), txt); toast('Rappel programmé : ' + fmt(when.toISOString()), 'success'); $('rm-txt').value = ''; btn.disabled = false; load(); })
         .catch(e => { btn.disabled = false; toast(missing(e) ? 'Rappels non installés : l’administrateur doit exécuter le script Supabase.' : 'Enregistrement impossible : ' + e.message, 'error'); });
     };
     if (!pre.text) setTimeout(() => $('rm-txt').focus(), 50);
@@ -75,10 +86,11 @@
     window.__ftRest('/rest/v1/reminders?select=id,due_at,body,go,sent_at&or=(sent_at.is.null,due_at.gte.' + since + ')&order=due_at.asc&limit=100').then(r => {
       LIST = r || []; homeCard();
       const up = LIST.filter(x => !x.sent_at), past = LIST.filter(x => x.sent_at).reverse();
-      const row = x => '<div class="rm-it' + (x.sent_at ? ' done' : '') + '"><div><b>' + esc(fmt(x.due_at)) + '</b><span>' + esc(x.body) + '</span>' + (x.go ? '<em>' + esc(tabName(x.go.slice(2)) || '') + '</em>' : '') + '</div><button type="button" class="rm-del" data-id="' + esc(x.id) + '" aria-label="Supprimer le rappel">×</button></div>';
+      const row = x => '<div class="rm-it' + (x.sent_at ? ' done' : '') + '"><div><b>' + esc(fmt(x.due_at)) + '</b><span>' + esc(x.body) + '</span>' + (x.go ? '<em>' + esc(tabName(x.go.slice(2)) || '') + '</em>' : '') + '</div><div class="rm-btns">' + (x.sent_at ? '' : '<button type="button" class="rm-del rm-cal" data-cal="' + esc(x.id) + '" aria-label="Ajouter à mon agenda" title="Ajouter à mon agenda">📅</button>') + '<button type="button" class="rm-del" data-id="' + esc(x.id) + '" aria-label="Supprimer le rappel">×</button></div></div>';
       h.innerHTML = (up.length ? up.map(row).join('') : '<p class="rm-p">Aucun rappel à venir.</p>') +
         (past.length ? '<details class="rm-past"><summary>Envoyés ces 7 derniers jours (' + past.length + ')</summary>' + past.map(row).join('') + '</details>' : '');
       h.onclick = e => {
+        const cb = e.target.closest('[data-cal]'); if (cb) { const r = LIST.find(x => x.id === cb.dataset.cal); if (r) ics(r.due_at, r.body); return; }
         const b = e.target.closest('.rm-del'); if (!b) return;
         window.__ftRest('/rest/v1/reminders?id=eq.' + encodeURIComponent(b.dataset.id), { method: 'DELETE', prefer: 'return=minimal' }).then(() => { toast('Rappel supprimé', 'success'); load(); }).catch(er => toast(er.message, 'error'));
       };

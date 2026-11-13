@@ -136,6 +136,8 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
       (recentTemplates || []).slice(0, 5).forEach(id => { const tp = templates.find(x => x.id === id); if (tp) out.push({ g: 'Modèles récents', t: tp.title, s: tp.category, run: () => openTpl(tp.id) }); });
       return out;
     }
+    (window.FT_SITUATIONS || []).map(x => ({ x, sc: score(q, x.t, x.t + ' ' + x.kw) })).filter(o => o.sc).sort((a, b) => b.sc - a.sc).slice(0, 4)
+      .forEach(o => out.push({ g: 'Que faire si…', t: o.x.t, s: o.x.c, run: () => window.ftSituation && window.ftSituation(o.x) }));
     acts.filter(x => score(q, x.t, x.t + ' ' + x.s + ' ' + (x.kw || '')) > 0).forEach(x => out.push({ g: 'Actions', t: x.t, s: x.s, run: x.run }));
         tools.map(t => ({ t: t, sc: score(q, t.name, ftToolHay(t)) })).filter(x => x.sc).sort((a, b) => b.sc - a.sc).slice(0, 6)
       .forEach(x => out.push({ g: 'Outils', t: x.t.name, s: x.t.desc, run: () => switchNavTab(x.t.id) }));

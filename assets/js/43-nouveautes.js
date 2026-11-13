@@ -2,6 +2,13 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.41', date: '13/11/2026', items: [
+      'Que faire si… : décrivez une situation (« reprise d’un CDD », « trop-perçu contesté »…) dans la recherche ou depuis l’accueil : le bon outil, le bon mail et le point clé s’affichent.',
+      'Comparer deux scénarios : reprise d’emploi à deux salaires, ARE ou ARCE, deux SJR, côte à côte avec l’écart et une vue usager (menu, Références et calculs).',
+      'Sigles expliqués : dans les outils, survolez ou touchez un sigle souligné (SJR, PJI, ICCP…) pour afficher sa définition.',
+      'Rappels dans l’agenda : un bouton 📅 ajoute un rappel au calendrier de l’iPhone ou à Outlook.',
+      'Chargement plus rapide : les polices et les icônes ne bloquent plus l’affichage de la page.'
+    ] },
     { v: '2026-11-13.40', date: '13/11/2026', items: [
       'Mises à jour automatiques : les nouvelles versions du site s’installent toutes seules, au premier moment calme (aucune saisie en cours) ; l’outil ouvert, les champs remplis et la position dans la page sont conservés.'
     ] },

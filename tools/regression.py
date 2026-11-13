@@ -19,7 +19,7 @@ srv = socketserver.ThreadingTCPServer(('127.0.0.1', 0), H); port = srv.server_ad
 threading.Thread(target=srv.serve_forever, daemon=True).start()
 URL = f'http://127.0.0.1:{port}/index.html'
 TABS = ['home', 'cvm', 1, 2, 3, 4, 5, 6, 7, 8, 9, 'cfd', 'dossier', 'delais', 'droits', 'cns', 'sjr', 'bareme', 'schemas', 'glossaire', 'sources', 'jour',
-        'invalidite', 'ati', 'ass', 'aref', 'sanctions', 'casparts', 'echeances', 'faq', 'formation', 'admin']
+        'invalidite', 'ati', 'ass', 'aref', 'sanctions', 'casparts', 'echeances', 'faq', 'formation', 'compare', 'admin']
 LABELS = "{'r:Ouverture de droits':'Droits','t:9':'Rupture conventionnelle individuelle'}"
 fails = []
 with sync_playwright() as p:
