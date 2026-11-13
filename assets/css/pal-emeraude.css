@@ -1269,3 +1269,19 @@ html.theme-light .cp-hd{background:#ecf7f3}
 html.theme-light .cp-key{background:#dffff0}
 html.theme-light .cp-key span:nth-child(2),html.theme-light .cp-key span:nth-child(3){color:#091b15}
 html.theme-light .cp-modes button{border-color:#bfdacf;color:#2a463b}
+html.ft-lite.theme-light .fh-card,html.ft-lite.theme-light .fh-chip,html.ft-lite.theme-light .fh-pin{box-shadow:0 1px 3px rgba(9,27,21,.12)!important}
+.fh-custom{border:1px dashed #2a463b;color:#80ab9b}
+.fh-custom:hover{color:#d9ece5;border-color:#587a6d}
+html.fh-edit-on #view-home .fh-editing{outline:2px dashed color-mix(in srgb,#11de68 55%,transparent)}
+.fh-edtools{background:#061a14;border:1px solid #144130;color:#bfdacf}
+.fh-edtools button{border:1px solid #2a463b;background:#0a221a;color:#d9ece5}
+.fh-drag{color:#1af676}
+#view-home .fh-drop{box-shadow:0 -4px 0 #11de68!important}
+#view-home .fh-col.fh-drop{box-shadow:inset 0 -4px 0 #11de68!important}
+#fh-editbar{background:#061a14;border:1px solid #11de68;color:#d9ece5}
+#fh-editbar button{border:1px solid #2a463b;background:#0a221a;color:#d9ece5}
+#fh-editbar button.pri{background:#079a4a;border-color:#079a4a}
+html.theme-light .fh-edtools,html.theme-light #fh-editbar{border-color:#5ffab0;color:#091b15}
+html.theme-light .fh-edtools button,html.theme-light #fh-editbar button{background:#f6fbf9;border-color:#bfdacf;color:#091b15}
+html.theme-light #fh-editbar button.pri{background:#079a4a}
+html.theme-light .fh-custom{border-color:#bfdacf;color:#3d5a4f}

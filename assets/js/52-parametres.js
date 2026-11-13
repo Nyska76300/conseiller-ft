@@ -5,7 +5,7 @@
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const toast = (m, t) => { try { showToast(m, t || 'info'); } catch (e) {} };
   const KEY = 'ft_prefs';
-  const DEF = { neon: true, neonLvl: 50, depth: 60, themeMode: '', motion: false, easy: false, start: 'home', pal: '' };
+  const DEF = { neon: true, neonLvl: 50, depth: 60, themeMode: '', motion: false, easy: false, start: 'home', pal: '', lite: '' };
   const PALS = [['', 'Océan', '#2563eb', '#22d3ee'], ['emeraude', 'Émeraude', '#059669', '#34d399'], ['sarcelle', 'Sarcelle', '#0d9488', '#2dd4bf'], ['amethyste', 'Améthyste', '#7c3aed', '#c084fc'], ['framboise', 'Framboise', '#db2777', '#f472b6'], ['ardoise', 'Ardoise', '#475569', '#94a3b8']];
   function setPal(p) {
     const h = document.documentElement, old = document.getElementById('ft-pal');
@@ -24,7 +24,7 @@
     if (v === 50) { st.textContent = ''; return; }
     if (!v) { st.textContent = pre('html ') + '{filter:none!important}'; return; }
     const r1 = (1.5 * k).toFixed(2), r2 = (5 * k).toFixed(2), m = Math.min(95, Math.round(45 * k)), r3 = (2 * k).toFixed(2), m2 = Math.min(90, Math.round(35 * k));
-    st.textContent = pre('html ') + '{filter:drop-shadow(0 0 ' + r1 + 'px currentColor) drop-shadow(0 0 ' + r2 + 'px color-mix(in srgb,currentColor ' + m + '%,transparent))' + (k > 1.2 ? ' drop-shadow(0 0 ' + (9 * (k - 1)).toFixed(2) + 'px color-mix(in srgb,currentColor ' + Math.round(30 * (k - 1)) + '%,transparent))' : '') + '}' +
+    st.textContent = pre('html ') + '{filter:drop-shadow(0 0 ' + (3 * k).toFixed(2) + 'px color-mix(in srgb,currentColor ' + Math.min(95, Math.round(65 * Math.sqrt(k))) + '%,transparent))}' +
       pre('html.theme-light ') + '{filter:drop-shadow(0 0 ' + r3 + 'px color-mix(in srgb,currentColor ' + m2 + '%,transparent))}' +
       '.sc-fig svg,.au-chart svg,.inv-table svg,#ft-reg-pill svg{filter:none!important}';
   }
@@ -49,11 +49,36 @@
       pre('html ', '.fh-chip:active,.fh-pin:active,#burger-tabs-list button[onclick]:active') + '{transform:translateY(0);box-shadow:inset 0 1px 2px rgba(0,0,0,' + a(0.3) + ')}' +
       'html.reduce-motion .fh-chip:hover,html.reduce-motion .fh-pin:hover{transform:none}';
   }
+  /* Appareil lent (poste sans carte graphique, bureau à distance…) : on mesure la cadence d’affichage
+     quelques secondes après l’ouverture et pendant le premier défilement ; sous ~35 images/s, l’affichage allégé s’active. */
+  const liteAuto = () => { try { return localStorage.getItem('ft_lite_auto') === '1'; } catch (e) { return false; } };
+  function probe(ms) {
+    if (P.lite || liteAuto() || document.hidden || !window.requestAnimationFrame) return;
+    const d = []; let last = 0; const end = performance.now() + ms;
+    (function f(t) {
+      if (last) d.push(t - last); last = t;
+      if (t < end && !document.hidden) return requestAnimationFrame(f);
+      if (d.length < 20) return;
+      d.sort((a, b) => a - b);
+      const med = d[d.length >> 1], p75 = d[Math.floor(d.length * 0.75)];
+      if (med > 28 || p75 > 40) { try { localStorage.setItem('ft_lite_auto', '1'); } catch (e) {} apply(); toast('Affichage allégé activé pour plus de fluidité (Paramètres pour le changer)', 'info'); }
+    })(performance.now());
+  }
+  setTimeout(() => probe(2500), 4000);
+  let scT = null, scEl = null;
+  document.addEventListener('wheel', e => {
+    const v = e.target.closest && e.target.closest('[id^="view-"]'); if (!v) return;
+    if (scEl !== v) { if (scEl) scEl.classList.remove('ft-scr'); scEl = v; v.classList.add('ft-scr'); }
+    clearTimeout(scT); scT = setTimeout(() => { if (scEl) scEl.classList.remove('ft-scr'); scEl = null; }, 160);
+  }, { capture: true, passive: true });
+  let probed = false;
+  document.addEventListener('scroll', () => { if (!probed) { probed = true; probe(1500); } }, { capture: true, passive: true });
   function apply() {
     const h = document.documentElement;
     h.classList.remove('no-neon'); neonCss(); depthCss();
     h.classList.toggle('reduce-motion', !!P.motion);
     h.classList.toggle('easy-read', !!P.easy);
+    h.classList.toggle('ft-lite', P.lite === '1' || (P.lite !== '0' && liteAuto()));
     if ((h.getAttribute('data-pal') || '') !== (P.pal || '')) setPal(P.pal || '');
   }
   /* Thème automatique : selon l’appareil, ou clair en journée et sombre le soir */
@@ -104,6 +129,7 @@
       '<section><h3>Accessibilité</h3>' +
         row('Contraste renforcé', 'Textes et bordures plus marqués', yn('hc', a.hc)) +
         row('Lecture facilitée', 'Lettres et lignes plus espacées', yn('easy', P.easy)) +
+        row('Affichage allégé', P.lite === '' ? (liteAuto() ? 'Activé automatiquement : cet appareil affiche le site lentement' : 'Automatique : s’active si l’appareil est lent') : 'Moins d’effets lumineux et d’ombres, défilement plus fluide', seg('lite', P.lite, [['', 'Auto'], ['1', 'Oui'], ['0', 'Non']])) +
         row('Réduire les animations', 'Pas d’effets de mouvement ni de fondu', yn('motion', P.motion)) +
         row('Mode entretien', 'Affichage resserré pour les rendez-vous (Ctrl+J)', yn('entretien', document.documentElement.classList.contains('entretien'))) + '</section>' +
       '<section><h3>Démarrage</h3>' +
@@ -144,7 +170,7 @@
       else if (k === 'ts') window.ftA11y && window.ftA11y('ts', +v);
       else if (k === 'hc') window.ftA11y && window.ftA11y('hc', v === '1');
       else if (k === 'entretien') { try { ftEntretien(v === '1'); } catch (er) {} }
-      else { P[k] = (k === 'start' || k === 'pal') ? v : v === '1'; save(); apply(); if (k === 'start' && v !== 'home') toast(v === 'cvm' ? 'Le site s’ouvrira sur la page Mails' : 'Le site s’ouvrira sur le dernier outil utilisé', 'success'); }
+      else { P[k] = (k === 'start' || k === 'pal' || k === 'lite') ? v : v === '1'; save(); apply(); if (k === 'start' && v !== 'home') toast(v === 'cvm' ? 'Le site s’ouvrira sur la page Mails' : 'Le site s’ouvrira sur le dernier outil utilisé', 'success'); }
       render(); return;
     }
     const b = e.target.closest('[data-pm]'); if (!b) return;
