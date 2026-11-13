@@ -1,7 +1,7 @@
 /* Espace Conseiller : fonctionnement hors ligne.
    La page est toujours prise sur le réseau en priorité (les mises à jour arrivent tout de suite) ;
    la copie gardée sur l'appareil ne sert que sans connexion. Les comptes (Supabase) ne passent jamais par ici. */
-const CACHE = 'ft-conseiller-v7';
+const CACHE = 'ft-conseiller-v8';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/apple-touch-icon.png', './icons/icon-192.png', './icons/icon-512.png'];
 const STATIC_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdn.jsdelivr.net'];
 
@@ -36,6 +36,8 @@ self.addEventListener('fetch', e => {
     e.respondWith(caches.match(req).then(r => r || fetch(req).then(res => keep(req, res))));
     return;
   }
+  // API (comptes, rappels…) : jamais de copie locale
+  if (/^\/(rest|auth|functions|storage)\/v1\//.test(url.pathname)) return;
   // Données de veille : toujours le réseau
   if (same && url.pathname.endsWith('.json')) return;
   // Fichiers du site (icônes…) : copie locale, mise à jour en arrière-plan
@@ -45,6 +47,20 @@ self.addEventListener('fetch', e => {
       return r || net;
     }));
   }
+});
+
+/* Hors ligne complet : la page envoie la liste de ses fichiers ; on les garde tous
+   et on supprime les copies des anciennes versions (assets/…?v=ancienne). */
+self.addEventListener('message', e => {
+  const list = e.data && e.data.ftCache; if (!Array.isArray(list)) return;
+  e.waitUntil(caches.open(CACHE).then(async c => {
+    const keep = new Set(list);
+    for (const u of list) { if (!(await c.match(u))) { try { const r = await fetch(u, { cache: 'no-cache' }); if (r.ok) await c.put(u, r); } catch (er) {} } }
+    for (const req of await c.keys()) {
+      const url = new URL(req.url);
+      if (url.origin === self.location.origin && url.pathname.includes('/assets/') && !keep.has(req.url)) await c.delete(req);
+    }
+  }));
 });
 
 /* Clic sur une notification : on revient sur le site (ou on l'ouvre) à l'endroit concerné */

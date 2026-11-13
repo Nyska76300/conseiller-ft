@@ -223,7 +223,10 @@
   window.ftPropCount = function () { return propCount; };
   document.addEventListener('ft-admin', function () { if (isAdmin) loadProps().catch(function () {}); });
   window.__ftRest = function (path, opts) { if (!sess) return Promise.reject(new Error('non connecté')); return ensureToken().then(function () { return api(path, opts || {}); }); };
-  window.__ftAnon = function (path) { return api(path, { auth: false }); };
+  /* Session renouvelée par la double vérification : on la garde et on revérifie les droits */
+  window.__ftKeepSession = function (d) { keepSession(d); renderAcct(); loadShared(); };
+  window.__ftAccess = function () { return sess ? sess.access_token : ''; };
+  window.__ftAnon = function (path, o) { var x = { auth: false }; if (o) { x.method = o.method; x.body = o.body; x.prefer = o.prefer; } return api(path, x); };
   window.__ftUser = function () { return sess && sess.user ? { id: sess.user.id, email: sess.user.email } : null; };
   window.__ftSaveShared = function (id, payload) {
     if (!sess || !isAdmin) return Promise.reject(new Error('Réservé à l’administrateur'));
@@ -305,6 +308,7 @@
           try { sessionStorage.removeItem('ft_sb_skip'); } catch (e) {}
           closeBox(); renderAcct(); toast(sess.user.name ? 'Bonjour ' + (sess.user.first || sess.user.name) + ' !' : 'Connecté : ' + email, 'success');
           if (!sess.user.name) setTimeout(function () { if (!document.getElementById('ft-auth')) showAccount(true); }, 1200);
+          try { document.dispatchEvent(new Event('ft-login')); } catch (e) {}
           return sync('start').then(loadShared);
         })
         .catch(function (e) { b.disabled = false; b.textContent = 'Se connecter'; msg(w, frErr(e)); });
@@ -483,12 +487,13 @@
       (sess ? (uname ? '<strong>' + esc(uname) + '</strong><div class="fa-st">' + esc(email) + '</div>' : '<strong>' + esc(email) + '</strong>') + (isAdmin ? '<div class="fa-st">Administrateur des modèles communs</div>' : '') : '<strong>Compte conseiller</strong>') +
       '<div class="fa-st">' + esc(st) + '</div>' +
       '<div class="fa-st" style="font-size:11px;opacity:.7">Version ' + esc((document.querySelector('meta[name="ft-version"]') || {}).content || '') + '</div>' +
-      (sess ? '<button type="button" data-a="me">Mon compte : nom, e-mail, mot de passe</button><button type="button" data-a="notif">' + (window.ftNotifOn && window.ftNotifOn() ? 'Désactiver les notifications' : 'Activer les notifications') + '</button><button type="button" data-a="tour">Revoir la visite guidée</button><button type="button" data-a="privacy">Confidentialité</button><button type="button" data-a="sync">Synchroniser maintenant</button>' +
+      (sess ? '<button type="button" data-a="me">Mon compte : nom, e-mail, mot de passe</button><button type="button" data-a="notif">' + (window.ftNotifOn && window.ftNotifOn() ? 'Désactiver les notifications' : 'Activer les notifications') + '</button>' + (window.FT_ACCT_ITEMS || []).map(function (x, i) { return (!x.admin || isAdmin) ? '<button type="button" data-a="x' + i + '">' + esc(typeof x.t === 'function' ? x.t() : x.t) + '</button>' : ''; }).join('') + '<button type="button" data-a="tour">Revoir la visite guidée</button><button type="button" data-a="privacy">Confidentialité</button><button type="button" data-a="sync">Synchroniser maintenant</button>' +
         (isAdmin ? '<button type="button" data-a="admin">Espace administrateur</button>' : '') + (isAdmin ? '<button type="button" data-a="props">Propositions des collègues' + (propCount ? ' (' + propCount + ')' : '') + '</button>' : '<button type="button" data-a="prop">Proposer le modèle ouvert à l’équipe</button>') + (isAdmin ? '<button type="button" data-a="pub">Publier le modèle ouvert pour tous</button><button type="button" data-a="unpub">Retirer le modèle ouvert des communs</button>' : '') +
         '<button type="button" data-a="out" class="fa-out">Se déconnecter</button>'
         : '<button type="button" data-a="in">Se connecter</button>') + '</div>';
     host.querySelector('button').onclick = function (e) { e.stopPropagation(); if (!sess) { showLogin(); return; } var m = host.querySelector('.fa-menu'); m.hidden = !m.hidden; };
     var act = { sync: function () { meta.dirty = true; sync('push').then(loadShared); }, pub: window.ftSharePublish, unpub: window.ftShareRemove, prop: function () { window.ftPropose(); }, props: function () { window.ftProposals(); }, admin: function () { switchNavTab('admin'); }, me: function () { showAccount(); }, tour: function () { if (window.ftTour) window.ftTour(true); }, notif: function () { if (window.ftEnableNotifs) window.ftEnableNotifs(); }, privacy: function () { if (window.ftPrivacy) window.ftPrivacy(); }, out: logout, in: function () { showLogin(); } };
+    (window.FT_ACCT_ITEMS || []).forEach(function (x, i) { act['x' + i] = x.run; });
     host.querySelectorAll('.fa-menu [data-a]').forEach(function (b) { b.onclick = function () { host.querySelector('.fa-menu').hidden = true; act[b.dataset.a](); }; });
   }
 

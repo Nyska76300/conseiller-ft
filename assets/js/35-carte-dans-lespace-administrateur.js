@@ -137,10 +137,12 @@
     if (props) it.push(['📝', props + ' proposition(s) de modèle à examiner', 'ad-props-n']);
     if (ideas) it.push(['💡', ideas + ' message(s) de la boîte à idées à traiter', 'ad-ideas']);
     if (bar) it.push(['💶', 'Barème à contrôler (échéance de revalorisation passée)', 'ad-ack']);
+    (window.FT_TODO || []).forEach(f => { try { const x = f(); if (x) it.push(x); } catch (e) {} });
     h.innerHTML = '<div class="ad-todo ' + (it.length ? 'has' : 'none') + '"><div class="ad-todo-h">' + (it.length ? '🔔 À traiter <b>' + it.length + '</b>' : '✅ Rien à traiter pour le moment') + '</div>' +
       (it.length ? '<div class="ad-todo-l">' + it.map(x => '<button type="button" data-go="' + x[2] + '"><span>' + x[0] + '</span>' + esc(x[1]) + '<em>Voir ›</em></button>').join('') + '</div>' : '<p>Les mises à jour réglementaires, propositions de modèles et messages des conseillers apparaîtront ici dès qu’ils arrivent.</p>') + '</div>';
     h.onclick = e => { const b = e.target.closest('[data-go]'); if (!b) return; const t = $(b.dataset.go); if (t) { const c = t.closest('.rounded-xl') || t; c.scrollIntoView({ behavior: 'smooth', block: 'start' }); c.classList.add('ad-flash'); setTimeout(() => c.classList.remove('ad-flash'), 1600); } };
   }
+  window.__ftTodo = () => setTimeout(todo, 30);
   document.addEventListener('ft-props', () => setTimeout(todo, 50));
   document.addEventListener('ft-regs', () => setTimeout(todo, 50));
   document.addEventListener('ft-admin', apply);

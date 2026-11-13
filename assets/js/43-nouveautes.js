@@ -2,6 +2,12 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.33', date: '13/11/2026', items: [
+      'Mes rappels : programmez un rappel (« relancer dans 15 jours ») depuis le menu de votre compte, la recherche ou le bouton « ⏰ Rappel » sous chaque mail généré ; vous recevez une notification à la date choisie, même appli fermée. Les prochains rappels s’affichent sur l’accueil.',
+      'Mails pré-remplis : dans la page Mails, « Remplir les champs vides » reprend les montants, dates et durées de votre dernier calcul (et chaque champ propose les valeurs du calcul). Vérifiez toujours avant d’envoyer.',
+      'Mode formation : un quiz de 10 questions sur les règles et les calculs, par thème, pour s’entraîner ou réviser (menu, rubrique Autres outils).',
+      'Hors ligne : tout le site est gardé sur l’appareil dès la première visite ; sans réseau, simulateurs et modèles restent disponibles et un repère l’indique.'
+    ] },
     { v: '2026-11-13.31', date: '13/11/2026', items: [
       'Notifications : elles arrivent maintenant même quand le site ou l’appli est fermé (nouveautés, annonces, mises à jour réglementaires). Activez-les depuis le menu de votre compte ; sur iPhone, depuis l’appli installée sur l’écran d’accueil.'
     ] },

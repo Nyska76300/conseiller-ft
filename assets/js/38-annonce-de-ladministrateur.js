@@ -55,6 +55,7 @@
       '<h3>Aucune donnée d’allocataire</h3><p>Les montants, dates et informations saisis dans les simulateurs restent dans votre navigateur. Ils ne sont ni envoyés ni conservés sur un serveur.</p>' +
       '<h3>Votre compte</h3><ul><li>Prénom, nom, adresse e-mail et mot de passe (chiffré) : pour vous connecter.</li><li>Vos préférences (thème, favoris, liens utiles) et vos modèles de mails personnels : pour les retrouver sur tous vos postes.</li></ul>' +
       '<h3>Statistiques d’utilisation</h3><ul><li>Quand vous êtes connecté : l’outil ouvert, le modèle de mail ouvert ou copié (son titre, pas son contenu) et la date.</li><li>Visibles uniquement par l’administrateur du site, pour l’améliorer.</li><li>Supprimées automatiquement au bout d’un an.</li></ul>' +
+      '<h3>Rappels et erreurs techniques</h3><ul><li>Vos rappels (texte et date) sont enregistrés sur votre compte pour vous être envoyés en notification ; supprimez-les à tout moment dans « Mes rappels ». N’y indiquez pas de nom complet ni d’identifiant d’allocataire.</li><li>Si un outil plante, l’erreur technique (message, outil ouvert, version, type d’appareil) est transmise à l’administrateur pour la corriger, sans aucune donnée saisie. Effacée au bout de 90 jours.</li><li>Pour remplir un mail, les montants et dates du dernier calcul restent 12 heures sur ce poste uniquement.</li></ul>' +
       '<h3>Services extérieurs</h3><ul><li>Comptes et synchronisation : Supabase.</li><li>Interprète vocal : le texte dicté est envoyé à un service de traduction en ligne (Google Traduction, ou MyMemory en secours). N’y dictez pas de données personnelles.</li><li>Hébergement des pages : GitHub Pages.</li></ul>' +
       '<h3>Vos droits</h3><p>Vous pouvez modifier vos informations dans « Mon compte ». Pour consulter ou supprimer vos données, ou supprimer votre compte, contactez l’administrateur du site.</p>' +
       '<button type="button" class="pv-ok">Fermer</button></div>';
@@ -184,6 +185,9 @@
     [/^Visite guid/i, 'Lancer', () => window.ftTour && window.ftTour()],
     [/^Notifications/i, 'Activer', () => window.ftEnableNotifs && window.ftEnableNotifs(), () => !(window.ftNotifOn && window.ftNotifOn())],
     [/^Confidentialit/i, 'Lire', () => window.ftPrivacy && window.ftPrivacy()],
+    [/^Mes rappels/i, 'Ouvrir', () => window.ftReminders && window.ftReminders()],
+    [/^Mode formation/i, 'Ouvrir', () => switchNavTab('formation')],
+    [/^Mails pré-remplis/i, 'Ouvrir', () => switchNavTab('cvm')],
     [/^Quoi de neuf/i, '', null, () => false],
     [/^(Apparence|Fiabilit)/i, '', null, () => false],
     [/interpr[eè]te/i, 'Ouvrir', () => window.ftInterp && window.ftInterp()],
