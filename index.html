@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.8">
+  <meta name="ft-version" content="2026-11-13.9">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -15145,6 +15145,22 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+.ad-first-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px}
+.ad-first-grid>div{display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (max-width:1023px){.ad-first-grid{grid-template-columns:1fr}}
+.ad-todo{padding:14px 16px;border-radius:14px;margin-bottom:16px;border:1px solid rgba(51,65,85,.8);background:rgba(15,23,42,.9)}
+.ad-todo.has{border-color:rgba(251,191,36,.55);background:linear-gradient(90deg,rgba(120,53,15,.35),rgba(15,23,42,.9))}
+.ad-todo.none{border-color:rgba(52,211,153,.45)}
+.ad-todo-h{font-size:14px;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px}
+.ad-todo-h b{min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#f59e0b;color:#1b1500;font-size:12px;display:inline-flex;align-items:center;justify-content:center}
+.ad-todo p{margin:6px 0 0;font-size:12px;color:#94a3b8}
+.ad-todo-l{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.ad-todo-l button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:9px 12px;border-radius:10px;border:1px solid rgba(71,85,105,.7);background:rgba(2,6,23,.5);color:#f1f5f9;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.ad-todo-l button:hover{border-color:#fbbf24}
+.ad-todo-l em{margin-left:auto;font-style:normal;font-size:11.5px;font-weight:700;color:#fbbf24}
+.ad-flash{outline:2px solid #fbbf24;outline-offset:3px;transition:outline-color .3s}
+html.theme-light .ad-todo{background:#fff;border-color:#e2e8f0}html.theme-light .ad-todo.has{background:#fffbeb;border-color:#f59e0b}
+html.theme-light .ad-todo-h{color:#0f172a}html.theme-light .ad-todo-l button{background:#fff;color:#0f172a;border-color:#e2e8f0}html.theme-light .ad-todo-l em{color:#b45309}
 .st-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
 .st-head h3{margin:0;font-size:15px;font-weight:800;color:#fff}
 .st-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:12px}
@@ -15868,7 +15884,7 @@ html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5
     window.__ftRest('/rest/v1/site_feedback?select=*&order=done.asc,created_at.desc&limit=100').then(rows => {
       rows = rows || []; const b = $('id-body'); b.className = '';
       const open = rows.filter(r => !r.done).length;
-      host.querySelector('.text-cyan-400').textContent = open + ' à traiter';
+      host.querySelector('.text-cyan-400').textContent = open + ' à traiter'; try { document.dispatchEvent(new Event('ft-regs')); } catch (e) {}
       b.innerHTML = rows.length ? rows.map(r => '<div class="id-it' + (r.done ? ' done' : '') + '" data-id="' + esc(r.id) + '"><div class="id-h"><span class="id-k">' + esc(K[r.kind] || r.kind) + '</span><span>' + esc(r.email || '') + ' · ' + dtt(r.created_at) + '</span></div><div class="id-m">' + esc(r.message) + '</div>' + (r.page ? '<div class="id-h"><span>Page : ' + esc(r.page) + '</span></div>' : '') + '<div class="ad-row" style="margin-top:6px">' + (r.email ? '<a class="ad-btn" href="mailto:' + esc(r.email) + '?subject=' + encodeURIComponent('Votre suggestion sur l’Espace Conseiller') + '">Répondre</a>' : '') + '<button type="button" class="ad-btn" data-a="done">' + (r.done ? 'Rouvrir' : 'Marquer traité') + '</button><button type="button" class="ad-btn" data-a="del">Supprimer</button></div></div>').join('') : '<p class="ad-empty">Aucun message pour l’instant. Les conseillers écrivent via « Suggérer une amélioration » (FAQ, recherche, menu « ⋯ »).</p>';
       b.onclick = e => {
         const btn = e.target.closest('button[data-a]'); if (!btn) return; const it = btn.closest('.id-it'), id = it.dataset.id, r = rows.find(x => String(x.id) === id);
@@ -16235,6 +16251,7 @@ html.theme-light .rg-up{background:#f8fafc;border-color:#e2e8f0}html.theme-light
     window.__ftSaveShared('__ft_regs', { decisions: d }).then(() => {
       LS.set('ft_regs_dec', JSON.stringify(d)); apply();
       toast(val === 'ok' ? 'Mise à jour diffusée aux conseillers' : val === 'no' ? 'Mise à jour écartée' : 'Décision annulée', 'success');
+      setTimeout(todo, 50);
     }).catch(e => toast('Enregistrement impossible : ' + (e && e.message || e), 'error'));
   };
   /* Carte dans l’Espace administrateur */
@@ -16261,7 +16278,36 @@ html.theme-light .rg-up{background:#f8fafc;border-color:#e2e8f0}html.theme-light
     try { if (_fill) _fill.apply(this, arguments); } catch (e) { console.warn(e); }
     const top = $('ad-usage'); if (top && !$('ad-regs')) { const h = document.createElement('div'); h.id = 'ad-regs'; top.parentNode.insertBefore(h, top); }
     window.__ftRegsRender();
+    /* « À traiter » : tout ce qui attend une réponse de l’administrateur, en premier */
+    if (top && !$('ad-first')) {
+      const f = document.createElement('div'); f.id = 'ad-first';
+      f.innerHTML = '<div id="ad-todo"></div><div class="ad-first-grid"><div id="ad-first-a"></div><div id="ad-first-b"></div></div>';
+      top.parentNode.insertBefore(f, top.parentNode.firstChild);
+      const mv = (el, to) => { if (el && $(to)) $(to).appendChild(el); };
+      mv($('ad-regs'), 'ad-first-a');
+      const props = $('ad-props-n'); mv(props && props.closest('.rounded-xl'), 'ad-first-a');
+      const ack = $('ad-ack'); mv(ack && ack.closest('.rounded-xl'), 'ad-first-a');
+      mv($('ad-ideas'), 'ad-first-b');
+    }
+    [0, 1200, 3500].forEach(t => setTimeout(todo, t));
   };
+  function todo() {
+    const h = $('ad-todo'); if (!h) return;
+    const d = decs(), regs = UPD.filter(u => !d[u.id]).length;
+    const props = window.ftPropCount ? (window.ftPropCount() || 0) : 0;
+    let ideas = 0; const ic = document.querySelector('#ad-ideas .text-cyan-400'); if (ic) ideas = parseInt(ic.textContent, 10) || 0;
+    const bar = !!$('ad-ack');
+    const it = [];
+    if (regs) it.push(['⚖️', regs + ' mise(s) à jour réglementaire(s) à valider', 'ad-regs']);
+    if (props) it.push(['📝', props + ' proposition(s) de modèle à examiner', 'ad-props-n']);
+    if (ideas) it.push(['💡', ideas + ' message(s) de la boîte à idées à traiter', 'ad-ideas']);
+    if (bar) it.push(['💶', 'Barème à contrôler (échéance de revalorisation passée)', 'ad-ack']);
+    h.innerHTML = '<div class="ad-todo ' + (it.length ? 'has' : 'none') + '"><div class="ad-todo-h">' + (it.length ? '🔔 À traiter <b>' + it.length + '</b>' : '✅ Rien à traiter pour le moment') + '</div>' +
+      (it.length ? '<div class="ad-todo-l">' + it.map(x => '<button type="button" data-go="' + x[2] + '"><span>' + x[0] + '</span>' + esc(x[1]) + '<em>Voir ›</em></button>').join('') + '</div>' : '<p>Les mises à jour réglementaires, propositions de modèles et messages des conseillers apparaîtront ici dès qu’ils arrivent.</p>') + '</div>';
+    h.onclick = e => { const b = e.target.closest('[data-go]'); if (!b) return; const t = $(b.dataset.go); if (t) { const c = t.closest('.rounded-xl') || t; c.scrollIntoView({ behavior: 'smooth', block: 'start' }); c.classList.add('ad-flash'); setTimeout(() => c.classList.remove('ad-flash'), 1600); } };
+  }
+  document.addEventListener('ft-props', () => setTimeout(todo, 50));
+  document.addEventListener('ft-regs', () => setTimeout(todo, 50));
   document.addEventListener('ft-admin', apply);
   document.addEventListener('ft-regs', apply);
   window.FT_ACTIONS = window.FT_ACTIONS || [];
