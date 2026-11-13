@@ -643,7 +643,7 @@ html.theme-light #ft-props .fp-b .fp-ok{color:#fff}
 .fh-pins .fh-pin-empty{font-size:13px;color:#94a3b8;margin:0}
 .fh-pins .fh-pin-edit{margin-left:auto;border:1px solid rgba(71,85,105,.7);background:transparent;color:#cbd5e1;border-radius:9px;padding:5px 10px;font-family:inherit;font-weight:600;font-size:12px;cursor:pointer}
 html.theme-light .fh-pins .fh-pin-edit{color:#334155;border-color:#cbd5e1}
-@media (max-width:767px){#view-home .fh-pins{order:1}}
+@media (max-width:767px){#view-home .fh-pins,#view-home #ft-rem-home{order:1}}
 #ft-pins-dlg{position:fixed;inset:0;z-index:99990;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.65);padding:16px}
 #ft-pins-dlg.on{display:flex}
 #ft-pins-dlg .pd-box{width:min(520px,100%);max-height:86vh;display:flex;flex-direction:column;border-radius:18px;border:1px solid #24345f;background:#081028;color:#e8eef9}

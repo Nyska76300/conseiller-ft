@@ -15,3 +15,12 @@ cas de contrôle des calculs, barre du haut). À lancer avant chaque mise en lig
 - `assets/js/NN-nom.js` : les scripts, chargés dans l'ordre de leur numéro (chacun complète les précédents) ;
   le barème (`BAREME`) et les modèles officiels sont dans `06-coeur-baremes-modeles.js`, les nouveautés dans `43-nouveautes.js`.
 - À chaque mise à jour : `python3 tools/version.py AAAA-MM-JJ.N` (change la version et force le rechargement des fichiers).
+
+## contrast.py — lisibilité des thèmes
+`python3 tools/contrast.py [--strict]` : mesure le contraste texte/fond sur les pages principales pour les 6 thèmes,
+en sombre et en clair. Un thème ne doit jamais être moins lisible qu'Océan (sinon échec en `--strict`, utilisé par la CI).
+
+## visual.py — vérifications visuelles
+`python3 tools/visual.py [sortie] [référence]` : captures des pages clés (ordinateur sombre, téléphone clair, horloge figée).
+Échoue sur erreur JavaScript, image cassée ou élément essentiel manquant ; signale les icônes non dessinées ;
+compare aux captures du passage précédent (cache GitHub) et joint les images de différences à l'exécution.

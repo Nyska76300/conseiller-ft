@@ -27,3 +27,27 @@ jobs:
         run: python tools/palettes.py --check
       - name: Lancer les tests (calculs, outils, affichage)
         run: python tools/regression.py
+      - name: Vérifier la lisibilité des thèmes de couleurs
+        run: python tools/contrast.py --strict
+      - name: Récupérer les captures du dernier passage
+        uses: actions/cache@v4
+        with:
+          path: visual-ref
+          key: visual-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            visual-${{ github.ref_name }}-
+            visual-main-
+      - name: Vérifications visuelles (captures, images, icônes)
+        run: |
+          pip install pillow
+          python tools/visual.py visual-out visual-ref
+      - name: Joindre les captures et les différences
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: captures
+          path: visual-out
+          if-no-files-found: ignore
+      - name: Garder ces captures comme référence pour le prochain passage
+        if: always()
+        run: rm -rf visual-ref && cp -r visual-out visual-ref || true

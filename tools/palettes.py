@@ -50,6 +50,10 @@ def shift(r, g, b, pal):
     target = lum(r / 255, g / 255, b / 255)
     if chroma < 0.32 and l < 0.2:
         target *= 0.85
+    elif chroma >= 0.32 and target < 0.2:
+        # accents foncés (texte coloré du thème clair, boutons à texte blanc) : un peu plus sombres,
+        # car le vert, le rose ou le violet paraissent plus clairs que le bleu d’origine
+        target *= 0.72
     lo, hi = 0.0, 1.0
     for _ in range(22):
         mid = (lo + hi) / 2
@@ -134,11 +138,14 @@ def render(items, pal):
             continue
         decls = []
         for d in body.split(';'):
-            if ':' not in d or 'var(--' in d.split(':', 1)[0]:
-                pass
+            if ':' not in d:
+                continue
             nd, ch = recolor(d, pal)
             if ch:
                 decls.append(nd.strip())
+            elif 'var(--' in d.split(':', 1)[1] and re.match(r'\s*(background|color|border|fill|stroke|box-shadow|outline)', d):
+                # couleur donnée par une variable : réémise telle quelle pour garder l’ordre de la cascade
+                decls.append(d.strip())
         if decls and head:
             res.append(head + '{' + ';'.join(decls) + '}')
     return res
