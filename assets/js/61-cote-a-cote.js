@@ -17,15 +17,15 @@
     const ok = partner && innerWidth >= MIN && cur() !== 'home' && partner.tab !== cur() && document.body.contains(partner.el) && !visible().includes(partner.el);
     h.querySelectorAll(':scope > .ft-split-b').forEach(v => { if (!partner || v !== partner.el || !ok) { v.classList.remove('ft-split-b'); if (!ok || v !== (partner && partner.el)) v.classList.add('hidden'); } });
     /* la vue active ne doit jamais rester cachée par erreur */
-    h.classList.toggle('ft-split', !!ok);
+    h.classList.toggle('ft-dual', !!ok);
     if (ok) { partner.el.classList.remove('hidden'); partner.el.classList.add('ft-split-b'); watch(partner.el); }
     bar(ok); btnState(); setTimeout(fit, 60);
   }
   /* Mises en page à colonnes trop étroites dans une moitié d’écran : on les passe en une colonne */
   function fit() {
     const h = host(); if (!h) return;
-    const on = h.classList.contains('ft-split');
-    document.querySelectorAll('.ft-sp1,.ft-spcol').forEach(e => { if (!on || !e.closest('.ft-split-host.ft-split')) e.classList.remove('ft-sp1', 'ft-spcol'); });
+    const on = h.classList.contains('ft-dual');
+    document.querySelectorAll('.ft-sp1,.ft-spcol').forEach(e => { if (!on || !e.closest('.ft-split-host.ft-dual')) e.classList.remove('ft-sp1', 'ft-spcol'); });
     if (!on) return;
     h.querySelectorAll(':scope > [id^="view-"]:not(.hidden)').forEach(v => {
       v.querySelectorAll('div,section,form,main,aside').forEach(e => {
@@ -49,7 +49,7 @@
     if (watched === el) return;
     if (mo) mo.disconnect();
     watched = el;
-    mo = new MutationObserver(() => { if (partner && partner.el === el && el.classList.contains('hidden') && host().classList.contains('ft-split')) el.classList.remove('hidden'); });
+    mo = new MutationObserver(() => { if (partner && partner.el === el && el.classList.contains('hidden') && host().classList.contains('ft-dual')) el.classList.remove('hidden'); });
     mo.observe(el, { attributes: true, attributeFilter: ['class'] });
   }
   function bar(on) {
