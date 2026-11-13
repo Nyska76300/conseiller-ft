@@ -1199,3 +1199,6 @@ html.theme-light .pm-pal button.on{border-color:#16181a;box-shadow:0 0 0 2px rgb
 html.theme-light .icp-card{border-color:#e4e8ec;color:#16181a}
 html.theme-light .icp-grid button,html.theme-light .icp-cur{border-color:#ced5db;color:#16181a}
 html.theme-light .icp-grid button.on{background:#f9fbfb;border-color:#34919d;color:#30747e}
+.pm-range input{accent-color:#80cdd1}
+.pm-range output{color:#a8e1e3}
+html.theme-light .pm-range output{color:#30747e}

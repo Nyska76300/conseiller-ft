@@ -1410,3 +1410,7 @@ html.theme-light .pm-pal button{border-color:#cbd5e1;color:#0f172a}html.theme-li
 .icp-foot{display:flex;justify-content:space-between;gap:8px;margin-top:12px}
 .ft-sec-ic{display:inline-flex;vertical-align:-2px;margin-right:6px}.ft-sec-ic svg{width:14px;height:14px}
 html.theme-light .icp-card{background:#fff;border-color:#e2e8f0;color:#0f172a}html.theme-light .icp-grid button,html.theme-light .icp-cur{background:#fff;border-color:#cbd5e1;color:#0f172a}html.theme-light .icp-grid button.on{background:#ecfeff;border-color:#0891b2;color:#0e7490}
+.pm-range{display:flex;align-items:center;gap:12px;margin-top:8px}
+.pm-range input{flex:1;accent-color:#22d3ee;height:28px}
+.pm-range output{min-width:36px;text-align:right;font-weight:800;font-size:14px;color:#67e8f9;font-variant-numeric:tabular-nums}
+html.theme-light .pm-range output{color:#0e7490}

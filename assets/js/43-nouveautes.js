@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.38', date: '13/11/2026', items: [
+      'Paramètres → Affichage : deux curseurs sur 100 pour régler l’intensité des néons des icônes (0 = aucun) et l’effet de profondeur des tuiles (ombres, relief, légère élévation au survol).'
+    ] },
     { v: '2026-11-13.37', date: '13/11/2026', items: [
       'Couleurs : choisissez un thème de couleurs (Océan, Émeraude, Sarcelle, Améthyste, Framboise, Ardoise) dans Paramètres, en mode sombre comme en mode clair.',
       'Menu du compte allégé : Mon compte, Paramètres, Mes rappels et Se déconnecter ; notifications, visite guidée, confidentialité et synchronisation sont dans Paramètres.'

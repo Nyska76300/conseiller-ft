@@ -5,7 +5,7 @@
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const toast = (m, t) => { try { showToast(m, t || 'info'); } catch (e) {} };
   const KEY = 'ft_prefs';
-  const DEF = { neon: true, motion: false, easy: false, start: 'home', pal: '' };
+  const DEF = { neon: true, neonLvl: 50, depth: 50, motion: false, easy: false, start: 'home', pal: '' };
   const PALS = [['', 'Océan', '#2563eb', '#22d3ee'], ['emeraude', 'Émeraude', '#059669', '#34d399'], ['sarcelle', 'Sarcelle', '#0d9488', '#2dd4bf'], ['amethyste', 'Améthyste', '#7c3aed', '#c084fc'], ['framboise', 'Framboise', '#db2777', '#f472b6'], ['ardoise', 'Ardoise', '#475569', '#94a3b8']];
   function setPal(p) {
     const h = document.documentElement, old = document.getElementById('ft-pal');
@@ -14,9 +14,41 @@
   }
   const P = (() => { try { return Object.assign({}, DEF, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { return Object.assign({}, DEF); } })();
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(P)); } catch (e) {} };
+  /* Intensité des néons : 0 = aucun, 50 = réglage d’origine, 100 = très lumineux */
+  const SEL = 'svg.lucide,button svg,a svg,.fh-gi svg,.fh-ci svg,.fh-dico svg,.lk-ico svg,.st-who i,.fa-av';
+  const lvl = () => (P.neon === false && P.neonLvl === 50) ? 0 : Math.max(0, Math.min(100, +P.neonLvl || 0));
+  function neonCss() {
+    let st = document.getElementById('ft-neon-css');
+    if (!st) { st = document.createElement('style'); st.id = 'ft-neon-css'; document.head.appendChild(st); }
+    const v = lvl(), k = v / 50, pre = s => SEL.split(',').map(x => s + x).join(',');
+    if (v === 50) { st.textContent = ''; return; }
+    if (!v) { st.textContent = pre('html ') + '{filter:none!important}'; return; }
+    const r1 = (1.5 * k).toFixed(2), r2 = (5 * k).toFixed(2), m = Math.min(95, Math.round(45 * k)), r3 = (2 * k).toFixed(2), m2 = Math.min(90, Math.round(35 * k));
+    st.textContent = pre('html ') + '{filter:drop-shadow(0 0 ' + r1 + 'px currentColor) drop-shadow(0 0 ' + r2 + 'px color-mix(in srgb,currentColor ' + m + '%,transparent))' + (k > 1.2 ? ' drop-shadow(0 0 ' + (9 * (k - 1)).toFixed(2) + 'px color-mix(in srgb,currentColor ' + Math.round(30 * (k - 1)) + '%,transparent))' : '') + '}' +
+      pre('html.theme-light ') + '{filter:drop-shadow(0 0 ' + r3 + 'px color-mix(in srgb,currentColor ' + m2 + '%,transparent))}' +
+      '.sc-fig svg,.au-chart svg,.inv-table svg,#ft-reg-pill svg{filter:none!important}';
+  }
+  /* Profondeur des tuiles : ombres en plusieurs couches, reflet en haut, légère élévation au survol */
+  const TILES = '.fh-card,.st-kpis>*,.st-tile,#view-admin .rounded-xl,.ag-t,.qz-card,.qz-intro,.hc-row,.bug-it,.rm-it,.hub-card,.home-quick-card,.data-card';
+  const HOVER = '.fh-chip,.fh-pin,.hc-row,.ag-t,.home-quick-card,.hub-card';
+  function depthCss() {
+    let st = document.getElementById('ft-depth-css');
+    if (!st) { st = document.createElement('style'); st.id = 'ft-depth-css'; document.head.appendChild(st); }
+    const v = Math.max(0, Math.min(100, P.depth == null ? 50 : +P.depth)), k = v / 50;
+    if (!v) { st.textContent = ''; return; }
+    const f = n => (n * k).toFixed(2), a = n => Math.min(0.9, n * k).toFixed(3);
+    const dark = 'inset 0 1px 0 rgba(255,255,255,' + a(0.07) + '),0 ' + f(1) + 'px ' + f(2) + 'px rgba(0,0,0,' + a(0.3) + '),0 ' + f(6) + 'px ' + f(14) + 'px -' + f(3) + 'px rgba(0,0,0,' + a(0.35) + '),0 ' + f(18) + 'px ' + f(36) + 'px -' + f(12) + 'px rgba(0,0,0,' + a(0.45) + ')';
+    const light = 'inset 0 1px 0 rgba(255,255,255,' + a(0.8) + '),0 ' + f(1) + 'px ' + f(2) + 'px rgba(15,23,42,' + a(0.06) + '),0 ' + f(6) + 'px ' + f(14) + 'px -' + f(3) + 'px rgba(15,23,42,' + a(0.08) + '),0 ' + f(18) + 'px ' + f(36) + 'px -' + f(12) + 'px rgba(15,23,42,' + a(0.12) + ')';
+    const pre = (p, sel) => sel.split(',').map(x => p + x).join(',');
+    st.textContent = pre('html ', TILES) + '{box-shadow:' + dark + '!important}' + pre('html.theme-light ', TILES) + '{box-shadow:' + light + '!important}' +
+      pre('html ', HOVER) + '{transition:transform .18s ease,box-shadow .18s ease}' +
+      '@media (hover:hover){' + pre('html ', HOVER.split(',').map(x => x + ':hover').join(',')) + '{transform:translateY(-' + f(1.5) + 'px);box-shadow:' + dark.replace(/rgba\(0,0,0,([\d.]+)\)/g, (m, x) => 'rgba(0,0,0,' + Math.min(0.9, x * 1.35).toFixed(3) + ')') + '!important}}' +
+      pre('html ', '.fh-card,.st-kpis>*,.ag-t,.qz-card') + '{background-image:linear-gradient(180deg,rgba(255,255,255,' + a(0.035) + '),rgba(255,255,255,0) 40%)}' +
+      'html.reduce-motion .fh-chip:hover,html.reduce-motion .fh-pin:hover{transform:none}';
+  }
   function apply() {
     const h = document.documentElement;
-    h.classList.toggle('no-neon', !P.neon);
+    h.classList.remove('no-neon'); neonCss(); depthCss();
     h.classList.toggle('reduce-motion', !!P.motion);
     h.classList.toggle('easy-read', !!P.easy);
     if ((h.getAttribute('data-pal') || '') !== (P.pal || '')) setPal(P.pal || '');
@@ -51,7 +83,8 @@
         row('Thème', '', seg('theme', theme(), [['dark', 'Sombre'], ['light', 'Clair']])) +
         '<div class="pm-row pm-col"><div><b>Couleurs</b><span>S’appliquent au thème sombre comme au clair</span></div><div class="pm-pal" role="group" aria-label="Couleurs">' + PALS.map(([v, l, a, b]) => '<button type="button" data-k="pal" data-v="' + v + '" aria-pressed="' + ((P.pal || '') === v) + '" class="' + ((P.pal || '') === v ? 'on' : '') + '"><i style="background:linear-gradient(135deg,' + a + ',' + b + ')"></i>' + l + '</button>').join('') + '</div></div>' +
         row('Taille du texte', '', seg('ts', a.ts, [[0, 'Normal'], [1, 'Grand'], [2, 'Très grand']])) +
-        row('Effet lumineux des icônes', 'Petit halo néon autour des icônes', yn('neon', P.neon)) + '</section>' +
+        '<div class="pm-row pm-col"><div><b>Intensité des néons</b><span>Halo lumineux autour des icônes : 0 = aucun, 50 = d’origine</span></div><div class="pm-range"><input type="range" id="pm-neon" min="0" max="100" step="1" value="' + lvl() + '" aria-label="Intensité des néons sur 100"><output id="pm-neon-v" for="pm-neon">' + lvl() + '</output></div></div>' +
+        '<div class="pm-row pm-col"><div><b>Effet de profondeur</b><span>Ombres et relief des tuiles : 0 = à plat, 50 = conseillé</span></div><div class="pm-range"><input type="range" id="pm-depth" min="0" max="100" step="1" value="' + (P.depth == null ? 50 : P.depth) + '" aria-label="Effet de profondeur sur 100"><output id="pm-depth-v" for="pm-depth">' + (P.depth == null ? 50 : P.depth) + '</output></div></div>' + '</section>' +
       '<section><h3>Accessibilité</h3>' +
         row('Contraste renforcé', 'Textes et bordures plus marqués', yn('hc', a.hc)) +
         row('Lecture facilitée', 'Lettres et lignes plus espacées', yn('easy', P.easy)) +
@@ -76,6 +109,8 @@
       w = document.createElement('div'); w.id = 'ft-prefs'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-labelledby', 'pm-t');
       document.body.appendChild(w);
       w.addEventListener('click', onClick);
+      w.addEventListener('input', e => { if (e.target.id === 'pm-depth') { P.depth = +e.target.value; const o = document.getElementById('pm-depth-v'); if (o) o.textContent = P.depth; depthCss(); return; } if (e.target.id !== 'pm-neon') return; P.neonLvl = +e.target.value; P.neon = P.neonLvl > 0; const o = document.getElementById('pm-neon-v'); if (o) o.textContent = P.neonLvl; neonCss(); });
+      w.addEventListener('change', e => { if (e.target.id === 'pm-neon' || e.target.id === 'pm-depth') save(); });
       document.addEventListener('keydown', e => { if (e.key === 'Escape' && !w.hidden) close(); });
     }
     return w;
@@ -111,7 +146,7 @@
   /* Accès : menu du compte, menu « ⋯ », recherche */
   (window.FT_ACCT_ITEMS = window.FT_ACCT_ITEMS || []).unshift({ t: 'Paramètres', run: () => window.ftSettings() });
   window.FT_ACTIONS = window.FT_ACTIONS || [];
-  window.FT_ACTIONS.push({ t: 'Paramètres', s: 'Affichage, accessibilité, démarrage, notifications', kw: 'paramètres réglages préférences affichage accessibilité thème clair sombre texte taille contraste animations démarrage', run: () => window.ftSettings() });
+  window.FT_ACTIONS.push({ t: 'Paramètres', s: 'Affichage, accessibilité, démarrage, notifications', kw: 'paramètres réglages préférences affichage accessibilité thème clair sombre texte taille contraste animations démarrage néon intensité couleurs', run: () => window.ftSettings() });
   function moreItem() {
     const m = $('ft-more'); if (!m || m.querySelector('[data-k="prefs"]')) return;
     const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'menuitem'); b.dataset.k = 'prefs';
