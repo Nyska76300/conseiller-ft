@@ -1202,3 +1202,20 @@ html.theme-light .icp-grid button.on{background:#ecfff4;border-color:#079a4a;col
 .pm-range input{accent-color:#11de68}
 .pm-range output{color:#1af676}
 html.theme-light .pm-range output{color:#0c7b3f}
+.hs-it{border:1px solid rgba(42,70,59,.8)}
+.hs-it b{color:#ecf7f3}
+.hs-it span{color:#80ab9b}
+.hs-h{color:#d9ece5}
+html.theme-light .hs-it{border-color:#d9ece5}
+html.theme-light .hs-it b,html.theme-light .hs-h{color:#091b15}
+#ft-act{background:rgba(1,9,6,.65)}
+.act-kpi div{background:rgba(1,9,6,.45);border:1px solid #172d25}
+.act-kpi small{color:#80ab9b}
+.act-h{color:#1af676}
+.act-weeks i{background:linear-gradient(180deg,#11de68,#0b7c58)}
+.act-weeks span{color:#80ab9b}
+.act-ml li{border-bottom:1px solid rgba(23,45,37,.7);color:#d9ece5}
+.act-ml em{color:#80ab9b}
+html.theme-light .act-kpi div{background:#f6fbf9;border-color:#d9ece5}
+html.theme-light .act-kpi strong,html.theme-light .act-ml li{color:#091b15}
+html.theme-light .act-h{color:#0c7b3f}

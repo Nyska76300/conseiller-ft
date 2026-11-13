@@ -5,7 +5,7 @@
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const toast = (m, t) => { try { showToast(m, t || 'info'); } catch (e) {} };
   const KEY = 'ft_prefs';
-  const DEF = { neon: true, neonLvl: 50, depth: 50, motion: false, easy: false, start: 'home', pal: '' };
+  const DEF = { neon: true, neonLvl: 50, depth: 60, themeMode: '', motion: false, easy: false, start: 'home', pal: '' };
   const PALS = [['', 'Océan', '#2563eb', '#22d3ee'], ['emeraude', 'Émeraude', '#059669', '#34d399'], ['sarcelle', 'Sarcelle', '#0d9488', '#2dd4bf'], ['amethyste', 'Améthyste', '#7c3aed', '#c084fc'], ['framboise', 'Framboise', '#db2777', '#f472b6'], ['ardoise', 'Ardoise', '#475569', '#94a3b8']];
   function setPal(p) {
     const h = document.documentElement, old = document.getElementById('ft-pal');
@@ -34,8 +34,7 @@
   function depthCss() {
     let st = document.getElementById('ft-depth-css');
     if (!st) { st = document.createElement('style'); st.id = 'ft-depth-css'; document.head.appendChild(st); }
-    const v = Math.max(0, Math.min(100, P.depth == null ? 50 : +P.depth)), k = v / 50;
-    if (!v) { st.textContent = ''; return; }
+    const v = Math.max(20, Math.min(100, P.depth == null ? 60 : +P.depth)), k = v / 50;
     const f = n => (n * k).toFixed(2), a = n => Math.min(0.9, n * k).toFixed(3);
     const dark = 'inset 0 1px 0 rgba(255,255,255,' + a(0.07) + '),0 ' + f(1) + 'px ' + f(2) + 'px rgba(0,0,0,' + a(0.3) + '),0 ' + f(6) + 'px ' + f(14) + 'px -' + f(3) + 'px rgba(0,0,0,' + a(0.35) + '),0 ' + f(18) + 'px ' + f(36) + 'px -' + f(12) + 'px rgba(0,0,0,' + a(0.45) + ')';
     const light = 'inset 0 1px 0 rgba(255,255,255,' + a(0.8) + '),0 ' + f(1) + 'px ' + f(2) + 'px rgba(15,23,42,' + a(0.06) + '),0 ' + f(6) + 'px ' + f(14) + 'px -' + f(3) + 'px rgba(15,23,42,' + a(0.08) + '),0 ' + f(18) + 'px ' + f(36) + 'px -' + f(12) + 'px rgba(15,23,42,' + a(0.12) + ')';
@@ -44,6 +43,10 @@
       pre('html ', HOVER) + '{transition:transform .18s ease,box-shadow .18s ease}' +
       '@media (hover:hover){' + pre('html ', HOVER.split(',').map(x => x + ':hover').join(',')) + '{transform:translateY(-' + f(1.5) + 'px);box-shadow:' + dark.replace(/rgba\(0,0,0,([\d.]+)\)/g, (m, x) => 'rgba(0,0,0,' + Math.min(0.9, x * 1.35).toFixed(3) + ')') + '!important}}' +
       pre('html ', '.fh-card,.st-kpis>*,.ag-t,.qz-card') + '{background-image:linear-gradient(180deg,rgba(255,255,255,' + a(0.035) + '),rgba(255,255,255,0) 40%)}' +
+      /* Relief permanent des tuiles cliquables (outils, favoris, menu) */
+      pre('html ', '.fh-chip,.fh-pin,#burger-tabs-list button[onclick],.hc-row,.pm-pal button') + '{box-shadow:inset 0 1px 0 rgba(255,255,255,' + a(0.06) + '),0 ' + f(1) + 'px ' + f(1.5) + 'px rgba(0,0,0,' + a(0.28) + '),0 ' + f(3) + 'px ' + f(8) + 'px -' + f(2) + 'px rgba(0,0,0,' + a(0.32) + ');transform:translateY(-' + f(0.5) + 'px)}' +
+      pre('html.theme-light ', '.fh-chip,.fh-pin,#burger-tabs-list button[onclick],.hc-row,.pm-pal button') + '{box-shadow:inset 0 1px 0 rgba(255,255,255,' + a(0.9) + '),0 ' + f(1) + 'px ' + f(1.5) + 'px rgba(15,23,42,' + a(0.07) + '),0 ' + f(3) + 'px ' + f(8) + 'px -' + f(2) + 'px rgba(15,23,42,' + a(0.1) + ')}' +
+      pre('html ', '.fh-chip:active,.fh-pin:active,#burger-tabs-list button[onclick]:active') + '{transform:translateY(0);box-shadow:inset 0 1px 2px rgba(0,0,0,' + a(0.3) + ')}' +
       'html.reduce-motion .fh-chip:hover,html.reduce-motion .fh-pin:hover{transform:none}';
   }
   function apply() {
@@ -53,6 +56,19 @@
     h.classList.toggle('easy-read', !!P.easy);
     if ((h.getAttribute('data-pal') || '') !== (P.pal || '')) setPal(P.pal || '');
   }
+  /* Thème automatique : selon l’appareil, ou clair en journée et sombre le soir */
+  const MQD = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+  function autoTheme(force) {
+    if (!P.themeMode) return;
+    const h = new Date().getHours();
+    const want = P.themeMode === 'system' ? (MQD && MQD.matches ? 'dark' : 'light') : (h >= 7 && h < 19 ? 'light' : 'dark');
+    if (force || theme() !== want) { try { applyTheme(want); } catch (e) {} }
+  }
+  if (typeof toggleTheme === 'function') { const _tt = toggleTheme; toggleTheme = function () { if (P.themeMode) { P.themeMode = ''; save(); } return _tt.apply(this, arguments); }; }
+  if (MQD && MQD.addEventListener) MQD.addEventListener('change', () => autoTheme());
+  setInterval(autoTheme, 5 * 60 * 1000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) autoTheme(); });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => autoTheme()); else setTimeout(autoTheme, 0);
   apply();
   window.addEventListener('storage', e => { if (e.key === KEY) { try { Object.assign(P, DEF, JSON.parse(e.newValue || '{}')); apply(); } catch (er) {} } });
 
@@ -63,7 +79,7 @@
     switchNavTab = function (id) { const r = _sw.apply(this, arguments); try { if (id != null && !/^(admin|home)$/.test(String(id))) localStorage.setItem('ft_last_tab', String(id)); } catch (e) {} return r; };
   }
   function startTab() {
-    if (/[?&](go|tab|t)=/.test(location.search) || location.hash.length > 1 || P.start === 'home') return;
+    if (window.__ftDeepLink || /[?&](go|tab|t)=/.test(location.search) || location.hash.length > 1 || P.start === 'home') return;
     let t = P.start === 'cvm' ? 'cvm' : (() => { try { return localStorage.getItem('ft_last_tab'); } catch (e) { return null; } })();
     if (!t || tabNow() !== 'home') return;
     try { switchNavTab(/^\d+$/.test(t) ? +t : t); } catch (e) {}
@@ -80,11 +96,11 @@
     const a = A(), notif = !!(window.ftNotifOn && window.ftNotifOn()), ver = (document.querySelector('meta[name="ft-version"]') || {}).content || '';
     return '<div class="pm-card"><div class="pm-h"><h2 id="pm-t">⚙️ Paramètres</h2><button type="button" class="pm-x" data-pm="x" aria-label="Fermer">×</button></div>' +
       '<section><h3>Affichage</h3>' +
-        row('Thème', '', seg('theme', theme(), [['dark', 'Sombre'], ['light', 'Clair']])) +
+        row('Thème', P.themeMode === 'system' ? 'Suit le réglage de l’appareil' : P.themeMode === 'hours' ? 'Clair de 7 h à 19 h, sombre le soir' : '', seg('theme', P.themeMode || theme(), [['dark', 'Sombre'], ['light', 'Clair'], ['system', 'Auto'], ['hours', 'Horaire']])) +
         '<div class="pm-row pm-col"><div><b>Couleurs</b><span>S’appliquent au thème sombre comme au clair</span></div><div class="pm-pal" role="group" aria-label="Couleurs">' + PALS.map(([v, l, a, b]) => '<button type="button" data-k="pal" data-v="' + v + '" aria-pressed="' + ((P.pal || '') === v) + '" class="' + ((P.pal || '') === v ? 'on' : '') + '"><i style="background:linear-gradient(135deg,' + a + ',' + b + ')"></i>' + l + '</button>').join('') + '</div></div>' +
         row('Taille du texte', '', seg('ts', a.ts, [[0, 'Normal'], [1, 'Grand'], [2, 'Très grand']])) +
         '<div class="pm-row pm-col"><div><b>Intensité des néons</b><span>Halo lumineux autour des icônes : 0 = aucun, 50 = d’origine</span></div><div class="pm-range"><input type="range" id="pm-neon" min="0" max="100" step="1" value="' + lvl() + '" aria-label="Intensité des néons sur 100"><output id="pm-neon-v" for="pm-neon">' + lvl() + '</output></div></div>' +
-        '<div class="pm-row pm-col"><div><b>Effet de profondeur</b><span>Ombres et relief des tuiles : 0 = à plat, 50 = conseillé</span></div><div class="pm-range"><input type="range" id="pm-depth" min="0" max="100" step="1" value="' + (P.depth == null ? 50 : P.depth) + '" aria-label="Effet de profondeur sur 100"><output id="pm-depth-v" for="pm-depth">' + (P.depth == null ? 50 : P.depth) + '</output></div></div>' + '</section>' +
+        '<div class="pm-row pm-col"><div><b>Effet de profondeur</b><span>Relief des tuiles, toujours présent : de léger (20) à très marqué (100)</span></div><div class="pm-range"><input type="range" id="pm-depth" min="20" max="100" step="1" value="' + Math.max(20, P.depth == null ? 60 : P.depth) + '" aria-label="Effet de profondeur sur 100"><output id="pm-depth-v" for="pm-depth">' + Math.max(20, P.depth == null ? 60 : P.depth) + '</output></div></div>' + '</section>' +
       '<section><h3>Accessibilité</h3>' +
         row('Contraste renforcé', 'Textes et bordures plus marqués', yn('hc', a.hc)) +
         row('Lecture facilitée', 'Lettres et lignes plus espacées', yn('easy', P.easy)) +
@@ -124,7 +140,7 @@
     const s = e.target.closest('[data-k]');
     if (s) {
       const k = s.dataset.k, v = s.dataset.v;
-      if (k === 'theme') { try { applyTheme(v); } catch (er) {} }
+      if (k === 'theme') { P.themeMode = (v === 'system' || v === 'hours') ? v : ''; save(); autoTheme(true); if (!P.themeMode) { try { applyTheme(v); } catch (er) {} } }
       else if (k === 'ts') window.ftA11y && window.ftA11y('ts', +v);
       else if (k === 'hc') window.ftA11y && window.ftA11y('hc', v === '1');
       else if (k === 'entretien') { try { ftEntretien(v === '1'); } catch (er) {} }

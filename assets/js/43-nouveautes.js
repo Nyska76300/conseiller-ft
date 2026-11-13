@@ -2,6 +2,12 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.39', date: '13/11/2026', items: [
+      'Mon activité : dans le menu de votre compte, vos outils et mails les plus utilisés, votre activité par semaine et vos scores de formation (visibles par vous seul).',
+      'Thème automatique : dans Paramètres, « Auto » suit le réglage de votre appareil, « Horaire » passe en clair de 7 h à 19 h et en sombre le soir.',
+      'Relief des tuiles : les tuiles et boutons d’outils ont désormais toujours un effet de profondeur, réglable de léger à très marqué dans Paramètres.',
+      'Raccourcis de l’appli : sur Android et sur ordinateur, un appui long (ou clic droit) sur l’icône de l’appli installée propose Mails, Simulateurs, Mes rappels et Rechercher.'
+    ] },
     { v: '2026-11-13.38', date: '13/11/2026', items: [
       'Paramètres → Affichage : deux curseurs sur 100 pour régler l’intensité des néons des icônes (0 = aucun) et l’effet de profondeur des tuiles (ombres, relief, légère élévation au survol).'
     ] },

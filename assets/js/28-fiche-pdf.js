@@ -136,7 +136,7 @@
   }
   window.ftGo = ftGo;
   if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.ftGo) ftGo(e.data.ftGo); });
-  (function () { const m = /[?&]go=([\w-]+)/.exec(location.search); if (m) { try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {} setTimeout(() => ftGo(m[1]), 1200); } })();
+  (function () { const m = /[?&]go=([\w-]+)/.exec(location.search); if (m) { window.__ftDeepLink = m[1]; try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {} setTimeout(() => ftGo(m[1]), 1200); } })();
   window.ftEnableNotifs = function () {
     if (!canNotif) { toast('Les notifications ne sont pas disponibles ici. Sur iPhone, installez d’abord le site sur l’écran d’accueil.', 'info'); return; }
     if (ls.get('ft_notif') === '1' && Notification.permission === 'granted') { ls.set('ft_notif', '0'); toast('Notifications désactivées', 'info'); menuLabel(); return; }
