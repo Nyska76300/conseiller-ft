@@ -1,0 +1,25 @@
+name: Tests de non-régression
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Installer Playwright et Chromium
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Vérifier le fichier de veille
+        run: python -m json.tool reglementation/maj.json > /dev/null
+      - name: Lancer les tests (calculs, outils, affichage)
+        run: python tools/regression.py
