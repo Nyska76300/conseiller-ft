@@ -29,7 +29,30 @@
     ['file-search', 'vérification contrôle'], ['badge-check', 'conforme validé'], ['target', 'objectif'], ['compass', 'orientation projet'], ['rocket', 'création entreprise'],
     ['sprout', 'projet démarrage'], ['palette', 'artiste'], ['drama|theater', 'spectacle intermittent'], ['music', 'musique intermittent'], ['hard-hat|construction', 'chantier btp'],
     ['truck', 'transport'], ['stethoscope', 'médical'], ['landmark', 'administration état'], ['infinity', 'sans limite'], ['sun', 'été saison'], ['umbrella', 'assurance'],
-    ['life-buoy', 'aide secours'], ['signpost', 'parcours orientation'], ['route', 'parcours étapes'], ['key-round|key', 'accès'], ['lock', 'sécurité'], ['zap', 'rapide']
+    ['life-buoy', 'aide secours'], ['signpost', 'parcours orientation'], ['route', 'parcours étapes'], ['key-round|key', 'accès'], ['lock', 'sécurité'], ['zap', 'rapide'],
+    /* ajouts */
+    ['calendar-days', 'calendrier jours'], ['calendar-check', 'rendez-vous validé'], ['calendar-x', 'absence annulation'], ['calendar-range', 'période'], ['alarm-clock', 'rappel réveil'],
+    ['history', 'historique passé'], ['file-check', 'document validé'], ['file-x', 'refus document'], ['file-pen|file-edit', 'rédaction modifier'], ['file-plus', 'nouveau document'],
+    ['files', 'documents pièces'], ['file-spreadsheet', 'tableau'], ['folder-open', 'dossier ouvert'], ['folder-check', 'dossier complet'], ['clipboard-pen|clipboard-edit', 'saisie formulaire'],
+    ['notebook-pen', 'notes carnet'], ['pen-line|pen', 'écrire signer'], ['signature', 'signature contrat'], ['stamp', 'tampon officiel'], ['scroll-text', 'contrat texte'],
+    ['contact', 'contact fiche'], ['id-card|contact-round', 'identité carte'], ['users-round', 'groupe collectif'], ['user-round-check', 'accompagnement suivi'], ['user-cog', 'paramètres conseiller'],
+    ['person-standing', 'personne'], ['hand-helping', 'aide accompagnement'], ['hand-coins', 'versement aide financière'], ['heart-handshake', 'solidarité soutien'], ['handshake', 'accord partenaire'],
+    ['house-plus', 'nouveau logement'], ['building', 'bâtiment agence'], ['factory', 'industrie usine'], ['warehouse', 'entrepôt logistique'], ['briefcase-business', 'emploi cadre'],
+    ['laptop', 'ordinateur télétravail'], ['monitor', 'écran informatique'], ['smartphone', 'téléphone portable'], ['headset', 'plateforme téléphonique'], ['printer', 'impression'],
+    ['wrench', 'outil réparation'], ['settings', 'réglages'], ['sliders-horizontal', 'paramètres réglages'], ['chef-hat', 'restauration cuisine'], ['shopping-cart', 'vente commerce'],
+    ['car', 'voiture permis'], ['bus', 'transport mobilité'], ['bike', 'vélo mobilité'], ['train-front|train', 'train déplacement'], ['fuel', 'carburant'],
+    ['scissors', 'coiffure artisan'], ['paintbrush', 'peinture artisan'], ['camera', 'photo audiovisuel'], ['film', 'cinéma intermittent'], ['mic', 'voix audio'],
+    ['leaf', 'environnement agricole'], ['tree-pine', 'forêt saison'], ['snowflake', 'hiver saison'], ['flower-2', 'printemps'], ['mountain', 'montagne saison'],
+    ['activity', 'activité suivi'], ['chart-line|line-chart', 'évolution courbe'], ['chart-column|bar-chart', 'histogramme'], ['gauge', 'indicateur jauge'], ['sigma', 'somme total'],
+    ['calculator', 'calcul'], ['divide', 'division prorata'], ['equal', 'égal résultat'], ['plus-circle|circle-plus', 'ajout cumul'], ['minus-circle|circle-minus', 'déduction retenue'],
+    ['badge-euro', 'montant aide'], ['badge-percent', 'réduction taux'], ['credit-card', 'carte paiement'], ['landmark', 'banque état'], ['vault', 'coffre épargne'],
+    ['circle-check|check-circle', 'validé ok'], ['circle-x|x-circle', 'refus ko'], ['circle-alert|alert-circle', 'avertissement'], ['octagon-alert|alert-octagon', 'stop interdit'], ['ban', 'interdit refus'],
+    ['shield-alert', 'risque fraude'], ['shield-x', 'refus protection'], ['eye', 'voir consulter'], ['eye-off', 'masqué confidentiel'], ['fingerprint', 'identité sécurité'],
+    ['messages-square', 'échanges discussion'], ['message-circle', 'message bulle'], ['inbox', 'boîte réception'], ['mail-check', 'mail envoyé validé'], ['mail-warning', 'mail alerte'],
+    ['megaphone', 'annonce communication'], ['newspaper', 'actualité'], ['library', 'bibliothèque ressources'], ['book-marked', 'guide référence'], ['languages', 'langue traduction'],
+    ['map', 'carte territoire'], ['navigation', 'direction'], ['milestone', 'étape jalon'], ['waypoints', 'parcours étapes'], ['git-branch', 'choix embranchement'],
+    ['puzzle', 'complément pièce'], ['layers', 'niveaux cumul'], ['layout-grid', 'tableau de bord'], ['list-ordered', 'liste étapes'], ['list-todo', 'à faire tâches'],
+    ['trophy', 'réussite objectif'], ['medal', 'récompense'], ['award', 'qualification diplôme'], ['sparkles', 'nouveauté'], ['flame', 'urgent prioritaire']
   ];
   const pascal = n => n.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
   const L = () => window.lucide && window.lucide.icons ? window.lucide : null;
@@ -114,12 +137,13 @@
     const g = $('icp-g'); if (!g) return;
     const q = (($('icp-q') || {}).value || '').trim().toLowerCase();
     let names = LIST.filter(([n, kw]) => !q || kw.includes(q) || n.includes(q)).map(([n]) => resolve(n)).filter(Boolean);
+    names = [...new Set(names)];
     if (q.length >= 3 && L()) {
       const extra = Object.keys(L().icons).map(p => /[A-Z]/.test(p) ? p.replace(/[A-Z]/g, (m, i) => (i ? '-' : '') + m.toLowerCase()).replace(/(\d+)/g, '-$1').replace(/--/g, '-') : p).filter(n => n.includes(q) && !names.includes(n)).slice(0, 60);
       names = names.concat(extra.filter(n => get(n)));
     }
     g.innerHTML = names.length ? '' : '<p class="ad-empty">Aucune icône trouvée.</p>';
-    names.slice(0, 120).forEach(n => {
+    names.slice(0, 260).forEach(n => {
       const b = document.createElement('button'); b.type = 'button'; b.dataset.ic = 'pick'; b.dataset.n = n; b.title = n; b.setAttribute('role', 'option'); b.setAttribute('aria-selected', String(ctx.icon === n));
       if (ctx.icon === n) b.className = 'on';
       const s = svg(n); if (s) b.appendChild(s); g.appendChild(b);

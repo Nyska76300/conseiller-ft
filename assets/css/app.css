@@ -1517,3 +1517,8 @@ html,body{overscroll-behavior:none}
 #home-time,#home-date{will-change:transform;contain:layout paint style}
 /* Mes favoris dans la colonne de droite : un outil par ligne */
 @media (min-width:1024px){#view-home .fh-R .fh-pins .fh-chips{grid-template-columns:minmax(0,1fr)!important}}
+/* Fenêtres de compte : défilent si l’écran est petit, et le bouton Enregistrer reste visible en bas */
+#ft-auth{overflow-y:auto;align-items:flex-start;padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+#ft-auth .fa-box{margin:auto}
+#ft-auth .fa-go{position:sticky;bottom:0;z-index:2;box-shadow:0 -10px 18px 6px #0f172a,0 8px 22px rgba(37,99,235,.35)}
+html.theme-light #ft-auth .fa-go{box-shadow:0 -10px 18px 6px #e9f5fe}

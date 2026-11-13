@@ -29,8 +29,19 @@ def shift(r, g, b, pal):
     if s < 0.06 or not (H_MIN <= hd <= H_MAX):
         return None
     c, spread, sbg, sacc = pal
-    nh = (c + (hd - H_MID) * spread) % 360
-    ns = min(1, s * (sbg if (l < 0.3 or l > 0.92) else sacc))
+    chroma = (1 - abs(2 * l - 1)) * s
+    if chroma >= 0.32:
+        # accent vif (boutons, icônes, liens) : nouvelle teinte, saturation d’origine
+        nh = (c + (hd - H_MID) * spread) % 360
+        ns = min(1, s * sacc)
+    elif l >= 0.62:
+        # textes clairs et fonds du thème clair : juste une nuance de la teinte (pas de texte coloré)
+        nh = c % 360
+        ns = min(1, s * 0.4 * sbg)
+    else:
+        # fonds sombres, bordures, cartes : gris teinté, discret
+        nh = c % 360
+        ns = min(1, s * 0.42 * sbg)
     # même luminosité perçue que la couleur d’origine (contrastes du texte conservés)
     target = lum(r / 255, g / 255, b / 255)
     lo, hi = 0.0, 1.0

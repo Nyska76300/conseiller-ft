@@ -1,6 +1,6 @@
 (function () {
   /* Comparateur de scénarios : deux situations côte à côte (reprise d’emploi, ARE ou ARCE, deux salaires de référence),
-     avec l’écart et une vue usager pour le montrer à la personne reçue. Calculs : mêmes fonctions que les simulateurs. */
+     avec l’écart. Calculs : mêmes fonctions que les simulateurs. */
   const $ = id => document.getElementById(id);
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const tab = () => { try { return String(activeNavTab); } catch (e) { return ''; } };
@@ -47,23 +47,16 @@
       '<p class="cp-note">' + esc(note) + ' Estimation indicative : seule la notification fait foi.</p>';
     last = { title, rows, hA, hB, note };
   }
-  function usager() {
-    if (!last) return;
-    const vals = [];
-    last.rows.filter(r => r[5] || last.rows.indexOf(r) < 3).forEach(r => { vals.push({ l: r[0] + ' · ' + last.hA, v: r[1] }); vals.push({ l: r[0] + ' · ' + last.hB, v: r[2] }); });
-    window.ftUsagerView && window.ftUsagerView(last.rows.map(r => r[0] + ' : ' + last.hA + ' ' + r[1] + ' — ' + last.hB + ' ' + r[2]).join('\n') + '\n\n' + last.note, { name: 'Comparaison · ' + last.title, vals: vals.slice(0, 8) });
-  }
-
   /* ---------- Vue ---------- */
   const V = document.createElement('div');
   V.id = 'view-compare'; V.className = 'hidden flex-1 flex flex-col overflow-hidden bg-slate-950 fr-view';
   V.innerHTML = '<div class="h-12 border-b border-slate-800 bg-slate-900/90 px-4 md:px-6 flex items-center justify-between shrink-0 z-10"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center shrink-0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true"><path d="M16 3h5v5M8 3H3v5M21 3l-7 7M3 3l7 7M16 21h5v-5M8 21H3v-5M21 21l-7-7M3 21l7-7"/></svg></div><h2 class="text-xs md:text-sm font-bold text-white tracking-tight">Comparer deux scénarios</h2></div></div>' +
-    '<div class="flex-1 overflow-y-auto p-4 md:p-6"><div class="max-w-4xl mx-auto"><div class="cp-modes" role="tablist" aria-label="Type de comparaison">' + MODES.map(m => '<button type="button" role="tab" data-m="' + m[0] + '">' + m[1] + '</button>').join('') + '</div><div class="cp-card"><div id="cp-form"></div><div id="cp-out" aria-live="polite"></div><div class="cp-acts"><button type="button" class="ad-btn" data-cp="us">👁 Vue usager</button></div></div></div></div>';
+    '<div class="flex-1 overflow-y-auto p-4 md:p-6"><div class="max-w-4xl mx-auto"><div class="cp-modes" role="tablist" aria-label="Type de comparaison">' + MODES.map(m => '<button type="button" role="tab" data-m="' + m[0] + '">' + m[1] + '</button>').join('') + '</div><div class="cp-card"><div id="cp-form"></div><div id="cp-out" aria-live="polite"></div><div class="cp-acts"></div></div></div></div>';
   const anc = $('view-delais'); if (anc) anc.parentElement.appendChild(V);
   try { NAV_TABS_CONFIG.push({ id: 'compare', name: 'Comparer deux scénarios', desc: 'Reprise d’emploi, ARE ou ARCE, deux SJR côte à côte', icon: 'git-compare', color: 'bg-sky-500/15 text-sky-400 border-sky-500/30', badge: 'Nouveau' }); } catch (e) {}
   try { FT_KW.compare = 'comparer comparaison scenario deux options reprise emploi arce are sjr salaire choix meilleur'; } catch (e) {}
   function draw() { $('cp-form').innerHTML = form(); V.querySelectorAll('.cp-modes [data-m]').forEach(b => { const on = b.dataset.m === mode; b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); }); compute(); }
-  V.addEventListener('click', e => { const m = e.target.closest('[data-m]'); if (m) { mode = m.dataset.m; draw(); return; } if (e.target.closest('[data-cp="us"]')) usager(); });
+  V.addEventListener('click', e => { const m = e.target.closest('[data-m]'); if (m) { mode = m.dataset.m; draw(); return; } });
   V.addEventListener('input', e => { if (e.target.closest('#cp-form')) compute(); });
   function render() { const on = tab() === 'compare'; V.classList.toggle('hidden', !on); if (!on) return; const n = $('header-active-tab-name'); if (n) n.textContent = 'Références et calculs · Comparer deux scénarios'; if (!$('cp-form').firstChild) draw(); }
   const _sw = switchNavTab;

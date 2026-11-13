@@ -2,17 +2,20 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
-    { v: '2026-11-13.50', date: '13/11/2026', items: [
+    { v: '2026-11-13.51', date: '13/11/2026', items: [
+      'Thèmes de couleurs revus : fonds sobres légèrement teintés, la couleur est réservée aux boutons, icônes et liens.',
+      'Plus d’une centaine d’icônes supplémentaires pour personnaliser les outils et les rubriques.',
+      'Mon compte : le bouton Enregistrer reste visible même sur un petit écran.',
+      'Vue usager retirée.',
       'Le mode entretien (Ctrl+J) est retiré.',
       'Affichage allégé appliqué pour tous : défilement fluide partout.',
       'Nouvel accueil : à gauche dossier, liens et repères ; au centre les outils ; à droite Mes favoris, CVM favoris et Quoi de neuf.',
       'Accueil épuré : plus de tuiles étirées avec du vide, la tuile « Reprendre » est retirée.',
       'Site beaucoup plus fluide : une boucle cachée redessinait l’accueil et le menu plusieurs fois par seconde, c’est corrigé. Défilement et survol allégés.',
-      'Accueil sur ordinateur : les rubriques d’outils se répartissent dans les trois colonnes, sans grand vide sur les côtés.'
     ] },
     { v: '2026-11-13.41', date: '13/11/2026', items: [
       'Que faire si… : décrivez une situation (« reprise d’un CDD », « trop-perçu contesté »…) dans la recherche ou depuis l’accueil : le bon outil, le bon mail et le point clé s’affichent.',
-      'Comparer deux scénarios : reprise d’emploi à deux salaires, ARE ou ARCE, deux SJR, côte à côte avec l’écart et une vue usager (menu, Références et calculs).',
+      'Comparer deux scénarios : reprise d’emploi à deux salaires, ARE ou ARCE, deux SJR, côte à côte avec l’écart (menu, Références et calculs).',
       'Sigles expliqués : dans les outils, survolez ou touchez un sigle souligné (SJR, PJI, ICCP…) pour afficher sa définition.',
       'Rappels dans l’agenda : un bouton 📅 ajoute un rappel au calendrier de l’iPhone ou à Outlook.',
       'Chargement plus rapide : les polices et les icônes ne bloquent plus l’affichage de la page.'
@@ -34,7 +37,6 @@
       'Menu du compte allégé : Mon compte, Paramètres, Mes rappels et Se déconnecter ; notifications, visite guidée, confidentialité et synchronisation sont dans Paramètres.'
     ] },
     { v: '2026-11-13.36', date: '13/11/2026', items: [
-      'Vue usager : sous chaque mail généré par un simulateur, « 👁 Vue usager » affiche les résultats en grand et sans jargon, à montrer à la personne reçue (texte agrandissable, impression).',
       'Annonces par agence : un message peut désormais concerner une seule agence ; il ne s’affiche que pour ses conseillers.',
       'Résumé du mois : le 1er de chaque mois, une notification récapitule les nouveautés du site et les changements réglementaires du mois écoulé (si les notifications sont activées).'
     ] },

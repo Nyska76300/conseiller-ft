@@ -1,5 +1,5 @@
 (function () {
-  /* Statistiques par agence, suivi de la formation (administrateur) et vue usager (simulateurs). */
+  /* Statistiques par agence, suivi de la formation (administrateur) */
   const $ = id => document.getElementById(id);
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const toast = (m, t) => { try { showToast(m, t || 'info'); } catch (e) {} };
@@ -94,39 +94,5 @@
   const _fill = window.ftAdminFill;
   window.ftAdminFill = function () { try { if (_fill) _fill.apply(this, arguments); } catch (e) { console.warn(e); } setTimeout(() => { ['ad-ag', 'ad-qz'].forEach(i => { const x = $(i); if (x) x.remove(); }); cards(); }, 60); };
 
-  /* =================== Vue usager =================== */
-  const PLAIN = [[/\bSJR\b/g, 'salaire journalier de référence'], [/\bAJ\b/g, 'allocation par jour'], [/\bARE\b/g, 'allocation chômage'], [/\bICCP\b/g, 'indemnité de congés payés'], [/\bsupra-?légal(e|es)?\b/gi, 'indemnités au-delà du minimum légal'], [/\bASS\b/g, 'allocation de solidarité'], [/\bATI\b/g, 'allocation des travailleurs indépendants'], [/\bAREF\b/g, 'allocation pendant la formation'], [/\bRFF\b/g, 'rémunération de fin de formation'], [/\bCSP\b/g, 'contrat de sécurisation professionnelle'], [/\bFCT\b/g, 'fin de contrat'], [/\bPJI\b/g, 'premier jour indemnisé']];
-  const plain = t => PLAIN.reduce((s, [r, v]) => s.replace(r, v), String(t || '')).replace(/^\w/, c => c.toUpperCase());
-  let fs = 1;
-  window.ftUsagerView = function (mailText, opt) {
-    const S = opt && opt.vals ? { name: opt.name || 'Simulation', vals: opt.vals } : (window.ftPrefill && window.ftPrefill.collect ? window.ftPrefill.collect() : null);
-    const seen = new Set();
-    const vals = S ? S.vals.filter(v => {
-      if (!v.l || v.l.length < 3 || /^[\d\s,.]+\s*(€|jours?|mois|j)?$/i.test(v.l.trim()) || /seuil|minimal|minimum l|maximum théorique|barème|plafond de ressources/i.test(v.l)) return false;
-      if (seen.has(v.v)) return false; seen.add(v.v); return true;
-    }).slice(0, 8) : [];
-    let w = $('ft-usager');
-    if (!w) { w = document.createElement('div'); w.id = 'ft-usager'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-labelledby', 'us-t'); document.body.appendChild(w);
-      w.addEventListener('click', e => { const b = e.target.closest('[data-us]'); if (!b) return; const a = b.dataset.us;
-        if (a === 'x') w.hidden = true; else if (a === 'p') { fs = Math.min(1.6, fs + 0.15); w.style.setProperty('--us', fs); } else if (a === 'm') { fs = Math.max(0.85, fs - 0.15); w.style.setProperty('--us', fs); } else if (a === 'print') window.print(); });
-      document.addEventListener('keydown', e => { if (e.key === 'Escape' && !w.hidden) w.hidden = true; }); }
-    const txt = String(mailText || '').replace(/^(objet|sujet)\s*:.*$/gim, '').trim();
-    w.innerHTML = '<div class="us-bar"><span>👁 Vue usager · ' + esc(S ? S.name : 'Simulation') + '</span><div><button type="button" data-us="m" aria-label="Texte plus petit">A−</button><button type="button" data-us="p" aria-label="Texte plus grand">A+</button><button type="button" data-us="print">Imprimer</button><button type="button" data-us="x" class="us-x">Fermer</button></div></div>' +
-      '<div class="us-body"><h2 id="us-t">Votre situation</h2><p class="us-note">Estimation indicative réalisée avec votre conseiller ou conseillère France Travail. Seule la notification officielle fait foi.</p>' +
-      (vals.length ? '<div class="us-grid">' + vals.map(v => '<div class="us-c"><span>' + esc(plain(v.l)) + '</span><strong>' + esc(v.v) + '</strong></div>').join('') + '</div>' : '') +
-      (txt ? '<h3>En résumé</h3><div class="us-txt">' + esc(txt).replace(/\n{2,}/g, '</p><p>').replace(/\n/g, '<br>').replace(/^/, '<p>') + '</p></div>' : '') + '</div>';
-    w.style.setProperty('--us', fs); w.hidden = false;
-    setTimeout(() => { const b = w.querySelector('.us-x'); if (b) b.focus(); }, 30);
-  };
-  function usBtns() {
-    document.querySelectorAll('.ft-mail .ft-mail-btns').forEach(g => {
-      if (g.querySelector('.ft-mail-us')) return;
-      const b = document.createElement('button'); b.type = 'button'; b.className = 'ft-mail-us'; b.textContent = '👁 Vue usager'; b.title = 'Afficher les résultats en grand, sans jargon, pour la personne reçue';
-      b.onclick = () => { const box = g.closest('.ft-mail'), ta = box && box.querySelector('textarea'); window.ftUsagerView(ta ? ta.value : ''); };
-      g.insertBefore(b, g.firstChild);
-    });
-  }
-  if (window.ftOnDom) window.ftOnDom(usBtns);
-  window.FT_ACTIONS = window.FT_ACTIONS || [];
-  window.FT_ACTIONS.push({ t: 'Vue usager', s: 'Résultats du simulateur en grand, sans jargon', kw: 'vue usager demandeur écran montrer présentation grand', run: () => { const ta = document.querySelector('[id^="view-"]:not(.hidden) .ft-mail textarea'); window.ftUsagerView(ta ? ta.value : ''); } });
+  /* Vue usager retirée (inutile au quotidien) */
 })();
