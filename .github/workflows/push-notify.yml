@@ -1,0 +1,33 @@
+name: Notification push (veille réglementaire)
+
+on:
+  push:
+    branches: [main]
+    paths: ["reglementation/maj.json"]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Prévenir l'administrateur d'une mise à jour à valider
+        env:
+          FT_PUSH_TOKEN: ${{ secrets.FT_PUSH_TOKEN }}
+        run: |
+          if [ -z "$FT_PUSH_TOKEN" ]; then echo "Secret FT_PUSH_TOKEN absent : pas d'envoi."; exit 0; fi
+          NEW=$(python3 - <<'PY'
+          import json, subprocess
+          cur = json.load(open('reglementation/maj.json')).get('updates', [])
+          try:
+              old = json.loads(subprocess.check_output(['git', 'show', 'HEAD~1:reglementation/maj.json'])).get('updates', [])
+          except Exception:
+              old = []
+          ids = {u.get('id') for u in old}
+          print(' · '.join(u.get('titre', '') for u in cur if u.get('id') not in ids))
+          PY
+          )
+          if [ -z "$NEW" ]; then echo "Aucune nouvelle mise à jour."; exit 0; fi
+          BODY=$(python3 -c "import json,sys; print(json.dumps({'title':'Mise à jour réglementaire à valider','body':sys.argv[1],'go':'admin','audience':'admins','tag':'ft-regs'}))" "$NEW")
+          curl -sS -X POST "https://rzjfiikdpjwzrfmlugpq.supabase.co/functions/v1/send-push" -H "Content-Type: application/json" -H "x-ft-token: $FT_PUSH_TOKEN" -d "$BODY"

@@ -1,7 +1,7 @@
 /* Espace Conseiller : fonctionnement hors ligne.
    La page est toujours prise sur le réseau en priorité (les mises à jour arrivent tout de suite) ;
    la copie gardée sur l'appareil ne sert que sans connexion. Les comptes (Supabase) ne passent jamais par ici. */
-const CACHE = 'ft-conseiller-v5';
+const CACHE = 'ft-conseiller-v6';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/apple-touch-icon.png', './icons/icon-192.png', './icons/icon-512.png'];
 const STATIC_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdn.jsdelivr.net'];
 
@@ -55,5 +55,14 @@ self.addEventListener('notificationclick', e => {
     const c = list.find(w => w.url.indexOf(self.registration.scope) === 0);
     if (c) { c.postMessage({ ftGo: go }); return c.focus(); }
     return self.clients.openWindow('./' + (go ? '?go=' + go : ''));
+  }));
+});
+
+/* Notifications push envoyées par l'Espace Conseiller (même appli fermée) */
+self.addEventListener('push', e => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (_) { d = { title: 'Espace Conseiller', body: e.data ? e.data.text() : '' }; }
+  e.waitUntil(self.registration.showNotification(d.title || 'Espace Conseiller', {
+    body: d.body || '', tag: d.tag || 'ft', icon: 'icons/icon-192.png', badge: 'icons/icon-192.png', data: { go: d.go || '' }
   }));
 });
