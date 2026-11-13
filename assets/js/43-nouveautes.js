@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.31', date: '13/11/2026', items: [
+      'Notifications : elles arrivent maintenant même quand le site ou l’appli est fermé (nouveautés, annonces, mises à jour réglementaires). Activez-les depuis le menu de votre compte ; sur iPhone, depuis l’appli installée sur l’écran d’accueil.'
+    ] },
     { v: '2026-11-13.30', date: '13/11/2026', items: [
       'Chargement plus rapide : le site est découpé en fichiers que votre navigateur garde en mémoire ; à chaque mise à jour, seuls les fichiers modifiés sont téléchargés.'
     ] },
