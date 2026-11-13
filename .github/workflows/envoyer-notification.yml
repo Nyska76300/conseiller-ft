@@ -1,0 +1,42 @@
+name: Envoyer une notification
+
+# Bouton « Run workflow » (onglet Actions) : envoie une notification push sans passer par le site.
+# Nécessite le secret FT_PUSH_TOKEN (même valeur que dans Supabase → Edge Functions → Secrets).
+on:
+  workflow_dispatch:
+    inputs:
+      titre:
+        description: "Titre"
+        required: true
+        default: "Test de notification"
+      message:
+        description: "Message"
+        required: true
+        default: "Les notifications de l'Espace Conseiller fonctionnent."
+      destinataires:
+        description: "Qui reçoit la notification"
+        type: choice
+        options: [admins, all]
+        default: admins
+      ouvrir:
+        description: "Outil à ouvrir au clic (facultatif, ex. admin, cvm, home)"
+        required: false
+        default: ""
+
+jobs:
+  envoyer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Envoyer
+        env:
+          FT_PUSH_TOKEN: ${{ secrets.FT_PUSH_TOKEN }}
+          TITRE: ${{ inputs.titre }}
+          MESSAGE: ${{ inputs.message }}
+          DEST: ${{ inputs.destinataires }}
+          OUVRIR: ${{ inputs.ouvrir }}
+        run: |
+          if [ -z "$FT_PUSH_TOKEN" ]; then echo "::error::Secret FT_PUSH_TOKEN absent (GitHub → Settings → Secrets → Actions)."; exit 1; fi
+          BODY=$(python3 -c "import json,os; print(json.dumps({'title':os.environ['TITRE'],'body':os.environ['MESSAGE'],'audience':os.environ['DEST'],'go':os.environ.get('OUVRIR',''),'tag':'ft-manuel'}))")
+          RES=$(curl -sS -X POST "https://rzjfiikdpjwzrfmlugpq.supabase.co/functions/v1/send-push" -H "Content-Type: application/json" -H "x-ft-token: $FT_PUSH_TOKEN" -d "$BODY")
+          echo "Réponse : $RES"
+          echo "$RES" | grep -q '"sent"' || { echo "::error::Envoi refusé : vérifiez que FT_PUSH_TOKEN est identique dans Supabase et GitHub."; exit 1; }
