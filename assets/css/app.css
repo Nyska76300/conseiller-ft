@@ -1515,3 +1515,5 @@ html,body{overscroll-behavior:none}
 [id^="view-"],.overflow-y-auto,.overflow-auto{overscroll-behavior:contain}
 /* L’horloge de l’accueil change chaque seconde : elle a son propre calque pour ne pas faire redessiner la page pendant le défilement */
 #home-time,#home-date{will-change:transform;contain:layout paint style}
+/* Mes favoris dans la colonne de droite : un outil par ligne */
+@media (min-width:1024px){#view-home .fh-R .fh-pins .fh-chips{grid-template-columns:minmax(0,1fr)!important}}

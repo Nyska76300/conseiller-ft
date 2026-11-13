@@ -66,6 +66,8 @@
         : '<p class="hc-empty">Les simulations que vous faites apparaîtront ici pour être reprises en un clic (sur ce poste uniquement).</p>') + '</section>';
   }
   function render() {
+    /* « Derniers calculs » n’est plus affiché sur l’accueil (l’historique reste accessible par la recherche) */
+    document.querySelectorAll('#view-home .fh-hist').forEach(x => x.remove()); return;
     /* Juste sous « Mes favoris » (sinon dans la colonne de droite) */
     const pins = document.querySelector('#view-home .fh-pins'), L = document.querySelector('#view-home .fh-L');
     if (!pins && !L) return;
@@ -90,7 +92,6 @@
   window.addEventListener('pagehide', () => { try { snapshot(); } catch (e) {} });
   window.ftCalcHistory = { get, snapshot, restore };
   window.FT_ACTIONS = window.FT_ACTIONS || [];
-  window.FT_ACTIONS.push({ t: 'Derniers calculs', s: 'Reprendre une simulation récente (sur ce poste)', kw: 'historique derniers calculs reprendre simulation récente', run: () => { switchNavTab('home'); setTimeout(() => { const c = document.querySelector('#view-home .fh-hist'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200); } });
   if (window.ftOnDom) window.ftOnDom(render);
   setTimeout(render, 600);
 })();

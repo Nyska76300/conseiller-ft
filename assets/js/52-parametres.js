@@ -51,28 +51,12 @@
   }
   /* Appareil lent (poste sans carte graphique, bureau à distance…) : on mesure la cadence d’affichage
      quelques secondes après l’ouverture et pendant le premier défilement ; sous ~35 images/s, l’affichage allégé s’active. */
-  const liteAuto = () => { try { return localStorage.getItem('ft_lite_auto') === '1'; } catch (e) { return false; } };
-  function probe(ms) {
-    if (P.lite || liteAuto() || document.hidden || !window.requestAnimationFrame) return;
-    const d = []; let last = 0; const end = performance.now() + ms;
-    (function f(t) {
-      if (last) d.push(t - last); last = t;
-      if (t < end && !document.hidden) return requestAnimationFrame(f);
-      if (d.length < 20) return;
-      d.sort((a, b) => a - b);
-      const med = d[d.length >> 1], p75 = d[Math.floor(d.length * 0.75)];
-      if (med > 28 || p75 > 40) { try { localStorage.setItem('ft_lite_auto', '1'); } catch (e) {} apply(); toast('Affichage allégé activé pour plus de fluidité (Paramètres pour le changer)', 'info'); }
-    })(performance.now());
-  }
-  setTimeout(() => probe(2500), 4000);
-  let probed = false;
-  document.addEventListener('scroll', () => { if (!probed) { probed = true; probe(1500); } }, { capture: true, passive: true });
   function apply() {
     const h = document.documentElement;
-    h.classList.remove('no-neon'); neonCss(); depthCss();
+    h.classList.remove('no-neon'); ['ft-neon-css', 'ft-depth-css'].forEach(id => { const x = document.getElementById(id); if (x) x.remove(); }); /* halos et relief marqués retirés : affichage allégé permanent */
     h.classList.toggle('reduce-motion', !!P.motion);
     h.classList.toggle('easy-read', !!P.easy);
-    h.classList.toggle('ft-lite', P.lite === '1' || (P.lite !== '0' && liteAuto()));
+    h.classList.add('ft-lite'); /* affichage allégé appliqué en permanence (fluidité) */
     if ((h.getAttribute('data-pal') || '') !== (P.pal || '')) setPal(P.pal || '');
   }
   /* Thème automatique : selon l’appareil, ou clair en journée et sombre le soir */
@@ -117,13 +101,10 @@
       '<section><h3>Affichage</h3>' +
         row('Thème', P.themeMode === 'system' ? 'Suit le réglage de l’appareil' : P.themeMode === 'hours' ? 'Clair de 7 h à 19 h, sombre le soir' : '', seg('theme', P.themeMode || theme(), [['dark', 'Sombre'], ['light', 'Clair'], ['system', 'Auto'], ['hours', 'Horaire']])) +
         '<div class="pm-row pm-col"><div><b>Couleurs</b><span>S’appliquent au thème sombre comme au clair</span></div><div class="pm-pal" role="group" aria-label="Couleurs">' + PALS.map(([v, l, a, b]) => '<button type="button" data-k="pal" data-v="' + v + '" aria-pressed="' + ((P.pal || '') === v) + '" class="' + ((P.pal || '') === v ? 'on' : '') + '"><i style="background:linear-gradient(135deg,' + a + ',' + b + ')"></i>' + l + '</button>').join('') + '</div></div>' +
-        row('Taille du texte', '', seg('ts', a.ts, [[0, 'Normal'], [1, 'Grand'], [2, 'Très grand']])) +
-        '<div class="pm-row pm-col"><div><b>Intensité des néons</b><span>Halo lumineux autour des icônes : 0 = aucun, 50 = d’origine</span></div><div class="pm-range"><input type="range" id="pm-neon" min="0" max="100" step="1" value="' + lvl() + '" aria-label="Intensité des néons sur 100"><output id="pm-neon-v" for="pm-neon">' + lvl() + '</output></div></div>' +
-        '<div class="pm-row pm-col"><div><b>Effet de profondeur</b><span>Relief des tuiles, toujours présent : de léger (20) à très marqué (100)</span></div><div class="pm-range"><input type="range" id="pm-depth" min="20" max="100" step="1" value="' + Math.max(20, P.depth == null ? 60 : P.depth) + '" aria-label="Effet de profondeur sur 100"><output id="pm-depth-v" for="pm-depth">' + Math.max(20, P.depth == null ? 60 : P.depth) + '</output></div></div>' + '</section>' +
+        row('Taille du texte', '', seg('ts', a.ts, [[0, 'Normal'], [1, 'Grand'], [2, 'Très grand']])) + '</section>' +
       '<section><h3>Accessibilité</h3>' +
         row('Contraste renforcé', 'Textes et bordures plus marqués', yn('hc', a.hc)) +
         row('Lecture facilitée', 'Lettres et lignes plus espacées', yn('easy', P.easy)) +
-        row('Affichage allégé', P.lite === '' ? (liteAuto() ? 'Activé automatiquement : cet appareil affiche le site lentement' : 'Automatique : s’active si l’appareil est lent') : 'Moins d’effets lumineux et d’ombres, défilement plus fluide', seg('lite', P.lite, [['', 'Auto'], ['1', 'Oui'], ['0', 'Non']])) +
         row('Réduire les animations', 'Pas d’effets de mouvement ni de fondu', yn('motion', P.motion)) +
         row('Mode entretien', 'Affichage resserré pour les rendez-vous (Ctrl+J)', yn('entretien', document.documentElement.classList.contains('entretien'))) + '</section>' +
       '<section><h3>Démarrage</h3>' +
