@@ -26,10 +26,10 @@ Format d'une entrée :
 }
 ```
 
-- `bareme` : chemins dans l'objet `BAREME` de `index.html` (notation pointée) et nouvelles valeurs.
+- `bareme` : chemins dans l'objet `BAREME` de `assets/js/06-coeur-baremes-modeles.js` (notation pointée) et nouvelles valeurs.
 - `code` : si la règle nouvelle demande une modification du code (nouveau calcul, nouvelle fiche), la veille la prépare dans une branche `veille/<id>` et indique ici son nom ; la fusion se fait après validation.
 
-## Paramètres contrôlés (objet `BAREME` de `index.html`)
+## Paramètres contrôlés (objet `BAREME` de `assets/js/06-coeur-baremes-modeles.js`)
 
 Toute valeur réglementaire chiffrée utilisée par un simulateur est rangée dans `BAREME`. Une mise à jour publiée dans `maj.json` peut donc la modifier sans toucher au code, par son chemin pointé :
 

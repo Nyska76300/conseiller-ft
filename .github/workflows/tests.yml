@@ -21,5 +21,7 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: Vérifier le fichier de veille
         run: python -m json.tool reglementation/maj.json > /dev/null
+      - name: Vérifier les versions des fichiers (assets)
+        run: python tools/version.py
       - name: Lancer les tests (calculs, outils, affichage)
         run: python tools/regression.py
