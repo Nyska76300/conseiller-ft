@@ -36,8 +36,8 @@
     if (!st) { st = document.createElement('style'); st.id = 'ft-depth-css'; document.head.appendChild(st); }
     const v = Math.max(20, Math.min(100, P.depth == null ? 60 : +P.depth)), k = v / 50;
     const f = n => (n * k).toFixed(2), a = n => Math.min(0.9, n * k).toFixed(3);
-    const dark = 'inset 0 1px 0 rgba(255,255,255,' + a(0.07) + '),0 ' + f(1) + 'px ' + f(2) + 'px rgba(0,0,0,' + a(0.3) + '),0 ' + f(6) + 'px ' + f(14) + 'px -' + f(3) + 'px rgba(0,0,0,' + a(0.35) + '),0 ' + f(18) + 'px ' + f(36) + 'px -' + f(12) + 'px rgba(0,0,0,' + a(0.45) + ')';
-    const light = 'inset 0 1px 0 rgba(255,255,255,' + a(0.8) + '),0 ' + f(1) + 'px ' + f(2) + 'px rgba(15,23,42,' + a(0.06) + '),0 ' + f(6) + 'px ' + f(14) + 'px -' + f(3) + 'px rgba(15,23,42,' + a(0.08) + '),0 ' + f(18) + 'px ' + f(36) + 'px -' + f(12) + 'px rgba(15,23,42,' + a(0.12) + ')';
+    const dark = 'inset 0 1px 0 rgba(255,255,255,' + a(0.07) + '),0 ' + f(1) + 'px ' + f(2) + 'px rgba(0,0,0,' + a(0.3) + '),0 ' + f(6) + 'px ' + f(14) + 'px -' + f(3) + 'px rgba(0,0,0,' + a(0.35) + '),0 ' + f(14) + 'px ' + f(24) + 'px -' + f(10) + 'px rgba(0,0,0,' + a(0.45) + ')';
+    const light = 'inset 0 1px 0 rgba(255,255,255,' + a(0.8) + '),0 ' + f(1) + 'px ' + f(2) + 'px rgba(15,23,42,' + a(0.06) + '),0 ' + f(6) + 'px ' + f(14) + 'px -' + f(3) + 'px rgba(15,23,42,' + a(0.08) + '),0 ' + f(14) + 'px ' + f(24) + 'px -' + f(10) + 'px rgba(15,23,42,' + a(0.12) + ')';
     const pre = (p, sel) => sel.split(',').map(x => p + x).join(',');
     st.textContent = pre('html ', TILES) + '{box-shadow:' + dark + '!important}' + pre('html.theme-light ', TILES) + '{box-shadow:' + light + '!important}' +
       pre('html ', HOVER) + '{transition:transform .18s ease,box-shadow .18s ease}' +

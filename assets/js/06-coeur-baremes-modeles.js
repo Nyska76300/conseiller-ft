@@ -4573,7 +4573,7 @@
           '<div class="home-tiles">' + tabs.map(t => homeTile(t, [])).join('') + '</div></section>';
       }).join('');
 
-      return quick + '<div class="home-top">' + favPanel + recentPanel + '</div>' + sections;
+      return quick + '<div class="home-top">' + favPanel + '</div>' + sections;
     }
 
     function homeResultsHtml(q, terms) {
@@ -4656,7 +4656,11 @@
       if (!el) return;
       const d = new Date();
       const p = n => String(n).padStart(2, '0');
-      el.innerHTML = p(d.getHours()) + ':' + p(d.getMinutes()) + '<small>:' + p(d.getSeconds()) + '</small>';
+      /* on ne change que le texte (pas de reconstruction de l’horloge chaque seconde) */
+      const hm = p(d.getHours()) + ':' + p(d.getMinutes()), sec = ':' + p(d.getSeconds());
+      let sm = el.querySelector('small');
+      if (!sm || el.firstChild.nodeType !== 3) { el.innerHTML = hm + '<small>' + sec + '</small>'; }
+      else { if (el.firstChild.nodeValue !== hm) el.firstChild.nodeValue = hm; sm.firstChild ? (sm.firstChild.nodeValue = sec) : (sm.textContent = sec); }
       const dt = document.getElementById('home-date');
       if (dt) {
         const t = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
