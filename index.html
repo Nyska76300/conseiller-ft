@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.20">
+  <meta name="ft-version" content="2026-11-13.21">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -15305,6 +15305,12 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+/* Effet néon léger sur les icônes */
+svg.lucide,button svg,a svg,.fh-gi svg,.fh-ci svg,.fh-dico svg,.lk-ico svg,.st-who i,.fa-av{filter:drop-shadow(0 0 1.5px currentColor) drop-shadow(0 0 5px color-mix(in srgb,currentColor 45%,transparent))}
+@supports not (color: color-mix(in srgb, red 50%, blue)){svg.lucide,button svg,a svg,.fh-gi svg,.fh-ci svg,.fh-dico svg,.lk-ico svg{filter:drop-shadow(0 0 2px currentColor)}}
+.sc-fig svg,.au-chart svg,.inv-table svg,#ft-reg-pill svg{filter:none!important}
+html.theme-light svg.lucide,html.theme-light button svg,html.theme-light a svg,html.theme-light .fh-gi svg,html.theme-light .fh-ci svg,html.theme-light .fh-dico svg,html.theme-light .lk-ico svg{filter:drop-shadow(0 0 2px color-mix(in srgb,currentColor 35%,transparent))}
+@media (prefers-reduced-transparency:reduce){svg.lucide,button svg,a svg{filter:none}}
 #view-home .fh-pins .fh-gi{color:#fbbf24!important;background:rgba(251,191,36,.16)!important;border-color:rgba(251,191,36,.35)!important}
 #view-home .fh-pins .fh-gi svg{fill:#fbbf24;stroke:#f59e0b}
 html.theme-light #view-home .fh-pins .fh-gi{color:#d97706!important;background:#fef3c7!important}
@@ -16696,6 +16702,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.21', date: '13/11/2026', items: [
+      'Apparence : les icônes ont un léger effet néon, et l’étoile « Mes favoris » de l’accueil est dorée.'
+    ] },
     { v: '2026-11-13.19', date: '13/11/2026', items: [
       'Fiabilité : les montants et seuils de l’ATI, de la RFF, des trop-perçus, de la pension d’invalidité et du cumul avec une activité non salariée sont désormais tenus dans le barème central, comme ceux de l’ARE. Ils sont contrôlés par la veille réglementaire hebdomadaire et mis à jour partout en même temps.'
     ] },
