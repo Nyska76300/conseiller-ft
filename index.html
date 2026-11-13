@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.3">
+  <meta name="ft-version" content="2026-11-13.4">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12487,6 +12487,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
   function parse(v, d) { try { var x = JSON.parse(v); return x == null ? d : x; } catch (e) { return d; } }
   function merge(localData, remoteData) {
     var out = {}; SYNC.forEach(function (k) { out[k] = remoteData[k] != null ? remoteData[k] : localData[k]; });
+    out.ft_pins = remoteData.ft_pins != null ? remoteData.ft_pins : '[]'; // « Mes outils » : propres à chaque compte, jamais repris d’un autre utilisateur du poste
     var dead = {}; parse(localData.ft_deleted_tpl, []).concat(parse(remoteData.ft_deleted_tpl, [])).forEach(function (id) { dead[id] = 1; });
     out.ft_deleted_tpl = JSON.stringify(Object.keys(dead));
     var lt = parse(localData.ft_templates, []), rt = parse(remoteData.ft_templates, []);
@@ -12515,6 +12516,7 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
     try { if (typeof activeTemplateId !== 'undefined' && activeTemplateId != null && !templates.some(function (t) { return t.id === activeTemplateId; })) activeTemplateId = templates.length ? templates[0].id : null; } catch (e) {}
     try { renderTemplatesList(); } catch (e) {}
     try { renderActiveTemplate(); } catch (e) {}
+    try { window.dispatchEvent(new StorageEvent('storage', { key: 'ft_pins' })); } catch (e) {}
   }
 
   /* ---------- Synchronisation ---------- */
@@ -14953,7 +14955,7 @@ html.theme-light #ft-gtip b{color:#0369a1}
 
   /* ================= Mes outils épinglés ================= */
   const getPins = () => { try { return JSON.parse(ls.get('ft_pins') || '[]'); } catch (e) { return []; } };
-  const setPins = a => { ls.set('ft_pins', JSON.stringify(a)); try { window.dispatchEvent(new StorageEvent('storage', { key: 'ft_pins' })); } catch (e) {} };
+  const setPins = a => { if (window.safeLS && safeLS.setItem) safeLS.setItem('ft_pins', JSON.stringify(a)); else ls.set('ft_pins', JSON.stringify(a)); try { window.dispatchEvent(new StorageEvent('storage', { key: 'ft_pins' })); } catch (e) {} };
   function allTools() {
     const list = $('burger-tabs-list'); if (!list) return [];
     const out = [];
@@ -16059,6 +16061,9 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.4', date: '13/11/2026', items: [
+      '« Mes outils » sur l’accueil sont désormais propres à chaque conseiller : ils sont enregistrés dans votre compte, vous suivent sur tous vos postes et ne sont plus partagés avec les autres personnes qui utilisent le même ordinateur.'
+    ] },
     { v: '2026-11-13.3', date: '13/11/2026', items: [
       'Interprète vocal : le bouton haut-parleur (menu « ⋯ » sur téléphone) ouvre une conversation à deux. Chacun choisit sa langue et appuie sur « Parler » : la phrase est traduite à l’écran et lue à voix haute dans la langue de l’autre. Mode « Face à face » pour poser le téléphone entre vous.',
       'La lecture à voix haute d’une page reste disponible par la recherche (Ctrl+K → « Lire à voix haute ») et le menu « ⋯ ».'
