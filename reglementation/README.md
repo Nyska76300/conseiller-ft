@@ -28,3 +28,27 @@ Format d'une entrée :
 
 - `bareme` : chemins dans l'objet `BAREME` de `index.html` (notation pointée) et nouvelles valeurs.
 - `code` : si la règle nouvelle demande une modification du code (nouveau calcul, nouvelle fiche), la veille la prépare dans une branche `veille/<id>` et indique ici son nom ; la fusion se fait après validation.
+
+## Paramètres contrôlés (objet `BAREME` de `index.html`)
+
+Toute valeur réglementaire chiffrée utilisée par un simulateur est rangée dans `BAREME`. Une mise à jour publiée dans `maj.json` peut donc la modifier sans toucher au code, par son chemin pointé :
+
+| Chemin | Contenu | Échéance habituelle |
+|---|---|---|
+| `are.*` | Partie fixe, minimum, plancher formation (`are.formation`, aussi plancher AREF), plafond, taux | 1er juillet |
+| `degr.*` | Dégressivité : coefficient, seuil, âge, mois de début | Convention / décret |
+| `duree.*` | Durées min./max. par âge, coefficient, rupture conventionnelle (`duree.rci`) | Convention / décret |
+| `affiliation.*` | Jours / heures d'affiliation, saisonniers | Convention |
+| `differe.*` | Délai d'attente, congés payés, supra-légal | Convention |
+| `cumul.*` | Cumul salaire, ARCE, base de mensualisation | Convention |
+| `csp.*` | ASP minimale, taux, IDR, prime | Convention CSP |
+| `retenues.*` | CSG, CRDS, assiette, retraite complémentaire, seuils | 1er janvier / 1er juillet |
+| `solidarite.*` | ASS, ATA | 1er avril |
+| `ati.*` | Forfait, plancher (et Mayotte), seuil de revenus, durée | Décret / 1er avril |
+| `rff.plafondMensuel` | Plafond mensuel de la RFF | France Travail |
+| `indu.*` | Seuil de non-récupération, prescription (cas général / fraude) | Code du travail |
+| `invalidite.*` | Montants min./max. par catégorie, conditions d'heures et de Smic | 1er avril |
+| `cns.*` | Cumul activité non salariée : déduction, plafond, avance, abattements, minimum BNC | Convention |
+| `generations` | Âges et trimestres de retraite par génération | LFSS / réforme |
+
+Chaque section porte un champ `verifie` (JJ/MM/AAAA) à mettre à jour dans la même entrée de `maj.json` quand la section est modifiée (ex. `"ati.verifie": "02/04/2027"`).
