@@ -14,4 +14,11 @@ if len(sys.argv) > 1:
 else:
     bad = [m.group(0) for m in re.finditer(r'assets/[\w./-]+\.(?:js|css)(\?v=[^"]*)?"', h) if m.group(1) != f'?v={cur}']
     if bad: print('Versions incohérentes :', bad[:5]); sys.exit(1)
+    # Fichiers locaux référencés (scripts, styles, images) : ils doivent exister
+    root = p.parent
+    refs = set(re.findall(r'(?:src|href)="((?:assets|icons)/[^"?#]+)', h))
+    for js in (root / 'assets/js').glob('*.js'):
+        refs |= set(re.findall(r'["\'](assets/[\w./-]+\.(?:png|jpg|svg|webp))', js.read_text(encoding='utf-8')))
+    missing = sorted(r for r in refs if not (root / r).exists())
+    if missing: print('Fichiers introuvables :', missing); sys.exit(1)
     print('OK', cur)
