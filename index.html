@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-12.51">
+  <meta name="ft-version" content="2026-11-13.1">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -6748,7 +6748,7 @@ Votre conseiller France Travail
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-2 text-[11px]">
+          <div class="grid grid-cols-1 gap-2 text-[11px]">
             <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
               <span class="block text-slate-400 text-[10px] font-semibold uppercase">Délais légaux</span>
               <span class="text-slate-200 font-medium mt-0.5 block">${escapeHtml(m.delais)}</span>
@@ -13806,10 +13806,13 @@ html.theme-light .inv-card a{color:#1d4ed8}
     return { aj: aj, pension: pension, cat: cat, cumulee: cumulee, areM: areM, integral: integral, deduction: deduction, verse: verse, total: verse + pension };
   };
 
-  const sec = (n, title, body, ref) => '<section class="inv-card"><h3><span class="inv-n">' + n + '</span>' + title + '</h3>' + body + (ref ? '<p class="inv-ref">' + ref + '</p>' : '') + '</section>';
+  /* Présentation identique aux autres simulateurs (cartes numérotées, verdict, chiffres clés) */
+  const sec = (n, title, body, ref) => '<div class="rounded-xl bg-slate-900/90 border border-slate-800 p-4 shadow-xl space-y-3 inv-old"><div class="flex items-center justify-between pb-2 border-b border-slate-800"><span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2"><div class="w-5 h-5 rounded bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-[10px]">' + n + '</div>' + title + '</span></div><div class="text-xs text-slate-300 leading-relaxed">' + body + '</div>' + (ref ? '<p class="text-[10px] text-slate-400 leading-relaxed">' + ref + '</p>' : '') + '</div>';
+  const IN = 'w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-cyan-400 text-xs text-white outline-none font-medium';
+  const field = (label, ctl, id) => '<div' + (id ? ' id="' + id + '"' : '') + '><label class="block text-[11px] font-medium text-slate-300 mb-1">' + label + '</label>' + ctl + '</div>';
 
   function tabRegles() {
-    return '<div class="inv-cards">' +
+    return '<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5"><div class="lg:col-span-6 space-y-4">' +
       sec('1', 'Conditions d’attribution',
         '<ul><li><strong>Incapacité :</strong> maladie ou accident d’origine <strong>non professionnelle</strong> réduisant d’au moins <strong>2/3</strong> la capacité de travail ou de gain (l’assuré ne peut pas gagner plus d’un tiers de la rémunération normale de sa catégorie dans sa région).</li>' +
         '<li><strong>Âge :</strong> ne pas avoir atteint l’âge légal de départ à la retraite. À cet âge, la pension est remplacée par la retraite pour inaptitude si l’assuré ne travaille plus.</li>' +
@@ -13817,6 +13820,7 @@ html.theme-light .inv-card a{color:#1d4ed8}
         '<li><strong>Activité :</strong> au cours des 12 mois précédant l’arrêt ou la constatation, avoir travaillé au moins <strong>600 heures</strong> ou cotisé sur une rémunération d’au moins <strong>2 030 fois le Smic horaire</strong>.</li>' +
         '<li>La décision et la catégorie sont fixées par le <strong>médecin-conseil de l’Assurance maladie</strong> (CPAM).</li></ul>',
         'Code de la Sécurité sociale, art. L. 341-1 et suivants · <a href="' + SRC.sp + '" target="_blank" rel="noopener noreferrer">service-public.gouv.fr</a> (vérifié le 01/04/2026)') +
+      '</div><div class="lg:col-span-6 space-y-4">' +
       sec('2', 'Les 3 catégories et les montants',
         '<div class="inv-scroll"><table class="inv-table"><thead><tr><th>Catégorie</th><th>Situation</th><th>Montant</th><th>Mensuel min.</th><th>Mensuel max.</th></tr></thead><tbody>' +
         '<tr><td><b>1re</b></td><td>Capable d’exercer une activité rémunérée</td><td>30 % du SAM</td><td>338,31 €</td><td>1 201,50 €</td></tr>' +
@@ -13835,40 +13839,47 @@ html.theme-light .inv-card a{color:#1d4ed8}
         '<li>À demander : la <strong>notification de la CPAM</strong> (catégorie, montant, date d’effet) et, pour un cumul intégral, les justificatifs montrant que la pension était perçue pendant l’activité.</li>' +
         '<li>Tout changement de catégorie, de montant ou une suspension de la pension doit être signalé : il modifie le montant de l’ARE.</li></ul>',
         'Règlement d’assurance chômage, art. 18 § 2 · <a href="' + SRC.ft + '" target="_blank" rel="noopener noreferrer">francetravail.fr</a> · Unédic, fiche ARE (2025)') +
-      '</div>';
+      '</div></div>';
   }
 
   function tabSim() {
-    return '<div class="inv-sim"><section class="inv-card"><h3><span class="inv-n">€</span>Données du dossier</h3>' +
-      '<label>Allocation journalière brute (AJ)<input id="inv-aj" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex. 45,20"></label>' +
-      '<label>Pension d’invalidité mensuelle nette<input id="inv-pension" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex. 650"></label>' +
-      '<label>Catégorie d’invalidité<select id="inv-cat"><option value="1">1re catégorie</option><option value="2" selected>2e catégorie</option><option value="3">3e catégorie</option></select></label>' +
-      '<label id="inv-cum-l">La pension était-elle déjà perçue pendant l’emploi qui a ouvert le droit ?<select id="inv-cum"><option value="non">Non, jamais cumulée avec ces salaires</option><option value="oui">Oui, cumulée avec ces salaires</option></select></label>' +
-      '</section><section class="inv-card inv-res" id="inv-res"></section></div>';
+    return '<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5"><div class="lg:col-span-6 space-y-4">' +
+      sec('1', 'Allocation et pension', '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">' +
+        field('Allocation journalière brute (AJ)', '<input id="inv-aj" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex. 45,20" class="' + IN + '">') +
+        field('Pension d’invalidité mensuelle nette', '<input id="inv-pension" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Ex. 650" class="' + IN + '">') + '</div>') +
+      sec('2', 'Catégorie et cumul antérieur', '<div class="grid grid-cols-1 gap-3 text-xs">' +
+        field('Catégorie d’invalidité', '<select id="inv-cat" class="' + IN + '"><option value="1">1re catégorie</option><option value="2" selected>2e catégorie</option><option value="3">3e catégorie</option></select>') +
+        field('La pension était-elle déjà perçue pendant l’emploi qui a ouvert le droit ?', '<select id="inv-cum" class="' + IN + '"><option value="non">Non, jamais cumulée avec ces salaires</option><option value="oui">Oui, cumulée avec ces salaires</option></select>', 'inv-cum-l') + '</div>') +
+      '</div><div class="lg:col-span-6 space-y-4"><div id="inv-res" class="space-y-4"></div><div id="inv-mail-host"></div></div></div>';
   }
   function run() {
     const res = $('inv-res'); if (!res) return;
     const cat = ($('inv-cat') || {}).value || '2';
     const cl = $('inv-cum-l'); if (cl) cl.style.display = cat === '1' ? 'none' : '';
     const r = ftInvCompute({ aj: ($('inv-aj') || {}).value, pension: ($('inv-pension') || {}).value, cat: cat, cumulee: ($('inv-cum') || {}).value });
-    res.innerHTML = '<div class="inv-hero"><span>ARE versée sur le mois</span><strong>' + eur(r.verse) + '</strong><em>' + (r.integral ? 'Cumul intégral avec la pension' : 'Pension déduite de l’ARE') + '</em></div>' +
-      '<div class="inv-row"><span>ARE du mois (AJ × 30 jours)</span><b>' + eur(r.areM) + '</b></div>' +
-      '<div class="inv-row"><span>Déduction de la pension</span><b>' + (r.integral ? 'aucune' : '− ' + eur(r.deduction)) + '</b></div>' +
-      '<div class="inv-row"><span>Pension d’invalidité nette</span><b>' + eur(r.pension) + '</b></div>' +
-      '<div class="inv-row"><span>Total ARE + pension</span><b>' + eur(r.total) + '</b></div>' +
-      (!r.integral && r.pension >= r.areM && r.areM > 0 ? '<div class="inv-note">La pension est au moins égale à l’ARE du mois : aucune allocation n’est versée.</div>' : '') +
-      '<div class="inv-note">Calcul indicatif sur 30 jours (mensualisation), avant retenues sociales sur l’ARE. Vérifiez le montant et la catégorie sur la notification de la CPAM.</div>';
+    const st = !r.areM ? 'nd' : r.integral ? 'ok' : r.verse > 0 ? 'wa' : 'ko';
+    const VC = { ok: ['from-emerald-950/40 border-emerald-500/40', 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30', 'text-emerald-300'], wa: ['from-amber-950/40 border-amber-500/40', 'bg-amber-500/20 text-amber-300 border border-amber-500/30', 'text-amber-300'], ko: ['from-rose-950/40 border-rose-500/40', 'bg-rose-500/20 text-rose-300 border border-rose-500/30', 'text-rose-300'], nd: ['from-slate-900 border-slate-800 fr-nd', 'bg-slate-800 text-slate-300 border border-slate-700', 'text-white'] };
+    const pill = { ok: 'Cumul intégral', wa: 'Pension déduite', ko: 'Aucune ARE versée', nd: 'En attente' }[st];
+    const title = { ok: 'ARE ET PENSION SE CUMULENT INTÉGRALEMENT', wa: 'LA PENSION EST DÉDUITE DE L’ARE', ko: 'PENSION SUPÉRIEURE OU ÉGALE À L’ARE : AUCUNE ALLOCATION', nd: 'SAISISSEZ L’ALLOCATION JOURNALIÈRE' }[st];
+    const desc = { ok: r.cat === '1' ? 'Pension de 1re catégorie : cumul intégral avec l’ARE.' : 'La pension était déjà cumulée avec les revenus de l’activité qui a ouvert le droit.', wa: 'Pension de ' + r.cat + 'e catégorie jamais cumulée avec ces revenus : déduite en totalité de l’ARE.', ko: 'La pension est au moins égale à l’ARE du mois : rien n’est versé au titre de l’ARE.', nd: 'Le calcul s’affiche dès la saisie.' }[st];
+    const row = (l, v, c) => '<div class="flex items-center justify-between gap-3 text-slate-300 text-[11px]"><span>' + l + '</span><span class="font-mono font-bold text-right ' + (c || 'text-white') + '">' + v + '</span></div>';
+    const tile = (l, v, sub, c) => '<div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800"><span class="block text-[10px] text-slate-400 uppercase font-semibold">' + l + '</span><span class="text-lg font-black ' + (c || 'text-white') + '">' + v + '</span><span class="block text-[9px] text-cyan-400 font-mono mt-0.5">' + sub + '</span></div>';
+    res.innerHTML = '<div class="rounded-xl border p-4 shadow-xl space-y-2 bg-gradient-to-br via-slate-900 to-slate-950 ' + VC[st][0] + '"><div class="flex items-center justify-between"><span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full ' + VC[st][1] + '">' + pill + '</span><span class="text-xs text-slate-400 font-mono">RAC art. 18 § 2</span></div><h4 class="text-base font-extrabold leading-tight ' + VC[st][2] + '">' + title + '</h4><p class="text-xs text-slate-300 leading-relaxed">' + desc + '</p></div>' +
+      sec('€', 'Montants du mois', '<div class="grid grid-cols-2 gap-2 text-center">' + tile('ARE versée', eur(r.verse), 'Sur 30 jours', 'text-cyan-300') + tile('Total ARE + pension', eur(r.total), 'Ressources du mois', 'text-emerald-400') + '</div>' +
+        '<div class="p-3 rounded-lg bg-slate-950/80 border border-slate-800/80 space-y-1.5 text-xs mt-3">' + row('ARE du mois (AJ × 30 jours)', eur(r.areM)) + row('Déduction de la pension', r.integral ? 'aucune' : '− ' + eur(r.deduction), r.integral ? 'text-emerald-400' : 'text-amber-300') + row('Pension d’invalidité nette', eur(r.pension)) + '</div>',
+        'Calcul indicatif sur 30 jours (mensualisation), avant retenues sociales sur l’ARE. Vérifiez le montant et la catégorie sur la notification de la CPAM.');
   }
 
   const TABS = [['sim', 'Cumul avec l’ARE : calcul', tabSim], ['regles', 'Règles et conditions', tabRegles]];
   let cur = 'sim';
   const v = document.createElement('div');
-  v.id = 'view-invalidite'; v.className = 'hidden flex-1 overflow-y-auto';
-  v.innerHTML = '<div class="reg-wrap"><div class="reg-head"><div><h2>Pension d’invalidité</h2><p>Conditions d’attribution, catégories et montants, règles de cumul avec l’ARE.</p></div></div><div class="rg-tabs" id="inv-tabs" role="tablist"></div><div id="inv-body"></div></div>';
+  v.id = 'view-invalidite'; v.className = 'hidden flex-1 flex flex-col overflow-hidden bg-slate-950';
+  v.innerHTML = '<div class="rg-panel" hidden></div><div class="h-12 border-b border-slate-800 bg-slate-900/90 px-4 md:px-6 flex items-center justify-between shrink-0 z-10"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-xs shrink-0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true"><circle cx="16" cy="4" r="1"/><path d="m18 19 1-7-6 1"/><path d="m5 8 3-3 5.5 3-2.36 3.5"/><path d="M4.24 14.5a5 5 0 0 0 6.88 6"/><path d="M13.76 17.5a5 5 0 0 0-6.88-6"/></svg></div><div><h2 class="text-xs md:text-sm font-bold text-white tracking-tight flex items-center gap-2"><span>Pension d’invalidité</span><span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 font-normal">CPAM · art. L. 341-1</span></h2></div></div><div class="flex items-center gap-2"><div class="flex items-center bg-slate-950 p-0.5 rounded-lg border border-slate-800" id="inv-tabs" role="tablist"></div></div></div><div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4"><p class="max-w-7xl mx-auto text-xs text-slate-400">Conditions d’attribution, catégories et montants, règles de cumul avec l’ARE.</p><div id="inv-body"></div></div>';
   const anchorView = $('view-delais'); if (anchorView) anchorView.parentElement.appendChild(v);
   window.invTab = function (id) {
     cur = id;
-    $('inv-tabs').innerHTML = TABS.map(t => '<button type="button" role="tab" class="rg-tab' + (t[0] === cur ? ' is-on' : '') + '" aria-selected="' + (t[0] === cur) + '" onclick="invTab(\'' + t[0] + '\')">' + t[1] + '</button>').join('');
+    const ON = 'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition-all bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-sm', OFF = 'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all';
+    $('inv-tabs').innerHTML = TABS.map(t => '<button type="button" role="tab" class="' + (t[0] === cur ? ON : OFF) + '" aria-selected="' + (t[0] === cur) + '" onclick="invTab(\'' + t[0] + '\')">' + t[1] + '</button>').join('');
     $('inv-body').innerHTML = TABS.find(x => x[0] === id)[2]();
     if (id === 'sim') { ['inv-aj', 'inv-pension', 'inv-cat', 'inv-cum'].forEach(k => { const e = $(k); if (e) { e.addEventListener('input', run); e.addEventListener('change', run); } }); run(); }
   };
@@ -14476,7 +14487,7 @@ html.theme-light .ft-mail-btns .ft-mail-copy{color:#fff}
     { key: 'od', tab: '1', host: () => document.querySelector('#od-subview-sim > div') },
     { key: 'delais', tab: 'delais', host: () => document.querySelector('#view-delais .reg-wrap') },
     { key: 'complement', tab: '5', split: true, host: () => document.querySelector('#view-complement-are .wiz-wrap') },
-    { key: 'invalidite', tab: 'invalidite', split: true, show: () => !!$('inv-aj'), host: () => document.querySelector('#view-invalidite .reg-wrap') },
+    { key: 'invalidite', tab: 'invalidite', show: () => !!$('inv-aj'), host: () => document.getElementById('inv-mail-host') },
     { key: 'ans', tab: '3', host: () => document.querySelector('#ans-subview-sim > div') },
     { key: 'cns', tab: 'cns', split: true, show: () => !!$('cns-out'), host: () => document.querySelector('#view-cns .reg-wrap') },
     { key: 'cspSim', tab: '4', host: () => document.querySelector('#csp-subview-sim > div') },
@@ -15097,6 +15108,12 @@ html.theme-light #ft-gtip b{color:#0369a1}
 </script>
 <style>
 /* ---------- Retouches visuelles (novembre 2026) ---------- */
+.inv-old ul{list-style:disc;padding-left:18px;margin:0;display:grid;gap:6px}
+.inv-old b,.inv-old strong{color:#fff}
+.inv-old a{color:#67e8f9}
+html.theme-light .inv-old b,html.theme-light .inv-old strong{color:#0f172a}
+html.theme-light .inv-old a{color:#0369a1}
+@media (min-width:1024px){#demission-detail-pane{max-height:calc(100vh - 370px);overflow-y:auto;scrollbar-width:thin}}
 #header-active-tab-name{display:inline-block;max-width:min(46vw,640px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
 #ft-auth .fa-logo.fa-logo-img{display:inline-flex;align-items:center;justify-content:center;background:#fff;border-radius:12px;padding:8px 16px;margin-bottom:14px}
 #ft-auth .fa-logo.fa-logo-img img{height:52px;width:auto;display:block}
@@ -15784,6 +15801,10 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.1', date: '13/11/2026', items: [
+      'Pension d’invalidité : même présentation que les autres simulateurs (blocs numérotés, verdict coloré, chiffres clés).',
+      'Démission : la fiche détaillée d’un motif (ex. reconversion professionnelle) reste lisible en entier, délais et point de vigilance l’un sous l’autre.'
+    ] },
     { v: '2026-11-12.49', date: '12/11/2026', items: [
       'Nouvelle page « Questions fréquentes » (menu Outils, « Autres outils ») : installer l’appli, compte, données, modèles communs, fiches PDF.',
       'Bouton « Suggérer une amélioration » (FAQ, recherche Ctrl+K, menu « ⋯ » du téléphone) : idées, erreurs et questions arrivent directement à l’administrateur.',
