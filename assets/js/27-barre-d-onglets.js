@@ -106,7 +106,7 @@
   document.addEventListener('ft-admin', () => setTimeout(all, 50));
   let mt = null;
   /* Un seul observateur partagé pour les ajouts récents (performances) */
-  window.ftOnDom = window.ftOnDom || (function () { const fns = []; let t = null; const run = () => { t = null; fns.forEach(f => { try { f(); } catch (e) {} }); }; new MutationObserver(recs => { if (t) return; /* l’horloge et les bulles d’aide changent sans cesse : on les ignore */ for (const r of recs) { const n = r.target; if (n && n.closest && !n.closest('#home-time,#home-date,.ft-sg-pop,#toast-container,.ft-sr,[aria-live],#ft-offline')) { t = setTimeout(run, 180); return; } } }).observe(document.body, { childList: true, subtree: true }); return f => fns.push(f); })();
+  window.ftOnDom = window.ftOnDom || (function () { const fns = []; let t = null; const run = () => { t = null; fns.forEach(f => { try { f(); } catch (e) {} }); }; new MutationObserver(recs => { if (t) return; /* l’horloge et les bulles d’aide changent sans cesse : on les ignore */ const ico = x => x.nodeType === 1 && (x.hasAttribute('data-lucide') || x.hasAttribute('data-ftic')); for (const r of recs) { const n = r.target; if (n && n.closest && !n.closest('#home-time,#home-date,.ft-sg-pop,#toast-container,.ft-sr,[aria-live],#ft-offline') && !([...r.addedNodes].every(ico) && [...r.removedNodes].every(ico))) { t = setTimeout(run, 180); return; } } }).observe(document.body, { childList: true, subtree: true }); return f => fns.push(f); })();
   window.ftOnDom(() => { numKeys(); shareButtons(); bareme(); });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(all, 300)); else setTimeout(all, 300);
 })();

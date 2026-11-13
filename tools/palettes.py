@@ -11,10 +11,10 @@ SRC = [ROOT / 'assets/css' / f for f in ('base.css', 'tailwind.css', 'app.css')]
 
 # nom : (teinte cible, écart conservé, facteur de saturation des fonds, facteur des accents)
 PALETTES = {
-    'emeraude': (160, 0.45, 1.0, 1.0),
-    'sarcelle': (184, 0.40, 1.0, 1.0),
-    'amethyste': (268, 0.45, 1.0, 1.0),
-    'framboise': (330, 0.35, 0.9, 1.0),
+    'emeraude': (160, 0.45, 1.0, 0.85),
+    'sarcelle': (184, 0.40, 1.0, 0.9),
+    'amethyste': (268, 0.45, 1.0, 0.9),
+    'framboise': (330, 0.35, 0.9, 0.85),
     'ardoise': (215, 1.0, 0.15, 0.55),
 }
 H_MIN, H_MAX, H_MID = 178, 268, 220  # famille « bleu » de l’interface d’origine
@@ -38,12 +38,18 @@ def shift(r, g, b, pal):
         # textes clairs et fonds du thème clair : juste une nuance de la teinte (pas de texte coloré)
         nh = c % 360
         ns = min(1, s * 0.4 * sbg)
-    else:
-        # fonds sombres, bordures, cartes : gris teinté, discret
+    elif l < 0.2:
+        # fonds très sombres (thème sombre) : teinte profonde et franche, un peu plus foncée
         nh = c % 360
-        ns = min(1, s * 0.42 * sbg)
+        ns = min(1, s * 0.8 * sbg)
+    else:
+        # cartes, bordures : teinte discrète
+        nh = c % 360
+        ns = min(1, s * 0.5 * sbg)
     # même luminosité perçue que la couleur d’origine (contrastes du texte conservés)
     target = lum(r / 255, g / 255, b / 255)
+    if chroma < 0.32 and l < 0.2:
+        target *= 0.85
     lo, hi = 0.0, 1.0
     for _ in range(22):
         mid = (lo + hi) / 2
@@ -138,12 +144,26 @@ def render(items, pal):
     return res
 
 
+def dark_bg(pal):
+    """Fond de page du thème sombre, dessiné pour chaque thème (le dégradé bleu vif d’origine, recoloré, criait trop)."""
+    h = pal[0] / 360
+    def c(l, sat, a=None):
+        r, g, b = (round(x * 255) for x in colorsys.hls_to_rgb(h, l, sat))
+        return 'rgba(%d,%d,%d,%s)' % (r, g, b, a) if a is not None else '#%02x%02x%02x' % (r, g, b)
+    sat = 0.55 * (pal[2] if pal[2] < 0.5 else 1)
+    return ('html:not(.theme-light){background:'
+            'radial-gradient(1100px 760px at 92% 110%,' + c(0.42, sat, .26) + ',transparent 62%),'
+            'radial-gradient(900px 600px at 0% -10%,' + c(0.5, sat, .10) + ',transparent 60%),'
+            'linear-gradient(150deg,' + c(0.025, sat) + ' 0%,' + c(0.06, sat) + ' 35%,' + c(0.10, sat) + ' 70%,' + c(0.16, sat) + ' 100%) fixed!important}')
+
+
 def build():
     css = '\n'.join(strip_comments(p.read_text(encoding='utf-8')) for p in SRC)
     items, _ = blocks(css)
     out = {}
     for name, pal in PALETTES.items():
         rules = render(items, pal)
+        rules.append(dark_bg(pal))
         out[name] = '/* Thème « ' + name + ' » : généré par tools/palettes.py, ne pas modifier à la main */\n' + '\n'.join(rules) + '\n'
     return out
 

@@ -2,7 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
-    { v: '2026-11-13.51', date: '13/11/2026', items: [
+    { v: '2026-11-13.52', date: '13/11/2026', items: [
+      'Menu et changements d’onglet plus fluides : les icônes ne sont plus toutes redessinées à chaque action.',
+      'Thèmes de couleurs en mode sombre redessinés : fond profond et discret, sans grande tache de couleur.',
       'Thèmes de couleurs revus : fonds sobres légèrement teintés, la couleur est réservée aux boutons, icônes et liens.',
       'Plus d’une centaine d’icônes supplémentaires pour personnaliser les outils et les rubriques.',
       'Mon compte : le bouton Enregistrer reste visible même sur un petit écran.',
