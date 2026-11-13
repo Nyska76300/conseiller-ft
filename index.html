@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Conseiller FT">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ft-version" content="2026-11-13.1">
+  <meta name="ft-version" content="2026-11-13.2">
   <title>Espace Conseiller France Travail</title>
   <script>
   var __ftUser = null, __storageOK = true;
@@ -12367,8 +12367,8 @@ window.ftHeaderSearch = function () {
 #ft-auth label{display:block;font-size:12.5px;font-weight:600;color:#cbd5e1;margin:10px 0 4px}
 #ft-auth input{width:100%;box-sizing:border-box;height:42px;padding:0 12px;border-radius:10px;border:1px solid rgba(148,163,184,.35);background:rgba(15,23,42,.7);color:#f1f5f9;font-size:14px;outline:0}
 #ft-auth input:focus{border-color:#67e8f9}
-#ft-auth .fa-go{width:100%;margin-top:16px;height:44px;border:0;border-radius:12px;background:#e1000f;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
-#ft-auth .fa-go:hover{background:#b8000c}
+#ft-auth .fa-go{width:100%;margin-top:16px;height:44px;border:0;border-radius:12px;background:linear-gradient(90deg,#2563eb,#06b6d4);color:#fff;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 8px 22px rgba(37,99,235,.35)}
+#ft-auth .fa-go:hover{filter:brightness(1.08)}
 #ft-auth .fa-go[disabled]{opacity:.6;cursor:wait}
 #ft-auth .fa-links{display:flex;justify-content:space-between;gap:8px 12px;margin-top:14px;flex-wrap:wrap}
 #ft-auth .fa-links button{background:none;border:0;color:#93c5fd;font-size:13px;cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:3px}
@@ -12475,6 +12475,8 @@ html.theme-light #ft-acct .fa-menu button.fa-out{color:#b91c1c}
     var m = String(e && e.message || '');
     if (/invalid login|invalid_credentials|invalid grant/i.test(m + (e.code || ''))) return 'E-mail ou mot de passe incorrect.';
     if (/email not confirmed/i.test(m)) return 'Adresse e-mail pas encore confirmée.';
+    if (/email rate limit|over_email_send_rate_limit/i.test(m + (e.code || ''))) return 'Trop d’e-mails envoyés en peu de temps (limite d’envoi de Supabase). Réessayez dans une heure, ou demandez à l’administrateur de créer votre compte.';
+    if (/error sending|sending (confirmation|magic|recovery)|smtp|unexpected_failure/i.test(m + (e.code || ''))) return 'L’e-mail de confirmation n’a pas pu être envoyé. Réessayez plus tard ou contactez l’administrateur du site.';
     if (/rate limit|too many/i.test(m)) return 'Trop de tentatives, réessayez dans quelques minutes.';
     if (/password should be|weak/i.test(m)) return 'Mot de passe trop court (8 caractères minimum conseillés).';
     if (/failed to fetch|network/i.test(m)) return 'Connexion impossible : vérifiez votre accès à Internet.';
@@ -15769,6 +15771,104 @@ html.theme-light #ft-fb .fb-box{background:#fff;color:#0f172a;border-color:#cbd5
   }
 })();
 </script>
+<!-- ================= Extension 33 : lecture à voix haute ================= -->
+<style>
+#ft-tts{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;min-width:36px;padding:0 10px;border-radius:10px;border:1px solid rgba(71,85,105,.8);background:rgba(30,41,59,.9);color:#67e8f9;font-family:inherit;font-weight:700;font-size:12.5px;cursor:pointer;flex:none}
+#ft-tts:hover{border-color:#67e8f9}
+#ft-tts svg{width:18px;height:18px}
+#ft-tts.on{background:linear-gradient(90deg,#2563eb,#06b6d4);border-color:transparent;color:#fff}
+#ft-tts .tt-l{display:none}
+@media (min-width:1440px){#ft-tts .tt-l{display:inline}}
+@media (max-width:640px){#ft-tts{display:none}}
+html.theme-light #ft-tts{background:#fff;border-color:#cbd5e1;color:#0369a1}
+html.theme-light #ft-tts.on{color:#fff}
+</style>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const ok = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+  const toast = (m, t) => { try { showToast(m, t || 'info'); } catch (e) {} };
+  const ICON_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>';
+  const ICON_STOP = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>';
+  let speaking = false;
+
+  /* Texte à lire : sélection, sinon mail ouvert, sinon mail généré, sinon contenu de l’outil */
+  function textToRead() {
+    const sel = String(window.getSelection ? window.getSelection() : '').trim();
+    if (sel.length >= 3) return sel;
+    let tab = ''; try { tab = String(activeNavTab); } catch (e) {}
+    if (tab === 'cvm') { const p = $('preview-body') || document.querySelector('#tab-content-cvm .prose, #tab-content-cvm'); if (p) return p.innerText.trim(); }
+    const view = document.querySelector('[id^="view-"]:not(.hidden)');
+    if (!view) return '';
+    const ta = [...view.querySelectorAll('.ft-mail textarea')].find(t => t.offsetParent && t.value.trim());
+    if (ta) return ta.value.trim();
+    const clone = view.cloneNode(true);
+    clone.querySelectorAll('.hub-bar,button,input,select,textarea,svg,script,style,.ft-mail,[hidden],.hidden,.fr-hide').forEach(e => e.remove());
+    return clone.innerText.replace(/\n{2,}/g, '\n').trim().slice(0, 6000);
+  }
+  function chunks(t) {
+    const parts = t.replace(/\s+/g, ' ').match(/[^.!?;:\n]+[.!?;:]?/g) || [t];
+    const out = []; let cur = '';
+    parts.forEach(p => { if ((cur + p).length > 220) { if (cur) out.push(cur); cur = p; } else cur += p; });
+    if (cur.trim()) out.push(cur);
+    return out.map(s => s.trim()).filter(Boolean);
+  }
+  function voice() {
+    const vs = speechSynthesis.getVoices();
+    return vs.find(v => /^fr(-|_)FR/i.test(v.lang) && /google|amélie|thomas|audrey|denise|henri/i.test(v.name)) || vs.find(v => /^fr(-|_)FR/i.test(v.lang)) || vs.find(v => /^fr/i.test(v.lang)) || null;
+  }
+  function setBtn() {
+    const b = $('ft-tts'); if (!b) return;
+    b.classList.toggle('on', speaking);
+    b.innerHTML = (speaking ? ICON_STOP : ICON_ON) + '<span class="tt-l">' + (speaking ? 'Arrêter' : 'Écouter') + '</span>';
+    const t = speaking ? 'Arrêter la lecture' : 'Lire à voix haute (le texte sélectionné, ou le mail, ou la page)';
+    b.title = t; b.setAttribute('aria-label', t); b.setAttribute('aria-pressed', String(speaking));
+    const m = document.querySelector('#ft-more [data-k="tts"] span'); if (m) m.textContent = speaking ? 'Arrêter la lecture' : 'Lire à voix haute';
+  }
+  function stop() { try { speechSynthesis.cancel(); } catch (e) {} speaking = false; setBtn(); }
+  window.ftSpeak = function (txt) {
+    if (!ok) { toast('La lecture à voix haute n’est pas disponible sur ce navigateur', 'info'); return; }
+    if (speaking) { stop(); return; }
+    const t = (txt || textToRead()).trim();
+    if (!t) { toast('Rien à lire : sélectionnez un texte ou ouvrez un mail', 'info'); return; }
+    speechSynthesis.cancel();
+    const v = voice(), list = chunks(t);
+    speaking = true; setBtn();
+    list.forEach((c, i) => {
+      const u = new SpeechSynthesisUtterance(c);
+      u.lang = 'fr-FR'; if (v) u.voice = v; u.rate = 1; u.pitch = 1;
+      if (i === list.length - 1) { u.onend = () => { speaking = false; setBtn(); }; }
+      u.onerror = () => { speaking = false; setBtn(); };
+      speechSynthesis.speak(u);
+    });
+  };
+  if (ok) { try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => {}; } catch (e) {} }
+
+  function build() {
+    if (!ok || $('ft-tts')) return;
+    const anchor = $('rp-btn') || $('ft-acct'); if (!anchor) return;
+    const b = document.createElement('button'); b.type = 'button'; b.id = 'ft-tts';
+    b.onclick = () => window.ftSpeak();
+    anchor.parentNode.insertBefore(b, anchor.nextSibling); setBtn();
+  }
+  function moreItem() {
+    const m = $('ft-more'); if (!ok || !m || m.querySelector('[data-k="tts"]')) return;
+    const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'menuitem'); b.dataset.k = 'tts';
+    b.innerHTML = ICON_ON + '<span>Lire à voix haute</span>';
+    b.addEventListener('click', ev => { ev.stopPropagation(); document.documentElement.classList.remove('ft-more-on'); setTimeout(() => window.ftSpeak(), 30); });
+    m.insertBefore(b, m.firstChild);
+  }
+  /* La lecture s’arrête quand on change d’outil */
+  const _sw = switchNavTab;
+  switchNavTab = function () { if (speaking) stop(); return _sw.apply(this, arguments); };
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && speaking) stop(); });
+  window.FT_ACTIONS = window.FT_ACTIONS || [];
+  if (ok) window.FT_ACTIONS.push({ t: 'Lire à voix haute', s: 'Le texte sélectionné, le mail ouvert ou la page', kw: 'lire voix haute audio écouter son volume synthèse vocale', run: () => setTimeout(() => window.ftSpeak(), 120) });
+  const go = () => { build(); moreItem(); };
+  if (window.ftOnDom) window.ftOnDom(go);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(go, 300)); else setTimeout(go, 300);
+})();
+</script>
 <!-- Fenêtre « Nouveautés » : s'ouvre une fois après chaque mise à jour -->
 <style>
 #ft-news{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,6,23,.6);backdrop-filter:blur(3px);opacity:0;transition:opacity .25s ease}
@@ -15801,6 +15901,10 @@ html.theme-light #ft-news .ftn-more{background:#e2e8f0;color:#0f172a}
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.2', date: '13/11/2026', items: [
+      'Lecture à voix haute : bouton haut-parleur dans la barre du haut (menu « ⋯ » sur téléphone). Il lit le texte sélectionné, sinon le mail ouvert ou généré, sinon la page ; un second clic arrête.',
+      'Écran de connexion : boutons bleus aux couleurs du site, et messages plus clairs si la création de compte échoue.'
+    ] },
     { v: '2026-11-13.1', date: '13/11/2026', items: [
       'Pension d’invalidité : même présentation que les autres simulateurs (blocs numérotés, verdict coloré, chiffres clés).',
       'Démission : la fiche détaillée d’un motif (ex. reconversion professionnelle) reste lisible en entier, délais et point de vigilance l’un sous l’autre.'
