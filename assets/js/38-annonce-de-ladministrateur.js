@@ -190,6 +190,7 @@
     [/^Confidentialit/i, 'Lire', () => window.ftPrivacy && window.ftPrivacy()],
     [/^Mes rappels/i, 'Ouvrir', () => window.ftReminders && window.ftReminders()],
     [/^Paramètres/i, 'Ouvrir', () => window.ftSettings && window.ftSettings()],
+    [/^Couleurs/i, 'Choisir', () => window.ftSettings && window.ftSettings()],
     [/^Vue usager/i, 'Essayer', () => switchNavTab(1)],
     [/^Aide-mémo/i, 'Ouvrir', () => window.ftRpToggle && window.ftRpToggle(true)],
     [/^Mode formation/i, 'Ouvrir', () => switchNavTab('formation')],

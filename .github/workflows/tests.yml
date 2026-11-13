@@ -23,5 +23,7 @@ jobs:
         run: python -m json.tool reglementation/maj.json > /dev/null
       - name: Vérifier les versions des fichiers (assets)
         run: python tools/version.py
+      - name: Vérifier les thèmes de couleurs
+        run: python tools/palettes.py --check
       - name: Lancer les tests (calculs, outils, affichage)
         run: python tools/regression.py

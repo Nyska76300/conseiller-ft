@@ -5,7 +5,13 @@
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const toast = (m, t) => { try { showToast(m, t || 'info'); } catch (e) {} };
   const KEY = 'ft_prefs';
-  const DEF = { neon: true, motion: false, easy: false, start: 'home', sound: true };
+  const DEF = { neon: true, motion: false, easy: false, start: 'home', pal: '' };
+  const PALS = [['', 'Océan', '#2563eb', '#22d3ee'], ['emeraude', 'Émeraude', '#059669', '#34d399'], ['sarcelle', 'Sarcelle', '#0d9488', '#2dd4bf'], ['amethyste', 'Améthyste', '#7c3aed', '#c084fc'], ['framboise', 'Framboise', '#db2777', '#f472b6'], ['ardoise', 'Ardoise', '#475569', '#94a3b8']];
+  function setPal(p) {
+    const h = document.documentElement, old = document.getElementById('ft-pal');
+    if (old) old.remove();
+    if (p) { const l = document.createElement('link'); l.rel = 'stylesheet'; l.id = 'ft-pal'; l.href = 'assets/css/pal-' + p + '.css?v=' + ((document.querySelector('meta[name="ft-version"]') || {}).content || ''); document.head.appendChild(l); h.setAttribute('data-pal', p); } else h.removeAttribute('data-pal');
+  }
   const P = (() => { try { return Object.assign({}, DEF, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { return Object.assign({}, DEF); } })();
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(P)); } catch (e) {} };
   function apply() {
@@ -13,6 +19,7 @@
     h.classList.toggle('no-neon', !P.neon);
     h.classList.toggle('reduce-motion', !!P.motion);
     h.classList.toggle('easy-read', !!P.easy);
+    if ((h.getAttribute('data-pal') || '') !== (P.pal || '')) setPal(P.pal || '');
   }
   apply();
   window.addEventListener('storage', e => { if (e.key === KEY) { try { Object.assign(P, DEF, JSON.parse(e.newValue || '{}')); apply(); } catch (er) {} } });
@@ -42,6 +49,7 @@
     return '<div class="pm-card"><div class="pm-h"><h2 id="pm-t">⚙️ Paramètres</h2><button type="button" class="pm-x" data-pm="x" aria-label="Fermer">×</button></div>' +
       '<section><h3>Affichage</h3>' +
         row('Thème', '', seg('theme', theme(), [['dark', 'Sombre'], ['light', 'Clair']])) +
+        '<div class="pm-row pm-col"><div><b>Couleurs</b><span>S’appliquent au thème sombre comme au clair</span></div><div class="pm-pal" role="group" aria-label="Couleurs">' + PALS.map(([v, l, a, b]) => '<button type="button" data-k="pal" data-v="' + v + '" aria-pressed="' + ((P.pal || '') === v) + '" class="' + ((P.pal || '') === v ? 'on' : '') + '"><i style="background:linear-gradient(135deg,' + a + ',' + b + ')"></i>' + l + '</button>').join('') + '</div></div>' +
         row('Taille du texte', '', seg('ts', a.ts, [[0, 'Normal'], [1, 'Grand'], [2, 'Très grand']])) +
         row('Effet lumineux des icônes', 'Petit halo néon autour des icônes', yn('neon', P.neon)) + '</section>' +
       '<section><h3>Accessibilité</h3>' +
@@ -57,6 +65,7 @@
       '<section><h3>Données et aide</h3>' +
         row('Derniers calculs', 'Historique gardé sur ce poste', '<button type="button" class="pm-btn" data-pm="hist">Effacer</button>') +
         row('Mes données', 'Sauvegarder ou restaurer vos modèles et réglages', '<button type="button" class="pm-btn" data-pm="data">Ouvrir</button>') +
+        (window.ftLoggedIn && window.ftLoggedIn() ? row('Synchronisation', 'Modèles, favoris et réglages sur tous vos postes', '<button type="button" class="pm-btn" data-pm="sync">Synchroniser</button>') : '') +
         row('Visite guidée', '', '<button type="button" class="pm-btn" data-pm="tour">Revoir</button>') +
         row('Confidentialité', '', '<button type="button" class="pm-btn" data-pm="privacy">Lire</button>') +
         row('Mise à jour', 'Version ' + esc(ver), '<button type="button" class="pm-btn" data-pm="reload">Forcer</button>') + '</section></div>';
@@ -84,7 +93,7 @@
       else if (k === 'ts') window.ftA11y && window.ftA11y('ts', +v);
       else if (k === 'hc') window.ftA11y && window.ftA11y('hc', v === '1');
       else if (k === 'entretien') { try { ftEntretien(v === '1'); } catch (er) {} }
-      else { P[k] = k === 'start' ? v : v === '1'; save(); apply(); if (k === 'start' && v !== 'home') toast(v === 'cvm' ? 'Le site s’ouvrira sur la page Mails' : 'Le site s’ouvrira sur le dernier outil utilisé', 'success'); }
+      else { P[k] = (k === 'start' || k === 'pal') ? v : v === '1'; save(); apply(); if (k === 'start' && v !== 'home') toast(v === 'cvm' ? 'Le site s’ouvrira sur la page Mails' : 'Le site s’ouvrira sur le dernier outil utilisé', 'success'); }
       render(); return;
     }
     const b = e.target.closest('[data-pm]'); if (!b) return;
@@ -93,13 +102,14 @@
     else if (a === 'rem') { close(); window.ftReminders(); }
     else if (a === 'hist') { if (confirm('Effacer l’historique des derniers calculs de ce poste ?')) { try { localStorage.removeItem('ft_calc_hist'); localStorage.removeItem('ft_calc_vals'); } catch (er) {} toast('Historique effacé', 'success'); try { switchNavTab(tabNow() === 'home' ? 'home' : tabNow()); } catch (er) {} } }
     else if (a === 'data') { close(); const d = $('data-btn') || document.querySelector('[data-k="data"]'); if (d) d.click(); }
+    else if (a === 'sync') { if (window.ftSyncNow) window.ftSyncNow(); toast('Synchronisation lancée', 'info'); }
     else if (a === 'tour') { close(); if (window.ftTour) window.ftTour(); }
     else if (a === 'privacy') { close(); if (window.ftPrivacy) window.ftPrivacy(); }
     else if (a === 'reload') { if (window.ftHardReload) window.ftHardReload(); }
   }
 
   /* Accès : menu du compte, menu « ⋯ », recherche */
-  (window.FT_ACCT_ITEMS = window.FT_ACCT_ITEMS || []).unshift({ t: 'Paramètres : affichage, accessibilité…', run: () => window.ftSettings() });
+  (window.FT_ACCT_ITEMS = window.FT_ACCT_ITEMS || []).unshift({ t: 'Paramètres', run: () => window.ftSettings() });
   window.FT_ACTIONS = window.FT_ACTIONS || [];
   window.FT_ACTIONS.push({ t: 'Paramètres', s: 'Affichage, accessibilité, démarrage, notifications', kw: 'paramètres réglages préférences affichage accessibilité thème clair sombre texte taille contraste animations démarrage', run: () => window.ftSettings() });
   function moreItem() {

@@ -2,6 +2,10 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-13.37', date: '13/11/2026', items: [
+      'Couleurs : choisissez un thème de couleurs (Océan, Émeraude, Sarcelle, Améthyste, Framboise, Ardoise) dans Paramètres, en mode sombre comme en mode clair.',
+      'Menu du compte allégé : Mon compte, Paramètres, Mes rappels et Se déconnecter ; notifications, visite guidée, confidentialité et synchronisation sont dans Paramètres.'
+    ] },
     { v: '2026-11-13.36', date: '13/11/2026', items: [
       'Vue usager : sous chaque mail généré par un simulateur, « 👁 Vue usager » affiche les résultats en grand et sans jargon, à montrer à la personne reçue (texte agrandissable, impression).',
       'Annonces par agence : un message peut désormais concerner une seule agence ; il ne s’affiche que pour ses conseillers.',
