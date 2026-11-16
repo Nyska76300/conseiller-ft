@@ -2,6 +2,14 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-16.2', date: '16/11/2026', items: [
+      'Nouvel onglet « Pièces justificatives » (Autres outils) : les pièces à demander selon la situation, et le mail de demande prêt à copier ou à imprimer.',
+      'Nouvel onglet « Calendrier des versements » (Références et calculs) : période d’actualisation, versement probable, jours fériés, jours ouvrés et jours indemnisés du mois, avec un message à l’allocataire.',
+      'Nouvel onglet « Journal réglementaire » (Références et calculs) : date de la dernière vérification automatique, mises à jour publiées par la veille et changements intégrés au site.',
+      'Nouvel onglet « Pense-bête d’entretien » (Autres outils) : les points à aborder selon le motif du rendez-vous, à cocher, avec une synthèse à copier. Rien n’est enregistré.',
+      'Conditions et ARE : carte résumé en haut (allocation mensuelle, premier jour indemnisable, durée), frise des dates et détail du calcul repliable.',
+      'En-têtes d’outils harmonisés : icône, titre et objectif, avec « Rédiger le mail CVM » et « Imprimer / PDF » directement dans l’en-tête. La fiche imprimée porte le logo et la date du barème.'
+    ] },
     { v: '2026-11-16.1', date: '16/11/2026', items: [
       'Correction : « Copier le texte » dans CVM Direct ouvrait la fenêtre Paramètres au lieu de copier le mail.'
     ] },

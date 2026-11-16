@@ -16,7 +16,7 @@ from playwright.sync_api import sync_playwright
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PALS = ['', 'emeraude', 'sarcelle', 'amethyste', 'framboise', 'ardoise']
-TABS = ['home', 'cvm', 1, 'droits', 'bareme', 'formation']
+TABS = ['home', 'cvm', 1, 'droits', 'bareme', 'formation', 'pieces', 'calendrier', 'pensebete']
 
 JS = r"""
 (theme) => {

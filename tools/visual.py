@@ -28,6 +28,10 @@ PAGES = [
     ('bareme', ['#view-bareme']),
     ('formation', ['#view-formation']),
     ('compare', ['#view-compare']),
+    ('pieces', ['#view-pieces']),
+    ('calendrier', ['#view-calendrier']),
+    ('journal', ['#view-journal']),
+    ('pensebete', ['#view-pensebete']),
 ]
 SETUPS = [('ordi-sombre', {'width': 1366, 'height': 900}, 'dark'), ('tel-clair', {'width': 390, 'height': 800}, 'light')]
 FROZEN = """

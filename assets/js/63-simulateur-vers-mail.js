@@ -77,6 +77,8 @@
     switchNavTab = function () { const r = _s.apply(this, arguments); try { place(); } catch (e) {} return r; };
   }
   setTimeout(place, 1200);
+  window.ftS2mMenu = menu;
+  window.ftS2mHas = () => !!(MAP[cur()] || []).filter(tpl).length;
   window.FT_ACTIONS = window.FT_ACTIONS || [];
   window.FT_ACTIONS.push({ t: 'Rédiger le mail CVM de cet outil', s: 'Mail pré-rempli avec les résultats affichés', kw: 'mail cvm rediger prerempli simulateur resultat envoyer', run: () => { const b = $('ft-s2m-btn'); if (b && !b.hidden) menu(b); else toast('Ouvrez d’abord un simulateur', 'info'); } });
 })();
