@@ -99,7 +99,7 @@
   }
   function close() { const w = $('ft-prefs'); if (w) w.hidden = true; }
   function render() { const w = box(), sc = w.querySelector('.pm-card') ? w.querySelector('.pm-card').scrollTop : 0; w.innerHTML = html(); w.querySelector('.pm-card').scrollTop = sc; }
-  window.ftSettings = function () { render(); box().hidden = false; setTimeout(() => { const b = document.querySelector('#ft-prefs .pm-x'); if (b) b.focus(); }, 30); };
+  window.ftOpenSettings = function () { render(); box().hidden = false; setTimeout(() => { const b = document.querySelector('#ft-prefs .pm-x'); if (b) b.focus(); }, 30); };
   function onClick(e) {
     const w = $('ft-prefs');
     if (e.target === w || e.target.closest('[data-pm="x"]')) return close();
@@ -125,14 +125,14 @@
   }
 
   /* Accès : menu du compte, menu « ⋯ », recherche */
-  (window.FT_ACCT_ITEMS = window.FT_ACCT_ITEMS || []).unshift({ t: 'Paramètres', run: () => window.ftSettings() });
+  (window.FT_ACCT_ITEMS = window.FT_ACCT_ITEMS || []).unshift({ t: 'Paramètres', run: () => window.ftOpenSettings() });
   window.FT_ACTIONS = window.FT_ACTIONS || [];
-  window.FT_ACTIONS.push({ t: 'Paramètres', s: 'Affichage, accessibilité, démarrage, notifications', kw: 'paramètres réglages préférences affichage accessibilité thème clair sombre texte taille contraste animations démarrage néon intensité couleurs', run: () => window.ftSettings() });
+  window.FT_ACTIONS.push({ t: 'Paramètres', s: 'Affichage, accessibilité, démarrage, notifications', kw: 'paramètres réglages préférences affichage accessibilité thème clair sombre texte taille contraste animations démarrage néon intensité couleurs', run: () => window.ftOpenSettings() });
   function moreItem() {
     const m = $('ft-more'); if (!m || m.querySelector('[data-k="prefs"]')) return;
     const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'menuitem'); b.dataset.k = 'prefs';
     b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Paramètres</span>';
-    b.addEventListener('click', ev => { ev.stopPropagation(); document.documentElement.classList.remove('ft-more-on'); setTimeout(() => window.ftSettings(), 30); });
+    b.addEventListener('click', ev => { ev.stopPropagation(); document.documentElement.classList.remove('ft-more-on'); setTimeout(() => window.ftOpenSettings(), 30); });
     m.insertBefore(b, m.firstChild);
   }
   if (window.ftOnDom) window.ftOnDom(moreItem);
@@ -144,7 +144,7 @@
     const b = document.createElement('button'); b.type = 'button'; b.id = 'ft-prefs-btn'; b.title = 'Paramètres'; b.setAttribute('aria-label', 'Paramètres');
     b.className = ref.className;
     b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>';
-    b.onclick = () => window.ftSettings();
+    b.onclick = () => window.ftOpenSettings();
     const last = ref.parentElement.lastElementChild; ref.parentElement.insertBefore(b, last && last.id === 'ft-hard-reload' ? last : null);
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', add); else add();

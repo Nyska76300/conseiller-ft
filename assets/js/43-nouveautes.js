@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-16.1', date: '16/11/2026', items: [
+      'Correction : « Copier le texte » dans CVM Direct ouvrait la fenêtre Paramètres au lieu de copier le mail.'
+    ] },
     { v: '2026-11-13.59', date: '13/11/2026', items: [
       'Mails CVM vérifiés sur la réglementation en vigueur : affiliation 130 jours / 910 h (et non 182 jours), 36 mois à partir de 55 ans (et non 53), démission en cours d’indemnisation : 88 jours / 610 h depuis le 1er avril 2025, plafond RFF 775,65 €.',
       'Avant de copier un mail : alerte si une date est invalide ou dans le désordre (fin avant début), ou si un montant paraît anormal.',
