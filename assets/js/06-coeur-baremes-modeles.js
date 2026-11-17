@@ -5035,7 +5035,7 @@
       }
       copyToClipboard(compileText(tpl.body, tpl.id, false));
       showToast('Message CVM copié dans le presse-papier', 'success');
-      if (ftSettings().clearAfterCopy) {
+      if ((typeof ftSettings === "function" && ftSettings() || {}).clearAfterCopy) {
         delete userVariables[tpl.id];
         saveState();
         if (typeof renderVariablesForm === 'function') renderVariablesForm(tpl);

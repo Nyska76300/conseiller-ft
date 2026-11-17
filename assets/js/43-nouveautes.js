@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-17.1', date: '17/11/2026', items: [
+      'CVM : le bouton « Copier » ne peut plus planter si le réglage « Effacer après copie » est illisible.'
+    ] },
     { v: '2026-11-16.2', date: '16/11/2026', items: [
       'Nouvel onglet « Pièces justificatives » (Autres outils) : les pièces à demander selon la situation, et le mail de demande prêt à copier ou à imprimer.',
       'Nouvel onglet « Calendrier des versements » (Références et calculs) : période d’actualisation, versement probable, jours fériés, jours ouvrés et jours indemnisés du mois, avec un message à l’allocataire.',
