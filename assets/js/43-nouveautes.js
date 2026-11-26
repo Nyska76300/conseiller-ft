@@ -2,6 +2,10 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.10', date: '26/11/2026', items: [
+      'Modèles de trop-perçu : le champ « Motif du trop-perçu » devient un menu déroulant avec les motifs de l’application (codes * à £). Le mail s’adapte au motif choisi, par exemple « correspondant à une activité professionnelle non déclarée lors de vos actualisations ». Un choix « Autre motif » permet un texte libre.',
+      'CVM Direct, liste : colonne des titres plus lisible (icône, titre en gras sur deux lignes, séparateur) ; le sous-titre disparaît quand il répète le titre.'
+    ] },
     { v: '2026-11-26.9', date: '26/11/2026', items: [
       'Post-it dans la barre du haut : une note rapide sur papier jaune, enregistrée automatiquement sur cet appareil. Un point orange signale qu’une note est en cours.',
       '« Aide-mémo » devient « Repères » (seuils et montants clés, touche ?).',

@@ -69,6 +69,7 @@
       if (c.querySelector('.cvm-pv')) return;
       const t = byId[c.dataset.tplId]; if (!t) return;
       c.classList.add('cvm-card'); c.tabIndex = 0;
+      const sp = c.querySelectorAll('.min-w-0 > .min-w-0 > span'); if (sp.length > 1 && sp[0].textContent.trim() === sp[1].textContent.trim()) sp[1].classList.add('cvm-dup');
       if (/bg-blue-600\/15/.test(c.className)) c.classList.add('is-active-card');
       const nV = (t.variables || []).length;
       const pv = document.createElement('div'); pv.className = 'cvm-pv'; pv.innerHTML = preview(t);

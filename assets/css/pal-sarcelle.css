@@ -1844,4 +1844,7 @@ html.theme-light.cvm-dw .cvm-vt button{color:#2b4446}
 html.theme-light.cvm-dw .cvm-vt button.on{background:#0f2829}
 @media (min-width:1024px){html.cvm-dw #view-cvm>main::before{background:linear-gradient(180deg,#137579,#1cd8bc)}#cvm-scrim{background:rgba(1,6,6,.55)}html.theme-light #cvm-scrim{background:rgba(11,29,30,.3)}}
 .ft-pi-dot{border:2px solid #041213}
+@media (min-width:1024px){html.cvm-dw.cvm-list #templates-list>.cvm-card>div:first-child{border-right:1px solid rgba(28,168,179,.18)}html.theme-light.cvm-dw.cvm-list #templates-list>.cvm-card>div:first-child{border-right-color:#e0e9ea}}
+.cvm-choice-hint{color:#99babc}
+html.theme-light .cvm-choice-hint{color:#596d6f}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(48,158,166,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(57,188,198,0.1),transparent 60%),linear-gradient(150deg,#03090a 0%,#071718 35%,#0b2628 70%,#123c3f 100%) fixed!important}
