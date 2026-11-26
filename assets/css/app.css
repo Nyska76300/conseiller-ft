@@ -2147,3 +2147,20 @@ html.theme-light:not(.cvm-dw) .cvm-xtra button{color:#25406b;background:#fff;bor
 html.theme-light:not(.cvm-dw) .cvm-xtra button.on{color:#4a3000;background:#f6c453;border-color:#f6c453}
 html.cvm-only-drafts #templates-list [data-tpl-id]:not(.is-draft){display:none!important}
 .cvm-dmark{display:inline-block;margin-left:6px;padding:0 6px;border-radius:999px;font-size:.6rem;font-weight:800;color:#1f1500;background:#fcd34d;vertical-align:middle;white-space:nowrap}
+/* Liste CVM (volet fixe) : première ligne du mail et nombre de champs */
+html:not(.cvm-dw) #templates-list{gap:8px}
+html:not(.cvm-dw) #templates-list .cvm-lc{padding:12px 12px 11px!important}
+html:not(.cvm-dw) #templates-list .cvm-lc>div>.min-w-0{align-items:flex-start}
+html:not(.cvm-dw) #templates-list .cvm-lc>div>.min-w-0>span:first-child{margin-top:1px}
+html:not(.cvm-dw) #templates-list .cvm-lc .min-w-0>.min-w-0{flex:1}
+html:not(.cvm-dw) #templates-list .cvm-lc .min-w-0>.min-w-0>span:first-child{font-size:.82rem;line-height:1.3}
+.cvm-li{display:flex;flex-direction:column;gap:6px;margin-top:5px}
+.cvm-li-pv{display:block;font-size:.74rem;line-height:1.45;color:#9fb3d6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cvm-li-pv .cvm-pv-var{color:#fcd9a0;background:rgba(245,158,11,.12);border-radius:4px;padding:0 3px}
+.cvm-li-n{align-self:flex-start;font-size:.66rem;font-weight:800;padding:2px 8px;border-radius:999px;color:#fde4b0;background:rgba(245,158,11,.16);border:1px solid rgba(245,158,11,.35)}
+.cvm-li-n.is-ok{color:#a7f3d0;background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.35)}
+html.theme-light .cvm-li-pv{color:#4a5d7a}
+html.theme-light .cvm-li-pv .cvm-pv-var{color:#8a4b00;background:#fff3dc}
+html.theme-light .cvm-li-n{color:#8a4b00;background:#fff3dc;border-color:#f5d27a}
+html.theme-light .cvm-li-n.is-ok{color:#065f46;background:#e7f8f0;border-color:#a7e3c8}
+.cvm-li-pv{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}

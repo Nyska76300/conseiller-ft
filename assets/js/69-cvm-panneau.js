@@ -85,6 +85,17 @@
       if (d && !m) { m = document.createElement('span'); m.className = 'cvm-dmark'; m.textContent = '✎ brouillon'; const t = c.querySelector('.min-w-0 > .min-w-0 > span'); if (t) { t.parentNode.insertBefore(m, t.nextSibling); } else c.appendChild(m); }
       if (!d && m) m.remove();
       const sp = c.querySelectorAll('.min-w-0 > .min-w-0 > span'); if (sp.length > 1 && sp[0].textContent.trim() === sp[1].textContent.trim()) sp[1].classList.add('cvm-dup');
+      /* Aperçu de la première ligne et nombre de champs (disposition avec volet fixe) */
+      if (!c.querySelector('.cvm-li')) {
+        let t = null; try { t = templates.find(x => x.id === c.dataset.tplId); } catch (e) {}
+        const box = c.querySelector('.min-w-0 > .min-w-0');
+        if (t && box) {
+          const nV = (t.variables || []).length;
+          const li = document.createElement('div'); li.className = 'cvm-li';
+          li.innerHTML = '<span class="cvm-li-pv">' + preview(t) + '</span><span class="cvm-li-n' + (nV ? '' : ' is-ok') + '">' + (nV ? nV + ' champ' + (nV > 1 ? 's' : '') + ' à remplir' : 'Prêt à copier') + '</span>';
+          box.appendChild(li); c.classList.add('cvm-lc');
+        }
+      }
     });
     const nb = $('cvm-drafts-n'); if (nb) nb.textContent = list.querySelectorAll('[data-tpl-id].is-draft').length;
   }

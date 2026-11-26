@@ -1885,4 +1885,6 @@ html.theme-light .rp-sch-l button{border-color:#e7dce1;background:#fcf8fa}
 html:not(.cvm-dw) .cvm-xtra button{color:#ddc6d1;background:rgba(15,3,9,.5);border:1px solid rgba(229,113,170,.28)}
 html:not(.cvm-dw) .cvm-xtra b{background:rgba(229,113,170,.2)}
 html.theme-light:not(.cvm-dw) .cvm-xtra button{color:#563746;border-color:#e7dce1}
+.cvm-li-pv{color:#c1acb7}
+html.theme-light .cvm-li-pv{color:#6b5661}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(166,48,107,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(198,57,128,0.1),transparent 60%),linear-gradient(150deg,#0a0306 0%,#18070f 35%,#280b1a 70%,#3f1229 100%) fixed!important}
