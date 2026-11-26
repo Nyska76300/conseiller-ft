@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.17', date: '26/11/2026', items: [
+      'Correction : la catégorie que vous donnez à un modèle (en le modifiant, en renommant ou en supprimant une catégorie) est désormais conservée. Avant, la mise à jour des modèles communs ou officiels la remettait à l’ancienne valeur à chaque chargement. Vos modifications d’un modèle commun faites après sa publication sont aussi gardées.'
+    ] },
     { v: '2026-11-26.16', date: '26/11/2026', items: [
       'CVM Direct : retour à la disposition d’avant, avec la liste des modèles au centre et le mail ouvert en permanence à droite (fin du panneau coulissant et des tuiles). Les boutons « Brouillons » et « Plus utilisés » restent au-dessus de la liste.'
     ] },

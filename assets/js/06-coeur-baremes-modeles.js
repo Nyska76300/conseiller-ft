@@ -646,8 +646,19 @@
 
     const CAT_MAP = {"Poursuite indemnisation (DC)": "Démission — poursuite des droits", "Démission": "Démission — poursuite des droits", "Rejet démission": "Démission — refus", "IPR DV 121 jours": "Démission — refus", "ANS": "Créateurs d'entreprise", "ASS": "ASS et RSA", "CAF / RSA": "ASS et RSA", "Reprise": "Reprise des droits", "Reprise & droit d'option": "Reprise des droits", "Modification AE": "Documents", "DPAE": "Documents", "Recours IPR": "IPR, sanctions et fraude", "CRE": "IPR, sanctions et fraude", "Fin de droit SAE": "Rechargement", "Calcul ARE": "Calcul et paiement", "Divers": "Calcul et paiement"};
     const REMOVED_OFFICIAL = { 'bm-umuxuc7jo70mc': 'bm-umuxuejsx7y7v', 'bm-umrnc12hmkdmy': 'bm-umrepzjc83kvn', 'bm-umuxtweu7zjz9': null, 'bm-umuh0hbi5tgs8': null, 'bm-m021': null, 'bm-umsootuhi51yf': null, 'bm-m015': 'bm-m014' };
+    /* Catégorie choisie par le conseiller pour un modèle (édition, renommage ou suppression de catégorie) :
+       gardée lors des mises à jour des modèles officiels et communs. Synchronisée avec le compte. */
+    function ftCatOver(id, cat) {
+      let m = {}; try { m = JSON.parse(safeLS.getItem('ft_cat_over') || '{}') || {}; } catch (e) {}
+      if (id === undefined) return m;
+      if (cat) m[id] = cat; else delete m[id];
+      try { safeLS.setItem('ft_cat_over', JSON.stringify(m)); } catch (e) {}
+      return m;
+    }
+    window.ftCatOver = ftCatOver;
     function refreshOfficialTemplates() {
       const off = new Map(OFFICIAL_TEMPLATES.map(t => [t.id, t]));
+      const over = ftCatOver();
       let dead = []; try { dead = JSON.parse(safeLS.getItem('ft_deleted_tpl') || '[]') || []; } catch (e) {}
       let changed = false;
       const gone = Object.keys(REMOVED_OFFICIAL).filter(id => !dead.includes(id));
@@ -658,7 +669,8 @@
         if (REMOVED_OFFICIAL.hasOwnProperty(t.id) && !(t.history || []).length) { changed = true; return; }
         const o = off.get(t.id);
         if (o && t.isOfficial && !(t.history || []).length) {
-          if (JSON.stringify([t.title, t.shortTitle, t.category, t.body, t.variables]) !== JSON.stringify([o.title, o.shortTitle, o.category, o.body, o.variables])) { next.push({ ...t, ...o }); changed = true; return; }
+          const oc = over[t.id] || o.category;
+          if (JSON.stringify([t.title, t.shortTitle, t.category, t.body, t.variables]) !== JSON.stringify([o.title, o.shortTitle, oc, o.body, o.variables])) { next.push({ ...t, ...o, category: oc }); changed = true; return; }
         }
         if (CAT_MAP[t.category]) { t.category = CAT_MAP[t.category]; changed = true; }
         next.push(t);
@@ -1374,6 +1386,7 @@
 
       templates[tplIndex].title = title;
       templates[tplIndex].shortTitle = shortTitle;
+      if (templates[tplIndex].category !== category) ftCatOver(templates[tplIndex].id, category);
       templates[tplIndex].category = category;
       templates[tplIndex].body = body;
       templates[tplIndex].variables = vars;
@@ -1461,7 +1474,7 @@
       // Reassign templates from old category name to new name
       templates.forEach(t => {
         if (t.category === oldName) {
-          t.category = newName;
+          t.category = newName; ftCatOver(t.id, newName);
         }
       });
 
@@ -1501,7 +1514,7 @@
       // Reassign templates to fallback
       templates.forEach(t => {
         if (t.category === categoryNameToDelete) {
-          t.category = fallbackCat;
+          t.category = fallbackCat; ftCatOver(t.id, fallbackCat);
         }
       });
 

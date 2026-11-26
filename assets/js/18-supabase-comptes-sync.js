@@ -6,7 +6,7 @@
   if (!SB_URL || !SB_KEY || !window.fetch) return;
 
   // Données synchronisées (aucune donnée de dossier ou d'allocataire)
-  var SYNC = ['ft_prefs', 'ft_links', 'ft_deleted_tpl', 'ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use', 'ft_bareme_ack', 'ft_pins', 'ft_menu_favs', 'ft_tour_done'];
+  var SYNC = ['ft_prefs', 'ft_links', 'ft_deleted_tpl', 'ft_cat_over', 'ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use', 'ft_bareme_ack', 'ft_pins', 'ft_menu_favs', 'ft_tour_done'];
   var K_SESS = 'ft_sb_session', K_META = 'ft_sb_meta';
   var LSraw = {
     get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -167,8 +167,17 @@
         var t = r.template; if (!t || t.id == null || dead.indexOf(String(t.id)) > -1 || dead.indexOf(t.id) > -1) return;
         t.shared = true;
         var i = templates.findIndex(function (x) { return x.id === t.id; });
-        if (i < 0) { templates.push(t); add++; }
-        else if (JSON.stringify(templates[i]) !== JSON.stringify(t)) { templates[i] = t; upd++; }
+        if (i < 0) { try { var ov0 = window.ftCatOver ? window.ftCatOver() : {}; if (ov0[t.id]) t.category = ov0[t.id]; } catch (e) {} templates.push(t); add++; }
+        else {
+          /* Copie locale modifiée par le conseiller (catégorie, texte) : ses changements ne sont plus écrasés par la version commune.
+             Modifiée après la dernière publication : on garde tout. Sinon : nouveau texte commun, mais catégorie et historique du conseiller. */
+          var loc = templates[i], h = (loc && loc.history) || [], at = h[0] && h[0].at;
+          if (at && r.updated_at && new Date(at) > new Date(r.updated_at)) { if (!loc.shared) { loc.shared = true; upd++; } return; }
+          var ov = {}; try { ov = window.ftCatOver ? window.ftCatOver() : {}; } catch (e) {}
+          if (h.length) t = Object.assign({}, t, { history: h });
+          if (ov[t.id]) t = Object.assign({}, t, { category: ov[t.id] }); else if (h.length && loc.category) t = Object.assign({}, t, { category: loc.category });
+          if (JSON.stringify(loc) !== JSON.stringify(t)) { templates[i] = t; upd++; }
+        }
       });
       if (add || upd) {
         try { if (typeof categoryList !== 'undefined') rows.forEach(function (r) { var c = r.template && r.template.category; if (c && !categoryList.some(function (x) { return (x && (x.id || x.name || x)) === c; })) {} }); } catch (e) {}
