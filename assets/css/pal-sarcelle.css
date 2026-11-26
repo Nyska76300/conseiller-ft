@@ -1910,4 +1910,9 @@ html.theme-light .cvm-so-c p{color:#596d6f}
 html.theme-light .cvm-so-c textarea{background:#f6fbfb;border-color:#cbdbdc;color:#0f2829}
 html.theme-light .cvm-so-a button{border-color:#cbdbdc}
 html.theme-light .cvm-so-a button.pri{background:#0a5e62;border-color:#0a5e62}
+.cvm-weak-t{border:1px dashed rgba(28,168,179,.4);color:#0bd1d5}
+.cvm-weak-t small{color:#99babc}
+.cvm-weak-t:hover{border-color:#09acb4;background:rgba(28,168,179,.08)}
+html.theme-light .cvm-weak-t{color:#0a5e62;border-color:#bbd3d5}
+html.theme-light .cvm-weak-t small{color:#596d6f}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(48,158,166,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(57,188,198,0.1),transparent 60%),linear-gradient(150deg,#03090a 0%,#071718 35%,#0b2628 70%,#123c3f 100%) fixed!important}

@@ -1137,6 +1137,7 @@
         const nC = templates.filter(isCommon).length, nP = templates.length - nC;
         scopeBar.querySelectorAll('button').forEach(b => { b.classList.toggle('on', b.dataset.s === tplScope); b.setAttribute('aria-selected', String(b.dataset.s === tplScope)); const c = b.querySelector('b'); if (c) c.textContent = b.dataset.s === 'common' ? nC : nP; });
       }
+      const weakIds = new Set(); window.__ftWeak = weakIds;
       const filtered = templates.filter(tpl => {
         if (tplScope === 'common' && !isCommon(tpl)) return false;
         if (tplScope === 'perso' && isCommon(tpl)) return false;
@@ -1147,6 +1148,7 @@
         const sc = scoreTpl(tpl, terms);
         if (!sc) return false;
         scores.set(tpl.id, sc);
+        if (terms.length && scoreTpl.lastMin < 45) weakIds.add(tpl.id);
         return true;
       });
 
@@ -4331,29 +4333,48 @@
 
     // 0 = ne correspond pas. Tous les mots saisis doivent être trouvés (ET), le titre compte le plus.
     // Le texte du mail et les libellés des champs comptent aussi ; un synonyme rapporte un peu moins que le mot exact.
+    /* 2 = mot entier, 1 = début de mot, 0 = absent (ou seulement au milieu d'un mot) */
+    const _wre = new Map();
+    function wordHit(f, t) {
+      if (!f) return 0;
+      let r = _wre.get(t);
+      if (!r) { const e = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); r = [new RegExp('(^|[^a-z0-9])' + e + '($|[^a-z0-9])'), new RegExp('(^|[^a-z0-9])' + e)]; _wre.set(t, r); }
+      return r[0].test(f) ? 2 : r[1].test(f) ? 1 : 0;
+    }
     function scoreTpl(tpl, terms) {
       if (!terms.length) return 1;
       const ix = tplIndex(tpl);
       if (ix.v == null) ix.v = nrm((tpl.variables || []).map(v => v.label || '').join(' '));
-      let total = 0;
+      let total = 0, min = Infinity;
       for (const t0 of terms) {
         let best = 0;
         synOf(t0).forEach((t, i) => {
           let s = 0;
-          if (ix.t.startsWith(t)) s = 100;
-          else if (ix.t.includes(' ' + t)) s = 80;
-          else if (ix.t.includes(t)) s = 60;
-          else if (ix.s.includes(t)) s = 45;
-          else if (ix.g.includes(t)) s = 35;
-          else if (ix.c.includes(t)) s = 30;
-          else if (ix.v.includes(t)) s = 15;
-          else if (ix.b.includes(t)) s = 10;
+          if (t.length <= 3) {
+            /* Sigle court (SAE, ASS, ARE, RIB…) : mot entier seulement ; un début de mot compte peu ; jamais au milieu d'un mot */
+            const F = [[ix.t, 100], [ix.s, 45], [ix.g, 35], [ix.c, 30], [ix.v, 15], [ix.b, 10]];
+            for (const [f, w] of F) {
+              const k = wordHit(f, t);
+              if (k === 2) { s = (w === 100 && !ix.t.startsWith(t)) ? 80 : w; break; }
+              if (k === 1 && !s) s = Math.max(1, Math.round(w * 0.3));
+            }
+          } else {
+            if (ix.t.startsWith(t)) s = 100;
+            else if (ix.t.includes(' ' + t)) s = 80;
+            else if (ix.t.includes(t)) s = 60;
+            else if (ix.s.includes(t)) s = 45;
+            else if (ix.g.includes(t)) s = 35;
+            else if (ix.c.includes(t)) s = 30;
+            else if (ix.v.includes(t)) s = 15;
+            else if (ix.b.includes(t)) s = 10;
+          }
           if (i) s = Math.round(s * 0.8);
           if (s > best) best = s;
         });
-        if (!best) return 0;
-        total += best;
+        if (!best) { scoreTpl.lastMin = 0; return 0; }
+        total += best; if (best < min) min = best;
       }
+      scoreTpl.lastMin = min;
       return total;
     }
 

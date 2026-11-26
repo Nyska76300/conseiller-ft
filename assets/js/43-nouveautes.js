@@ -2,6 +2,10 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.21', date: '26/11/2026', items: [
+      'Recherche des mails plus précise : un sigle court (SAE, ASS, ARE, RIB…) ne trouve plus les mots qui le contiennent (« ass » ne trouve plus « assurance »).',
+      'Les mails où le mot cherché n’apparaît que dans le texte ou les mots-clés sont repliés sous « Afficher N autres résultats », après les mails dont le titre correspond.'
+    ] },
     { v: '2026-11-26.20', date: '26/11/2026', items: [
       'CVM Direct : deux nouvelles rubriques sous Favoris. « SAE » regroupe tous les mails dont le titre contient SAE (modèles officiels et les vôtres). « Plus utilisés » affiche vos 10 mails les plus copiés sur ce poste, du plus copié au moins copié.',
       'Le modèle « Admission définitive ou provisoire » s’appelle désormais « SAE : admission définitive ou provisoire ».'

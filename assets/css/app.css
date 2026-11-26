@@ -2213,3 +2213,10 @@ html.theme-light .cvm-so-a button.pri{background:#0b5cd5;border-color:#0b5cd5;co
 .cvm-ec-r{flex-wrap:wrap}
 .cvm-ec-r span{flex:1 0 100%;white-space:normal}
 #cvm-top{display:none!important}
+/* Recherche CVM : résultats faibles repliés */
+html:not(.cvm-weak-on) #templates-list .is-weak{display:none!important}
+.cvm-weak-t{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin:4px 0;padding:9px 12px;border-radius:11px;border:1px dashed rgba(110,150,240,.4);background:transparent;color:#8cc0ff;font-size:.78rem;font-weight:700;text-align:left;cursor:pointer}
+.cvm-weak-t small{font-size:.68rem;font-weight:500;color:#9db5e0}
+.cvm-weak-t:hover{border-color:#5b9bff;background:rgba(110,150,240,.08)}
+html.theme-light .cvm-weak-t{color:#0b5cd5;border-color:#bcd0ee}
+html.theme-light .cvm-weak-t small{color:#566b86}

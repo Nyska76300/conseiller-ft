@@ -28,7 +28,8 @@
   }
   function counts() {
     const L = $('templates-list'); if (!L) return;
-    const n = { all: L.querySelectorAll('[data-tpl-id]').length, ready: L.querySelectorAll('[data-tpl-id].is-ready').length, fill: L.querySelectorAll('[data-tpl-id].is-fill').length, drafts: L.querySelectorAll('[data-tpl-id].is-draft').length };
+    const wx = root.classList.contains('cvm-weak-on') ? '' : ':not(.is-weak)', Q = x => L.querySelectorAll('[data-tpl-id]' + x + wx).length;
+    const n = { all: Q(''), ready: Q('.is-ready'), fill: Q('.is-fill'), drafts: Q('.is-draft') };
     document.querySelectorAll('#cvm-qf [data-f]').forEach(b => { const s = b.querySelector('b'); if (s) s.textContent = n[b.dataset.f]; });
     let e = $('cvm-qf-empty');
     const vis = [...L.querySelectorAll('[data-tpl-id]')].some(c => c.offsetParent);
@@ -168,8 +169,29 @@
   };
   (window.FT_ACTIONS = window.FT_ACTIONS || []).push({ t: 'Formule de fin des mails', s: 'Ajoutée à chaque mail copié', kw: 'formule politesse fin mail signature cordialement', run: () => window.ftSignoff() });
 
+  /* ---------- Recherche : résultats faibles repliés ---------- */
+  let lastQ = '';
+  function weak() {
+    const L = $('templates-list'); if (!L) return;
+    const old = $('cvm-weak-t'); if (old) old.remove();
+    L.querySelectorAll('.is-weak').forEach(c => c.classList.remove('is-weak'));
+    let q = ''; try { q = String(searchQuery || '').trim(); } catch (e) {}
+    if (q !== lastQ) { lastQ = q; root.classList.remove('cvm-weak-on'); }
+    const W = window.__ftWeak; if (!q || !W || !W.size) return;
+    const cards = [...L.querySelectorAll('[data-tpl-id]')];
+    const strong = cards.filter(c => !W.has(c.dataset.tplId)), wk = cards.filter(c => W.has(c.dataset.tplId));
+    if (!strong.length || !wk.length) return;
+    wk.forEach(c => c.classList.add('is-weak'));
+    const b = document.createElement('button'); b.type = 'button'; b.id = 'cvm-weak-t'; b.className = 'cvm-weak-t';
+    const on = root.classList.contains('cvm-weak-on');
+    b.innerHTML = (on ? 'Masquer' : 'Afficher') + ' ' + wk.length + ' autre' + (wk.length > 1 ? 's' : '') + ' résultat' + (wk.length > 1 ? 's' : '') + ' <small>mot trouvé seulement dans le texte, les mots-clés ou en début de mot</small>';
+    b.addEventListener('click', () => { root.classList.toggle('cvm-weak-on'); weak(); counts(); });
+    wk[0].before(b);
+    const cb = $('filtered-count-badge'); if (cb) cb.textContent = strong.length + ' résultat' + (strong.length > 1 ? 's' : '') + (on ? ' + ' + wk.length : '');
+  }
+
   /* ---------- Branchements ---------- */
-  function after() { try { quickBar(); counts(); emptyCats(); soNote(); } catch (e) { console.warn(e); } }
+  function after() { try { weak(); quickBar(); counts(); emptyCats(); soNote(); } catch (e) { console.warn(e); } }
   if (typeof renderTemplatesList === 'function') {
     const _r = renderTemplatesList;
     renderTemplatesList = function () { const r = _r.apply(this, arguments); setTimeout(after, 0); return r; };
