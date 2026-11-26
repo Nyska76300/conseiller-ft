@@ -1966,3 +1966,20 @@ html.theme-light .cvm-nv{color:#566b86}
 html.theme-light .cvm-open-l{color:#0b5cd5}
 html.cvm-dw #templates-list{grid-auto-rows:max-content!important}
 html.cvm-dw #templates-list>.cvm-card{height:auto!important;max-height:none!important}
+/* CVM : choix Liste / Tuiles */
+.cvm-vt{display:none}
+html.cvm-dw .cvm-vt{display:inline-flex;gap:2px;padding:2px;margin-left:auto;margin-right:10px;border-radius:9px;background:rgba(1,6,26,.5);border:1px solid rgba(110,150,240,.28)}
+html.cvm-dw .cvm-vt button{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:7px;font-size:.72rem;font-weight:700;color:#b8cdf2;background:transparent;border:0;cursor:pointer}
+html.cvm-dw .cvm-vt button.on{color:#0a1640;background:#eaf1ff}
+html.theme-light.cvm-dw .cvm-vt{background:#fff;border-color:#d3e0f1}
+html.theme-light.cvm-dw .cvm-vt button{color:#25406b}
+html.theme-light.cvm-dw .cvm-vt button.on{color:#fff;background:#14264d}
+@media (min-width:1024px){
+  html.cvm-dw.cvm-list #templates-list{display:flex!important;flex-direction:column;gap:6px;padding:10px 14px!important}
+  html.cvm-dw.cvm-list #templates-list>.cvm-card{flex:none!important;display:grid!important;grid-template-columns:minmax(230px,320px) minmax(0,1fr) 150px;align-items:center;column-gap:18px;row-gap:0;min-height:0;padding:9px 14px!important;border-radius:12px!important}
+  html.cvm-dw.cvm-list #templates-list>.cvm-card .cvm-pv{-webkit-line-clamp:2;max-height:3em;font-size:.76rem}
+  html.cvm-dw.cvm-list #templates-list>.cvm-card .cvm-ft{margin:0;padding:0;border:0;flex-direction:column;align-items:flex-end;justify-content:center;gap:4px}
+}
+@media (min-width:1024px) and (max-width:1279px){
+  html.cvm-dw.cvm-list #templates-list>.cvm-card{grid-template-columns:minmax(200px,260px) minmax(0,1fr) 130px}
+}

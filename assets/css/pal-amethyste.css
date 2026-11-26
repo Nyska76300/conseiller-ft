@@ -1836,4 +1836,10 @@ html.theme-light .cvm-pv{color:#554a61}
 html.theme-light .cvm-ft{border-top-color:#eae6ee}
 html.theme-light .cvm-nv{color:#70657d}
 html.theme-light .cvm-open-l{color:#6d17dc}
+html.cvm-dw .cvm-vt{background:rgba(11,3,19,.5);border:1px solid rgba(180,129,235,.28)}
+html.cvm-dw .cvm-vt button{color:#d3c8e0}
+html.cvm-dw .cvm-vt button.on{color:#200e34;background:#f3eff8}
+html.theme-light.cvm-dw .cvm-vt{border-color:#e2dde8}
+html.theme-light.cvm-dw .cvm-vt button{color:#4a395d}
+html.theme-light.cvm-dw .cvm-vt button.on{background:#2f1947}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(103,48,166,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(123,57,198,0.1),transparent 60%),linear-gradient(150deg,#06030a 0%,#0f0718 35%,#190b28 70%,#27123f 100%) fixed!important}

@@ -1836,4 +1836,10 @@ html.theme-light .cvm-pv{color:#3f5253}
 html.theme-light .cvm-ft{border-top-color:#e0e9ea}
 html.theme-light .cvm-nv{color:#596d6f}
 html.theme-light .cvm-open-l{color:#0a5e62}
+html.cvm-dw .cvm-vt{background:rgba(1,7,8,.5);border:1px solid rgba(28,168,179,.28)}
+html.cvm-dw .cvm-vt button{color:#b3d2d4}
+html.cvm-dw .cvm-vt button.on{color:#071a1b;background:#e6f3f4}
+html.theme-light.cvm-dw .cvm-vt{border-color:#d3e1e2}
+html.theme-light.cvm-dw .cvm-vt button{color:#2b4446}
+html.theme-light.cvm-dw .cvm-vt button.on{background:#0f2829}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(48,158,166,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(57,188,198,0.1),transparent 60%),linear-gradient(150deg,#03090a 0%,#071718 35%,#0b2628 70%,#123c3f 100%) fixed!important}

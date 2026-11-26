@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.8', date: '26/11/2026', items: [
+      'CVM Direct : choix de l’affichage des modèles, « Liste » (par défaut : une ligne par modèle avec deux lignes d’aperçu) ou « Tuiles », à côté du nombre de résultats. Le choix est mémorisé sur cet appareil.'
+    ] },
     { v: '2026-11-26.7', date: '26/11/2026', items: [
       'CVM Direct sur ordinateur : la liste des modèles prend toute la largeur, en cartes avec un aperçu des premières lignes du mail et les champs à remplir surlignés.',
       'Le mail s’ouvre dans un panneau qui arrive par la droite (champs, message complet, Copier). Échap ou la croix le referment ; Ctrl+↓ / Ctrl+↑ et Ctrl+Entrée fonctionnent toujours.',

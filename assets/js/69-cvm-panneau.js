@@ -10,8 +10,22 @@
   const panel = () => $('tab-content-cvm');
   let scrim = null;
 
+  const getView = () => { try { return localStorage.getItem('ft_cvm_view') || 'liste'; } catch (e) { return 'liste'; } };
+  function viewToggle() {
+    const badge = $('filtered-count-badge'); if (!badge || $('cvm-vt')) return;
+    const w = document.createElement('div'); w.id = 'cvm-vt'; w.className = 'cvm-vt'; w.setAttribute('role', 'group'); w.setAttribute('aria-label', 'Affichage des modèles');
+    w.innerHTML = '<button type="button" data-v="liste" title="Affichage en liste"><i data-lucide="list" class="w-3.5 h-3.5"></i>Liste</button><button type="button" data-v="tuiles" title="Affichage en tuiles"><i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>Tuiles</button>';
+    w.addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; try { localStorage.setItem('ft_cvm_view', b.dataset.v); } catch (err) {} syncView(); });
+    badge.parentNode.insertBefore(w, badge);
+    try { if (window.lucide) lucide.createIcons(); } catch (e) {}
+  }
+  function syncView() {
+    const v = getView(); root.classList.toggle('cvm-list', v !== 'tuiles');
+    document.querySelectorAll('#cvm-vt [data-v]').forEach(b => { const a = b.dataset.v === v; b.classList.toggle('on', a); b.setAttribute('aria-pressed', String(a)); });
+  }
   function apply() {
     root.classList.toggle('cvm-dw', on());
+    viewToggle(); syncView();
     if (!on()) close(true);
     if (!scrim) {
       scrim = document.createElement('div'); scrim.id = 'cvm-scrim'; scrim.setAttribute('aria-hidden', 'true');
