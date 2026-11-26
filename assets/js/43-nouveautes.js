@@ -2,6 +2,10 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.1', date: '26/11/2026', items: [
+      'Complément ARE : nouveau bloc « Ce qui se cumule avec l’ARE » en trois colonnes (cumulable, sous conditions, non cumulable), avec la règle et la source officielle de chaque motif, et un filtre de recherche.',
+      'Fenêtres « Mes données » (export des modèles) et « Modifier le modèle » : fond opaque et textes contrastés, en clair comme en sombre.'
+    ] },
     { v: '2026-11-17.1', date: '17/11/2026', items: [
       'CVM : le bouton « Copier » ne peut plus planter si le réglage « Effacer après copie » est illisible.'
     ] },
