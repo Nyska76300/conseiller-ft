@@ -39,6 +39,7 @@
       ['£', 'Trop-perçu de PAS', 'un trop-perçu de prélèvement à la source de l’impôt sur le revenu']
     ]
   };
+  Object.keys(CHOICES).forEach(k => CHOICES[k].sort((a, b) => a[1].localeCompare(b[1], 'fr', { sensitivity: 'base' })));
   window.FT_CVM_CHOICES = CHOICES;
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const OTHER = '__autre';
