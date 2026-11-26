@@ -1753,3 +1753,30 @@ html.theme-light #data-modal .data-action.is-danger strong{color:#b4233b}
 .cu-note{margin:0;font-size:.74rem;color:var(--r-sub,#9db5e0)}
 html.theme-light .cu-wrap{--r-text:#14264d;--r-sub:#566b86;--r-line:#d3e0f1;--r-card:#ffffff;--r-card2:#f2f7fd;--r-accent:#0b5cd5}
 html.theme-light .cu-ok{--cu:#1f8a5f}html.theme-light .cu-mid{--cu:#b7791f}html.theme-light .cu-no{--cu:#c2334b}
+
+/* ===== 2026-11-26.2 : barre des rubriques sur deux niveaux, onglets Simulateur / Règles plus visibles ===== */
+.hub-bar{flex-wrap:wrap!important;row-gap:10px!important;overflow:visible!important;-webkit-mask-image:none!important;mask-image:none!important}
+.hub-bar>.hub-chips{flex:1 1 100%!important}
+.hub-name{display:inline-flex!important;align-items:center;font-size:.68rem!important;font-weight:800!important;letter-spacing:.06em;text-transform:uppercase;color:#8cc0ff;margin-right:8px;padding-right:12px;border-right:1px solid rgba(110,150,240,.3)}
+.hub-tab{color:#d6e4ff!important;background:rgba(10,26,80,.55)!important;border-color:rgba(110,150,240,.32)!important;font-size:.78rem!important;padding:6px 12px!important}
+.hub-tab:hover{border-color:#5b9bff!important;color:#fff!important}
+.hub-tab.is-on{color:#fff!important;background:linear-gradient(90deg,#0b5cd5,#2a78e8)!important;border-color:transparent!important;box-shadow:0 2px 10px rgba(11,92,213,.35)!important}
+html.theme-light .hub-name{color:#0b5cd5;border-right-color:#d3e0f1}
+html.theme-light .hub-tab{color:#25406b!important;background:#f2f7fd!important;border-color:#cbd9ee!important}
+html.theme-light .hub-tab:hover{color:#0b2a6b!important;border-color:#0b5cd5!important}
+html.theme-light .hub-tab.is-on{color:#fff!important;background:linear-gradient(90deg,#0b5cd5,#2a78e8)!important;border-color:transparent!important}
+.hub-bar>.hub-sub{flex:1 1 100%!important;width:100%;margin:0!important;justify-content:flex-start!important;padding-top:10px;border-top:1px dashed rgba(110,150,240,.25)}
+.hub-bar>.hub-sub .rg-tabs{flex-wrap:nowrap!important;gap:4px!important;padding:4px!important;border-radius:14px!important;background:rgba(1,6,26,.55)!important;border:1px solid rgba(110,150,240,.35)!important;width:auto!important}
+.hub-bar>.hub-sub .rg-tab{flex:0 0 auto!important;padding:9px 22px!important;border-radius:10px!important;font-size:.9rem!important;font-weight:800!important;color:#cfe0ff!important;white-space:nowrap}
+.hub-bar>.hub-sub .rg-tab:hover{background:rgba(110,150,240,.16)!important;color:#fff!important}
+.hub-bar>.hub-sub .rg-tab.is-on{background:#eaf1ff!important;color:#0b2a6b!important;box-shadow:0 2px 8px rgba(0,0,0,.35)!important}
+html.theme-light .hub-bar>.hub-sub{border-top-color:#d3e0f1}
+html.theme-light .hub-bar>.hub-sub .rg-tabs{background:#e8f0fb!important;border-color:#c6d6ee!important}
+html.theme-light .hub-bar>.hub-sub .rg-tab{color:#25406b!important}
+html.theme-light .hub-bar>.hub-sub .rg-tab:hover{background:#d8e5f7!important;color:#0b2a6b!important}
+html.theme-light .hub-bar>.hub-sub .rg-tab.is-on{background:#14264d!important;color:#fff!important;box-shadow:0 2px 8px rgba(15,28,58,.25)!important}
+@media (max-width:900px){
+  .hub-name{display:none!important}
+  .hub-bar>.hub-sub .rg-tabs{width:100%!important}
+  .hub-bar>.hub-sub .rg-tab{flex:1 1 0!important;padding:10px 12px!important;text-align:center}
+}

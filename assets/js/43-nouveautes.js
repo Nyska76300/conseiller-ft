@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.2', date: '26/11/2026', items: [
+      'Barre du haut des simulateurs sur deux niveaux : les rubriques sur la première ligne, puis les onglets « Simulateur / Règles et calculs » en dessous, plus grands et d’une couleur distincte.'
+    ] },
     { v: '2026-11-26.1', date: '26/11/2026', items: [
       'Complément ARE : nouveau bloc « Ce qui se cumule avec l’ARE » en trois colonnes (cumulable, sous conditions, non cumulable), avec la règle et la source officielle de chaque motif, et un filtre de recherche.',
       'Fenêtres « Mes données » (export des modèles) et « Modifier le modèle » : fond opaque et textes contrastés, en clair comme en sombre.'
