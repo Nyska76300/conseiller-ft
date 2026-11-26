@@ -196,31 +196,17 @@
 
   /* ---------- Trop-perçus ---------- */
   /* Motifs de trop-perçu (causes recensées par France Travail et l’Unédic) : [code, libellé de la liste, phrase du mail] */
-  const TP_MOTIFS = [
-    ['', 'Choisir un motif…', ''],
-    ['reprise', 'Reprise d’activité non déclarée ou déclarée tardivement', 'une reprise d’activité qui n’a pas été déclarée, ou l’a été tardivement, lors de votre actualisation'],
-    ['ecart', 'Écart entre revenus déclarés et bulletin de salaire', 'un écart entre les revenus déclarés lors de votre actualisation et ceux qui figurent sur votre bulletin de salaire'],
-    ['bulletin', 'Bulletin de salaire transmis tardivement', 'la transmission tardive de votre bulletin de salaire, qui n’a pas permis de calculer à temps le montant dû'],
-    ['ans', 'Activité non salariée ou chiffre d’affaires non déclaré', 'des revenus d’activité non salariée (chiffre d’affaires) qui n’ont pas été déclarés'],
-    ['maladie', 'Arrêt maladie, maternité ou accident du travail non signalé', 'un arrêt de travail (maladie, maternité ou accident) indemnisé par l’Assurance maladie et non signalé'],
-    ['retraite', 'Retraite liquidée ou taux plein atteint', 'la liquidation de votre retraite, ou l’atteinte du nombre de trimestres pour une retraite à taux plein'],
-    ['invalidite', 'Pension d’invalidité non signalée ou modifiée', 'une pension d’invalidité, ou un changement de catégorie ou de montant, qui n’avait pas été pris en compte'],
-    ['attestation', 'Attestation employeur rectificative', 'une attestation employeur rectificative qui modifie votre salaire de référence ou vos dates de contrat'],
-    ['differe', 'Indemnités de rupture ou congés payés pris en compte après coup', 'des indemnités de rupture ou de congés payés connues après l’ouverture de vos droits, qui reportent le début de votre indemnisation'],
-    ['formation', 'Formation rémunérée par un autre organisme', 'une formation rémunérée par un autre organisme pendant une période où l’allocation vous a été versée'],
-    ['etranger', 'Séjour à l’étranger ou changement de résidence non signalé', 'un séjour à l’étranger ou un changement de résidence qui n’a pas été signalé'],
-    ['sanction', 'Radiation ou sanction appliquée après versement', 'une radiation ou une sanction prise en compte après le versement de votre allocation'],
-    ['erreur', 'Erreur de calcul ou de traitement de France Travail', 'une erreur de calcul ou de traitement de nos services, dont nous vous prions de nous excuser'],
-    ['autre', 'Autre motif (à préciser)', '']
-  ];
+  /* Motifs de trop-perçu : même liste que le menu des modèles CVM (assets/js/71-cvm-choix.js) */
+  const tpList = () => (window.FT_CVM_CHOICES && window.FT_CVM_CHOICES.motif_trop_percu || []).filter((x, i, a) => a.findIndex(y => y[1] === x[1]) === i);
+  const TP_OPTS = () => [['', 'Choisir un motif…']].concat(tpList().map(x => [x[0], x[1]])).concat([['autre', 'Autre motif (à préciser)']]);
   function tpMotif() {
     const k = val('tp-motif'), w = $('tp-autre-w'); if (w) w.hidden = k !== 'autre';
     if (k === 'autre') return val('tp-autre').trim();
-    const m = TP_MOTIFS.find(x => x[0] === k); return m ? m[2] : '';
+    const m = tpList().find(x => x[0] === k); return m ? m[2] : '';
   }
   function induSim() {
     return cols(
-      sec('1', 'Trop-perçu notifié', grid(field('Montant (€)', inp('tp-mt', 'number', 'Ex. 845,20', ' min="0" step="0.01" inputmode="decimal"')) + field('Période concernée', inp('tp-per', 'text', 'Ex. mars à mai 2026')) + '<div class="sm:col-span-2">' + field('Motif du trop-perçu', sel('tp-motif', TP_MOTIFS.map(m => [m[0], m[1]]))) + '</div><div class="sm:col-span-2" id="tp-autre-w" hidden>' + field('Préciser le motif', inp('tp-autre', 'text', 'Ex. versement en double à la suite d’une régularisation')) + '</div>'), 'Pour le mail') +
+      sec('1', 'Trop-perçu notifié', grid(field('Montant (€)', inp('tp-mt', 'number', 'Ex. 845,20', ' min="0" step="0.01" inputmode="decimal"')) + field('Période concernée', inp('tp-per', 'text', 'Ex. mars à mai 2026')) + '<div class="sm:col-span-2">' + field('Motif du trop-perçu', sel('tp-motif', TP_OPTS())) + '</div><div class="sm:col-span-2" id="tp-autre-w" hidden>' + field('Préciser le motif', inp('tp-autre', 'text', 'Ex. versement en double à la suite d’une régularisation')) + '</div>'), 'Pour le mail') +
       sec('2', 'Prescription', grid(field('Versement le plus ancien', inp('tp-v', 'date')) + field('Date de la notification', inp('tp-n', 'date')) + field('Fraude ou fausse déclaration', sel('tp-fr', [['non', 'Non'], ['oui', 'Oui']]))), '3 ans · 10 ans si fraude'),
       '<div id="tp-res" class="space-y-4"></div>' + mailPanel('indu'));
   }
@@ -369,28 +355,33 @@
     head.insertBefore(seg, right);
     const box = document.createElement('div'); box.id = 'indus-delais'; box.className = 'flex-1 overflow-y-auto p-4 md:p-6 space-y-4 fr-view'; box.hidden = true;
     view.appendChild(box);
-    let mode = 'ech', built = false;
-    const TI = { ech: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>', del: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 12v3M12 18h.01"/>' };
+    const boxR = document.createElement('div'); boxR.id = 'indus-regles'; boxR.className = box.className; boxR.hidden = true; view.appendChild(boxR);
+    let mode = 'ech', built = false, builtR = false;
+    const MODES = [['ech', 'Échéancier'], ['notif', 'Mail : trop-perçu notifié'], ['del', 'Délais et recours']];
+    const TI = { notif: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>', ech: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>', del: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 12v3M12 18h.01"/>' };
     function draw() {
-      seg.innerHTML = [['ech', 'Échéancier'], ['del', 'Délais et recours']].map(t => '<button type="button" role="tab" data-m="' + t[0] + '" aria-selected="' + (t[0] === mode) + '" class="' + (t[0] === mode ? ON : OFF) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5" aria-hidden="true">' + TI[t[0]] + '</svg><span>' + t[1] + '</span></button>').join('');
-      const del = mode === 'del';
+      seg.innerHTML = MODES.map(t => '<button type="button" role="tab" data-m="' + t[0] + '" aria-selected="' + (t[0] === mode) + '" class="' + (t[0] === mode ? ON : OFF) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5" aria-hidden="true">' + TI[t[0]] + '</svg><span>' + t[1] + '</span></button>').join('');
+      const del = mode !== 'ech';
       [...view.children].forEach(c => {
-        if (c === box || c === head || c.classList.contains('hub-bar') || c.classList.contains('rg-panel')) return;
+        if (c === box || c === boxR || c === head || c.classList.contains('hub-bar') || c.classList.contains('rg-panel')) return;
         if (del) { if (!c.dataset.frWas) { c.dataset.frWas = '1'; c.classList.add('fr-hide'); } }
         else if (c.dataset.frWas) { delete c.dataset.frWas; c.classList.remove('fr-hide'); }
       });
       right.style.display = del ? 'none' : '';
-      box.hidden = !del;
-      if (del && !built) {
+      box.hidden = mode !== 'notif'; boxR.hidden = mode !== 'del';
+      if (mode === 'notif' && !built) {
         built = true;
-        box.innerHTML = '<p class="max-w-7xl mx-auto text-xs text-slate-400">Prescription de 3 ou 10 ans, retenue sur allocations, remise de dette, contestation et médiateur, avec un mail type pour l’allocataire.</p>' + induSim() + '<div class="h-2"></div>' + induRegles();
+        box.innerHTML = '<p class="max-w-7xl mx-auto text-xs text-slate-400">Renseignez le montant, la période et le motif : le mail à l’allocataire se rédige tout seul, avec le contrôle de prescription (3 ou 10 ans).</p>' + induSim();
         ['tp-mt', 'tp-per', 'tp-motif', 'tp-autre', 'tp-v', 'tp-n', 'tp-fr'].forEach(id => { const e = $(id); if (e) { e.addEventListener('input', induRun); e.addEventListener('change', induRun); } });
         induRun();
       }
+      if (mode === 'del' && !builtR) { builtR = true; boxR.innerHTML = '<p class="max-w-7xl mx-auto text-xs text-slate-400">Prescription, retenue sur allocations, remise de dette, contestation et médiateur.</p>' + induRegles(); }
     }
     seg.addEventListener('click', e => { const b = e.target.closest('[data-m]'); if (b) { mode = b.dataset.m; draw(); } });
     document.addEventListener('click', e => { if (mode === 'del' && e.target.closest && e.target.closest('#view-indus .hub-sub button')) { mode = 'ech'; draw(); } });
-    window.ftInduMode = m => { mode = m; draw(); };
+    window.ftInduMode = m => { mode = m === 'del' ? 'notif' : m; draw(); };
+    window.FT_ACTIONS = window.FT_ACTIONS || [];
+    window.FT_ACTIONS.push({ t: 'Trop-perçu notifié : mail', s: 'Montant, période, motif : le mail de notification se rédige tout seul', kw: 'trop percu notifie notification mail indu motif prescription', run: () => { switchNavTab(6); setTimeout(() => window.ftInduMode('notif'), 80); } });
     draw();
   })();
   try { FT_KW['6'] = (FT_KW['6'] || '') + ' trop-perçu trop percu indu prescription délais recours remise dette contestation médiateur contrainte'; } catch (e) {}

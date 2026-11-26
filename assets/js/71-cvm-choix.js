@@ -55,7 +55,7 @@
       const hit = list.find(x => x[2] === cur);
       const sel = document.createElement('select');
       sel.className = inp.className + ' cvm-choice'; sel.setAttribute('aria-label', v.label);
-      sel.innerHTML = '<option value="">Choisir le motif…</option>' + list.map(x => '<option value="' + esc(x[0]) + '"' + (hit && hit[0] === x[0] ? ' selected' : '') + '>' + esc(x[0] + ' · ' + x[1]) + '</option>').join('') +
+      sel.innerHTML = '<option value="">Choisir le motif…</option>' + list.filter((x, i, a) => a.findIndex(y => y[1] === x[1]) === i).map(x => '<option value="' + esc(x[0]) + '"' + (hit && hit[0] === x[0] ? ' selected' : '') + '>' + esc(x[1]) + '</option>').join('') +
         '<option value="' + OTHER + '"' + (!hit && cur ? ' selected' : '') + '>Autre motif (texte libre)</option>';
       inp.dataset.choice = '1';
       inp.placeholder = 'Rédigez le motif (ex. « une activité déclarée en retard »)';

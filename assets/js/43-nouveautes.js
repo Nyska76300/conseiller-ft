@@ -2,6 +2,10 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.11', date: '26/11/2026', items: [
+      'Trop-perçu : le menu des motifs reprend la liste de l’application (pénalité administrative, double paiement, activité salariée, IJSS transmises par la CPAM, trop-perçu de PAS…), sans les codes lettres. Même liste et même texte dans l’onglet et dans les modèles CVM.',
+      'Trop-perçu : le mail de notification a son propre bouton en haut de l’onglet, « Mail : trop-perçu notifié », entre « Échéancier » et « Délais et recours » (aussi accessible par la recherche).'
+    ] },
     { v: '2026-11-26.10', date: '26/11/2026', items: [
       'Modèles de trop-perçu : le champ « Motif du trop-perçu » devient un menu déroulant avec les motifs de l’application (codes * à £). Le mail s’adapte au motif choisi, par exemple « correspondant à une activité professionnelle non déclarée lors de vos actualisations ». Un choix « Autre motif » permet un texte libre.',
       'CVM Direct, liste : colonne des titres plus lisible (icône, titre en gras sur deux lignes, séparateur) ; le sous-titre disparaît quand il répète le titre.'
