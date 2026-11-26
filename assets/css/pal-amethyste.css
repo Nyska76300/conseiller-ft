@@ -1875,4 +1875,11 @@ html.theme-light .cvm-top-h,html.theme-light .cvm-top-o{color:#2f1947}
 html.theme-light .cvm-top-o:hover{background:#f8f6fa}
 html.theme-light .cvm-top-n{color:#6d17dc}
 html.theme-light .cvm-top-e,html.theme-light .cvm-top-h small{color:#70657d}
+.ft-cmp-link{background:rgba(163,102,240,.1);border:1px solid rgba(182,130,248,.3);color:#ddd5e7}
+.ft-cmp-link button{background:#8332e9}
+.ft-cmp-link button:hover{background:#a162f1}
+html.theme-light .ft-cmp-link{background:#f6f3fa;border-color:#dfd5ea;color:#4a395d}
+.rp-sch-l button{border:1px solid rgba(180,129,235,.3);background:rgba(180,129,235,.08)}
+.rp-sch-l button:hover{border-color:#b682f8}
+html.theme-light .rp-sch-l button{border-color:#e2dde8;background:#faf8fc}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(103,48,166,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(123,57,198,0.1),transparent 60%),linear-gradient(150deg,#06030a 0%,#0f0718 35%,#190b28 70%,#27123f 100%) fixed!important}

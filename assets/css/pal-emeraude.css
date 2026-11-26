@@ -1875,4 +1875,11 @@ html.theme-light .cvm-top-h,html.theme-light .cvm-top-o{color:#0f2920}
 html.theme-light .cvm-top-o:hover{background:#f2f8f6}
 html.theme-light .cvm-top-n{color:#0d6142}
 html.theme-light .cvm-top-e,html.theme-light .cvm-top-h small{color:#586e67}
+.ft-cmp-link{background:rgba(19,152,104,.1);border:1px solid rgba(14,177,119,.3);color:#c4ded5}
+.ft-cmp-link button{background:#107350}
+.ft-cmp-link button:hover{background:#119565}
+html.theme-light .ft-cmp-link{background:#ecf7f3;border-color:#bfdfd5;color:#2a453c}
+.rp-sch-l button{border:1px solid rgba(32,172,127,.3);background:rgba(32,172,127,.08)}
+.rp-sch-l button:hover{border-color:#0eb177}
+html.theme-light .rp-sch-l button{border-color:#d3e2dd;background:#f4faf8}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(48,166,127,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(57,198,151,0.1),transparent 60%),linear-gradient(150deg,#030a08 0%,#071812 35%,#0b281e 70%,#123f30 100%) fixed!important}

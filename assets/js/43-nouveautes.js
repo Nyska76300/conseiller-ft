@@ -2,6 +2,12 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.15', date: '26/11/2026', items: [
+      'Modèles renommés pour des titres plus clairs (ex. « Choix entre ARE mensuelle et ARCE », « Complément ARE : principe » / « Complément ARE : calcul du montant », « Admission définitive ou provisoire », « Embauche : déclaration préalable (DPAE) »). Les modèles que vous avez modifiés gardent leur titre.',
+      '« Pas besoin de RDV » et « N’ayant pas pu vous joindre » ne font plus qu’un : « Appeler le 3949 : pas de RDV ou injoignable », avec un menu pour choisir la situation.',
+      'ARCE et maintien, Complément ARE : bouton « Comparer deux scénarios » en haut de l’onglet.',
+      'Schémas : retirés du menu, ils s’ouvrent depuis le volet Repères (et restent dans la recherche et dans Références et calculs).'
+    ] },
     { v: '2026-11-26.14', date: '26/11/2026', items: [
       'Barre du haut allégée : Dates, Calculatrice, Mode clair / sombre et Recharger sont regroupés dans le bouton « Outils ». La recherche retrouve de la place.',
       'Menu : champ « Filtrer les outils… » en haut (Entrée ouvre le premier résultat) ; rubriques repliées par défaut, sauf celle de l’outil ouvert ; un clic sur une rubrique l’ouvre ou la ferme, et le choix est mémorisé.',

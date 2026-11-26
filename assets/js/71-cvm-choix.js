@@ -40,6 +40,7 @@
     ]
   };
   CHOICES.type_admission = [['def', 'Définitive', 'définitive'], ['prov', 'Provisoire', 'provisoire']];
+  CHOICES.contexte_3949 = [['rdv', 'Pas besoin de rendez-vous', 'Il n\'est pas nécessaire de prendre rendez-vous. Je vous invite'], ['injoignable', 'Pas pu vous joindre par téléphone', 'N\'ayant pas pu vous joindre ce jour par téléphone, je vous invite']];
   CHOICES.evenement_declare = [['travail', 'Travail', 'travail'], ['formation', 'Formation', 'formation'], ['stage', 'Stage', 'stage'], ['mission', 'Mission d’intérim', 'mission d’intérim']];
   Object.keys(CHOICES).filter(k => k === 'motif_trop_percu').forEach(k => CHOICES[k].sort((a, b) => a[1].localeCompare(b[1], 'fr', { sensitivity: 'base' })));
   /* Mois : menu des 24 derniers mois et des 3 suivants (« septembre 2026 ») */
@@ -59,7 +60,7 @@
       const inp = [...grid.querySelectorAll('input')].find(i => (i.getAttribute('oninput') || '').indexOf("'" + v.key + "'") >= 0);
       if (!inp || inp.dataset.choice) return;
       let store = {}; try { store = userVariables[tpl.id] || {}; } catch (e) {}
-      const cur = store[v.key] || '';
+      const cur = store[v.key] || inp.value || '';
       const hit = list.find(x => x[2] === cur);
       const sel = document.createElement('select');
       sel.className = inp.className + ' cvm-choice'; sel.setAttribute('aria-label', v.label);
