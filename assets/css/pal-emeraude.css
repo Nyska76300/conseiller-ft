@@ -1842,4 +1842,6 @@ html.cvm-dw .cvm-vt button.on{color:#071b14;background:#e5f4ef}
 html.theme-light.cvm-dw .cvm-vt{border-color:#d3e2dd}
 html.theme-light.cvm-dw .cvm-vt button{color:#2a453c}
 html.theme-light.cvm-dw .cvm-vt button.on{background:#0f2920}
+@media (min-width:1024px){html.cvm-dw #view-cvm>main::before{background:linear-gradient(180deg,#167854,#24dd73)}#cvm-scrim{background:rgba(1,6,4,.55)}html.theme-light #cvm-scrim{background:rgba(11,30,23,.3)}}
+.ft-pi-dot{border:2px solid #04130e}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(48,166,127,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(57,198,151,0.1),transparent 60%),linear-gradient(150deg,#030a08 0%,#071812 35%,#0b281e 70%,#123f30 100%) fixed!important}

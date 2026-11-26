@@ -2,6 +2,12 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.9', date: '26/11/2026', items: [
+      'Post-it dans la barre du haut : une note rapide sur papier jaune, enregistrée automatiquement sur cet appareil. Un point orange signale qu’une note est en cours.',
+      '« Aide-mémo » devient « Repères » (seuils et montants clés, touche ?).',
+      'Interprète vocal : icône seule dans la barre du haut (le nom reste en info-bulle).',
+      'CVM Direct : titres centrés et soulignés dans la liste ; le panneau du mail s’ouvre avec un glissement, un fondu du fond et une apparition progressive du contenu.'
+    ] },
     { v: '2026-11-26.8', date: '26/11/2026', items: [
       'CVM Direct : choix de l’affichage des modèles, « Liste » (par défaut : une ligne par modèle avec deux lignes d’aperçu) ou « Tuiles », à côté du nombre de résultats. Le choix est mémorisé sur cet appareil.'
     ] },

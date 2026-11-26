@@ -195,7 +195,7 @@
     [/^Mon activité/i, 'Ouvrir', () => window.ftMyActivity && window.ftMyActivity()],
     [/^Thème automatique|^Relief/i, 'Régler', () => window.ftOpenSettings && window.ftOpenSettings()],
     [/^Couleurs/i, 'Choisir', () => window.ftOpenSettings && window.ftOpenSettings()],
-    [/^Aide-mémo/i, 'Ouvrir', () => window.ftRpToggle && window.ftRpToggle(true)],
+    [/^(Aide-mémo|Repères)/i, 'Ouvrir', () => window.ftRpToggle && window.ftRpToggle(true)],
     [/^Mode formation/i, 'Ouvrir', () => switchNavTab('formation')],
     [/^Mails pré-remplis/i, 'Ouvrir', () => switchNavTab('cvm')],
     [/^Quoi de neuf/i, '', null, () => false],
