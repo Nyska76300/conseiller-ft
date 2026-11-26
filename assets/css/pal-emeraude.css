@@ -1882,4 +1882,7 @@ html.theme-light .ft-cmp-link{background:#ecf7f3;border-color:#bfdfd5;color:#2a4
 .rp-sch-l button{border:1px solid rgba(32,172,127,.3);background:rgba(32,172,127,.08)}
 .rp-sch-l button:hover{border-color:#0eb177}
 html.theme-light .rp-sch-l button{border-color:#d3e2dd;background:#f4faf8}
+html:not(.cvm-dw) .cvm-xtra button{color:#b2d3c8;background:rgba(1,7,5,.5);border:1px solid rgba(32,172,127,.28)}
+html:not(.cvm-dw) .cvm-xtra b{background:rgba(32,172,127,.2)}
+html.theme-light:not(.cvm-dw) .cvm-xtra button{color:#2a453c;border-color:#d3e2dd}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(48,166,127,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(57,198,151,0.1),transparent 60%),linear-gradient(150deg,#030a08 0%,#071812 35%,#0b281e 70%,#123f30 100%) fixed!important}

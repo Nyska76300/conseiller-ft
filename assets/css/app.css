@@ -2137,3 +2137,13 @@ html.theme-light .ft-cmp-link{background:#eef5ff;border-color:#c5dafa;color:#254
 html.theme-light .rp-sch-l button{border-color:#d3e0f1;background:#f5f9ff}
 .hub-bar+.ft-cmp-link{margin:12px var(--ft-pad,24px) 6px}
 @media (max-width:640px){.hub-bar+.ft-cmp-link{margin:10px 10px 4px}}
+/* 2026-11-26.16 : volet de lecture fixe à droite ; Brouillons et Plus utilisés gardés */
+html:not(.cvm-dw) .cvm-vt{display:none!important}
+html:not(.cvm-dw) .cvm-xtra{display:inline-flex;gap:6px;margin-left:auto}
+html:not(.cvm-dw) .cvm-xtra button{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:8px;font-size:.7rem;font-weight:700;color:#b8cdf2;background:rgba(1,6,26,.5);border:1px solid rgba(110,150,240,.28);cursor:pointer;white-space:nowrap}
+html:not(.cvm-dw) .cvm-xtra button.on{color:#1f1500;background:#e0a52a;border-color:#e0a52a}
+html:not(.cvm-dw) .cvm-xtra b{padding:0 5px;border-radius:999px;background:rgba(110,150,240,.2);font-size:.64rem}
+html.theme-light:not(.cvm-dw) .cvm-xtra button{color:#25406b;background:#fff;border-color:#d3e0f1}
+html.theme-light:not(.cvm-dw) .cvm-xtra button.on{color:#4a3000;background:#f6c453;border-color:#f6c453}
+html.cvm-only-drafts #templates-list [data-tpl-id]:not(.is-draft){display:none!important}
+.cvm-dmark{display:inline-block;margin-left:6px;padding:0 6px;border-radius:999px;font-size:.6rem;font-weight:800;color:#1f1500;background:#fcd34d;vertical-align:middle;white-space:nowrap}

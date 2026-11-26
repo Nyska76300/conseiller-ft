@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.16', date: '26/11/2026', items: [
+      'CVM Direct : retour à la disposition d’avant, avec la liste des modèles au centre et le mail ouvert en permanence à droite (fin du panneau coulissant et des tuiles). Les boutons « Brouillons » et « Plus utilisés » restent au-dessus de la liste.'
+    ] },
     { v: '2026-11-26.15', date: '26/11/2026', items: [
       'Modèles renommés pour des titres plus clairs (ex. « Choix entre ARE mensuelle et ARCE », « Complément ARE : principe » / « Complément ARE : calcul du montant », « Admission définitive ou provisoire », « Embauche : déclaration préalable (DPAE) »). Les modèles que vous avez modifiés gardent leur titre.',
       '« Pas besoin de RDV » et « N’ayant pas pu vous joindre » ne font plus qu’un : « Appeler le 3949 : pas de RDV ou injoignable », avec un menu pour choisir la situation.',

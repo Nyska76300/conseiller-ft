@@ -6,7 +6,9 @@
   const $ = id => document.getElementById(id);
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const tab = () => { try { return String(activeNavTab); } catch (e) { return ''; } };
-  const on = () => window.innerWidth >= MIN_W;
+  /* 2026-11-26.16 : retour au volet de lecture fixe à droite (demande du conseiller) ; le panneau coulissant est désactivé. */
+  const DRAWER = false;
+  const on = () => DRAWER && window.innerWidth >= MIN_W;
   const panel = () => $('tab-content-cvm');
   let scrim = null;
 
@@ -60,6 +62,11 @@
     root.classList.remove('cvm-open');
     if (!silent) { const a = document.querySelector('#templates-list [data-tpl-id].is-active-card, #templates-list .bg-blue-600\\/15'); if (a) try { a.focus({ preventScroll: true }); } catch (e) {} }
   }
+  if (typeof handleVarChange === 'function') {
+    const _h = handleVarChange; let dt;
+    handleVarChange = function () { const r = _h.apply(this, arguments); clearTimeout(dt); dt = setTimeout(() => { try { if (!on()) drafts(); } catch (e) {} }, 250); return r; };
+    window.handleVarChange = handleVarChange;
+  }
   window.ftCvmPanelOpen = open; window.ftCvmPanelClose = close;
 
   /* Aperçu du mail et bouton Copier sur chaque carte */
@@ -68,8 +75,22 @@
     const body = String(tpl.body || '').slice(0, 420);
     return esc(body).replace(/\{\{\s*([\w.-]+)\s*\}\}/g, (m, k) => '<span class="cvm-pv-var">' + esc(vars[k] || k) + '</span>').replace(/\n+/g, ' ');
   }
+  function drafts() {
+    const list = $('templates-list'); if (!list) return;
+    list.querySelectorAll('[data-tpl-id]').forEach(c => {
+      let ud = {}; try { ud = userVariables[c.dataset.tplId] || {}; } catch (e) {}
+      const d = Object.keys(ud).some(k => String(ud[k] == null ? '' : ud[k]).trim());
+      c.classList.toggle('is-draft', d);
+      let m = c.querySelector(':scope .cvm-dmark');
+      if (d && !m) { m = document.createElement('span'); m.className = 'cvm-dmark'; m.textContent = '✎ brouillon'; const t = c.querySelector('.min-w-0 > .min-w-0 > span'); if (t) { t.parentNode.insertBefore(m, t.nextSibling); } else c.appendChild(m); }
+      if (!d && m) m.remove();
+      const sp = c.querySelectorAll('.min-w-0 > .min-w-0 > span'); if (sp.length > 1 && sp[0].textContent.trim() === sp[1].textContent.trim()) sp[1].classList.add('cvm-dup');
+    });
+    const nb = $('cvm-drafts-n'); if (nb) nb.textContent = list.querySelectorAll('[data-tpl-id].is-draft').length;
+  }
   function cards() {
-    const list = $('templates-list'); if (!list || !on()) return;
+    const list = $('templates-list'); if (!list) return;
+    if (!on()) { drafts(); return; }
     let tpls = []; try { tpls = templates; } catch (e) {}
     const byId = {}; tpls.forEach(t => { byId[t.id] = t; });
     list.querySelectorAll('[data-tpl-id]').forEach(c => {
