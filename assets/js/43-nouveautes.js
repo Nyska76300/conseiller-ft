@@ -2,6 +2,10 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.20', date: '26/11/2026', items: [
+      'CVM Direct : deux nouvelles rubriques sous Favoris. « SAE » regroupe tous les mails dont le titre contient SAE (modèles officiels et les vôtres). « Plus utilisés » affiche vos 10 mails les plus copiés sur ce poste, du plus copié au moins copié.',
+      'Le modèle « Admission définitive ou provisoire » s’appelle désormais « SAE : admission définitive ou provisoire ».'
+    ] },
     { v: '2026-11-26.19', date: '26/11/2026', items: [
       'CVM Direct : filtres rapides au-dessus de la liste : Tous, Prêts à copier, À remplir, Brouillons (avec le nombre de modèles).',
       'Flèches ↑ et ↓ du clavier : passent au modèle précédent ou suivant (quand vous n’êtes pas dans un champ).',

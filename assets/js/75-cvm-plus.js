@@ -133,7 +133,7 @@
     copyCurrentMail = function () {
       const orig = copyToClipboard;
       copyToClipboard = function (t) { return orig.call(this, addSignoff(t)); };
-      try { return _c.apply(this, arguments); } finally { copyToClipboard = orig; }
+      try { return _c.apply(this, arguments); } finally { copyToClipboard = orig; setTimeout(() => { try { renderCategoryPills(); } catch (e) {} }, 50); }
     };
     window.copyCurrentMail = copyCurrentMail;
   }

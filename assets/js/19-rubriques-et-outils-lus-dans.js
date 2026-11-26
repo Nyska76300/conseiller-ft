@@ -496,7 +496,7 @@
     const l = document.querySelector('#cvm-m-bar .cm-l'), n = document.querySelector('#cvm-m-bar .cm-n'); if (!l) return;
     let cur = 'all', cnt = 0;
     try { cur = currentCategory; cnt = cur === 'all' ? templates.length : cur === 'favorites' ? templates.filter(t => favorites.includes(t.id)).length : templates.filter(t => t.category === cur).length; } catch (e) {}
-    l.textContent = cur === 'all' ? 'Toutes les catégories' : cur === 'favorites' ? 'Favoris' : cur;
+    l.textContent = cur === 'all' ? 'Toutes les catégories' : cur === 'favorites' ? 'Favoris' : cur === '__sae' ? 'SAE' : cur === '__top' ? 'Plus utilisés' : cur;
     n.textContent = cnt;
   }
   window.ftCvmCats = catsOpen;
