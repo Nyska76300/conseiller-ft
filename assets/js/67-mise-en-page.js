@@ -1,6 +1,5 @@
 (function () {
   /* Mise en page inspirée de MEAD (sans toucher à l'en-tête) :
-     1. menu latéral fixe sur grand écran (le bouton « Menu » le replie / déplie) ;
      2. accueil : tuiles de chiffres et bandeau des chiffres clés du barème ;
      3. cartes d'outils avec sous-titre et badge « Nouveau » ;
      4. raccourci « / » pour la recherche ;
@@ -11,59 +10,6 @@
   const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : v; } catch (e) { return d; } };
   const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
   const eur = (x, d) => Number(x).toLocaleString('fr-FR', { minimumFractionDigits: d == null ? 2 : d, maximumFractionDigits: d == null ? 2 : d }) + ' €';
-
-  /* ---------- 1. Menu latéral fixe ---------- */
-  const DOCK_MIN = 1280;
-  const curTab = () => { try { return String(activeNavTab); } catch (e) { return ''; } };
-  /* CVM Direct a déjà sa propre colonne : sous 1600 px, le menu y redevient escamotable */
-  const wide = () => window.innerWidth >= DOCK_MIN && !(curTab() === 'cvm' && window.innerWidth < 1600);
-  function dockApply() {
-    const on = wide();
-    root.classList.toggle('ft-dock', on);
-    root.classList.toggle('ft-dock-min', on && lsGet('ft_dock', '1') === '0');
-    if (on) { const bd = $('burger-backdrop'); if (bd) bd.classList.add('hidden'); }
-    sideExtras();
-  }
-  if (typeof toggleBurgerMenu === 'function') {
-    const _tb = toggleBurgerMenu;
-    toggleBurgerMenu = function (f) {
-      if (wide()) {
-        if (typeof f === 'boolean') return;           /* les fermetures automatiques ne replient pas le menu fixe */
-        lsSet('ft_dock', root.classList.contains('ft-dock-min') ? '1' : '0');
-        dockApply(); return;
-      }
-      return _tb.apply(this, arguments);
-    };
-    window.toggleBurgerMenu = toggleBurgerMenu;
-  }
-  function sideExtras() {
-    const list = $('burger-tabs-list'); if (!list) return;
-    /* nombre d'outils par rubrique */
-    list.querySelectorAll('.menu-sec').forEach(s => {
-      const h = s.querySelector('.menu-sec-h'); if (!h) return;
-      const n = s.querySelectorAll('button[onclick^="switchNavTab"]').length;
-      if (h.dataset.n !== String(n)) h.dataset.n = String(n);
-    });
-    /* bouton de thème en bas du menu */
-    const dr = $('burger-nav-drawer');
-    if (dr && !$('ms-theme') && typeof toggleTheme === 'function') {
-      const b = document.createElement('button'); b.type = 'button'; b.id = 'ms-theme'; b.className = 'ms-theme';
-      b.addEventListener('click', () => { toggleTheme(); setTimeout(themeLabel, 50); });
-      dr.appendChild(b);
-    }
-    themeLabel();
-  }
-  function themeLabel() {
-    const b = $('ms-theme'); if (!b) return;
-    const light = root.classList.contains('theme-light');
-    const t = light ? '🌙 Mode sombre' : '☀️ Mode clair';
-    if (b.textContent !== t) b.textContent = t;
-  }
-  if (typeof renderBurgerTabs === 'function') {
-    const _rb = renderBurgerTabs;
-    renderBurgerTabs = function () { const r = _rb.apply(this, arguments); try { sideExtras(); } catch (e) {} return r; };
-  }
-  let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(dockApply, 120); });
 
   /* ---------- 2. Accueil : tuiles et bandeau des chiffres clés ---------- */
   function homeExtras() {
@@ -135,9 +81,9 @@
     host.insertAdjacentElement('afterend', f);
   }
 
-  function all() { try { dockApply(); } catch (e) {} try { homeExtras(); chips(); } catch (e) {} try { footer(); } catch (e) {} }
+  function all() { try { homeExtras(); chips(); } catch (e) {} try { footer(); } catch (e) {} }
   const _sw = switchNavTab;
-  switchNavTab = function () { const r = _sw.apply(this, arguments); try { dockApply(); } catch (e) {} setTimeout(() => { try { homeExtras(); chips(); themeLabel(); } catch (e) {} }, 80); return r; };
+  switchNavTab = function () { const r = _sw.apply(this, arguments); setTimeout(() => { try { homeExtras(); chips(); } catch (e) {} }, 80); return r; };
   /* l'accueil se redessine parfois (favoris, nouveautés) : on complète les cartes sans boucle */
   let mo = null, pend = false;
   function watch() {
