@@ -1844,7 +1844,10 @@ html.theme-light.cvm-dw .cvm-vt button{color:#3e4043}
 html.theme-light.cvm-dw .cvm-vt button.on{background:#222427}
 @media (min-width:1024px){html.cvm-dw #view-cvm>main::before{background:linear-gradient(180deg,#3d6c9d,#80cdd1)}#cvm-scrim{background:rgba(4,5,5,.55)}html.theme-light #cvm-scrim{background:rgba(25,26,29,.3)}}
 .ft-pi-dot{border:2px solid #0f1012}
-@media (min-width:1024px){html.cvm-dw.cvm-list #templates-list>.cvm-card>div:first-child{border-right:1px solid rgba(121,154,204,.18)}html.theme-light.cvm-dw.cvm-list #templates-list>.cvm-card>div:first-child{border-right-color:#e7e7e8}}
 .cvm-choice-hint{color:#b2b4b7}
 html.theme-light .cvm-choice-hint{color:#68696b}
+.cvm-chip{color:#d4d5d7;background:rgba(121,154,204,.12);border:1px solid rgba(121,154,204,.18)}
+.cvm-chip.is-cat{color:#aec9e7;background:rgba(61,108,157,.22);border-color:rgba(61,108,157,.4)}
+html.theme-light .cvm-chip{color:#4d4e50;background:#f2f3f3;border-color:#e3e4e5}
+html.theme-light .cvm-chip.is-cat{color:#274a71;background:#ebeced;border-color:#cdced1}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(98,106,116,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(117,126,138,0.1),transparent 60%),linear-gradient(150deg,#060607 0%,#0e0f11 35%,#17191c 70%,#25282c 100%) fixed!important}

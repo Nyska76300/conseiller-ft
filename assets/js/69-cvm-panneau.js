@@ -76,7 +76,10 @@
       const ft = document.createElement('div'); ft.className = 'cvm-ft';
       ft.innerHTML = '<span class="cvm-nv">' + (nV ? nV + ' champ' + (nV > 1 ? 's' : '') + ' à remplir' : 'Prêt à copier') + '</span>' +
         (nV ? '<span class="cvm-open-l">Ouvrir ›</span>' : '<button type="button" class="cvm-copy" data-copy="' + esc(t.id) + '"><i data-lucide="copy" class="w-3.5 h-3.5"></i>Copier</button>');
-      c.appendChild(pv); c.appendChild(ft);
+      const ch = document.createElement('div'); ch.className = 'cvm-chips';
+      const tags = (t.tags || []).join(' ').split(/[,;]+/).map(x => x.trim()).filter(Boolean).slice(0, 3);
+      ch.innerHTML = '<span class="cvm-chip is-cat">' + esc(t.category || '') + '</span>' + (nV ? '<span class="cvm-chip is-nv">' + nV + ' champ' + (nV > 1 ? 's' : '') + '</span>' : '<span class="cvm-chip is-ok">prêt à copier</span>') + tags.map(x => '<span class="cvm-chip">' + esc(x.toLowerCase()) + '</span>').join('');
+      c.appendChild(pv); c.appendChild(ch); c.appendChild(ft);
     });
     try { if (window.lucide) lucide.createIcons(); } catch (e) {}
   }
