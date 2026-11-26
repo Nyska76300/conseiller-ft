@@ -1755,4 +1755,33 @@ html.theme-light .hub-bar>.hub-sub .rg-tabs{background:#f1eef5!important;border-
 html.theme-light .hub-bar>.hub-sub .rg-tab{color:#4a395d!important}
 html.theme-light .hub-bar>.hub-sub .rg-tab:hover{background:#e7e2ee!important;color:#360f62!important}
 html.theme-light .hub-bar>.hub-sub .rg-tab.is-on{background:#2f1947!important;box-shadow:0 2px 8px rgba(34,19,52,.25)!important}
+.menu-sec-h[data-n]::after{background:rgba(180,129,235,.18);color:#d3c8e0}
+html.theme-light .menu-sec-h[data-n]::after{background:#f0ecf4;color:#4a395d}
+.ms-theme{color:#e8e0f2;background:rgba(39,15,66,.55);border:1px solid rgba(180,129,235,.3)}
+.ms-theme:hover{border-color:#b682f8}
+html.theme-light .ms-theme{color:#4a395d;background:#f8f6fa;border-color:#e2dde8}
+.fh-kpi{background:rgba(26,8,46,.64);border:1px solid rgba(180,129,235,.22)}
+.fh-kpi strong{color:#f3eff8}
+.fh-kpi span{color:#bcafca}
+html.theme-light .fh-kpi{border-color:#e2dde8}
+html.theme-light .fh-kpi strong{color:#2f1947}
+html.theme-light .fh-kpi span{color:#70657d}
+.fh-ticker{background:rgba(11,3,19,.55);border:1px solid rgba(180,129,235,.22)}
+.fh-tk-l{color:#200e34;background:#ceaefb}
+.fh-tk-r{color:#e8e0f2}
+.fh-tk-i b{color:#ceaefb}
+.fh-tk-s{color:rgba(206,174,251,.5)}
+html.theme-light .fh-ticker{border-color:#e2dde8}
+html.theme-light .fh-tk-l{background:#6d17dc}
+html.theme-light .fh-tk-r{color:#4a395d}
+html.theme-light .fh-tk-i b{color:#6d17dc}
+.fh-chip .fh-cs{color:#bcafca}
+html.theme-light .fh-chip .fh-cs{color:#70657d}
+.fh-chip .fh-new{color:#200e34}
+.ft-foot{color:#bcafca;border-top:1px solid rgba(180,129,235,.18);background:#130623}
+.ft-foot a{color:#ceaefb}
+html.theme-light .ft-foot{color:#70657d;background:#fbf9fc;border-top-color:#e2dde8}
+html.theme-light .ft-foot a{color:#6d17dc}
+html.theme-light #burger-tabs-list button[class*="from-blue-900"]{background:#efeaf4!important;border-color:#6d17dc!important}
+html.theme-light #burger-tabs-list button[class*="from-blue-900"] .text-xs,html.theme-light #burger-tabs-list button[class*="from-blue-900"] span{color:#360f62!important}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(103,48,166,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(123,57,198,0.1),transparent 60%),linear-gradient(150deg,#06030a 0%,#0f0718 35%,#190b28 70%,#27123f 100%) fixed!important}

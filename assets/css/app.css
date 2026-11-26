@@ -1780,3 +1780,73 @@ html.theme-light .hub-bar>.hub-sub .rg-tab.is-on{background:#14264d!important;co
   .hub-bar>.hub-sub .rg-tabs{width:100%!important}
   .hub-bar>.hub-sub .rg-tab{flex:1 1 0!important;padding:10px 12px!important;text-align:center}
 }
+
+/* ===== 2026-11-26.3 : menu latéral fixe, chiffres clés, cartes d'outils, pied de page ===== */
+@media (min-width:1280px){
+  html.ft-dock{--dock:256px}
+  html.ft-dock #burger-nav-drawer{top:56px!important;height:calc(100vh - 56px)!important;height:calc(100dvh - 56px)!important;width:var(--dock)!important;max-width:none!important;transform:none!important;box-shadow:none!important;z-index:30!important;transition:none!important}
+  html.ft-dock #burger-backdrop{display:none!important}
+  html.ft-dock body>.ft-split-host,html.ft-dock #ft-foot{margin-left:var(--dock)}
+  html.ft-dock #burger-nav-drawer>div:first-child,html.ft-dock #burger-nav-drawer>div.px-3.pt-3.pb-1{display:none!important}
+  html.ft-dock #burger-tabs-list{padding:10px 10px 6px!important}
+  html.ft-dock #burger-tabs-list button[onclick^="switchNavTab"]{padding:6px 8px!important;gap:10px!important;align-items:center!important;border-radius:10px!important}
+  html.ft-dock #burger-tabs-list button[onclick^="switchNavTab"] p{display:none!important}
+  html.ft-dock #burger-tabs-list button[onclick^="switchNavTab"]>div:first-child{width:28px!important;height:28px!important;border-radius:8px!important}
+  html.ft-dock #burger-tabs-list button[onclick^="switchNavTab"]>div:first-child svg{width:15px!important;height:15px!important}
+  html.ft-dock #burger-tabs-list .space-y-1\.5>:not([hidden])~:not([hidden]){margin-top:3px!important}
+  html.ft-dock #burger-tabs-list .text-xs{font-size:.8rem!important}
+  html.ft-dock.ft-dock-min{--dock:0px}
+  html.ft-dock.ft-dock-min #burger-nav-drawer{display:none!important}
+}
+.menu-sec-h{display:flex!important;align-items:center;gap:8px}
+.menu-sec-h[data-n]::after{content:attr(data-n);margin-left:auto;font-size:.66rem;font-weight:800;padding:1px 7px;border-radius:999px;background:rgba(110,150,240,.18);color:#b8cdf2;letter-spacing:0}
+html.theme-light .menu-sec-h[data-n]::after{background:#e6eefa;color:#25406b}
+.ms-theme{flex:none;margin:0 10px 10px;padding:9px 12px;border-radius:11px;font-size:.8rem;font-weight:700;text-align:left;color:#d6e4ff;background:rgba(10,26,80,.55);border:1px solid rgba(110,150,240,.3);cursor:pointer}
+.ms-theme:hover{border-color:#5b9bff}
+html.theme-light .ms-theme{color:#25406b;background:#f2f7fd;border-color:#d3e0f1}
+.fh-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 0}
+.fh-kpi{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border-radius:14px;background:rgba(4,16,58,.64);border:1px solid rgba(110,150,240,.22);min-width:0}
+.fh-kpi strong{font-size:1.35rem;font-weight:800;color:#eaf1ff;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fh-kpi span{font-size:.72rem;font-weight:600;color:#9db5e0}
+html.theme-light .fh-kpi{background:#fff;border-color:#d3e0f1}
+html.theme-light .fh-kpi strong{color:#14264d}
+html.theme-light .fh-kpi span{color:#566b86}
+@media (max-width:700px){.fh-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.fh-kpi strong{font-size:1.1rem}}
+.fh-ticker{display:flex;align-items:center;gap:10px;margin:10px 0 4px;padding:8px 12px;border-radius:12px;background:rgba(1,6,26,.55);border:1px solid rgba(110,150,240,.22);overflow:hidden}
+.fh-tk-l{flex:none;font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#0a1640;background:#8cc0ff;padding:3px 8px;border-radius:999px}
+.fh-tk-w{flex:1;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent)}
+.fh-tk-r{display:inline-flex;align-items:center;gap:12px;white-space:nowrap;animation:fhtk 60s linear infinite;font-size:.8rem;color:#d6e4ff}
+.fh-tk-r>span[aria-hidden]{display:inline-flex;align-items:center;gap:12px}
+.fh-tk-i b{color:#8cc0ff;font-weight:700}
+.fh-tk-s{color:rgba(140,192,255,.5)}
+.fh-ticker:hover .fh-tk-r,.fh-ticker:focus-within .fh-tk-r{animation-play-state:paused}
+@keyframes fhtk{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.fh-tk-r{animation:none}.fh-tk-w{overflow-x:auto}}
+html.theme-light .fh-ticker{background:#fff;border-color:#d3e0f1}
+html.theme-light .fh-tk-l{color:#fff;background:#0b5cd5}
+html.theme-light .fh-tk-r{color:#25406b}
+html.theme-light .fh-tk-i b{color:#0b5cd5}
+.fh-chip .fh-ct{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1}
+.fh-chip .fh-cs{font-size:.7rem;font-weight:500;color:#9db5e0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+html.theme-light .fh-chip .fh-cs{color:#566b86}
+.fh-chip .fh-new{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:999px;font-size:.6rem;font-weight:800;vertical-align:2px;color:#0a1640;background:#7ee2b8}
+html.theme-light .fh-chip .fh-new{color:#fff;background:#17704b}
+.ft-foot{flex:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 18px;padding:5px 16px;font-size:.7rem;color:#9db5e0;border-top:1px solid rgba(110,150,240,.18);background:#030c2c}
+.ft-foot a{color:#8cc0ff;text-decoration:underline}
+.ft-foot b{color:#f5c76a;font-weight:700}
+.ft-foot-v{opacity:.8}
+html.theme-light .ft-foot{color:#566b86;background:#f7faff;border-top-color:#d3e0f1}
+html.theme-light .ft-foot a{color:#0b5cd5}
+html.theme-light .ft-foot b{color:#8a5a00}
+@media (max-width:1023px){.ft-foot{display:none}}
+@media print{.ft-foot,.fh-ticker{display:none!important}}
+@media (min-width:1280px) and (max-width:1759px){
+  html.ft-dock #view-home .home-wrap.fh-on{grid-template-columns:minmax(0,1fr) minmax(300px,340px)!important;grid-template-areas:"c l" "c r"!important;grid-template-rows:auto 1fr!important}
+  html.ft-dock #view-home .home-wrap.fh-on>.fh-L{grid-area:l!important}
+  html.ft-dock #view-home .home-wrap.fh-on>.fh-C{grid-area:c!important}
+  html.ft-dock #view-home .home-wrap.fh-on>.fh-R{grid-area:r!important;align-self:start}
+}
+.home-hero>.fh-kpis,.home-hero>.fh-ticker{grid-column:1/-1;width:100%;position:relative;z-index:1}
+.home-hero>.fh-kpis{margin-top:16px}
+html.theme-light #burger-tabs-list button[class*="from-blue-900"]{background:#e3edfb!important;border-color:#0b5cd5!important;box-shadow:none!important}
+html.theme-light #burger-tabs-list button[class*="from-blue-900"] .text-xs,html.theme-light #burger-tabs-list button[class*="from-blue-900"] span{color:#0b2a6b!important}

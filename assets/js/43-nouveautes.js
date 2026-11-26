@@ -2,6 +2,13 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.3', date: '26/11/2026', items: [
+      'Nouvelle mise en page sur grand écran : le menu reste affiché à gauche, avec le nombre d’outils par rubrique et le bouton Mode clair / sombre en bas. Le bouton « Menu » le replie ou le déplie (dans CVM Direct, il redevient escamotable sous 1600 px de large).',
+      'Accueil : tuiles de chiffres (outils, modèles de mails, barème vérifié, revalorisation) et bandeau défilant des chiffres clés du barème (allocation minimale, partie fixe, dégressivité, ASS…). Le bandeau se met en pause au survol.',
+      'Cartes d’outils de l’accueil : un sous-titre sous chaque outil et le badge « Nouveau ».',
+      'Touche « / » : place le curseur dans la recherche.',
+      'Pied de page sur ordinateur : sources (Unédic, France Travail, Service-public), date de vérification de la réglementation et mention « Indicatif ».'
+    ] },
     { v: '2026-11-26.2', date: '26/11/2026', items: [
       'Barre du haut des simulateurs sur deux niveaux : les rubriques sur la première ligne, puis les onglets « Simulateur / Règles et calculs » en dessous, plus grands et d’une couleur distincte.'
     ] },
