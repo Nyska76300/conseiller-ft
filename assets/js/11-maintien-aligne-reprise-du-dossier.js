@@ -76,7 +76,7 @@
   window.ftMtOpen = id => { switchNavTab('cvm'); selectCategory('all'); selectTemplate(id); };
 
   /* ---------- 4. Export et import complets ---------- */
-  const KEEP = ['ft_dossiers', 'ft_todos', 'ft_profile', 'ft_tool_use', 'ft_settings', 'ft_theme', 'ft_calc_history', 'ft_recent_templates', 'ft_user_vars', 'ft_sort_mode', 'ft_cat_sort_mode'];
+  const KEEP = ['ft_dossiers', 'ft_todos', 'ft_profile', 'ft_tool_use', 'ft_settings', 'ft_theme', 'ft_calc_history', 'ft_recent_templates', 'ft_user_vars', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_cat_over', 'ft_signoff', 'ft_tpl_usage', 'ft_postits'];
   ftExportData = function () {
     let me = null; try { me = ftCurrentUser(); } catch (e) {}
     const extra = {}; KEEP.forEach(k => { const v = safeLS.getItem(k); if (v != null) extra[k] = v; });

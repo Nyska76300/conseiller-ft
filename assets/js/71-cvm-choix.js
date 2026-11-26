@@ -49,6 +49,9 @@
   const choicesFor = (key) => CHOICES[key] || (/^mois(_|$)/.test(key) && !/^mois_annee_attendu$/.test(key) ? monthList() : null);
   window.ftCvmChoicesFor = choicesFor;
   window.FT_CVM_CHOICES = CHOICES;
+  /* Réponse la plus courante, choisie d'office (modifiable) */
+  const DEFAULTS = { contexte_3949: 'rdv', type_admission: 'def', evenement_declare: 'travail' };
+  window.FT_CVM_DEFAULTS = {}; Object.keys(DEFAULTS).forEach(k => { const x = (CHOICES[k] || []).find(y => y[0] === DEFAULTS[k]); if (x) window.FT_CVM_DEFAULTS[k] = x[2]; });
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const OTHER = '__autre';
 
@@ -60,7 +63,8 @@
       const inp = [...grid.querySelectorAll('input')].find(i => (i.getAttribute('oninput') || '').indexOf("'" + v.key + "'") >= 0);
       if (!inp || inp.dataset.choice) return;
       let store = {}; try { store = userVariables[tpl.id] || {}; } catch (e) {}
-      const cur = store[v.key] || inp.value || '';
+      let cur = store[v.key] || inp.value || '';
+      if (!cur && window.FT_CVM_DEFAULTS[v.key]) { cur = window.FT_CVM_DEFAULTS[v.key]; inp.value = cur; setTimeout(() => { try { handleVarChange(tpl.id, v.key, cur); } catch (e) {} }, 0); }
       const hit = list.find(x => x[2] === cur);
       const sel = document.createElement('select');
       sel.className = inp.className + ' cvm-choice'; sel.setAttribute('aria-label', v.label);

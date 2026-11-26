@@ -2,6 +2,15 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.19', date: '26/11/2026', items: [
+      'CVM Direct : filtres rapides au-dessus de la liste : Tous, Prêts à copier, À remplir, Brouillons (avec le nombre de modèles).',
+      'Flèches ↑ et ↓ du clavier : passent au modèle précédent ou suivant (quand vous n’êtes pas dans un champ).',
+      'Menus déroulants préremplis avec la réponse la plus courante (3949 : pas besoin de rendez-vous ; admission : définitive ; événement : travail). Vous pouvez toujours changer.',
+      'Bouton « Sauvegarde » au-dessus de la liste : exporter ou restaurer vos modèles, catégories et réglages dans un fichier.',
+      'Catégories vides signalées dans la colonne de gauche, avec « Supprimer » ou « Garder ».',
+      'Publication d’un modèle commun : le site prévient si le titre existe déjà, si la catégorie n’est pas officielle ou si une accolade est mal fermée.',
+      'Formule de fin : à régler dans Paramètres (ou via la recherche). Elle est ajoutée automatiquement à chaque mail copié, sauf s’il la contient déjà ; un rappel s’affiche sous l’aperçu.'
+    ] },
     { v: '2026-11-26.18', date: '26/11/2026', items: [
       'CVM Direct : chaque modèle de la liste affiche de nouveau le début du mail (2 lignes, champs surlignés) et le nombre de champs à remplir (ou « Prêt à copier »). Les cartes sont plus aérées.'
     ] },

@@ -79,8 +79,11 @@
     const list = $('templates-list'); if (!list) return;
     list.querySelectorAll('[data-tpl-id]').forEach(c => {
       let ud = {}; try { ud = userVariables[c.dataset.tplId] || {}; } catch (e) {}
-      const d = Object.keys(ud).some(k => String(ud[k] == null ? '' : ud[k]).trim());
+      const DF = window.FT_CVM_DEFAULTS || {};
+      const d = Object.keys(ud).some(k => { const v = String(ud[k] == null ? '' : ud[k]).trim(); return v && v !== DF[k]; });
       c.classList.toggle('is-draft', d);
+      let tt = null; try { tt = templates.find(x => x.id === c.dataset.tplId); } catch (e) {}
+      const nv0 = tt ? (tt.variables || []).length : 0; c.classList.toggle('is-ready', !!tt && !nv0); c.classList.toggle('is-fill', nv0 > 0);
       let m = c.querySelector(':scope .cvm-dmark');
       if (d && !m) { m = document.createElement('span'); m.className = 'cvm-dmark'; m.textContent = '✎ brouillon'; const t = c.querySelector('.min-w-0 > .min-w-0 > span'); if (t) { t.parentNode.insertBefore(m, t.nextSibling); } else c.appendChild(m); }
       if (!d && m) m.remove();
