@@ -469,19 +469,19 @@
       },
       {
         id: "clause_sauvegarde_65j",
-        title: "Clause de sauvegarde : Démission dans les 65 jours d'un emploi repris",
+        title: "Clause de sauvegarde : Démission dans les 88 jours d'un emploi repris",
         category: "Voies de Rattrapage",
-        summary: "Démission d'un emploi n'ayant pas duré plus de 65 jours après un licenciement, fin de CDD ou rupture conventionnelle.",
+        summary: "Démission d'un emploi repris depuis moins de 88 jours travaillés (610 h) après un licenciement, une fin de CDD ou une rupture conventionnelle (65 jours ou 455 h si la démission date d'avant le 01/04/2025).",
         tag: "Sauvegarde - Chap. 2 § 4",
         badgeColor: "bg-blue-500/10 text-cyan-300 border-cyan-500/20",
         icon: "shield",
-        conditions: "Postérieurement à une perte involontaire d'emploi (licenciement, rupture conventionnelle, fin de CDD) n'ayant pas donné lieu à une inscription préalable comme demandeur d'emploi, le salarié entreprend un emploi auquel il met fin volontairement dans un délai n'excédant pas 65 jours travaillés (ou 455 heures).",
+        conditions: "Postérieurement à une perte involontaire d'emploi (licenciement, rupture conventionnelle, fin de CDD) n'ayant pas donné lieu à une inscription préalable comme demandeur d'emploi, le salarié entreprend un emploi auquel il met fin volontairement avant 88 jours travaillés (ou 610 heures) pour une démission à compter du 01/04/2025 (65 jours ou 455 heures auparavant).",
         justificatifs: [
           "Attestation employeur de l'avant-dernier emploi (justifiant du licenciement ou rupture involontaire)",
-          "Attestation employeur du dernier emploi démissionné (durée $\le 65$ jours)",
+          "Attestation employeur du dernier emploi démissionné (moins de 88 jours travaillés ou 610 heures)",
           "Absence d'inscription entre les deux contrats"
         ],
-        delais: "Rupture intervenue avant le 66e jour travaillé.",
+        delais: "Rupture intervenue avant le 89e jour travaillé (avant le 66e si la démission date d'avant le 01/04/2025).",
         vigilance: "La démission est neutralisée et le droit s'ouvre sur la base de la rupture involontaire précédente."
       },
       {
@@ -4781,7 +4781,7 @@
       invalidite: { min: 338.31, max1: 1201.50, max2: 2002.50, min3: 1636.76, max3: 3300.95, heures: 600, smicFois: 2030, effet: '01/04/2026', verifie: '01/04/2026' },
       cns: { deduc: 0.70, plafond: 0.60, avance: 0.80, provisoire: 0.70, abat: { vente: 0.71, bic: 0.50, bnc: 0.34 }, bncMin: 305, verifie: '23/10/2026' },
       generations: [
-        ['Janvier à août 1961', '168', '62 ans'], ['Septembre à décembre 1961', '166', '62 ans et 3 mois'], ['1962', '167', '62 ans et 6 mois'],
+        ['Janvier à août 1961', '168', '62 ans'], ['Septembre à décembre 1961', '169', '62 ans et 3 mois'], ['1962', '169', '62 ans et 6 mois'],
         ['1963', '170', '62 ans et 9 mois'], ['1964', '170', '62 ans et 9 mois'], ['1er janvier au 31 mars 1965', '170', '62 ans et 9 mois'],
         ['1er avril au 31 décembre 1965', '171', '63 ans'], ['1966', '172', '63 ans et 3 mois'], ['1967', '172', '63 ans et 6 mois'],
         ['1968', '172', '63 ans et 9 mois'], ['À partir de 1969', '172', '64 ans']

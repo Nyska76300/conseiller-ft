@@ -1777,4 +1777,19 @@ html.theme-light .fh-chip .fh-cs{color:#70657d}
 .ft-foot a{color:#ceaefb}
 html.theme-light .ft-foot{color:#70657d;background:#fbf9fc;border-top-color:#e2dde8}
 html.theme-light .ft-foot a{color:#6d17dc}
+.ipr-intro p{color:var(--r-sub,#bcafca)}
+.ipr-c small{color:var(--r-sub,#bcafca)}
+html.theme-light .ipr-c small,html.theme-light .ipr-intro p{color:#70657d}
+html:not(.theme-light) nav.hub-bar,html:not(.theme-light) .hub-bar{background-color:#170828!important}
+html.theme-light nav.hub-bar,html.theme-light .hub-bar{background-color:#f9f7fb!important}
+.ft-nw.is-upd{color:#200e34;background:linear-gradient(90deg,#d7bafb,#c69cfa);box-shadow:0 0 0 1px rgba(198,156,250,.35),0 0 12px rgba(198,156,250,.3)}
+.ft-nw.is-upd::before{background:#200e34}
+.hub-tab.ft-new-hub::after{border:2px solid #170828}
+html.theme-light .ft-nw.is-upd{background:linear-gradient(90deg,#5e15bc,#6d17dc)}
+html.theme-light .hub-tab.ft-new-hub::after{border-color:#f9f7fb}
+.fh-chip .fh-new.is-upd{color:#200e34;background:#d7bafb}
+html.theme-light .fh-chip .fh-new.is-upd{background:#5e15bc}
+html.theme-light #burger-tabs-list button[class*="from-blue-900"]{background:#efeaf4!important;border-color:#6d17dc!important}
+html.theme-light #burger-tabs-list button[class*="from-blue-900"] .text-xs{color:#360f62!important}
+html.theme-light #burger-tabs-list button[class*="from-blue-900"] p{color:#554a61!important}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(103,48,166,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(123,57,198,0.1),transparent 60%),linear-gradient(150deg,#06030a 0%,#0f0718 35%,#190b28 70%,#27123f 100%) fixed!important}

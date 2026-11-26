@@ -604,6 +604,7 @@
   /* Contenu */
   const SRC = [
     ['Unédic : cumul ARE-rémunération', 'https://www.unedic.org/la-reglementation/fiches-thematiques/cumul-allocation-salaire'],
+    ['Service-public : créer une entreprise et conserver l’ARE (IPR, délai de 6 mois)', 'https://entreprendre.service-public.gouv.fr/vosdroits/F36613'],
     ['France Travail : je retrouve un emploi (activité non salariée)', 'https://www.francetravail.fr/candidat/mes-droits-aux-aides-et-allocati/a-chaque-situation-son-allocatio/quelle-est-ma-situation-professi/je-reprends-une-activite-ou-une/je-retrouve-un-emploi.html'],
     ['France Travail : comment contester une décision', 'https://www.francetravail.fr/candidat/vos-droits-et-demarches/reclamations/comment-contester-une-decision-d.html'],
     ['France Travail : recours', 'https://www.francetravail.fr/faq/candidat/mes-echanges-avec-france-travail/reclamations-et-droit-a-lerreur/recours-france-travail.html'],
@@ -618,6 +619,7 @@
     return h('Principe') + li([
       'Une personne qui crée ou reprend une entreprise en étant indemnisée peut cumuler une partie de l’ARE avec les revenus de cette activité, quel que soit son niveau de rémunération, y compris sans ACRE.',
       'Le cumul est plafonné à ' + fn(CNS.plafond * 100) + ' % des droits restants à la date de création ou de reprise (fin de contrat retenue au 01/04/2025 ou après, sauf procédure de licenciement engagée avant cette date). Les 40 % restants peuvent être demandés à l’instance paritaire régionale (IPR).',
+      'Poursuite exceptionnelle par l’IPR : seulement si l’allocataire n’a tiré aucun revenu de l’activité depuis la création ou la reprise (dividendes compris) et justifie de sa poursuite effective. Demande au plus tard 6 mois après le mois où le plafond a été atteint. L’IPR apprécie notamment la trésorerie, les dividendes et les comptes de l’entreprise (voir l’onglet « Dossier IPR »).',
       'Le cumul est incompatible avec l’ARCE : l’allocataire choisit l’une ou l’autre.',
       'L’activité non salariée ne donne pas lieu à une ouverture de droits.',
       'La date de fin de droits est repoussée en fonction du complément versé : les jours non payés sont reportés.',
@@ -647,7 +649,7 @@
       'Transmettre les justificatifs de revenus : lorsque les revenus sont connus, avant la fin du mois suivant. Sans justificatif, le versement peut être suspendu.',
       'Revenus inconnus lors de l’actualisation : un paiement provisoire est versé, puis régularisé une fois les revenus réels connus.',
       'Consulter le nombre de jours restants sur la page d’accueil de l’espace personnel.',
-      'Plafond de 60 % atteint : demander à l’IPR une poursuite exceptionnelle (justifier la poursuite effective de l’activité et attester l’absence de revenus d’activité, dividendes compris, depuis la création ou la reprise).']) +
+      'Plafond de 60 % atteint : demander à l’IPR une poursuite exceptionnelle (justifier la poursuite effective de l’activité et attester l’absence de revenus d’activité, dividendes compris, depuis la création ou la reprise), au plus tard 6 mois après le mois où le plafond a été atteint. L’onglet « Dossier IPR » liste les pièces et prépare la note.']) +
       h('Pour l’agent : vérifications dans le dossier') + li([
         'Date de fin de contrat retenue : le plafond de 60 % s’applique à partir du 01/04/2025 (sauf procédure de licenciement antérieure).',
         'Reliquat de droits à la date de création ou de reprise, puis suivi des jours consommés en cumul.',
@@ -678,6 +680,77 @@
     return h('Sources consultées le 27/10/2026') + '<div class="wiz-links">' + SRC.map(s => '<a href="' + s[1] + '" target="_blank" rel="noopener noreferrer">' + esc(s[0]) + '</a>').join('') + '</div>' +
       note('Les règles ci-dessus reprennent ces pages. Elles doivent être confirmées dans le règlement général annexé avant toute décision individuelle.');
   }
+
+  /* ---------- Dossier IPR : aide à la complétude (remplace le simulateur) ---------- */
+  const IPR_COND = [
+    ['fct', 'La fin de contrat retenue est au 01/04/2025 ou après (le plafond de 60 % s’applique)', 'Plafond applicable aux droits ouverts sur une fin de contrat à compter du 01/04/2025 (procédures de licenciement engagées à compter de cette date).'],
+    ['insc', 'L’activité a été créée ou reprise pendant l’indemnisation (inscription avant la création)', 'La demande IPR concerne les créateurs ou repreneurs inscrits avant la création ou la reprise.'],
+    ['plaf', 'Le plafond de 60 % du reliquat à la création est atteint : les versements sont arrêtés', 'La demande n’est possible qu’une fois le plafond atteint.'],
+    ['zero', 'Aucun revenu tiré de l’activité depuis la création ou la reprise, dividendes compris', 'Condition indispensable : toutes les actualisations depuis la création doivent montrer 0 € de revenu non salarié.'],
+    ['actif', 'L’activité se poursuit réellement (pas de cessation ni de mise en sommeil)', 'L’allocataire doit justifier de la poursuite effective de l’activité.'],
+    ['delai', 'La demande est déposée au plus tard 6 mois après le mois où le plafond a été atteint', 'Au-delà, la demande est hors délai.']
+  ];
+  const IPR_PIECES = [
+    ['dem', 'Demande écrite et motivée de l’allocataire (datée et signée) : pourquoi l’activité ne dégage pas encore de revenu, perspectives', 'tous'],
+    ['hon', 'Attestation sur l’honneur : aucun revenu tiré de l’activité depuis la création, y compris sous forme de dividendes', 'tous'],
+    ['immat', 'Justificatif d’existence de l’activité à jour : extrait Kbis, extrait du répertoire des métiers ou avis de situation SIRENE', 'tous'],
+    ['urssaf', 'Déclarations de chiffre d’affaires ou de revenus à l’Urssaf depuis la création (y compris déclarations à 0 €)', 'tous'],
+    ['preuves', 'Preuves de poursuite effective : devis, factures, contrats ou commandes en cours, prospection, site ou annonces, assurance professionnelle', 'tous'],
+    ['banque', 'Relevés du compte bancaire professionnel des derniers mois (situation de trésorerie)', 'tous'],
+    ['comptes', 'Derniers comptes annuels ou bilan et compte de résultat, ou situation comptable intermédiaire', 'societe'],
+    ['ag', 'Procès-verbal d’assemblée sur l’affectation du résultat (absence de distribution de dividendes)', 'societe'],
+    ['remu', 'Attestation de l’expert-comptable ou du représentant légal : absence de rémunération du dirigeant', 'societe'],
+    ['previ', 'Prévisionnel ou plan de développement (facultatif mais utile)', 'tous']
+  ];
+  const iprSt = { c: {}, p: {} };
+  function tabIpr() {
+    const d = new Date(), ym = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    return '<div class="ipr-intro"><p>Une fois le plafond de 60 % atteint, l’allocataire peut demander <b>à titre exceptionnel</b> à l’instance paritaire régionale (IPR) la poursuite du versement des 40 % restants. Cette page aide à vérifier la recevabilité, réunir les pièces et préparer la transmission. Rien n’est enregistré.</p></div>' +
+      '<div class="dl-layout"><section class="dl-form"><h3 class="dl-h">1. Recevabilité</h3>' +
+      IPR_COND.map(c => '<label class="dl-check ipr-c"><input type="checkbox" data-ipr-c="' + c[0] + '" onchange="cnsIprRun()"> <span>' + esc(c[1]) + '<small>' + esc(c[2]) + '</small></span></label>').join('') +
+      '<h3 class="dl-h">2. Chiffres du dossier</h3>' +
+      '<label>Forme de l’activité<select id="ipr-forme" onchange="cnsIprRun()"><option value="micro">Micro-entreprise ou entreprise individuelle</option><option value="societe">Société (SARL, SAS, EURL…)</option></select></label>' +
+      '<label>Date de création ou de reprise<input id="ipr-crea" type="date" oninput="cnsIprRun()"></label>' +
+      '<label>Reliquat de droits à la création (jours)<input id="ipr-rel" type="number" min="0" placeholder="0" oninput="cnsIprRun()"></label>' +
+      '<label>Allocation journalière brute (€)<input id="ipr-aj" type="number" min="0" step="any" placeholder="0" oninput="cnsIprRun()"></label>' +
+      '<label>Mois où le plafond a été atteint<input id="ipr-mois" type="month" value="' + ym + '" oninput="cnsIprRun()"></label>' +
+      '<h3 class="dl-h">3. Pièces à joindre</h3><div id="ipr-pieces"></div>' +
+      '<p class="wiz-hint">Liste indicative : aucune page officielle ne fixe de liste de pièces. L’IPR apprécie notamment la trésorerie, l’existence de dividendes et les comptes de l’entreprise (Unédic). Suivre les consignes de votre direction régionale.</p>' +
+      '</section><section id="ipr-out" class="dl-result"></section></div>';
+  }
+  window.cnsIprRun = function () {
+    const out = $('ipr-out'); if (!out) return;
+    document.querySelectorAll('[data-ipr-c]').forEach(i => { iprSt.c[i.dataset.iprC] = i.checked; });
+    const forme = ($('ipr-forme') || {}).value || 'micro';
+    const box = $('ipr-pieces');
+    if (box) {
+      document.querySelectorAll('[data-ipr-p]').forEach(i => { iprSt.p[i.dataset.iprP] = i.checked; });
+      box.innerHTML = IPR_PIECES.filter(x => x[2] === 'tous' || x[2] === forme).map(x => '<label class="dl-check ipr-c"><input type="checkbox" data-ipr-p="' + x[0] + '"' + (iprSt.p[x[0]] ? ' checked' : '') + ' onchange="cnsIprRun()"> <span>' + esc(x[1]) + '</span></label>').join('');
+    }
+    const pcs = IPR_PIECES.filter(x => x[2] === 'tous' || x[2] === forme);
+    const recues = pcs.filter(x => iprSt.p[x[0]]), manq = pcs.filter(x => !iprSt.p[x[0]]);
+    const nC = IPR_COND.filter(c => iprSt.c[c[0]]).length, okC = nC === IPR_COND.length;
+    const rel = parseFloat(($('ipr-rel') || {}).value) || 0, aj = parseFloat(($('ipr-aj') || {}).value) || 0;
+    const plafJ = Math.floor(rel * CNS.plafond), restJ = rel > 0 ? rel - plafJ : 0;
+    const m = (($('ipr-mois') || {}).value || '').split('-').map(Number);
+    let lim = null; if (m[0] && m[1]) lim = new Date(m[0], m[1] - 1 + 7, 0); /* dernier jour du 6e mois suivant */
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const late = lim && today > lim;
+    const fd = x => x ? x.toLocaleDateString('fr-FR') : '—';
+    const crea = ($('ipr-crea') || {}).value ? fd(new Date(($('ipr-crea') || {}).value + 'T00:00:00')) : '—';
+    const al = [];
+    if (late) al.push(wizAlert('danger', 'Délai dépassé : la demande devait être déposée au plus tard le ' + fd(lim) + '.'));
+    if (iprSt.c.zero === false && nC) al.push(wizAlert('warn', 'Si l’activité a procuré un revenu (même ponctuel, dividendes compris) depuis la création, la demande ne peut pas aboutir.'));
+    if (!okC) al.push(wizAlert('warn', (IPR_COND.length - nC) + ' condition(s) de recevabilité non cochée(s) : vérifier avant de transmettre.'));
+    if (okC && !late) al.push(wizAlert('info', 'Conditions de recevabilité réunies : le dossier peut être transmis à l’IPR une fois les pièces complètes.'));
+    out.innerHTML = '<div class="wiz-hero ' + (okC && !late && !manq.length ? 'is-ok' : 'is-warn') + '"><div class="wiz-hero-top"><span>Dossier IPR</span></div><strong>' + recues.length + ' / ' + pcs.length + ' pièces</strong><em>' + (manq.length ? manq.length + ' pièce(s) à demander' : 'dossier complet') + ' · recevabilité ' + nC + ' / ' + IPR_COND.length + '</em></div>' +
+      '<div class="wiz-tiles"><div class="wiz-tile"><span>Date limite de dépôt</span><strong>' + fd(lim) + '</strong></div><div class="wiz-tile"><span>Plafond de 60 %</span><strong>' + (rel ? plafJ + ' j' : '—') + '</strong></div><div class="wiz-tile"><span>40 % en jeu</span><strong>' + (rel ? restJ + ' j' + (aj ? ' · ' + eur(restJ * aj) : '') : '—') + '</strong></div></div>' + al.join('') +
+      '<div class="wiz-actions"><button type="button" class="reg-btn" onclick="cnsIprCopy(\'mail\')"' + (manq.length ? '' : ' disabled') + '>Copier le mail : pièces manquantes</button><button type="button" class="reg-btn reg-btn-primary" onclick="cnsIprCopy(\'note\')">Copier la note de transmission</button></div>' +
+      note('Sources : service-public.fr (conditions et délai de 6 mois), Unédic (plafond de 60 %, rôle de l’IPR). La décision appartient à l’IPR.');
+    window.__iprMail = 'Bonjour,\n\nVous avez atteint le plafond de 60 % de vos droits restants à la date de création de votre activité. Vous pouvez demander, à titre exceptionnel, à l’instance paritaire régionale (IPR) la poursuite du versement de votre allocation, si vous n’avez tiré aucun revenu de votre activité depuis sa création (y compris sous forme de dividendes) et que vous justifiez de sa poursuite effective.\n\nPour constituer votre demande, merci de nous transmettre :\n' + manq.map(x => '- ' + x[1]).join('\n') + '\n\n' + (lim ? 'Votre demande doit être déposée au plus tard le ' + fd(lim) + '.\n\n' : '') + 'Vous pouvez déposer ces documents depuis votre espace personnel sur francetravail.fr.\n\nCordialement,\nVotre conseiller France Travail';
+    window.__iprNote = 'DEMANDE DE POURSUITE EXCEPTIONNELLE – CUMUL ARE ET ACTIVITÉ NON SALARIÉE (IPR)\n\nForme : ' + (forme === 'societe' ? 'société' : 'micro-entreprise ou entreprise individuelle') + '\nCréation ou reprise : ' + crea + '\nReliquat à la création : ' + (rel || '—') + ' j · plafond 60 % : ' + (rel ? plafJ : '—') + ' j · 40 % restants : ' + (rel ? restJ : '—') + ' j' + (aj && rel ? ' (' + eur(restJ * aj) + ')' : '') + '\nPlafond atteint : ' + ((($('ipr-mois') || {}).value || '—').split('-').reverse().join('/')) + ' · dépôt au plus tard le ' + fd(lim) + (late ? ' (HORS DÉLAI)' : '') + '\n\nRecevabilité :\n' + IPR_COND.map(c => (iprSt.c[c[0]] ? '[x] ' : '[ ] ') + c[1]).join('\n') + '\n\nPièces jointes :\n' + (recues.length ? recues.map(x => '- ' + x[1]).join('\n') : '- aucune') + (manq.length ? '\n\nPièces manquantes :\n' + manq.map(x => '- ' + x[1]).join('\n') : '') + '\n\nAvis du conseiller : …';
+  };
+  window.cnsIprCopy = function (k) { copyToClipboard(k === 'mail' ? (window.__iprMail || '') : (window.__iprNote || '')); showToast(k === 'mail' ? 'Mail copié' : 'Note copiée', 'success'); };
   function tabSim() {
     const d = new Date(), ym = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
     return '<div class="dl-layout"><section class="dl-form"><h3 class="dl-h">Situation</h3>' +
@@ -719,22 +792,22 @@
   window.cnsCopy = function () { copyToClipboard(window.__cnsNote || ''); showToast('Note copiée', 'success'); };
 
   /* Vue et onglets internes */
-  const TABS = [['sim', 'Simulateur', tabSim], ['regles', 'Règles et calcul', tabRegles], ['dem', 'Démarches', tabDemarches], ['rec', 'Recours', tabRecours], ['src', 'Sources', tabSources]];
-  let cur = 'sim';
+  const TABS = [['ipr', 'Dossier IPR', tabIpr], ['regles', 'Règles et calcul', tabRegles], ['dem', 'Démarches', tabDemarches], ['rec', 'Recours', tabRecours], ['src', 'Sources', tabSources]];
+  let cur = 'ipr';
   const v = document.createElement('div');
   v.id = 'view-cns'; v.className = 'hidden flex-1 overflow-y-auto';
-  v.innerHTML = '<div class="reg-wrap"><div class="reg-head"><div><h2>Cumul CNS</h2><p>Cumul de l’ARE avec une activité non salariée : règles, simulateur, démarches et recours.</p></div></div><div class="rg-tabs" id="cns-tabs" role="tablist"></div><div id="cns-body"></div></div>';
+  v.innerHTML = '<div class="reg-wrap"><div class="reg-head"><div><h2>Cumul CNS</h2><p>Cumul de l’ARE avec une activité non salariée : dossier IPR, règles, démarches et recours.</p></div></div><div class="rg-tabs" id="cns-tabs" role="tablist"></div><div id="cns-body"></div></div>';
   $('view-delais').parentElement.appendChild(v);
   window.cnsTab = function (id) {
     cur = id;
     $('cns-tabs').innerHTML = TABS.map(t => '<button type="button" role="tab" class="rg-tab' + (t[0] === cur ? ' is-on' : '') + '" aria-selected="' + (t[0] === cur) + '" onclick="cnsTab(\'' + t[0] + '\')">' + t[1] + '</button>').join('');
     const t = TABS.find(x => x[0] === id);
-    $('cns-body').innerHTML = '<section class="' + (id === 'sim' ? '' : 'dl-form cns-panel') + '">' + t[2]() + '</section>';
-    if (id === 'sim') cnsRun();
+    $('cns-body').innerHTML = '<section class="' + (id === 'ipr' ? '' : 'dl-form cns-panel') + '">' + t[2]() + '</section>';
+    if (id === 'ipr') cnsIprRun();
     refreshIcons();
   };
 
-  NAV_TABS_CONFIG.push({ id: 'cns', name: 'Cumul CNS', desc: 'Cumul ARE et activité non salariée : règles, simulateur, démarches, recours', icon: 'briefcase', color: 'bg-teal-500/15 text-teal-400 border-teal-500/30', badge: 'Non salarié' });
+  NAV_TABS_CONFIG.push({ id: 'cns', name: 'Cumul CNS', desc: 'Cumul ARE et activité non salariée : dossier IPR, règles, démarches, recours', icon: 'briefcase', color: 'bg-teal-500/15 text-teal-400 border-teal-500/30', badge: 'Non salarié' });
   HOME_GROUPS[1].ids.push('cns');
   FT_KW.cns = 'cumul cns non salarié non salariée micro-entrepreneur auto-entrepreneur indépendant activité création reprise entreprise abattement 60 pourcent recours démarches';
   const _sw4 = switchNavTab;

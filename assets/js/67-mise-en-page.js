@@ -57,7 +57,7 @@
       const w = document.createElement('span'); w.className = 'fh-ct';
       lb.parentNode.insertBefore(w, lb); w.appendChild(lb);
       const s = document.createElement('span'); s.className = 'fh-cs'; s.textContent = sub; w.appendChild(s);
-      if (t && t.badge && /nouveau/i.test(t.badge)) { const g = document.createElement('span'); g.className = 'fh-new'; g.textContent = t.badge; lb.appendChild(g); }
+      const nw = window.ftIsNew && m && window.ftIsNew(m[1]); if (nw) { const g = document.createElement('span'); g.className = 'fh-new' + (nw.kind === 'Nouveau' ? '' : ' is-upd'); g.textContent = nw.kind; lb.appendChild(g); }
     });
   }
 

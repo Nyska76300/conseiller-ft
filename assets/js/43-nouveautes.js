@@ -2,6 +2,13 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.5', date: '26/11/2026', items: [
+      'Cumul CNS : le simulateur laisse la place à l’onglet « Dossier IPR » pour la demande de poursuite exceptionnelle au-delà du plafond de 60 %. Il couvre la recevabilité (aucun revenu ni dividende, activité poursuivie, délai de 6 mois), les pièces à joindre selon la forme de l’activité, la date limite de dépôt et les 40 % en jeu. Il prépare aussi le mail des pièces manquantes et la note de transmission.',
+      'Menu : repère « Nouveau » ou « Mis à jour » pendant 30 jours sur les outils récents, avec un point sur la rubrique et dans la barre des rubriques.',
+      'Vérification complète du barème au regard de la réglementation en vigueur. Les montants sont confirmés : aucune revalorisation de l’ARE au 1er juillet 2026, ASS et ATA au 1er avril 2026, diviseur du différé spécifique 111,8, durées des ruptures conventionnelles depuis le 01/09/2026, primo-entrants, pension d’invalidité.',
+      'Corrections : trimestres requis pour la retraite (169 pour fin 1961 et 1962). La démission d’un emploi repris après une perte involontaire passe à 88 jours travaillés ou 610 h (démissions depuis le 01/04/2025).',
+      'Barre des rubriques collante : fond opaque, le contenu ne se voit plus à travers en faisant défiler la page.'
+    ] },
     { v: '2026-11-26.4', date: '26/11/2026', items: [
       'Retour au menu précédent : il s’ouvre et se ferme avec le bouton « Menu », comme avant. L’accueil (tuiles, chiffres clés, cartes d’outils) et le pied de page restent.'
     ] },
