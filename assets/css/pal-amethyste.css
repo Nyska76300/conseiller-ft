@@ -1792,4 +1792,38 @@ html.theme-light .fh-chip .fh-new.is-upd{background:#5e15bc}
 html.theme-light #burger-tabs-list button[class*="from-blue-900"]{background:#efeaf4!important;border-color:#6d17dc!important}
 html.theme-light #burger-tabs-list button[class*="from-blue-900"] .text-xs{color:#360f62!important}
 html.theme-light #burger-tabs-list button[class*="from-blue-900"] p{color:#554a61!important}
+.ipr-lead{background:linear-gradient(90deg,rgba(109,23,220,.22),rgba(109,23,220,.06));border:1px solid rgba(180,129,235,.3);color:#e8e0f2}
+.ipr-lead svg{color:#ceaefb}
+.ipr-kpi{background:rgba(26,8,46,.7);border:1px solid rgba(180,129,235,.22);border-top:3px solid rgba(180,129,235,.45)}
+.ipr-kpi small{color:#bcafca}
+.ipr-kpi strong{color:#f3eff8}
+.ipr-kpi em{color:#bcafca}
+.ipr-card{background:rgba(26,8,46,.64);border:1px solid rgba(180,129,235,.22)}
+.ipr-card .ipr-ch{color:#ceaefb}
+.ipr-card h3{color:#f3eff8}
+.ipr-n{color:#200e34;background:#ceaefb}
+.ipr-c-count{background:rgba(180,129,235,.18);color:#e8e0f2}
+.ipr .ipr-c{color:#f3eff8}
+.ipr .ipr-c:hover{background:rgba(180,129,235,.1)}
+.ipr .ipr-c small{color:#bcafca}
+.ipr-fields label{color:#bcafca}
+.ipr-fields input,.ipr-fields select{color:#f3eff8;background:rgba(11,3,19,.55);border:1px solid rgba(180,129,235,.3)}
+.ipr-calc>div{background:rgba(11,3,19,.5);border:1px solid rgba(180,129,235,.2)}
+.ipr-calc span{color:#bcafca}
+.ipr-calc b{color:#f3eff8}
+.ipr-calc p{color:#bcafca}
+.ipr-foot,.ipr-src{color:#bcafca}
+.ipr-src a{color:#ceaefb}
+html.theme-light .ipr-lead{color:#2f1947;background:linear-gradient(90deg,#efeaf4,#faf8fc);border-color:#d9d2e2}
+html.theme-light .ipr-lead svg{color:#6d17dc}
+html.theme-light .ipr-kpi,html.theme-light .ipr-card{border-color:#e2dde8}
+html.theme-light .ipr-kpi small,html.theme-light .ipr-kpi em,html.theme-light .ipr .ipr-c small,html.theme-light .ipr-fields label,html.theme-light .ipr-calc span,html.theme-light .ipr-calc p,html.theme-light .ipr-foot,html.theme-light .ipr-src{color:#70657d}
+html.theme-light .ipr-kpi strong,html.theme-light .ipr-card h3,html.theme-light .ipr .ipr-c,html.theme-light .ipr-calc b{color:#2f1947}
+html.theme-light .ipr-card .ipr-ch{color:#6d17dc}
+html.theme-light .ipr-n{background:#6d17dc}
+html.theme-light .ipr-c-count{background:#f0ecf4;color:#4a395d}
+html.theme-light .ipr .ipr-c:hover{background:#f8f6fa}
+html.theme-light .ipr-fields input,html.theme-light .ipr-fields select{color:#2f1947;background:#f8f6fa;border-color:#dcd5e3}
+html.theme-light .ipr-calc>div{background:#f8f6fa;border-color:#e2dde8}
+html.theme-light .ipr-src a{color:#6d17dc}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(103,48,166,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(123,57,198,0.1),transparent 60%),linear-gradient(150deg,#06030a 0%,#0f0718 35%,#190b28 70%,#27123f 100%) fixed!important}

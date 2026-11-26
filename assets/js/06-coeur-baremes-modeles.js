@@ -1789,7 +1789,7 @@
         } else {
           h += row('Salaire moyen', '—', 'Renseignez le salaire brut mensuel moyen pour estimer l\u2019allocation.');
         }
-        h += row('Durée maximale', maxDays + ' j', (rciReduit ? 'Rupture conventionnelle avec fin de contrat à compter du 01/09/2026 : plafond de 15 mois (moins de 55 ans) ou 20,5 mois. ' : 'Moins de 55 ans : 548 j · 55 et 56 ans : 685 j · 57 ans et plus : 822 j. ') + 'Durée réelle : jours calendaires de la période de référence × 0,75, minimum 182 j.', rciReduit ? 'is-info' : '');
+        h += row('Durée maximale', maxDays + ' j', (rciReduit ? 'Rupture conventionnelle avec fin de contrat à compter du 01/09/2026 : plafond de 15 mois (moins de 55 ans) ou 20,5 mois ; outre-mer hors Mayotte : 608 ou 913 jours (onglet Rupture conventionnelle). ' : 'Moins de 55 ans : 548 j · 55 et 56 ans : 685 j · 57 ans et plus : 822 j. ') + 'Durée réelle : jours calendaires de la période de référence × 0,75, minimum 182 j.', rciReduit ? 'is-info' : '');
         h += row('Différé congés payés', diffCp + ' j', sjr > 0 ? fmtEur(indemCp) + ' ÷ SJR ' + fmtEur(sjr) + ', plafonné à ' + B.differe.cpMax + ' j.' : 'Calculé à partir du SJR.');
         h += row('Différé spécifique', diffSupra + ' j', fmtEur(indemSupra) + ' ÷ ' + String(B.differe.diviseur).replace('.', ',') + ', plafonné à ' + (eco ? B.differe.specMaxEco + ' j (motif économique)' : B.differe.specMax + ' j') + '.');
         h += row('Premier jour indemnisable', ftFmtDate(premier), 'Fin de contrat (' + ftFmtDate(dFct) + (fctSaisie ? '' : ', date du jour par défaut') + ') + ' + (1 + totalDiff) + ' j : délai d\u2019attente ' + B.differe.attente + ' j + différés.');
@@ -4767,7 +4767,7 @@
       ],
       are: { partieFixe: 13.18, min: 32.13, formation: 22.99, max: 300.21, tauxA: 0.404, tauxB: 0.57, plafond: 0.75, effet: '01/07/2025' },
       degr: { coef: 0.7, seuil: 92.57, ageLimite: 55, moisDebut: 7 },
-      duree: { coef: 0.75, min: 182, max: { u55: 548, a55: 685, a57: 822 }, cfd: { u55: 182, a55: 228, a57: 273 }, rci: { u55: 456, a55: 624, effet: '2026-09-01' } },
+      duree: { coef: 0.75, min: 182, max: { u55: 548, a55: 685, a57: 822 }, cfd: { u55: 182, a55: 228, a57: 273 }, rci: { u55: 456, a55: 624, domU55: 608, domA55: 913, effet: '2026-09-01' } },
       affiliation: { jours: 130, heures: 910, joursSais: 108, heuresSais: 758 },
       differe: { attente: 7, cpMax: 30, diviseur: 111.8, specMax: 150, specMaxEco: 75 },
       cumul: { remun: 0.70, arce: 0.60, arretNonSalarie: 0.60, base: 30 },
@@ -5330,7 +5330,7 @@
       if (fct && insc && insc < fct) out.push(wizAlert('warn', 'La date d\u2019inscription précède la fin de contrat : vérifiez les dates.'));
       if (fct && insc && insc > ftAddDays(fct, 365) && a.forclusion === 'ok') out.push(wizAlert('danger', 'Inscription plus de 12 mois après la fin de contrat alors que le délai est indiqué comme respecté : risque de forclusion.'));
       if (a.forclusion === 'forclos') out.push(wizAlert('danger', 'Demande hors délai de 12 mois sans motif de report : l\u2019ouverture de droits est bloquée.'));
-      if (a.motif === 'rupture_conv' && fct) out.push(wizAlert('info', fct >= ftParseDate(BAREME.duree.rci.effet) ? 'Rupture conventionnelle avec fin de contrat à compter du 01/09/2026 : durée maximale réduite (15 mois, 20,5 mois à 55 ans et plus).' : 'Rupture conventionnelle avec fin de contrat avant le 01/09/2026 : durée maximale de droit commun.'));
+      if (a.motif === 'rupture_conv' && fct) out.push(wizAlert('info', fct >= ftParseDate(BAREME.duree.rci.effet) ? 'Rupture conventionnelle avec fin de contrat à compter du 01/09/2026 : durée maximale réduite (15 mois, 20,5 mois à 55 ans et plus ; outre-mer hors Mayotte : 608 ou 913 jours).' : 'Rupture conventionnelle avec fin de contrat avant le 01/09/2026 : durée maximale de droit commun.'));
       if (parseFloat(a.supra) > 0 && (isDem || a.motif === 'fin_cdd')) out.push(wizAlert('warn', 'Des indemnités supra-légales sont saisies pour un motif qui n\u2019en comporte normalement pas : vérifiez le dossier.'));
       if (a.age !== 'under55' && a.aff) out.push(wizAlert('info', 'À 55 ans et plus, la période de référence est de 36 mois ; la durée maximale dépend de l\u2019âge (685 j à 55-56 ans, 822 j à partir de 57 ans).'));
       if (!a.sjr && a.salaire) out.push(wizAlert('info', 'SJR estimé à partir du salaire moyen. Pour un montant exact, saisissez le SJR de l\u2019attestation employeur.'));

@@ -123,7 +123,6 @@
     { key: 'complement', tab: '5', split: true, host: () => document.querySelector('#view-complement-are .wiz-wrap') },
     { key: 'invalidite', tab: 'invalidite', show: () => !!$('inv-aj'), host: () => document.getElementById('inv-mail-host') },
     { key: 'ans', tab: '3', host: () => document.querySelector('#ans-subview-sim > div') },
-    { key: 'cns', tab: 'cns', split: true, show: () => !!$('cns-out'), host: () => document.querySelector('#view-cns .reg-wrap') },
     { key: 'cspSim', tab: '4', host: () => document.querySelector('#csp-subview-sim > div') },
     { key: 'cspRec', tab: '4', host: () => document.querySelector('#csp-subview-reclass > div[class*="grid-cols"]') || document.querySelector('#csp-subview-reclass > div') },
     { key: 'droits', tab: 'droits', split: true, host: () => document.querySelector('#view-droits .reg-wrap') },

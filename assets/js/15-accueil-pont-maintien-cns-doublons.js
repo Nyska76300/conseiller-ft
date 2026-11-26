@@ -32,6 +32,7 @@
 
   /* ---------- 2. Pont Maintien (ARCE et maintien) vers Cumul CNS ---------- */
   function bridge() {
+    return; /* Cumul CNS n'a plus de simulateur : le pont ARCE → CNS est retiré */
     const res = $('maint-res-are-versee'); if (!res || $('maint-to-cns')) return;
     const host = res.closest('div[class*="rounded"]') || res.parentElement;
     const d = document.createElement('div'); d.id = 'maint-to-cns'; d.className = 'x12-bridge';
@@ -54,7 +55,7 @@
     const v = $('view-cns'); if (!v || v.querySelector('.x12-cnslink')) return;
     const a = document.createElement('p'); a.className = 'x12-cnslink';
     a.innerHTML = 'Comparer avec l’ARCE ou le maintien simple : <button type="button" onclick="switchNavTab(\'3\')">ouvrir ARCE et maintien</button>';
-    const w = v.querySelector('.reg-wrap') || v; w.insertBefore(a, w.children[1] || null);
+    const hd = v.querySelector('.reg-head > div'); if (hd) hd.appendChild(a); else { const w = v.querySelector('.reg-wrap') || v; w.insertBefore(a, w.children[1] || null); }
   }
   const _sw = switchNavTab;
   switchNavTab = function (t) { const r = _sw(t); try { bridge(); cnsLink(); } catch (e) {} return r; };

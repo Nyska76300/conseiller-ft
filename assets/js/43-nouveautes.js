@@ -2,6 +2,13 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.6', date: '26/11/2026', items: [
+      'Cumul CNS repensé : bandeau d’explication, quatre chiffres clés (recevabilité, pièces, date limite, 40 % en jeu), puis trois cartes côte à côte (recevabilité, chiffres du dossier, pièces à joindre). Les cases cochées passent au vert.',
+      'Toutes les pages utilisent mieux la largeur de l’écran : contenu élargi sur les grands écrans, formulaires sur deux colonnes (Délais, Conditions…), résultat qui reste visible en faisant défiler, Droits et passages sur deux colonnes, FAQ sur deux colonnes, listes de règles en colonnes.',
+      'Rupture conventionnelle : durées outre-mer (608 et 913 jours) rappelées dans les simulateurs Conditions et Parcours dossier.',
+      'Échéances : fin du cumul ASS et AAH au 1er janvier 2027.',
+      'Veille automatique : un contrôle approfondi chaque début de mois vérifie aussi les seuils écrits dans les textes et simulateurs (65 / 88 / 121 jours, durées de rupture conventionnelle, etc.).'
+    ] },
     { v: '2026-11-26.5', date: '26/11/2026', items: [
       'Cumul CNS : le simulateur laisse la place à l’onglet « Dossier IPR » pour la demande de poursuite exceptionnelle au-delà du plafond de 60 %. Il couvre la recevabilité (aucun revenu ni dividende, activité poursuivie, délai de 6 mois), les pièces à joindre selon la forme de l’activité, la date limite de dépôt et les 40 % en jeu. Il prépare aussi le mail des pièces manquantes et la note de transmission.',
       'Menu : repère « Nouveau » ou « Mis à jour » pendant 30 jours sur les outils récents, avec un point sur la rubrique et dans la barre des rubriques.',
