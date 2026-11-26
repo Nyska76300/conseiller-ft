@@ -30,27 +30,6 @@
   renderHome = function (q) { const r = _rh(q); try { fixHome(); } catch (e) {} return r; };
   try { fixHome(); } catch (e) {}
 
-  /* ---------- 2. Pont Maintien (ARCE et maintien) vers Cumul CNS ---------- */
-  function bridge() {
-    return; /* Cumul CNS n'a plus de simulateur : le pont ARCE → CNS est retiré */
-    const res = $('maint-res-are-versee'); if (!res || $('maint-to-cns')) return;
-    const host = res.closest('div[class*="rounded"]') || res.parentElement;
-    const d = document.createElement('div'); d.id = 'maint-to-cns'; d.className = 'x12-bridge';
-    d.innerHTML = '<p>Ce calcul est une estimation rapide sur un mois. Le détail mensuel (plafond de 70 %, reliquat, jours reportés) se trouve dans Cumul CNS.</p><button type="button" onclick="ftMaintToCns()">Poursuivre dans Cumul CNS avec ces valeurs</button>';
-    (host.parentElement || host).insertBefore(d, host.nextSibling);
-  }
-  window.ftMaintToCns = () => {
-    const v = id => ($(id) || {}).value || '';
-    const t = v('maint-type'), map = { bic: 'bic', vente: 'vente', bnc: 'bnc' };
-    switchNavTab('cns');
-    setTimeout(() => {
-      if ($('cns-aj')) $('cns-aj').value = v('maint-input-are-jour');
-      if ($('cns-type')) $('cns-type').value = map[t] || 'bic';
-      if ($('cns-rev')) $('cns-rev').value = v('maint-input-recette');
-      try { cnsRun(); } catch (e) {}
-      showToast('Valeurs reprises dans Cumul CNS', 'success');
-    }, 60);
-  };
   function cnsLink() {
     const v = $('view-cns'); if (!v || v.querySelector('.x12-cnslink')) return;
     const a = document.createElement('p'); a.className = 'x12-cnslink';
@@ -58,8 +37,8 @@
     const hd = v.querySelector('.reg-head > div'); if (hd) hd.appendChild(a); else { const w = v.querySelector('.reg-wrap') || v; w.insertBefore(a, w.children[1] || null); }
   }
   const _sw = switchNavTab;
-  switchNavTab = function (t) { const r = _sw(t); try { bridge(); cnsLink(); } catch (e) {} return r; };
-  try { bridge(); cnsLink(); } catch (e) {}
+  switchNavTab = function (t) { const r = _sw(t); try { cnsLink(); } catch (e) {} return r; };
+  try { cnsLink(); } catch (e) {}
 
   /* ---------- 3. Détecteur de doublons de modèles ---------- */
   const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\{\{[^}]*\}\}|\[[^\]]*\]/g, ' ').replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();

@@ -2,6 +2,15 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.14', date: '26/11/2026', items: [
+      'Barre du haut allégée : Dates, Calculatrice, Mode clair / sombre et Recharger sont regroupés dans le bouton « Outils ». La recherche retrouve de la place.',
+      'Menu : champ « Filtrer les outils… » en haut (Entrée ouvre le premier résultat) ; rubriques repliées par défaut, sauf celle de l’outil ouvert ; un clic sur une rubrique l’ouvre ou la ferme, et le choix est mémorisé.',
+      'Mails : menus déroulants pour les mois (« septembre 2026 »), le type d’admission (définitive ou provisoire) et l’événement déclaré par erreur, avec un choix « Autre » en texte libre.',
+      'CVM Direct : étiquette « ✎ brouillon » sur les modèles dont la saisie est en cours et bouton « Brouillons » pour n’afficher qu’eux ; bouton « Plus utilisés » qui liste vos modèles les plus copiés sur cet appareil, avec l’étoile pour les mettre en favoris.',
+      'Post-it : jusqu’à 6 notes (onglets 1, 2, 3… et +), avec Copier, Envoyer par mail et Effacer.',
+      'Phrase d’introduction des outils limitée à une ligne : un clic l’affiche en entier.',
+      'Nettoyage : suppression du code de l’ancien simulateur Cumul CNS, du mode entretien et de la vue usager. Relecture automatique des mails renforcée (accolades orphelines, espaces doublés, textes presque identiques, listes à choix).'
+    ] },
     { v: '2026-11-26.13', date: '26/11/2026', items: [
       'CVM Direct, affichage en liste : pastille de couleur de la catégorie et titre en gras, avec Modifier, Supprimer et Favori juste à droite du titre ; aperçu du mail sur une ligne ; étiquettes dessous (catégorie, nombre de champs ou « prêt à copier », mots-clés).',
       'Motifs de trop-perçu classés par ordre alphabétique, dans l’onglet Trop-perçu comme dans les modèles CVM.'

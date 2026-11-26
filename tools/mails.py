@@ -10,7 +10,9 @@ Usage : python3 tools/mails.py [--online]
 AVERTISSEMENT :
   - date, montant ou durée écrits en dur (probablement tirés d'un ancien dossier) ;
   - ponctuation douteuse (espace avant une virgule, « .. », parenthèse non fermée) ;
-  - lien mal formé ; avec --online, lien qui ne répond pas.
+  - lien mal formé ; avec --online, lien qui ne répond pas ;
+  - accolades orphelines, espaces doublés, texte presque identique à un autre modèle ;
+  - listes à choix (assets/js/71-cvm-choix.js) : texte inséré qui finit par un point, liste jamais utilisée.
 Le résumé est écrit dans $GITHUB_STEP_SUMMARY quand il existe.
 """
 import json, os, re, sys, urllib.request
@@ -71,6 +73,9 @@ def main():
         for m in re.finditer(r'\s[,.](?!\d)|\.\.(?!\.)|,,', txt):
             ctx = txt[max(0, m.start() - 25):m.end() + 5].replace('\n', ' ')
             warn.append(f"{name} : ponctuation à vérifier « …{ctx}… »")
+        rest = re.sub(r'\{\{[^}]+\}\}', '', body)
+        if '{' in rest or '}' in rest: err.append(f"{name} : accolade orpheline (champ mal fermé)")
+        if re.search(r'[^\s]  +[^\s]', re.sub(r'(?m)^\s+', '', body)): warn.append(f"{name} : espaces doublés")
         nb = re.sub(r'(?m)^\s*\d+\)', '', txt)  # « 1) », « 2) » : numérotation
         if nb.count('(') != nb.count(')'): warn.append(f"{name} : parenthèse non fermée")
         for u in re.findall(r'https?://[^\s)»"]+', body):
@@ -84,6 +89,25 @@ def main():
                 except Exception as e:
                     code = getattr(e, 'code', None)
                     if code not in (401, 403, 405, 429): warn.append(f"{name} : lien injoignable {u} ({code or type(e).__name__})")
+    # textes presque identiques
+    import difflib
+    def nz(x): return re.sub(r'\W+', ' ', x.lower())[:700]
+    for i, a in enumerate(T):
+        for b in T[i + 1:]:
+            if difflib.SequenceMatcher(None, nz(a['body']), nz(b['body'])).ratio() > 0.92:
+                warn.append(f"« {a['title']} » et « {b['title']} » : textes presque identiques")
+    # listes à choix
+    try:
+        cj = open(os.path.join(ROOT, 'assets', 'js', '71-cvm-choix.js'), encoding='utf-8').read()
+        used_keys = {v['key'] for t in T for v in t.get('variables', [])}
+        for key, block in re.findall(r"(\w+): \[\s*((?:\[.*?\],?\s*)+)\]", cj, re.S):
+            if key not in used_keys: warn.append(f"liste à choix « {key} » : aucun modèle ne l’utilise")
+            for m in re.finditer(r"\['[^']*', '([^']*)', '([^']*)'\]", block):
+                if m.group(2).rstrip().endswith('.'): warn.append(f"liste « {key} », choix « {m.group(1)} » : le texte inséré finit par un point")
+        for key in re.findall(r"CHOICES\.(\w+) = \[", cj):
+            if key not in used_keys: warn.append(f"liste à choix « {key} » : aucun modèle ne l’utilise")
+    except FileNotFoundError:
+        pass
     rep = ['## Relecture des modèles de mails', '', f'{len(T)} modèles, {len(cats)} catégories.']
     if err: rep += ['', '### ❌ À corriger'] + ['- ' + e for e in err]
     if warn: rep += ['', f'### ⚠️ À vérifier ({len(warn)})'] + ['- ' + w for w in warn[:120]]

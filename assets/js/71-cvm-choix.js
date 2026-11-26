@@ -39,7 +39,14 @@
       ['£', 'Trop-perçu de PAS', 'un trop-perçu de prélèvement à la source de l’impôt sur le revenu']
     ]
   };
-  Object.keys(CHOICES).forEach(k => CHOICES[k].sort((a, b) => a[1].localeCompare(b[1], 'fr', { sensitivity: 'base' })));
+  CHOICES.type_admission = [['def', 'Définitive', 'définitive'], ['prov', 'Provisoire', 'provisoire']];
+  CHOICES.evenement_declare = [['travail', 'Travail', 'travail'], ['formation', 'Formation', 'formation'], ['stage', 'Stage', 'stage'], ['mission', 'Mission d’intérim', 'mission d’intérim']];
+  Object.keys(CHOICES).filter(k => k === 'motif_trop_percu').forEach(k => CHOICES[k].sort((a, b) => a[1].localeCompare(b[1], 'fr', { sensitivity: 'base' })));
+  /* Mois : menu des 24 derniers mois et des 3 suivants (« septembre 2026 ») */
+  const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+  function monthList() { const d = new Date(), out = []; for (let i = 3; i >= -24; i--) { const x = new Date(d.getFullYear(), d.getMonth() + i, 1); const t = MOIS[x.getMonth()] + ' ' + x.getFullYear(); out.push([t, t, t]); } return out; }
+  const choicesFor = (key) => CHOICES[key] || (/^mois(_|$)/.test(key) && !/^mois_annee_attendu$/.test(key) ? monthList() : null);
+  window.ftCvmChoicesFor = choicesFor;
   window.FT_CVM_CHOICES = CHOICES;
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const OTHER = '__autre';
@@ -48,7 +55,7 @@
     if (!tpl || !tpl.variables) return;
     const grid = document.getElementById('dynamic-inputs-grid'); if (!grid) return;
     tpl.variables.forEach(v => {
-      const list = CHOICES[v.key]; if (!list) return;
+      const list = choicesFor(v.key); if (!list) return;
       const inp = [...grid.querySelectorAll('input')].find(i => (i.getAttribute('oninput') || '').indexOf("'" + v.key + "'") >= 0);
       if (!inp || inp.dataset.choice) return;
       let store = {}; try { store = userVariables[tpl.id] || {}; } catch (e) {}
@@ -56,16 +63,16 @@
       const hit = list.find(x => x[2] === cur);
       const sel = document.createElement('select');
       sel.className = inp.className + ' cvm-choice'; sel.setAttribute('aria-label', v.label);
-      sel.innerHTML = '<option value="">Choisir le motif…</option>' + list.filter((x, i, a) => a.findIndex(y => y[1] === x[1]) === i).map(x => '<option value="' + esc(x[0]) + '"' + (hit && hit[0] === x[0] ? ' selected' : '') + '>' + esc(x[1]) + '</option>').join('') +
-        '<option value="' + OTHER + '"' + (!hit && cur ? ' selected' : '') + '>Autre motif (texte libre)</option>';
+      sel.innerHTML = '<option value="">' + (/^mois/.test(v.key) ? 'Choisir le mois…' : v.key === 'motif_trop_percu' ? 'Choisir le motif…' : 'Choisir…') + '</option>' + list.filter((x, i, a) => a.findIndex(y => y[1] === x[1]) === i).map(x => '<option value="' + esc(x[0]) + '"' + (hit && hit[0] === x[0] ? ' selected' : '') + '>' + esc(x[1]) + '</option>').join('') +
+        '<option value="' + OTHER + '"' + (!hit && cur ? ' selected' : '') + '>' + (v.key === 'motif_trop_percu' ? 'Autre motif (texte libre)' : 'Autre (texte libre)') + '</option>';
       inp.dataset.choice = '1';
-      inp.placeholder = 'Rédigez le motif (ex. « une activité déclarée en retard »)';
+      if (v.key === 'motif_trop_percu') inp.placeholder = 'Rédigez le motif (ex. « une activité déclarée en retard »)';
       inp.classList.add('cvm-choice-free');
       inp.hidden = !(!hit && cur);
       inp.parentNode.insertBefore(sel, inp);
       const hint = document.createElement('div'); hint.className = 'cvm-choice-hint';
       inp.parentNode.appendChild(hint);
-      const showHint = () => { const x = list.find(y => y[0] === sel.value); hint.textContent = x ? '« … correspondant à ' + x[2] + ' »' : ''; };
+      const showHint = () => { const x = list.find(y => y[0] === sel.value); hint.textContent = x && v.key === 'motif_trop_percu' ? '« … correspondant à ' + x[2] + ' »' : ''; };
       sel.addEventListener('change', () => {
         if (sel.value === OTHER) { inp.hidden = false; inp.value = ''; handleVarChange(tpl.id, v.key, ''); inp.focus(); showHint(); return; }
         inp.hidden = true;

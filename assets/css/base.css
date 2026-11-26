@@ -1037,13 +1037,6 @@
     .mt-strip button { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--r-line, rgba(110,150,240,.25)); background: var(--r-card2, rgba(1,6,26,.5)); color: var(--r-text, #eaf1ff); text-align: left; cursor: pointer; max-width: 100%; }
     .mt-strip button:hover { border-color: var(--r-accent, #8cc0ff); }
     .mt-strip strong { font-size: 0.82rem; } .mt-strip span { font-size: 0.7rem; color: var(--r-sub, #9db5e0); }
-    html.entretien .reg-head p, html.entretien .wiz-hint, html.entretien .hub-name, html.entretien .home-quick-card p, html.entretien .mt-strip { display: none !important; }
-    html.entretien .reg-wrap { padding-top: 8px !important; padding-bottom: 8px !important; }
-    html.entretien .reg-head { margin-bottom: 6px !important; }
-    html.entretien .reg-head h2 { font-size: 1.15rem !important; }
-    html.entretien .hub-bar { padding-top: 4px !important; padding-bottom: 4px !important; }
-    html.entretien .wiz-hero strong, html.entretien .dl-result strong { font-size: 1.35em; }
-    html.entretien .sim-detail, html.entretien .dl-form { font-size: 0.92em; }
     .mt-strip { margin-bottom: 84px; }
     #reg-banner-text, #model-count-badge { white-space: nowrap; }
     .mt-strip summary { cursor: pointer; font-weight: 700; font-size: 0.85rem; color: var(--r-text, #eaf1ff); list-style: none; }

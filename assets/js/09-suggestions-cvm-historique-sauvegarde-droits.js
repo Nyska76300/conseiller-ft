@@ -763,45 +763,6 @@
     window.__iprNote = 'DEMANDE DE POURSUITE EXCEPTIONNELLE – CUMUL ARE ET ACTIVITÉ NON SALARIÉE (IPR)\n\nForme : ' + (forme === 'societe' ? 'société' : 'micro-entreprise ou entreprise individuelle') + '\nCréation ou reprise : ' + crea + '\nReliquat à la création : ' + (rel || '—') + ' j · plafond 60 % : ' + (rel ? plafJ : '—') + ' j · 40 % restants : ' + (rel ? restJ : '—') + ' j' + (aj && rel ? ' (' + eur(restJ * aj) + ')' : '') + '\nPlafond atteint : ' + ((($('ipr-mois') || {}).value || '—').split('-').reverse().join('/')) + ' · dépôt au plus tard le ' + fd(lim) + (late ? ' (HORS DÉLAI)' : '') + '\n\nRecevabilité :\n' + IPR_COND.map(c => (iprSt.c[c[0]] ? '[x] ' : '[ ] ') + c[1]).join('\n') + '\n\nPièces jointes :\n' + (recues.length ? recues.map(x => '- ' + x[1]).join('\n') : '- aucune') + (manq.length ? '\n\nPièces manquantes :\n' + manq.map(x => '- ' + x[1]).join('\n') : '') + '\n\nAvis du conseiller : …';
   };
   window.cnsIprCopy = function (k) { copyToClipboard(k === 'mail' ? (window.__iprMail || '') : (window.__iprNote || '')); showToast(k === 'mail' ? 'Mail copié' : 'Note copiée', 'success'); };
-  function tabSim() {
-    const d = new Date(), ym = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-    return '<div class="dl-layout"><section class="dl-form"><h3 class="dl-h">Situation</h3>' +
-      '<label>Allocation journalière brute (€)<input id="cns-aj" type="number" min="0" step="any" placeholder="0" oninput="cnsRun()"></label>' +
-      '<label>Mois civil concerné<input id="cns-mois" type="month" value="' + ym + '" oninput="cnsRun()"></label>' +
-      '<label>Nature de l’activité<select id="cns-type" onchange="cnsRun()"><option value="vente">Micro-entrepreneur : achat-revente, hébergement (abattement 71 %)</option><option value="bic">Micro-entrepreneur : autres BIC (abattement 50 %)</option><option value="bnc">Micro-entrepreneur : BNC (abattement 34 %, minimum 305 €)</option><option value="assurances">Autre : revenus déclarés aux assurances sociales</option></select></label>' +
-      '<label id="cns-l-rev">Chiffre d’affaires du mois (€)<input id="cns-rev" type="number" min="0" step="any" placeholder="0" oninput="cnsRun()"></label>' +
-      '<label>Justificatifs<select id="cns-mode" onchange="cnsRun()"><option value="justifie">Revenus connus et justifiés</option><option value="avance">Revenus déclarés, justificatifs à venir (avance)</option><option value="inconnu">Revenus inconnus (paiement provisoire)</option></select></label>' +
-      '<h3 class="dl-h">Plafond de 60 %</h3>' +
-      '<label class="dl-check"><input id="cns-plaf" type="checkbox" checked onchange="cnsRun()"> Fin de contrat retenue au 01/04/2025 ou après</label>' +
-      '<label>Reliquat de droits à la création ou reprise (jours)<input id="cns-rel" type="number" min="0" placeholder="0" oninput="cnsRun()"></label>' +
-      '<label>Jours déjà consommés en cumul avant ce mois<input id="cns-conso" type="number" min="0" placeholder="0" oninput="cnsRun()"></label>' +
-      '</section><section id="cns-out" class="dl-result"></section></div>';
-  }
-  window.cnsRun = function () {
-    const out = $('cns-out'); if (!out) return;
-    const aj = parseFloat($('cns-aj').value) || 0;
-    const [y, m] = ($('cns-mois').value || '').split('-').map(Number);
-    const jm = 30; /* mensualisation : 30 jours quel que soit le mois */
-    const type = $('cns-type').value;
-    $('cns-l-rev').firstChild.nodeValue = type === 'assurances' ? 'Revenus du mois déclarés aux assurances sociales (€)' : 'Chiffre d’affaires du mois (€)';
-    if (!(aj > 0)) { out.innerHTML = note('Renseignez l’allocation journalière pour calculer le cumul.'); return; }
-    const r = cnsCompute({ aj: aj, jm: jm, type: type, revenu: parseFloat($('cns-rev').value) || 0, mode: $('cns-mode').value, plafondActif: $('cns-plaf').checked, reliquat: parseFloat($('cns-rel').value) || 0, conso: parseFloat($('cns-conso').value) || 0 });
-    const al = [];
-    if (r.plafonne) al.push(wizAlert('warn', 'Plafond de 60 % atteint : ' + r.jours + ' jour(s) payable(s) sur ' + (r.mode === 'avance' ? r.provisoireJ : r.J) + '. Au-delà, poursuite exceptionnelle à demander à l’IPR.'));
-    if (r.mode === 'inconnu') al.push(wizAlert('warn', 'Paiement provisoire de 70 % de l’ARE mensuelle, régularisé chaque année sur les justificatifs.'));
-    if (r.mode === 'avance') al.push(wizAlert('warn', 'Avance de ' + r.provisoireJ + ' jour(s) (J × 0,8) : ' + (r.J - r.provisoireJ) + ' jour(s) à verser après justificatifs.'));
-    if (r.J === 0 && r.mode !== 'inconnu') al.push(wizAlert('warn', 'Revenus retenus ≥ 70 % de l’ARE mensuelle : aucun jour indemnisé ce mois-ci, les jours sont reportés.'));
-    const tiles = [['Revenu retenu', eur(r.retenu)], ['ARE mensuelle', eur(r.areM)], ['Part déduite (70 %)', eur(r.deduit)], ['Jours J calculés', fn(r.jRaw) + ' → ' + r.J]];
-    out.innerHTML = '<div class="wiz-hero is-ok"><div class="wiz-hero-top"><span>Complément d’ARE ' + (r.mode === 'inconnu' ? 'provisoire' : 'du mois') + '</span></div><strong>' + eur(r.complement) + '</strong><em>' + (r.mode === 'inconnu' ? '70 % de l’ARE mensuelle' : r.jours + ' jour(s) indemnisé(s), ' + r.reportes + ' reporté(s)') + '</em></div>' +
-      '<div class="wiz-tiles">' + tiles.map(t => '<div class="wiz-tile"><span>' + t[0] + '</span><strong>' + esc(t[1]) + '</strong></div>').join('') + '</div>' +
-      '<div class="wiz-tiles"><div class="wiz-tile"><span>Revenu total du mois</span><strong>' + eur(r.total) + '</strong></div>' +
-      (r.plafondJours != null ? '<div class="wiz-tile"><span>Plafond de 60 %</span><strong>' + fn(r.plafondJours) + ' j · reste ' + fn(r.restantJours) + ' j</strong></div>' : '') + '</div>' + al.join('') +
-      note('Formule : J = [ARE mensuelle − 0,70 × (CA − abattement)] ÷ AJ, arrondi à l’entier. Simulation indicative à confirmer sur la notification.') +
-      '<div class="wiz-actions"><button type="button" class="reg-btn" onclick="cnsCopy()">Copier la note</button></div>';
-    window.__cnsNote = 'Cumul ARE et activité non salariée, ' + $('cns-mois').value + '\nAJ ' + eur(aj) + ' × ' + jm + ' j = ' + eur(r.areM) + '\nRevenu retenu ' + eur(r.retenu) + ' (déduction 70 % = ' + eur(r.deduit) + ')\n' +
-      (r.mode === 'inconnu' ? 'Paiement provisoire : ' + eur(r.complement) : 'Jours indemnisés : ' + r.jours + ' (reportés : ' + r.reportes + ')\nComplément : ' + eur(r.complement)) + (r.plafondJours != null ? '\nPlafond 60 % : ' + fn(r.plafondJours) + ' j, restant ' + fn(r.restantJours) + ' j' : '') + '\nBarème vérifié le ' + BAREME.verifie;
-  };
-  window.cnsCopy = function () { copyToClipboard(window.__cnsNote || ''); showToast('Note copiée', 'success'); };
 
   /* Vue et onglets internes */
   const TABS = [['ipr', 'Dossier IPR', tabIpr], ['regles', 'Règles et calcul', tabRegles], ['dem', 'Démarches', tabDemarches], ['rec', 'Recours', tabRecours], ['src', 'Sources', tabSources]];

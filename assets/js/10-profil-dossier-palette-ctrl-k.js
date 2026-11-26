@@ -92,10 +92,6 @@ L.push('Allocation journalière brute estimée : ' + sn.are, 'Formule retenue : 
     _sw(t);
     const cur = String(activeNavTab);
     if (cur && cur !== 'home' && cur.indexOf('hub:') !== 0) { const u = usage(); u[cur] = (u[cur] || 0) + 1; LSset('ft_tool_use', JSON.stringify(u)); }
-    if (cur === 'cns' && profile && profile.aj) {
-      const inp = $('cns-aj');
-      if (inp && !inp.value) { inp.value = profile.aj.toFixed(2); try { cnsRun(); } catch (e) {} showToast('Allocation du dossier en cours reprise : ' + profile.aj.toFixed(2).replace('.', ',') + ' €/j', 'info'); }
-    }
   };
   const hs = $('home-search'); if (hs) hs.placeholder = window.matchMedia('(max-width:767px)').matches ? 'Un outil ou un modèle de mail' : 'Un outil ou un modèle de mail (Ctrl+K partout)';
 

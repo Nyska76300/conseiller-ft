@@ -14,6 +14,13 @@
   function viewToggle() {
     const badge = $('filtered-count-badge'); if (!badge || $('cvm-vt')) return;
     const w = document.createElement('div'); w.id = 'cvm-vt'; w.className = 'cvm-vt'; w.setAttribute('role', 'group'); w.setAttribute('aria-label', 'Affichage des modèles');
+    const ex = document.createElement('div'); ex.id = 'cvm-xtra'; ex.className = 'cvm-xtra';
+    ex.innerHTML = '<button type="button" id="cvm-drafts" title="N’afficher que les modèles avec une saisie en cours"><span>Brouillons</span><b id="cvm-drafts-n">0</b></button><button type="button" id="cvm-top" title="Vos modèles les plus copiés sur cet appareil">Plus utilisés</button>';
+    ex.addEventListener('click', e => {
+      if (e.target.closest('#cvm-drafts')) { root.classList.toggle('cvm-only-drafts'); e.target.closest('#cvm-drafts').classList.toggle('on', root.classList.contains('cvm-only-drafts')); }
+      if (e.target.closest('#cvm-top')) { e.stopPropagation(); topPop(e.target.closest('#cvm-top')); }
+    });
+    badge.parentNode.insertBefore(ex, badge);
     w.innerHTML = '<button type="button" data-v="liste" title="Affichage en liste"><i data-lucide="list" class="w-3.5 h-3.5"></i>Liste</button><button type="button" data-v="tuiles" title="Affichage en tuiles"><i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>Tuiles</button>';
     w.addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; try { localStorage.setItem('ft_cvm_view', b.dataset.v); } catch (err) {} syncView(); });
     badge.parentNode.insertBefore(w, badge);
@@ -78,10 +85,41 @@
         (nV ? '<span class="cvm-open-l">Ouvrir ›</span>' : '<button type="button" class="cvm-copy" data-copy="' + esc(t.id) + '"><i data-lucide="copy" class="w-3.5 h-3.5"></i>Copier</button>');
       const ch = document.createElement('div'); ch.className = 'cvm-chips';
       const tags = (t.tags || []).join(' ').split(/[,;]+/).map(x => x.trim()).filter(Boolean).slice(0, 3);
-      ch.innerHTML = '<span class="cvm-chip is-cat">' + esc(t.category || '') + '</span>' + (nV ? '<span class="cvm-chip is-nv">' + nV + ' champ' + (nV > 1 ? 's' : '') + '</span>' : '<span class="cvm-chip is-ok">prêt à copier</span>') + tags.map(x => '<span class="cvm-chip">' + esc(x.toLowerCase()) + '</span>').join('');
+      let ud = {}; try { ud = userVariables[t.id] || {}; } catch (e) {}
+      const draft = Object.keys(ud).some(k => String(ud[k] == null ? '' : ud[k]).trim()); c.classList.toggle('is-draft', draft);
+      ch.innerHTML = (draft ? '<span class="cvm-chip is-draft">✎ brouillon</span>' : '') + '<span class="cvm-chip is-cat">' + esc(t.category || '') + '</span>' + (nV ? '<span class="cvm-chip is-nv">' + nV + ' champ' + (nV > 1 ? 's' : '') + '</span>' : '<span class="cvm-chip is-ok">prêt à copier</span>') + tags.map(x => '<span class="cvm-chip">' + esc(x.toLowerCase()) + '</span>').join('');
       c.appendChild(pv); c.appendChild(ch); c.appendChild(ft);
     });
+    const nd = list.querySelectorAll('.cvm-card.is-draft').length, nb = document.getElementById('cvm-drafts-n'); if (nb) nb.textContent = nd;
     try { if (window.lucide) lucide.createIcons(); } catch (e) {}
+  }
+
+  /* Modèles les plus copiés (compteur local) */
+  const UKEY = 'ft_tpl_usage';
+  const usage = () => { try { return JSON.parse(localStorage.getItem(UKEY) || '{}') || {}; } catch (e) { return {}; } };
+  if (typeof copyCurrentMail === 'function') {
+    const _c = copyCurrentMail;
+    copyCurrentMail = function () { const r = _c.apply(this, arguments); try { const u = usage(), id = activeTemplateId; if (id) { u[id] = (u[id] || 0) + 1; localStorage.setItem(UKEY, JSON.stringify(u)); } } catch (e) {} return r; };
+    window.copyCurrentMail = copyCurrentMail;
+  }
+  function topPop(anchor) {
+    let p = $('cvm-top-pop');
+    if (p && p.classList.contains('on')) { p.classList.remove('on'); return; }
+    if (!p) { p = document.createElement('div'); p.id = 'cvm-top-pop'; p.className = 'cvm-top-pop'; document.body.appendChild(p);
+      document.addEventListener('click', e => { if (p.classList.contains('on') && e.target.isConnected && !p.contains(e.target)) p.classList.remove('on'); });
+      p.addEventListener('click', e => {
+        const f = e.target.closest('[data-fav]'); if (f) { e.stopPropagation(); try { toggleFavorite(f.dataset.fav, e); } catch (err) {} setTimeout(() => topPop.fill(), 30); return; }
+        const o = e.target.closest('[data-open]'); if (o) { p.classList.remove('on'); try { selectTemplate(o.dataset.open); } catch (err) {} open(); }
+      });
+    }
+    topPop.fill = () => {
+      const u = usage(); let tpls = [], fav = []; try { tpls = templates; fav = favorites; } catch (e) {}
+      const top = Object.keys(u).map(id => [tpls.find(t => t.id === id), u[id]]).filter(x => x[0]).sort((a, b) => b[1] - a[1]).slice(0, 10);
+      p.innerHTML = '<div class="cvm-top-h"><b>Vos modèles les plus copiés</b><small>sur cet appareil</small></div>' + (top.length ? top.map(x => '<div class="cvm-top-r"><button type="button" class="cvm-top-o" data-open="' + esc(x[0].id) + '">' + esc(x[0].title) + '</button><span class="cvm-top-n">' + x[1] + '×</span><button type="button" class="cvm-top-f' + (fav.indexOf(x[0].id) >= 0 ? ' on' : '') + '" data-fav="' + esc(x[0].id) + '" title="Favori" aria-label="Favori">★</button></div>').join('') : '<p class="cvm-top-e">Copiez quelques mails : vos modèles les plus utilisés apparaîtront ici, prêts à être mis en favoris.</p>');
+    };
+    topPop.fill();
+    const r = anchor.getBoundingClientRect(); p.style.top = (r.bottom + 8) + 'px'; p.style.left = Math.max(8, Math.min(window.innerWidth - 380, r.left - 120)) + 'px';
+    p.classList.add('on');
   }
 
   /* Ouverture au clic sur une carte (pas sur les boutons) */
