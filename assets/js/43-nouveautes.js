@@ -2,6 +2,12 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-26.7', date: '26/11/2026', items: [
+      'CVM Direct sur ordinateur : la liste des modèles prend toute la largeur, en cartes avec un aperçu des premières lignes du mail et les champs à remplir surlignés.',
+      'Le mail s’ouvre dans un panneau qui arrive par la droite (champs, message complet, Copier). Échap ou la croix le referment ; Ctrl+↓ / Ctrl+↑ et Ctrl+Entrée fonctionnent toujours.',
+      'Modèles sans champ à remplir : bouton « Copier » directement sur la carte, sans ouvrir le panneau.',
+      '« Rédiger le mail CVM » depuis un simulateur ouvre directement le panneau du modèle choisi. Sur téléphone, rien ne change.'
+    ] },
     { v: '2026-11-26.6', date: '26/11/2026', items: [
       'Cumul CNS repensé : bandeau d’explication, quatre chiffres clés (recevabilité, pièces, date limite, 40 % en jeu), puis trois cartes côte à côte (recevabilité, chiffres du dossier, pièces à joindre). Les cases cochées passent au vert.',
       'Toutes les pages utilisent mieux la largeur de l’écran : contenu élargi sur les grands écrans, formulaires sur deux colonnes (Délais, Conditions…), résultat qui reste visible en faisant défiler, Droits et passages sur deux colonnes, FAQ sur deux colonnes, listes de règles en colonnes.',

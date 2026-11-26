@@ -1826,4 +1826,14 @@ html.theme-light .ipr .ipr-c:hover{background:#f8f6fa}
 html.theme-light .ipr-fields input,html.theme-light .ipr-fields select{color:#2f1947;background:#f8f6fa;border-color:#dcd5e3}
 html.theme-light .ipr-calc>div{background:#f8f6fa;border-color:#e2dde8}
 html.theme-light .ipr-src a{color:#6d17dc}
+@media (min-width:1024px){html.cvm-dw #view-cvm>main{background:#1c0b2f!important;border-left:1px solid rgba(180,129,235,.3)}html.theme-light.cvm-dw #view-cvm>main{background:#fbf9fc!important;border-left-color:#d9d2e2;box-shadow:-24px 0 60px rgba(34,19,52,.22)}html.cvm-dw.cvm-open #cvm-scrim{background:rgba(8,2,15,.55)}html.theme-light.cvm-dw.cvm-open #cvm-scrim{background:rgba(34,19,52,.28)}html.cvm-dw .cvm-dw-x{color:#e8e0f2;background:rgba(180,129,235,.14);border:1px solid rgba(180,129,235,.3)}html.cvm-dw .cvm-dw-x:hover{background:rgba(180,129,235,.26)}html.theme-light.cvm-dw .cvm-dw-x{color:#2f1947;background:#f0ecf4;border-color:#d9d2e2}html.cvm-dw #templates-list>.cvm-card:focus-visible{outline:2px solid #b682f8}}
+.cvm-pv{color:#cfc6da}
+.cvm-ft{border-top:1px solid rgba(180,129,235,.16)}
+.cvm-nv{color:#bcafca}
+.cvm-open-l{color:#ceaefb}
+.cvm-copy{background:linear-gradient(90deg,#6d17dc,#8641e1)}
+html.theme-light .cvm-pv{color:#554a61}
+html.theme-light .cvm-ft{border-top-color:#eae6ee}
+html.theme-light .cvm-nv{color:#70657d}
+html.theme-light .cvm-open-l{color:#6d17dc}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(103,48,166,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(123,57,198,0.1),transparent 60%),linear-gradient(150deg,#06030a 0%,#0f0718 35%,#190b28 70%,#27123f 100%) fixed!important}

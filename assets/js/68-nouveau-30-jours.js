@@ -8,7 +8,8 @@
     journal: ['2026-11-16', 'Nouveau'],
     pensebete: ['2026-11-16', 'Nouveau'],
     '5': ['2026-11-26', 'Mis à jour'],
-    cns: ['2026-11-26', 'Mis à jour']
+    cns: ['2026-11-26', 'Mis à jour'],
+    cvm: ['2026-11-26', 'Mis à jour']
   };
   const DAYS = 30;
   const until = d => { const x = new Date(d + 'T00:00:00'); x.setDate(x.getDate() + DAYS); return x; };

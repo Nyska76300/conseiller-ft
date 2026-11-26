@@ -1930,3 +1930,39 @@ html.theme-light .ipr-src a{color:#0b5cd5}
   #faq-list .faq-q{margin-bottom:0}
 }
 @media (max-width:900px){.hub-bar>.hub-sub .rg-tabs{overflow-x:auto;scrollbar-width:none}.hub-bar>.hub-sub .rg-tabs::-webkit-scrollbar{display:none}.hub-bar>.hub-sub .rg-tab{flex:1 0 auto!important}}
+
+/* ===== 2026-11-26.7 : CVM Direct, mail en panneau latéral et cartes avec aperçu ===== */
+@media (min-width:1024px){
+  html.cvm-dw #view-cvm>.tpl-col{flex:1 1 auto!important;width:auto!important;max-width:none!important;min-width:0!important;border-right:0!important}
+  html.cvm-dw #view-cvm>main{position:fixed!important;top:56px;right:0;bottom:0;width:min(900px,66vw)!important;max-width:none!important;z-index:45;transform:translateX(104%);visibility:hidden;transition:transform .26s cubic-bezier(.2,.8,.2,1),visibility 0s linear .26s;background:#071437!important;border-left:1px solid rgba(110,150,240,.3);box-shadow:-24px 0 60px rgba(0,0,0,.5)}
+  html.cvm-dw.cvm-open #view-cvm>main{transform:none;visibility:visible;transition:transform .26s cubic-bezier(.2,.8,.2,1),visibility 0s}
+  html.theme-light.cvm-dw #view-cvm>main{background:#f7faff!important;border-left-color:#c6d6ee;box-shadow:-24px 0 60px rgba(15,28,58,.22)}
+  #cvm-scrim{display:none}
+  html.cvm-dw.cvm-open #cvm-scrim{display:block;position:fixed;inset:56px 0 0 0;z-index:44;background:rgba(1,5,20,.55)}
+  html.theme-light.cvm-dw.cvm-open #cvm-scrim{background:rgba(15,28,58,.28)}
+  .cvm-dw-x{display:none}
+  html.cvm-dw .cvm-dw-x{display:inline-flex;align-items:center;justify-content:center;flex:none;width:36px;height:36px;margin-right:10px;border-radius:10px;color:#d6e4ff;background:rgba(110,150,240,.14);border:1px solid rgba(110,150,240,.3);cursor:pointer}
+  html.cvm-dw .cvm-dw-x:hover{background:rgba(110,150,240,.26)}
+  html.theme-light.cvm-dw .cvm-dw-x{color:#14264d;background:#e6eefa;border-color:#c6d6ee}
+  html.cvm-dw #cvm-back{display:none!important}
+  html.cvm-dw #templates-list{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;padding:14px!important;align-content:start}
+  html.cvm-dw #templates-list>*{margin:0!important}
+  html.cvm-dw #templates-list>.tpl-grp,html.cvm-dw #templates-list>div:not([data-tpl-id]){grid-column:1/-1}
+  html.cvm-dw #templates-list>.cvm-card{display:flex;flex-direction:column;gap:8px;padding:12px 14px!important;border-radius:16px!important;min-height:150px}
+  html.cvm-dw #templates-list>.cvm-card:focus-visible{outline:2px solid #5b9bff;outline-offset:2px}
+  html.cvm-dw #templates-list>.cvm-card .opacity-0{opacity:.55}
+}
+.cvm-pv{flex:none;max-height:6em;font-size:.78rem;line-height:1.5;color:#b8cbe9;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.cvm-pv-var{display:inline;padding:0 5px;border-radius:5px;font-weight:700;color:#ffd3a1;background:rgba(245,158,11,.16);border:1px dashed rgba(245,158,11,.5)}
+.cvm-ft{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:8px;border-top:1px solid rgba(110,150,240,.16)}
+.cvm-nv{font-size:.7rem;font-weight:700;color:#9db5e0}
+.cvm-open-l{font-size:.74rem;font-weight:800;color:#8cc0ff}
+.cvm-copy{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:9px;font-size:.74rem;font-weight:800;color:#fff;background:linear-gradient(90deg,#0b5cd5,#2a78e8);border:0;cursor:pointer}
+.cvm-copy:hover{filter:brightness(1.1)}
+html.theme-light .cvm-pv{color:#3d4f6b}
+html.theme-light .cvm-pv-var{color:#8a4b00;background:#fff4e0;border-color:#f0b860}
+html.theme-light .cvm-ft{border-top-color:#e0e8f4}
+html.theme-light .cvm-nv{color:#566b86}
+html.theme-light .cvm-open-l{color:#0b5cd5}
+html.cvm-dw #templates-list{grid-auto-rows:max-content!important}
+html.cvm-dw #templates-list>.cvm-card{height:auto!important;max-height:none!important}
