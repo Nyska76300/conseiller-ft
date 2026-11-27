@@ -2,6 +2,10 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.11', date: '27/11/2026', items: [
+      'Onglet « Autres » complet : il reprend tous les outils qui ne sont rangés dans aucune rubrique (Ma journée, Questions fréquentes, Pièces justificatives, Pense-bête d’entretien, Mode formation…), même si le titre « Autres outils » du menu a été renommé.',
+      'Sous-onglets d’une rubrique : une icône colorée devant chaque titre, sur une seule ligne.'
+    ] },
     { v: '2026-11-27.10', date: '27/11/2026', items: [
       'En-tête : la roue des paramètres et « Mes données » passent dans le menu du compte (bouton « Se connecter » ou vos initiales), même sans être connecté.',
       'Onglet « Autres » : un clic l’ouvre bien (il se refermait si le menu était déjà ouvert au survol). Les onglets tiennent sur une ligne même sur un écran plus étroit (noms courts : Fin de droits, Situations, Références).',

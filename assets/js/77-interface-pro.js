@@ -77,7 +77,10 @@
     const tabOf = b => (/switchNavTab\('([^']+)'\)/.exec(b.getAttribute('onclick') || '') || [])[1];
     if (id === 'autres') {
       const list = document.getElementById('burger-tabs-list'); const out = [];
-      if (list) { let on = false; [...list.children].forEach(c => { if (c.classList.contains('menu-sec-h')) { on = /autres/i.test(c.textContent); return; } if (on && c.tagName === 'BUTTON') { const v = tabOf(c); if (v) out.push({ k: 'tab', v: v, t: lbl(c) }); } }); }
+      if (list) { let on = false; [...list.children].forEach(c => { if (c.classList.contains('menu-sec-h')) { on = true; return; } if (on && c.tagName === 'BUTTON') { const v = tabOf(c); if (v) out.push({ k: 'tab', v: v, t: lbl(c) }); } }); }
+      /* + tout outil qui n'appartient à aucune rubrique (même si le titre « Autres outils » a été renommé) */
+      const inSec = new Set([...document.querySelectorAll('#burger-tabs-list .menu-sec button[onclick^="switchNavTab"]')].map(tabOf));
+      try { NAV_TABS_CONFIG.forEach(t => { const v = String(t.id); if (/^hub:|^home$|^cvm$/.test(v) || inSec.has(v) || out.some(x => x.v === v)) return; out.push({ k: 'tab', v: v, t: t.name }); }); } catch (e) {}
       if (!out.some(x => x.v === 'jour')) out.unshift({ k: 'tab', v: 'jour', t: nameOf('jour', 'Ma journée') });
       return [{ h: 'Autres outils', items: out }];
     }
@@ -311,7 +314,19 @@
       el.classList.add('ios-ic', 'ios-auto'); el.dataset.ios = '1';
     }));
   }
-  function after() { try { home(); simLayout(); rulesToc(); iosify(); } catch (e) { console.warn(e); } }
+  /* Sous-onglets d'une rubrique : icône colorée devant chaque titre */
+  function hubIcons() {
+    document.querySelectorAll('.hub-bar .hub-tab[data-t]').forEach(b => {
+      if (b.querySelector('.pt-ic')) return;
+      const ic = toolIcon(b.dataset.t); if (!ic) return;
+      const h = window.ftHubOf ? window.ftHubOf(b.dataset.t) : null;
+      let col = h ? GC[h.id] : null;
+      if (!col) { const sec = [...document.querySelectorAll('#burger-tabs-list > .menu-sec')].find(x => x.querySelector('button[onclick="switchNavTab(\'' + b.dataset.t + '\')"]')); const hh = sec && (window.FT_HUBS || []).find(x => sec.querySelector('button[onclick="switchNavTab(\'' + x.members[0][0] + '\')"]')); col = hh ? GC[hh.id] : '#0a84ff'; }
+      const i = document.createElement('i'); i.className = 'ios-ic pt-ic'; i.style.setProperty('--ios', col); i.innerHTML = ic; i.setAttribute('aria-hidden', 'true');
+      b.prepend(i);
+    });
+  }
+  function after() { try { home(); simLayout(); rulesToc(); iosify(); hubIcons(); } catch (e) { console.warn(e); } }
   if (typeof switchNavTab === 'function') {
     const _s = switchNavTab;
     switchNavTab = function () { const r = _s.apply(this, arguments); try { mark(); close(); setTimeout(after, 250); } catch (e) {} return r; };
