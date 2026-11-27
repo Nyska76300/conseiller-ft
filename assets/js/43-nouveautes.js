@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.23', date: '27/11/2026', items: [
+      'Accueil allégé : un bandeau (Bonjour, heure, recherche, Nouveau dossier, Que faire si…, vos liens utiles, chiffres clés), puis quatre cartes : Outils favoris, Mails favoris, Outils les plus utilisés et Repères. « Quoi de neuf » devient le bouton « Nouveautés ».'
+    ] },
     { v: '2026-11-27.21', date: '27/11/2026', items: [
       'Fond pastel doux aux tons bleutés (bleu, lavande, bleu ciel) sur tout le site en mode clair, avec un en-tête légèrement transparent et des cartes plus arrondies.'
     ] },

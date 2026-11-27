@@ -422,7 +422,93 @@
     b.addEventListener('click', () => { const on = f.classList.toggle('open'); b.setAttribute('aria-expanded', String(on)); });
     f.appendChild(b);
   }
-  function after() { try { foot(); home(); simLayout(); rulesToc(); iosify(); syncHubBars(); hubIcons(); } catch (e) { console.warn(e); } }
+  /* ---------- Accueil allégé : bandeau, outils favoris, mails favoris, plus utilisés, repères ---------- */
+  const PH = {
+    search: '<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>', plus: '<path d="M12 5v14M5 12h14"/>',
+    help: '<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.5a2.5 2.5 0 0 1 4.8 1c0 1.7-2.4 2-2.4 3.5M12 17h.01"/>',
+    link: '<path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/>',
+    bell: '<path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
+    star: '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" fill="currentColor" stroke="none"/>',
+    mail: '<rect x="3.5" y="6" width="17" height="12" rx="2.2"/><path d="m4 7 8 6 8-6"/>',
+    trend: '<path d="m4 16 5-5 4 4 7-7M15 8h5v5"/>', chev: '<path d="m9 6 6 6-6 6"/>'
+  };
+  const sg = (k, w) => '<svg viewBox="0 0 24 24" width="' + (w || 18) + '" height="' + (w || 18) + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + PH[k] + '</svg>';
+  const ic = (inner, c, cls) => '<span class="ios-ic ' + (cls || '') + '" style="--ios:' + c + '">' + inner + '</span>';
+  const fmtN = n => (typeof n === 'number' ? n.toFixed(2).replace('.', ',') : '—');
+  function proHome() {
+    const vh = document.getElementById('view-home'); if (!vh) return;
+    let H = document.getElementById('pro-home');
+    if (!H) {
+      H = document.createElement('div'); H.id = 'pro-home'; H.className = 'pro-home'; vh.prepend(H);
+      H.addEventListener('click', e => {
+        const a = e.target.closest('[data-go]'); if (!a) return;
+        const k = a.dataset.go, v = a.dataset.v;
+        try {
+          if (k === 'tab') switchNavTab(v);
+          else if (k === 'pin') window.ftOpenPin(v);
+          else if (k === 'tpl') window.ftOpenPin('tpl:' + v);
+          else if (k === 'link') window.open(v, '_blank', 'noopener');
+          else if (k === 'search') { if (typeof ftHeaderSearch === 'function') ftHeaderSearch(); }
+          else if (k === 'dossier') { const b = vh.querySelector('.home-wrap .fh-dos .fh-btn'); if (b) b.click(); else switchNavTab('dossier'); }
+          else if (k === 'sit') { const b = vh.querySelector('.sit-home'); if (b) b.click(); }
+          else if (k === 'news') { const b = vh.querySelector('.home-wrap .fh-news .fh-btn2'); if (b) b.click(); }
+          else if (k === 'links') { const b = vh.querySelector('.lk-manage'); if (b) b.click(); }
+          else if (k === 'pins') { if (window.ftOpenPins) window.ftOpenPins(); }
+          else if (k === 'mails') { switchNavTab('cvm'); setTimeout(() => { try { selectCategory('favorites'); } catch (er) {} }, 40); }
+        } catch (er) {}
+      });
+    }
+    const B = (typeof BAREME !== 'undefined' && BAREME) || {};
+    const h = new Date().getHours(); let me = null; try { me = ftCurrentUser(); } catch (e) {}
+    let links = null; try { links = JSON.parse(localStorage.getItem('ft_links')); } catch (e) {}
+    if (!Array.isArray(links)) links = [{ t: 'Unédic', u: 'https://www.unedic.org/' }];
+    const pins = window.ftPinsList ? window.ftPinsList() : [];
+    const ptools = pins.filter(x => String(x.id).indexOf('tpl:') !== 0);
+    let fm = []; try { fm = favorites.map(id => templates.find(t => t.id === id)).filter(Boolean); } catch (e) {}
+    pins.filter(x => String(x.id).indexOf('tpl:') === 0).forEach(x => { const id = String(x.id).slice(4); if (!fm.some(t => String(t.id) === id)) { try { const t = templates.find(y => String(y.id) === id); if (t) fm.push(t); } catch (e) {} } });
+    let use = {}; try { use = JSON.parse(localStorage.getItem('ft_tool_use') || '{}') || {}; } catch (e) {}
+    const known = new Set(); try { NAV_TABS_CONFIG.forEach(t => known.add(String(t.id))); } catch (e) {}
+    let top = Object.keys(use).filter(k => known.has(k) && !/^(home|cvm|hub:)/.test(k)).sort((a, b) => use[b] - use[a]);
+    ['1', '2', '6', '5', '9', 'delais', '3', 'calendrier'].forEach(k => { if (!top.includes(k)) top.push(k); }); top = top.slice(0, 8);
+    const tname = id => { const b = document.querySelector('#burger-tabs-list button[onclick="switchNavTab(\'' + id + '\')"]'); if (b) { const t = b.querySelector('.text-xs'); const v = ((t ? t.textContent : b.textContent) || '').replace(/\s*(Nouveau|Mis à jour)\s*$/, '').trim(); if (v) return v; } try { const t = NAV_TABS_CONFIG.find(x => String(x.id) === id); return t ? t.name : id; } catch (e) { return id; } };
+    const colOf = id => { if (TOOLC[id]) return TOOLC[id]; const hh = window.ftHubOf ? window.ftHubOf(id) : null; return (hh && GC[hh.id]) || '#0a84ff'; };
+    const tIcon = id => toolIcon(id) || sg('star');
+    const row = (go, v, title, sub, icon, c) => '<button type="button" class="ph-row" data-go="' + go + '" data-v="' + esc(v) + '">' + ic(icon, c) + '<span class="ph-rt"><b>' + esc(title) + '</b>' + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</span>' + sg('chev', 15) + '</button>';
+    const html =
+      '<section class="ph-hero"><div class="ph-hd"><div><div class="ph-hello">' + ((h >= 18 || h < 4) ? 'Bonsoir' : 'Bonjour') + (me && me.name ? ' ' + esc(me.name) : '') + '</div><div class="ph-q">Que cherchez-vous ?</div></div>' +
+        '<div class="ph-right"><button type="button" class="ph-news" data-go="news">' + sg('bell', 14) + 'Nouveautés</button><div class="ph-clock"><div class="ph-time"><span id="ph-hm"></span><small id="ph-s"></small></div><div class="ph-date" id="ph-d"></div></div></div></div>' +
+        '<button type="button" class="ph-search" data-go="search">' + sg('search', 20) + '<span>Un outil, une règle ou un modèle de mail</span><kbd>Ctrl K</kbd></button>' +
+        '<div class="ph-acts"><button type="button" class="ph-b pri" data-go="dossier">' + sg('plus', 16) + 'Nouveau dossier</button><button type="button" class="ph-b" data-go="sit">' + ic(sg('help', 14), '#af52de', 'ph-mi') + 'Que faire si…</button><span class="ph-sep"></span>' +
+          links.slice(0, 6).map(l => '<button type="button" class="ph-b" data-go="link" data-v="' + esc(l.u || l.url) + '">' + ic(sg('link', 14), '#32ade6', 'ph-mi') + esc(l.t || l.name || '') + '</button>').join('') + '<button type="button" class="ph-b ghost" data-go="links">' + sg('plus', 14) + 'Lien</button></div>' +
+        '<div class="ph-kpi"><span class="ph-lab">Chiffres clés</span>' + [['ARE min.', fmtN(B.are && B.are.min) + ' €/j'], ['Partie fixe', fmtN(B.are && B.are.partieFixe) + ' €/j'], ['Allocation max.', fmtN(B.are && B.are.max) + ' €/j'], ['ASS', fmtN(B.solidarite && B.solidarite.ass) + ' €/j'], ['Affiliation', ((B.affiliation && B.affiliation.jours) || '') + ' j / ' + ((B.affiliation && B.affiliation.heures) || '') + ' h']].map(k => '<span>' + k[0] + ' <b>' + esc(k[1]) + '</b></span>').join('') + '</div></section>' +
+      '<div class="ph-grid"><div class="ph-main"><div class="ph-two">' +
+        '<section class="ph-card ph-tf"><header>' + ic(sg('star', 16), '#ff9f0a') + '<h2>Outils favoris</h2><small>' + ptools.length + '</small><button type="button" class="ph-b sm" data-go="pins">Choisir</button></header>' +
+          (ptools.length ? '<div class="ph-list">' + ptools.slice(0, 8).map(x => row('pin', x.id, x.label, x.group, (x.icon || '').replace(/\sclass="[^"]*"/, '') || sg('star'), colOf(String(x.id)))).join('') + '</div>' : '<p class="ph-empty">Cliquez sur « Choisir » pour épingler vos outils préférés.</p>') + '</section>' +
+        '<section class="ph-card ph-mf"><header>' + ic(sg('mail', 16), '#0a84ff') + '<h2>Mails favoris</h2><small>' + fm.length + '</small><button type="button" class="ph-b sm" data-go="mails">Ouvrir</button></header>' +
+          (fm.length ? '<div class="ph-list">' + fm.slice(0, 8).map(t => row('tpl', t.id, t.title, t.category, sg('mail', 16), '#0a84ff')).join('') + '</div>' : '<p class="ph-empty">Ajoutez l’étoile sur un mail dans l’onglet Mails pour le retrouver ici.</p>') + '</section>' +
+        '</div><section class="ph-card ph-top"><header>' + ic(sg('trend', 16), '#34c759') + '<h2>Outils les plus utilisés</h2></header><div class="ph-apps">' +
+          top.map(id => '<button type="button" class="ph-app" data-go="tab" data-v="' + esc(id) + '">' + ic(tIcon(id), colOf(id), 'ph-ai') + '<span>' + esc(tname(id)) + '</span></button>').join('') + '</div></section></div>' +
+        '<section class="ph-card ph-rp"><div id="ph-rep-slot"></div></section>' +
+      '</div>';
+    if (H.dataset.h !== html) {
+      const slot = document.getElementById('ph-rep-slot'), rep = slot && slot.firstElementChild;
+      H.innerHTML = html; H.dataset.h = html;
+      if (rep) document.getElementById('ph-rep-slot').appendChild(rep);
+    }
+    /* Repères : la carte existante (avec ses dépliants) est déplacée dans l'accueil allégé */
+    const fresh = vh.querySelector('.home-wrap .fh-rep'), slot = document.getElementById('ph-rep-slot');
+    if (fresh && slot) { slot.innerHTML = ''; slot.appendChild(fresh); }
+    phTick();
+  }
+  function phTick() {
+    const d = new Date(), p = n => String(n).padStart(2, '0');
+    const a = document.getElementById('ph-hm'), b = document.getElementById('ph-s'), c = document.getElementById('ph-d');
+    if (a) a.textContent = p(d.getHours()) + ':' + p(d.getMinutes());
+    if (b) b.textContent = ':' + p(d.getSeconds());
+    if (c) { const t = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); c.textContent = t.charAt(0).toUpperCase() + t.slice(1); }
+  }
+  setInterval(() => { if (cur() === 'home') phTick(); }, 1000);
+  function after() { try { proHome(); foot(); home(); simLayout(); rulesToc(); iosify(); syncHubBars(); hubIcons(); } catch (e) { console.warn(e); } }
   if (typeof switchNavTab === 'function') {
     const _s = switchNavTab;
     switchNavTab = function () { const r = _s.apply(this, arguments); try { mark(); close(); setTimeout(after, 250); } catch (e) {} return r; };
