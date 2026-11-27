@@ -411,3 +411,9 @@ html.ui-pro:not(.theme-light) [id^="view-"] :is(.bg-white,[class*="bg-white/"]):
   html.ui-pro:is(.theme-light,:not(.theme-light)) .hub-bar>.hub-sub{flex:0 0 auto!important;width:auto!important;align-self:flex-end}
 }
 html.ui-pro:is(.theme-light,:not(.theme-light)) .hub-bar .hub-tab{padding:11px 10px 9px!important;font-size:.9rem!important}
+/* 2026-11-27.20 : heure sans cadre, plus grande, avec les secondes */
+html.ui-pro #view-home .home-clock{background:transparent!important;border:0!important;padding:0!important;box-shadow:none!important}
+html.ui-pro #view-home .home-time{font-size:2.3rem!important;font-weight:800!important;letter-spacing:-.03em}
+html.ui-pro #view-home .home-time small{display:inline!important;font-size:.5em!important;font-weight:700;color:var(--pro-mute);margin-left:2px;letter-spacing:0}
+html.ui-pro #view-home .home-date{font-size:.8rem!important;margin-top:2px!important}
+@media (max-width:640px){html.ui-pro #view-home .home-time{font-size:1.4rem!important}}
