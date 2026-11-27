@@ -2,6 +2,11 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.27', date: '27/11/2026', items: [
+      'Assistant (widget bulle violette, ou recherche « Assistant ») : posez une question avec vos mots, il répond avec le contenu du site (chiffres du barème, situations « Que faire si… », FAQ, glossaire) et propose les bons outils et mails. Aucune IA externe : rien ne quitte votre poste.',
+      'Barre de widgets personnalisable (bouton de réglage en bas de la barre, ou menu du compte) : ajoutez, retirez et réordonnez les widgets, et épinglez n’importe quel outil. Le choix suit votre compte.',
+      'Accueil identique au thème classique, avec les icônes aux couleurs des onglets ; les icônes de « Mes favoris » prennent aussi la couleur de leur outil.'
+    ] },
     { v: '2026-11-27.26', date: '27/11/2026', items: [
       'Accueil : retour à la disposition d’origine (Dossier en cours, Liens utiles, Repères, recherche, simulateurs, favoris, Nouveautés), avec la barre de widgets à droite.',
       'Dates, Calculatrice et Repères ne sont plus en haut : ils s’ouvrent depuis la barre de widgets.',

@@ -282,27 +282,17 @@
   function home() {
     const nh = document.querySelector('#view-home .fh-news h2'); if (nh && nh.textContent.trim() !== 'Nouveautés') nh.textContent = 'Nouveautés';
     /* icônes des outils de l'accueil : même couleur que dans les onglets */
-    document.querySelectorAll('#view-home .fh-chip').forEach(c => { const m = /switchNavTab\('([^']+)'\)/.exec(c.getAttribute('onclick') || ''); if (m && TOOLC[m[1]]) c.style.setProperty('--ios', TOOLC[m[1]]); });
+    document.querySelectorAll('#view-home .fh-chip').forEach(c => {
+      const m = /switchNavTab\('([^']+)'\)/.exec(c.getAttribute('onclick') || ''); let id = m ? m[1] : c.dataset.id; if (!id) return;
+      let col = null;
+      if (String(id).indexOf('tpl:') === 0) col = '#0a84ff';
+      else { col = TOOLC[id]; if (!col) { const hh = window.ftHubOf ? window.ftHubOf(id) : null; col = hh && GC[hh.id]; } }
+      if (col) c.style.setProperty('--ios', col);
+    });
     document.querySelectorAll('#view-home .fh-grp').forEach(g => { const h = (window.FT_HUBS || []).find(x => g.querySelector('.fh-chip[onclick="switchNavTab(\'' + x.members[0][0] + '\')"]')); const gi = g.querySelector('.fh-gi'); if (h && gi && GC[h.id]) gi.style.setProperty('--ios', GC[h.id]); });
     const sum = document.querySelector('#view-home .fh-sum'), d1 = sum && sum.querySelector(':scope > .fh-grp.fh-c1'); if (d1 && sum.firstElementChild !== d1) sum.prepend(d1);
     const hero = document.querySelector('#view-home .home-hero'); if (!hero) return;
-    if (!hero.querySelector('.pro-acts')) {
-      const a = document.createElement('div'); a.className = 'pro-acts'; a.setAttribute('role', 'group'); a.setAttribute('aria-label', 'Actions rapides');
-      a.innerHTML = '<button type="button" data-a="dos" class="pri">' + sv(AI.dos, '#0a84ff') + '<span><b>Nouveau dossier</b><small>Droits, ARE, durée et mail</small></span></button>' +
-        '<button type="button" data-a="fav">' + sv(AI.fav, '#ff9f0a') + '<span><b>Mails favoris</b><small>Vos modèles étoilés</small></span></button>' +
-        '<button type="button" data-a="top">' + sv(AI.top, '#34c759') + '<span><b>Plus utilisés</b><small>Vos mails les plus copiés</small></span></button>' +
-        '<button type="button" data-a="sit">' + sv(AI.sit, '#5e5ce6') + '<span><b>Que faire si…</b><small>Décrivez une situation : le site vous indique le bon outil et le bon mail</small></span></button>';
-      a.addEventListener('click', e => {
-        const b = e.target.closest('[data-a]'); if (!b) return;
-        const k = b.dataset.a;
-        try {
-          if (k === 'dos') { const x = document.querySelector('#view-home .fh-dos .fh-btn, #view-home .fh-dos button'); if (x) x.click(); else switchNavTab('dossier'); }
-          else if (k === 'fav' || k === 'top') { switchNavTab('cvm'); setTimeout(() => { try { selectCategory(k === 'fav' ? 'favorites' : '__top'); } catch (er) {} }, 40); }
-          else if (k === 'sit') { const x = document.querySelector('#view-home .sit-home'); if (x) x.click(); }
-        } catch (er) {}
-      });
-      const srch = hero.querySelector('.home-search'); (srch || hero.firstChild).after(a);
-    }
+
   }
 
   /* ---------- Simulateurs : résultat dans un encadré fixe à droite ---------- */
@@ -504,12 +494,68 @@
   }
   setInterval(() => { if (cur() === 'home') phTick(); }, 1000);
   /* ---------- Barre de widgets à droite, centrée : favoris, plus utilisés, calculatrice, dates, repères ---------- */
-  const WG = [['mf', 'Mails favoris', 'mail', '#0a84ff'], ['tf', 'Outils favoris', 'star', '#ff9f0a'], ['top', 'Plus utilisés', 'trend', '#34c759'], ['calc', 'Calculatrice', null, '#30b84f'], ['dates', 'Dates', null, '#5e5ce6'], ['rep', 'Repères', null, '#ff7a00']];
+  /* Catalogue des widgets ; chaque conseiller choisit les siens et leur ordre (clé ft_wg, synchronisée avec le compte) */
+  const WG = [['asst', 'Assistant', null, '#5e5ce6'], ['mf', 'Mails favoris', 'mail', '#0a84ff'], ['tf', 'Outils favoris', 'star', '#ff9f0a'], ['top', 'Plus utilisés', 'trend', '#34c759'], ['calc', 'Calculatrice', null, '#30b84f'], ['dates', 'Dates', null, '#5e5ce6'], ['rep', 'Repères', null, '#ff7a00'], ['postit', 'Post-it', null, '#f5b800'], ['jour', 'Ma journée', null, '#ff3b30'], ['sit', 'Que faire si…', null, '#af52de'], ['tts', 'Interprète vocal', null, '#af52de'], ['theme', 'Clair / sombre', null, '#5e5ce6']];
+  const WG_DEF = ['asst', 'mf', 'tf', 'top', 'calc', 'dates', 'rep'];
   const WGI = {
     calc: '<rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8 7h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 18h.01M12 18h4"/>',
     dates: '<rect x="3.5" y="5" width="17" height="15" rx="2.2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/>',
-    rep: '<path d="M5 21V4.5M5 4.5h11l-2 3.5 2 3.5H5"/>'
+    rep: '<path d="M5 21V4.5M5 4.5h11l-2 3.5 2 3.5H5"/>',
+    asst: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4h0A1.5 1.5 0 0 1 4 14.5z"/><path d="M8.5 9.5h.01M12 9.5h.01M15.5 9.5h.01"/>',
+    postit: '<path d="M5 4h14v11l-5 5H5z"/><path d="M14 20v-5h5"/>',
+    jour: '<rect x="3.5" y="5" width="17" height="15" rx="2.2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><circle cx="12" cy="14.5" r="1.4" fill="currentColor" stroke="none"/>',
+    sit: '<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.5a2.5 2.5 0 0 1 4.8 1c0 1.7-2.4 2-2.4 3.5M12 17h.01"/>',
+    tts: '<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>',
+    theme: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+    gear: '<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>'
   };
+  const wgCfg = () => { try { const v = JSON.parse(localStorage.getItem('ft_wg') || 'null'); if (Array.isArray(v)) return v; } catch (e) {} return WG_DEF.slice(); };
+  const wgSave = v => { try { (typeof safeLS !== 'undefined' ? safeLS : localStorage).setItem('ft_wg', JSON.stringify(v)); } catch (e) {} wgRender(); };
+  const svgOf = inner => '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+  const toolLabel = id => { const b = document.querySelector('#burger-tabs-list button[onclick="switchNavTab(\'' + id + '\')"]'); if (b) { const t = b.querySelector('.text-xs'); const v = ((t ? t.textContent : b.textContent) || '').replace(/\s*(Nouveau|Mis à jour)\s*$/, '').trim(); if (v) return v; } try { const t = NAV_TABS_CONFIG.find(x => String(x.id) === id); return t ? t.name : id; } catch (e) { return id; } };
+  function wgMeta(key) {
+    if (String(key).indexOf('tool:') === 0) { const id = key.slice(5); const hh = window.ftHubOf ? window.ftHubOf(id) : null; return { k: key, t: toolLabel(id), c: TOOLC[id] || (hh && GC[hh.id]) || '#0a84ff', ic: toolIcon(id) || svgOf(WGI.gear) }; }
+    const w = WG.find(x => x[0] === key); if (!w) return null;
+    return { k: key, t: w[1], c: w[3], ic: w[2] ? sg(w[2], 18) : svgOf(WGI[key]) };
+  }
+  function wgRender() {
+    const bar = document.getElementById('pro-wg'); if (!bar) return;
+    const list = wgCfg().map(wgMeta).filter(Boolean);
+    bar.innerHTML = list.map(m => '<button type="button" data-w="' + esc(m.k) + '" title="' + esc(m.t) + '" aria-label="' + esc(m.t) + '">' + ic(m.ic, m.c, 'wg-ic') + '</button>').join('') +
+      '<button type="button" class="wg-edit" data-w="__edit" title="Personnaliser la barre" aria-label="Personnaliser la barre">' + svgOf(WGI.gear) + '</button>';
+  }
+  function wgEdit() {
+    let w = document.getElementById('pro-wg-ed');
+    if (!w) {
+      w = document.createElement('div'); w.id = 'pro-wg-ed'; w.className = 'cvm-so'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-labelledby', 'pro-wg-ed-t'); document.body.appendChild(w);
+      w.addEventListener('click', e => {
+        const t = e.target, cfg = wgCfg();
+        if (t === w || t.closest('[data-e="x"]')) { w.hidden = true; return; }
+        if (t.closest('[data-e="reset"]')) { try { localStorage.removeItem('ft_wg'); } catch (er) {} wgRender(); draw(); return; }
+        const mv = t.closest('[data-mv]'); if (mv) { const i = +mv.dataset.i, j = i + (+mv.dataset.mv); if (j < 0 || j >= cfg.length) return; [cfg[i], cfg[j]] = [cfg[j], cfg[i]]; wgSave(cfg); draw(); return; }
+        const rm = t.closest('[data-rm]'); if (rm) { cfg.splice(+rm.dataset.rm, 1); wgSave(cfg); draw(); return; }
+        const ad = t.closest('[data-add]'); if (ad) { if (!cfg.includes(ad.dataset.add)) cfg.push(ad.dataset.add); wgSave(cfg); draw(); return; }
+      });
+      w.addEventListener('change', e => { const sel = e.target.closest('#pro-wg-tool'); if (sel && sel.value) { const cfg = wgCfg(); const k = 'tool:' + sel.value; if (!cfg.includes(k)) cfg.push(k); wgSave(cfg); draw(); } });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && !w.hidden) w.hidden = true; });
+    }
+    function draw() {
+      const cfg = wgCfg();
+      const tools = [...document.querySelectorAll('#burger-tabs-list button[onclick^="switchNavTab"]')].map(b => (/switchNavTab\('([^']+)'\)/.exec(b.getAttribute('onclick') || '') || [])[1]).filter(id => id && id !== 'home' && !cfg.includes('tool:' + id));
+      const uniq = [...new Set(tools)].map(id => [id, toolLabel(id)]).sort((a, b) => a[1].localeCompare(b[1], 'fr'));
+      w.innerHTML = '<div class="cvm-so-c"><div class="cvm-so-h"><h2 id="pro-wg-ed-t">Ma barre de widgets</h2><button type="button" data-e="x" aria-label="Fermer">×</button></div>' +
+        '<p>Choisissez les widgets de la barre de droite et leur ordre. Vous pouvez aussi y épingler n’importe quel outil.</p>' +
+        '<div class="pro-hb-l">' + (cfg.length ? cfg.map((k, i) => { const m = wgMeta(k); if (!m) return ''; return '<div class="pro-hb-r"><label>' + ic(m.ic, m.c, 'wg-ri') + ' ' + esc(m.t) + '</label><span><button type="button" data-mv="-1" data-i="' + i + '" aria-label="Monter"' + (i ? '' : ' disabled') + '>↑</button><button type="button" data-mv="1" data-i="' + i + '" aria-label="Descendre"' + (i < cfg.length - 1 ? '' : ' disabled') + '>↓</button><button type="button" data-rm="' + i + '" aria-label="Retirer ' + esc(m.t) + '">✕</button></span></div>'; }).join('') : '<p class="wg-empty">Aucun widget : la barre n’affiche que le bouton de réglage.</p>') + '</div>' +
+        '<div class="wg-add"><b>Ajouter</b><div class="wg-chips">' + WG.filter(x => !cfg.includes(x[0])).map(x => '<button type="button" data-add="' + x[0] + '">+ ' + x[1] + '</button>').join('') + '</div>' +
+        '<select id="pro-wg-tool" aria-label="Épingler un outil"><option value="">+ Épingler un outil…</option>' + uniq.map(([id, l]) => '<option value="' + esc(id) + '">' + esc(l) + '</option>').join('') + '</select></div>' +
+        '<div class="cvm-so-a"><button type="button" data-e="reset">Barre d’origine</button><button type="button" data-e="x" class="pri">Terminé</button></div></div>';
+      w.hidden = false;
+    }
+    draw();
+  }
+  window.ftWidgetsEdit = wgEdit;
+  (window.FT_ACTIONS = window.FT_ACTIONS || []).push({ t: 'Personnaliser la barre de widgets', s: 'Choisir les widgets de droite et leur ordre', kw: 'widget barre droite personnaliser raccourcis', run: () => wgEdit() });
+  (window.FT_ACCT_ITEMS = window.FT_ACCT_ITEMS || []).push({ t: 'Personnaliser la barre de widgets', anon: true, run: () => wgEdit() });
   let wOpen = null;
   function wgData(k) {
     const tname = id => { const b = document.querySelector('#burger-tabs-list button[onclick="switchNavTab(\'' + id + '\')"]'); if (b) { const t = b.querySelector('.text-xs'); const v = ((t ? t.textContent : b.textContent) || '').replace(/\s*(Nouveau|Mis à jour)\s*$/, '').trim(); if (v) return v; } return id; };
@@ -528,11 +574,18 @@
   function wgBuild() {
     if (document.getElementById('pro-wg')) return;
     const bar = document.createElement('nav'); bar.id = 'pro-wg'; bar.className = 'pro-wg'; bar.setAttribute('aria-label', 'Widgets');
-    bar.innerHTML = WG.map(w => '<button type="button" data-w="' + w[0] + '" title="' + w[1] + '" aria-label="' + w[1] + '">' + ic(w[2] ? sg(w[2], 18) : '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + WGI[w[0]] + '</svg>', w[3], 'wg-ic') + '</button>').join('');
     const pan = document.createElement('div'); pan.id = 'pro-wg-pan'; pan.className = 'pro-wg-pan'; pan.setAttribute('role', 'dialog');
-    document.body.appendChild(bar); document.body.appendChild(pan);
+    document.body.appendChild(bar); document.body.appendChild(pan); wgRender();
     bar.addEventListener('click', e => {
       const b = e.target.closest('[data-w]'); if (!b) return; const k = b.dataset.w;
+      if (k === '__edit') { wgClose(); wgEdit(); return; }
+      if (k.indexOf('tool:') === 0) { wgClose(); try { switchNavTab(k.slice(5)); } catch (er) {} return; }
+      if (k === 'asst') { wgClose(); if (window.ftAssistant) window.ftAssistant(); return; }
+      if (k === 'postit') { wgClose(); if (window.ftPostIt) window.ftPostIt(true); return; }
+      if (k === 'jour') { wgClose(); try { switchNavTab('jour'); } catch (er) {} return; }
+      if (k === 'sit') { wgClose(); if (window.ftSituations) window.ftSituations(); return; }
+      if (k === 'tts') { wgClose(); const t = document.getElementById('ft-tts'); if (t) t.click(); return; }
+      if (k === 'theme') { try { toggleTheme(); } catch (er) {} return; }
       if (k === 'calc') { wgClose(); try { toggleCalculator(); } catch (er) {} return; }
       if (k === 'dates') { wgClose(); try { toggleDateCalc(); } catch (er) { const d = document.getElementById('datecalc-toggle'); if (d) d.click(); } return; }
       if (k === 'rep') { wgClose(); try { window.ftRpToggle(true); } catch (er) { const r = document.getElementById('rp-btn'); if (r) r.click(); } return; }
@@ -553,7 +606,7 @@
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && wOpen) wgClose(); });
   }
   function wgOpen(k, btn) {
-    const pan = document.getElementById('pro-wg-pan'), d = wgData(k), w = WG.find(x => x[0] === k);
+    const pan = document.getElementById('pro-wg-pan'), d = wgData(k), w = WG.find(x => x[0] === k); if (!d || !w) return;
     pan.innerHTML = '<header>' + ic(sg(w[2], 16), w[3], 'wg-hi') + '<h2>' + w[1] + '</h2><small>' + d.items.length + '</small></header>' +
       (d.items.length ? '<div class="wg-list">' + d.items.map(x => '<button type="button" class="wg-row" data-go="' + x.go + '" data-v="' + esc(x.v) + '">' + ic(x.i || sg('star', 16), x.c, 'wg-ri') + '<span><b>' + esc(x.t) + '</b>' + (x.s ? '<small>' + esc(x.s) + '</small>' : '') + '</span></button>').join('') + '</div>' : '<p class="wg-empty">' + d.empty + '</p>') +
       (d.foot ? '<button type="button" class="wg-foot" data-go="' + d.foot[0] + '">' + d.foot[1] + '</button>' : '');
