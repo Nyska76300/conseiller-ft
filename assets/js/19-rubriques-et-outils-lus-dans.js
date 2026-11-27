@@ -15,7 +15,7 @@
     cal: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
     calc: '<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/>'
   };
-  const LOOK = [[/invalidit/i, 'acc', 'fh-c6'], [/ouverture/i, 'clip', 'fh-c1'], [/ans|création|cumul/i, 'brief', 'fh-c2'], [/fin de droits|passage/i, 'hour', 'fh-c3'], [/situation/i, 'shield', 'fh-c4'], [/référence|calcul/i, 'book', 'fh-c5']];
+  const LOOK = [[/invalidit/i, 'acc', 'fh-c6'], [/ouverture|^droits$/i, 'clip', 'fh-c1'], [/ans|création|cumul/i, 'brief', 'fh-c2'], [/fin de droits|passage/i, 'hour', 'fh-c3'], [/situation/i, 'shield', 'fh-c4'], [/référence|calcul/i, 'book', 'fh-c5']];
   const look = t => LOOK.find(l => l[0].test(t)) || [0, 'folder', 'fh-c1'];
 
   /* ---------- Rubriques et outils (lus dans le menu) ---------- */
@@ -288,7 +288,7 @@
 
 
   /* ---------- Menu : rubriques dans l'ordre voulu, outils par ordre alphabétique ---------- */
-  const SEC_ORDER = [/ouverture/i, /ans|création/i, /situation/i, /fin de droits/i, /invalidit/i, /référence|calcul/i];
+  const SEC_ORDER = [/ouverture|^droits$/i, /ans|création/i, /situation/i, /fin de droits/i, /invalidit/i, /référence|calcul/i];
   const secRank = t => { const i = SEC_ORDER.findIndex(r => r.test(t)); return i < 0 ? 99 : i; };
   const lbl = b => ((b.querySelector('.text-xs') || b).textContent || '').trim();
   function sortMenu() {

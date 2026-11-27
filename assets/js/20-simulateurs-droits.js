@@ -108,7 +108,7 @@
   };
 
   /* Menu : dans la rubrique « Ouverture de droits » */
-  const isOuv = el => /ouverture/i.test((el && (el.dataset.lbOrig || el.textContent)) || '');
+  const isOuv = el => { const t = ((el && (el.dataset.lbOrig || el.textContent)) || '').trim(); return /ouverture/i.test(t) || /^droits$/i.test(t); };
   if (typeof renderBurgerTabs === 'function') {
     const _rb = renderBurgerTabs;
     renderBurgerTabs = function () {

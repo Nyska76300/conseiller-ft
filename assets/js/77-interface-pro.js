@@ -68,7 +68,15 @@
       ];
     }
     const h = (window.FT_HUBS || []).find(x => x.id === id);
-    if (h) return [{ h: nameOf(h.id, h.name), items: h.members.map(m => ({ k: 'tab', v: m[0], t: nameOf(m[0], m[1]) })) }];
+    if (h) {
+      let LB = {}; try { LB = JSON.parse(localStorage.getItem('ft_labels') || '{}') || {}; } catch (e) {}
+      const items = h.members.map(m => ({ k: 'tab', v: m[0], t: LB['t:' + m[0]] || m[1] }));
+      /* onglets ajoutés après coup dans la barre de la rubrique (ex. Pension d'invalidité) */
+      const ids = new Set(items.map(x => String(x.v)));
+      const bar = [...document.querySelectorAll('.hub-bar')].find(b => b.querySelector('.hub-tab[data-t="' + CSS.escape(String(h.members[0][0])) + '"]'));
+      if (bar) bar.querySelectorAll('.hub-tab[data-t]').forEach(t => { const v = t.dataset.t; if (!ids.has(v)) { ids.add(v); items.push({ k: 'tab', v: v, t: t.textContent.trim() }); } });
+      return [{ h: nameOf(h.id, h.name), items: items }];
+    }
     return null;
   }
   function menuHtml(id) {
@@ -224,7 +232,7 @@
       p.classList.add('pro-rules'); p.prepend(n);
     });
   }
-  document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.rg-tab')) setTimeout(rulesToc, 60); });
+  document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.rg-tab')) setTimeout(() => { rulesToc(); iosify(); }, 60); });
 
   /* ---------- Impression : en-tête sobre ---------- */
   function printHead() {
@@ -240,7 +248,23 @@
     h.innerHTML = '<b>France Travail</b><span>Espace Conseiller' + (t ? ' · ' + esc(t) : '') + '</span><span>Imprimé le ' + d + '</span>';
   });
 
-  function after() { try { home(); simLayout(); rulesToc(); } catch (e) { console.warn(e); } }
+  /* ---------- Icônes façon iOS partout : carré arrondi coloré, dessin blanc ---------- */
+  const IOSC = { blue: '#0a84ff', sky: '#32ade6', cyan: '#30b0c7', teal: '#00a6a6', emerald: '#34c759', green: '#30b84f', lime: '#7cc22e', amber: '#ff9f0a', yellow: '#f5b800', orange: '#ff9500', red: '#ff3b30', rose: '#ff375f', pink: '#ff2d55', purple: '#af52de', violet: '#8e5cf0', fuchsia: '#c644e0', indigo: '#5e5ce6', slate: '#8e8e93', gray: '#8e8e93', zinc: '#8e8e93', neutral: '#8e8e93' };
+  function iosify() {
+    const v = [...document.querySelectorAll('[id^="view-"]')].find(x => x.offsetParent && !x.classList.contains('hidden'));
+    const roots = [v, document.getElementById('rp-drawer')].filter(Boolean);
+    roots.forEach(root => root.querySelectorAll('span,div').forEach(el => {
+      if (el.dataset.ios || el.classList.contains('ios-ic')) return;
+      const c = typeof el.className === 'string' ? el.className : '';
+      if (!/rounded/.test(c) || !/(^|\s)bg-/.test(c)) return;
+      if (el.children.length !== 1 || el.firstElementChild.tagName.toLowerCase() !== 'svg' || el.textContent.trim()) return;
+      const r = el.getBoundingClientRect(); if (r.width < 16 || r.width > 44 || Math.abs(r.width - r.height) > 4) return;
+      const m = /(?:^|\s)text-([a-z]+)-\d/.exec(c) || /(?:^|\s)bg-([a-z]+)-\d/.exec(c);
+      el.style.setProperty('--ios', IOSC[m ? m[1] : 'blue'] || '#0a84ff');
+      el.classList.add('ios-ic', 'ios-auto'); el.dataset.ios = '1';
+    }));
+  }
+  function after() { try { home(); simLayout(); rulesToc(); iosify(); } catch (e) { console.warn(e); } }
   if (typeof switchNavTab === 'function') {
     const _s = switchNavTab;
     switchNavTab = function () { const r = _s.apply(this, arguments); try { mark(); close(); setTimeout(after, 250); } catch (e) {} return r; };

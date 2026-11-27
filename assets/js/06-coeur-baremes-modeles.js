@@ -685,7 +685,7 @@
       const used = new Set(templates.map(t => t.category));
       DEFAULT_CATEGORIES.forEach(d => { if (used.has(d.name) && !seen.has(d.name)) { cats.push({ ...d }); changed = true; } });
       let dcat = []; try { dcat = JSON.parse(safeLS.getItem('ft_deleted_cat') || '[]'); } catch (e) {}
-      categoryList = cats.filter(c => { if (dcat.includes(c.name) && !used.has(c.name)) { changed = true; return false; } return true; });
+      categoryList = cats.filter(c => { const nm = c && typeof c.name === 'string' ? c.name : ''; if ((!nm.trim() || dcat.includes(nm)) && !used.has(nm)) { changed = true; return false; } return true; });
       if (changed) { try { saveState(); } catch (e) {} }
     }
 
@@ -1541,7 +1541,7 @@
     }
 
     function confirmDeleteCategory() {
-      if (!categoryNameToDelete) return;
+      if (categoryNameToDelete == null) return; /* une catégorie sans nom (« ») doit aussi pouvoir être supprimée */
 
       const fallbackCat = categoryList.find(c => c.name !== categoryNameToDelete)?.name || "Divers";
 

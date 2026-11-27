@@ -2,6 +2,12 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.6', date: '27/11/2026', items: [
+      'Icônes façon iOS harmonisées dans tout le site : accueil (cartes, simulateurs, mails favoris, liens), titres des outils et volet Repères ; étoile sur « Mes favoris ».',
+      'Menus des onglets de rubriques complets : « Pension d’invalidité » revient dans Droits (elle avait disparu de la barre après le changement de nom).',
+      'Correction : en revenant de « Règles et calculs » vers « Simulateur », le simulateur s’affiche de nouveau.',
+      'Correction : une catégorie de mails sans nom peut être supprimée ; les catégories vides sans nom sont retirées automatiquement.'
+    ] },
     { v: '2026-11-27.5', date: '27/11/2026', items: [
       'La rubrique « Ouverture de droits » s’appelle désormais « Droits ».',
       'En-tête : clair / sombre, calculatrice et dates reviennent en icônes, toutes de la même taille ; « Recharger la page » passe dans Paramètres ; le bouton Menu disparaît sur ordinateur (les onglets le remplacent).',
