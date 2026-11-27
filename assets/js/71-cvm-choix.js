@@ -46,18 +46,34 @@
   /* Mois : menu des 24 derniers mois et des 3 suivants (« septembre 2026 ») */
   const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
   function monthList() { const d = new Date(), out = []; for (let i = 3; i >= -24; i--) { const x = new Date(d.getFullYear(), d.getMonth() + i, 1); const t = MOIS[x.getMonth()] + ' ' + x.getFullYear(); out.push([t, t, t]); } return out; }
-  const choicesFor = (key) => CHOICES[key] || (/^mois(_|$)/.test(key) && !/^mois_annee_attendu$/.test(key) ? monthList() : null);
+  /* Réglage administrateur (commun à tous) : texte libre ou menu déroulant personnalisé, par variable */
+  const varCfg = () => { try { return JSON.parse(localStorage.getItem('ft_var_cfg') || '{}') || {}; } catch (e) { return {}; } };
+  window.ftVarCfg = varCfg;
+  const builtinFor = (key) => CHOICES[key] || (/^mois(_|$)/.test(key) && !/^mois_annee_attendu$/.test(key) ? monthList() : null);
+  const choicesFor = (key) => {
+    const c = varCfg()[key];
+    if (c && c.mode === 'text') return null;
+    if (c && c.mode === 'select' && c.options && c.options.length) return c.options.map((o, i) => ['c' + i, o.label, (o.text && String(o.text).trim()) || o.label]);
+    return builtinFor(key);
+  };
+  window.ftCvmBuiltinFor = builtinFor;
   window.ftCvmChoicesFor = choicesFor;
   window.FT_CVM_CHOICES = CHOICES;
   /* Réponse la plus courante, choisie d'office (modifiable) */
   const DEFAULTS = { contexte_3949: 'rdv', type_admission: 'def', evenement_declare: 'travail' };
-  window.FT_CVM_DEFAULTS = {}; Object.keys(DEFAULTS).forEach(k => { const x = (CHOICES[k] || []).find(y => y[0] === DEFAULTS[k]); if (x) window.FT_CVM_DEFAULTS[k] = x[2]; });
+  function computeDefaults() {
+    const D = {}; Object.keys(DEFAULTS).forEach(k => { const x = (CHOICES[k] || []).find(y => y[0] === DEFAULTS[k]); if (x) D[k] = x[2]; });
+    const C = varCfg(); Object.keys(C).forEach(k => { const c = C[k]; delete D[k]; if (c && c.mode === 'select' && c.def != null && c.options && c.options[c.def]) { const o = c.options[c.def]; D[k] = (o.text && String(o.text).trim()) || o.label; } });
+    window.FT_CVM_DEFAULTS = D;
+  }
+  computeDefaults(); window.ftCvmComputeDefaults = computeDefaults;
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const OTHER = '__autre';
 
   function enhance(tpl) {
     if (!tpl || !tpl.variables) return;
     const grid = document.getElementById('dynamic-inputs-grid'); if (!grid) return;
+    if (window.ftVarAdminGear) try { window.ftVarAdminGear(tpl, grid); } catch (e) {}
     tpl.variables.forEach(v => {
       const list = choicesFor(v.key); if (!list) return;
       const inp = [...grid.querySelectorAll('input')].find(i => (i.getAttribute('oninput') || '').indexOf("'" + v.key + "'") >= 0);
@@ -69,7 +85,7 @@
       const sel = document.createElement('select');
       sel.className = inp.className + ' cvm-choice'; sel.setAttribute('aria-label', v.label);
       sel.innerHTML = '<option value="">' + (/^mois/.test(v.key) ? 'Choisir le mois…' : v.key === 'motif_trop_percu' ? 'Choisir le motif…' : 'Choisir…') + '</option>' + list.filter((x, i, a) => a.findIndex(y => y[1] === x[1]) === i).map(x => '<option value="' + esc(x[0]) + '"' + (hit && hit[0] === x[0] ? ' selected' : '') + '>' + esc(x[1]) + '</option>').join('') +
-        '<option value="' + OTHER + '"' + (!hit && cur ? ' selected' : '') + '>' + (v.key === 'motif_trop_percu' ? 'Autre motif (texte libre)' : 'Autre (texte libre)') + '</option>';
+        ((varCfg()[v.key] || {}).other === false ? '' : '<option value="' + OTHER + '"' + (!hit && cur ? ' selected' : '') + '>' + (v.key === 'motif_trop_percu' ? 'Autre motif (texte libre)' : 'Autre (texte libre)') + '</option>');
       inp.dataset.choice = '1';
       if (v.key === 'motif_trop_percu') inp.placeholder = 'Rédigez le motif (ex. « une activité déclarée en retard »)';
       inp.classList.add('cvm-choice-free');
@@ -89,6 +105,7 @@
       showHint();
     });
   }
+  window.ftCvmEnhance = enhance;
   if (typeof renderVariablesForm === 'function') {
     const _r = renderVariablesForm;
     renderVariablesForm = function (tpl) { const r = _r.apply(this, arguments); try { enhance(tpl); } catch (e) { console.warn(e); } return r; };

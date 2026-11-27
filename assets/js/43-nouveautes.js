@@ -2,6 +2,10 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.1', date: '27/11/2026', items: [
+      'CVM Direct : liste des modèles plus compacte (deux fois plus de mails visibles sans faire défiler). Le titre, le début du mail et le nombre de champs tiennent sur deux lignes.',
+      'Administrateurs : un bouton de réglage apparaît à côté de chaque champ d’un mail. Il permet de choisir « Texte libre » ou « Menu déroulant », de rédiger les choix (libellé affiché et texte inséré dans le mail), de fixer le choix par défaut et de garder ou non « Autre (texte libre) ». Le réglage vaut pour tous les modèles qui utilisent ce champ et pour tous les conseillers ; « Revenir au réglage du site » l’annule.'
+    ] },
     { v: '2026-11-26.21', date: '26/11/2026', items: [
       'Recherche des mails plus précise : un sigle court (SAE, ASS, ARE, RIB…) ne trouve plus les mots qui le contiennent (« ass » ne trouve plus « assurance »).',
       'Les mails où le mot cherché n’apparaît que dans le texte ou les mots-clés sont repliés sous « Afficher N autres résultats », après les mails dont le titre correspond.'

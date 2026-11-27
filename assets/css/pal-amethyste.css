@@ -1915,4 +1915,30 @@ html.theme-light .cvm-so-a button.pri{background:#6d17dc;border-color:#6d17dc}
 .cvm-weak-t:hover{border-color:#b682f8;background:rgba(180,129,235,.08)}
 html.theme-light .cvm-weak-t{color:#6d17dc;border-color:#d4cbdf}
 html.theme-light .cvm-weak-t small{color:#70657d}
+.ft-vg{border:1px solid rgba(180,129,235,.35);background:rgba(11,3,19,.6);color:#ceaefb}
+.ft-vg:hover{border-color:#b682f8}
+html.theme-light .ft-vg{border-color:#dcd5e3;color:#6d17dc}
+.ft-vc{background:rgba(10,3,17,.62)}
+.ft-vc-c{background:#200e34;border:1px solid rgba(180,129,235,.3);color:#f3eff8}
+.ft-vc-h p{color:#bcafca}
+.ft-vc-h>button{border:1px solid rgba(180,129,235,.3)}
+.ft-vc-mode button{border:1px solid rgba(180,129,235,.3);background:rgba(11,3,19,.4)}
+.ft-vc-mode button.on{border-color:#b682f8;background:rgba(131,50,233,.2);box-shadow:inset 0 0 0 1px #b682f8}
+.ft-vc-mode small{color:#bcafca}
+.ft-vc-lh{color:#bcafca}
+.ft-vc-r input[data-f]{background:rgba(11,3,19,.6);border:1px solid rgba(180,129,235,.28);color:#f3eff8}
+.ft-vc-r input[type=radio]{accent-color:#8332e9}
+.ft-vc-add{border:1px dashed rgba(180,129,235,.45);color:#ceaefb}
+.ft-vc-opt input{accent-color:#8332e9}
+.ft-vc-txt{color:#bcafca}
+.ft-vc-a button{border:1px solid rgba(180,129,235,.3)}
+.ft-vc-a button.pri{background:#8332e9;border-color:#8332e9}
+html.theme-light .ft-vc-c{border-color:#e2dde8;color:#2f1947}
+html.theme-light .ft-vc-h p,html.theme-light .ft-vc-mode small,html.theme-light .ft-vc-lh,html.theme-light .ft-vc-txt{color:#70657d}
+html.theme-light .ft-vc-mode button{background:#fbf9fc;border-color:#e2dde8}
+html.theme-light .ft-vc-mode button.on{background:#f4f0f8;border-color:#6d17dc;box-shadow:inset 0 0 0 1px #6d17dc}
+html.theme-light .ft-vc-r input[data-f]{background:#fbf9fc;border-color:#dcd5e3;color:#2f1947}
+html.theme-light .ft-vc-add{color:#6d17dc;border-color:#d4cbdf}
+html.theme-light .ft-vc-a button{border-color:#dcd5e3}
+html.theme-light .ft-vc-a button.pri{background:#6d17dc;border-color:#6d17dc}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(103,48,166,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(123,57,198,0.1),transparent 60%),linear-gradient(150deg,#06030a 0%,#0f0718 35%,#190b28 70%,#27123f 100%) fixed!important}

@@ -1915,4 +1915,30 @@ html.theme-light .cvm-so-a button.pri{background:#2d5784;border-color:#2d5784}
 .cvm-weak-t:hover{border-color:#6e9fd5;background:rgba(121,154,204,.08)}
 html.theme-light .cvm-weak-t{color:#2d5784;border-color:#cdcfd1}
 html.theme-light .cvm-weak-t small{color:#68696b}
+.ft-vg{border:1px solid rgba(121,154,204,.35);background:rgba(5,6,7,.6);color:#9bc1e2}
+.ft-vg:hover{border-color:#6e9fd5}
+html.theme-light .ft-vg{border-color:#d7d8d9;color:#2d5784}
+.ft-vc{background:rgba(5,6,6,.62)}
+.ft-vc-c{background:#15171a;border:1px solid rgba(121,154,204,.3);color:#f0f1f2}
+.ft-vc-h p{color:#b2b4b7}
+.ft-vc-h>button{border:1px solid rgba(121,154,204,.3)}
+.ft-vc-mode button{border:1px solid rgba(121,154,204,.3);background:rgba(5,6,7,.4)}
+.ft-vc-mode button.on{border-color:#6e9fd5;background:rgba(54,103,159,.2);box-shadow:inset 0 0 0 1px #6e9fd5}
+.ft-vc-mode small{color:#b2b4b7}
+.ft-vc-lh{color:#b2b4b7}
+.ft-vc-r input[data-f]{background:rgba(5,6,7,.6);border:1px solid rgba(121,154,204,.28);color:#f0f1f2}
+.ft-vc-r input[type=radio]{accent-color:#36679f}
+.ft-vc-add{border:1px dashed rgba(121,154,204,.45);color:#9bc1e2}
+.ft-vc-opt input{accent-color:#36679f}
+.ft-vc-txt{color:#b2b4b7}
+.ft-vc-a button{border:1px solid rgba(121,154,204,.3)}
+.ft-vc-a button.pri{background:#36679f;border-color:#36679f}
+html.theme-light .ft-vc-c{border-color:#dedfe0;color:#222427}
+html.theme-light .ft-vc-h p,html.theme-light .ft-vc-mode small,html.theme-light .ft-vc-lh,html.theme-light .ft-vc-txt{color:#68696b}
+html.theme-light .ft-vc-mode button{background:#fafafa;border-color:#dedfe0}
+html.theme-light .ft-vc-mode button.on{background:#f1f1f2;border-color:#2d5784;box-shadow:inset 0 0 0 1px #2d5784}
+html.theme-light .ft-vc-r input[data-f]{background:#fafafa;border-color:#d7d8d9;color:#222427}
+html.theme-light .ft-vc-add{color:#2d5784;border-color:#cdcfd1}
+html.theme-light .ft-vc-a button{border-color:#d7d8d9}
+html.theme-light .ft-vc-a button.pri{background:#2d5784;border-color:#2d5784}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(98,106,116,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(117,126,138,0.1),transparent 60%),linear-gradient(150deg,#060607 0%,#0e0f11 35%,#17191c 70%,#25282c 100%) fixed!important}

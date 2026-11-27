@@ -1915,4 +1915,30 @@ html.theme-light .cvm-so-a button.pri{background:#0a5e62;border-color:#0a5e62}
 .cvm-weak-t:hover{border-color:#09acb4;background:rgba(28,168,179,.08)}
 html.theme-light .cvm-weak-t{color:#0a5e62;border-color:#bbd3d5}
 html.theme-light .cvm-weak-t small{color:#596d6f}
+.ft-vg{border:1px solid rgba(28,168,179,.35);background:rgba(1,7,8,.6);color:#0bd1d5}
+.ft-vg:hover{border-color:#09acb4}
+html.theme-light .ft-vg{border-color:#cbdbdc;color:#0a5e62}
+.ft-vc{background:rgba(1,7,7,.62)}
+.ft-vc-c{background:#071a1b;border:1px solid rgba(28,168,179,.3);color:#e6f3f4}
+.ft-vc-h p{color:#99babc}
+.ft-vc-h>button{border:1px solid rgba(28,168,179,.3)}
+.ft-vc-mode button{border:1px solid rgba(28,168,179,.3);background:rgba(1,7,8,.4)}
+.ft-vc-mode button.on{border-color:#09acb4;background:rgba(13,112,117,.2);box-shadow:inset 0 0 0 1px #09acb4}
+.ft-vc-mode small{color:#99babc}
+.ft-vc-lh{color:#99babc}
+.ft-vc-r input[data-f]{background:rgba(1,7,8,.6);border:1px solid rgba(28,168,179,.28);color:#e6f3f4}
+.ft-vc-r input[type=radio]{accent-color:#0d7075}
+.ft-vc-add{border:1px dashed rgba(28,168,179,.45);color:#0bd1d5}
+.ft-vc-opt input{accent-color:#0d7075}
+.ft-vc-txt{color:#99babc}
+.ft-vc-a button{border:1px solid rgba(28,168,179,.3)}
+.ft-vc-a button.pri{background:#0d7075;border-color:#0d7075}
+html.theme-light .ft-vc-c{border-color:#d3e1e2;color:#0f2829}
+html.theme-light .ft-vc-h p,html.theme-light .ft-vc-mode small,html.theme-light .ft-vc-lh,html.theme-light .ft-vc-txt{color:#596d6f}
+html.theme-light .ft-vc-mode button{background:#f6fbfb;border-color:#d3e1e2}
+html.theme-light .ft-vc-mode button.on{background:#e7f4f5;border-color:#0a5e62;box-shadow:inset 0 0 0 1px #0a5e62}
+html.theme-light .ft-vc-r input[data-f]{background:#f6fbfb;border-color:#cbdbdc;color:#0f2829}
+html.theme-light .ft-vc-add{color:#0a5e62;border-color:#bbd3d5}
+html.theme-light .ft-vc-a button{border-color:#cbdbdc}
+html.theme-light .ft-vc-a button.pri{background:#0a5e62;border-color:#0a5e62}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(48,158,166,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(57,188,198,0.1),transparent 60%),linear-gradient(150deg,#03090a 0%,#071718 35%,#0b2628 70%,#123c3f 100%) fixed!important}

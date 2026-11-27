@@ -11,7 +11,7 @@
   const dt = s => new Date(s).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
   const nf = n => Number(n || 0).toLocaleString('fr-FR');
   const toolName = id => { try { const c = NAV_TABS_CONFIG.find(x => String(x.id) === String(id)); return c ? c.name : id; } catch (e) { return id; } };
-  const SPECIAL = { __ft_faq: 'FAQ du site', __ft_labels: 'Noms renommés', __ft_icons: 'Icônes', __ft_annonce: 'Annonce', __ft_regs: 'Validations de la veille', __ft_push: 'Clés des notifications' };
+  const SPECIAL = { __ft_faq: 'FAQ du site', __ft_labels: 'Noms renommés', __ft_varcfg: 'Champs des mails (texte libre ou menu)', __ft_icons: 'Icônes', __ft_annonce: 'Annonce', __ft_regs: 'Validations de la veille', __ft_push: 'Clés des notifications' };
   const label = (id, title) => SPECIAL[id] || (title && title !== id ? 'Modèle « ' + title + ' »' : id);
 
   /* =================== Historique et sauvegardes =================== */
