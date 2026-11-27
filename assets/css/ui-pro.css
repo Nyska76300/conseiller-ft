@@ -355,3 +355,14 @@ html.ui-pro #view-home .fh-chip .fh-ci{background:linear-gradient(180deg,color-m
 html.ui-pro #view-home .pro-acts button:not([data-a="sit"]){display:none!important}
 html.ui-pro #view-home .pro-acts{grid-template-columns:1fr!important}
 html.ui-pro #view-home .pro-acts button[data-a="sit"]{padding:10px 14px}
+/* Barre du haut : compte tout à droite, boutons masquables */
+html.ui-pro #ft-acct{order:999;margin-left:4px}
+html.ui-pro .pro-hb-off{display:none!important}
+.pro-hb-l{display:flex;flex-direction:column;gap:6px}
+.pro-hb-r{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border-radius:10px;border:1px solid rgba(110,150,240,.25)}
+html.theme-light .pro-hb-r{border-color:#d9e0ea;background:#f9fbfe}
+.pro-hb-r label{display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:600;cursor:pointer}
+.pro-hb-r input{width:17px;height:17px;accent-color:#0b5cd5}
+.pro-hb-r span{display:flex;gap:4px}
+.pro-hb-r span button{width:30px;height:30px;border-radius:8px;border:1px solid rgba(110,150,240,.3);background:transparent;color:inherit;font-weight:800;cursor:pointer}
+.pro-hb-r span button:disabled{opacity:.3;cursor:default}

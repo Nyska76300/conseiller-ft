@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.18', date: '27/11/2026', items: [
+      'Barre du haut : le bouton du compte est tout à droite. Nouveau réglage « Organiser la barre du haut » (menu du compte ou recherche) : changez l’ordre des boutons avec les flèches et masquez ceux qui ne servent pas ; le choix suit votre compte.'
+    ] },
     { v: '2026-11-27.17', date: '27/11/2026', items: [
       'Accueil : sous la barre de recherche, seul « Que faire si… » reste (Nouveau dossier est dans la carte « Dossier en cours », les mails favoris et plus utilisés dans l’onglet Mails).'
     ] },

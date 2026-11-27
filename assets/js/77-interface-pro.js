@@ -227,10 +227,45 @@
     rp: '<path d="M5 21V4.5M5 4.5h11l-2 3.5 2 3.5H5"/>',
   };
   function header() {
+    hbApply();
     const rp = document.getElementById('rp-btn');
     if (rp && !rp.dataset.pro) { rp.dataset.pro = '1'; rp.innerHTML = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + HI.rp + '</svg><span class="sr-only">Repères</span>'; }
     const rl = [...document.querySelectorAll('header button')].find(b => b.title === 'Recharger la page'); if (rl) rl.classList.add('pro-hide');
   }
+  /* Barre du haut personnalisable : ordre et affichage des boutons ; le compte reste tout à droite */
+  const HB = [['ft-pi-btn', 'Post-it'], ['rp-btn', 'Repères'], ['ft-tts', 'Interprète vocal'], ['datecalc-toggle', 'Dates'], ['header-calc-btn', 'Calculatrice'], ['theme-toggle-btn', 'Clair / sombre']];
+  const hbGet = () => { try { const v = JSON.parse(localStorage.getItem('ft_hdr') || 'null'); if (v && Array.isArray(v.order)) return v; } catch (e) {} return { order: HB.map(x => x[0]), hide: [] }; };
+  function hbApply() {
+    const cfg = hbGet(), order = cfg.order.concat(HB.map(x => x[0]).filter(id => !cfg.order.includes(id)));
+    order.forEach((id, i) => { const el = document.getElementById(id); if (el) { el.style.order = String(10 + i); el.classList.toggle('pro-hb-off', cfg.hide.includes(id)); } });
+    const ac = document.getElementById('ft-acct'); if (ac) ac.style.order = '999';
+  }
+  window.ftHeaderEdit = function () {
+    let w = document.getElementById('pro-hb');
+    if (!w) {
+      w = document.createElement('div'); w.id = 'pro-hb'; w.className = 'cvm-so'; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-labelledby', 'pro-hb-t'); document.body.appendChild(w);
+      w.addEventListener('click', e => {
+        const cfg = hbGet(); const t = e.target;
+        if (t === w || t.closest('[data-hb="x"]')) { w.hidden = true; return; }
+        if (t.closest('[data-hb="reset"]')) { try { localStorage.removeItem('ft_hdr'); } catch (er) {} hbApply(); draw(); return; }
+        const mv = t.closest('[data-mv]'); if (mv) { const i = +mv.dataset.i, j = i + (+mv.dataset.mv); if (j < 0 || j >= cfg.order.length) return; const o = cfg.order; [o[i], o[j]] = [o[j], o[i]]; save(cfg); return; }
+        const cb = t.closest('input[data-id]'); if (cb) { cfg.hide = cfg.hide.filter(x => x !== cb.dataset.id); if (!cb.checked) cfg.hide.push(cb.dataset.id); save(cfg); }
+      });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && !w.hidden) w.hidden = true; });
+    }
+    function save(cfg) { try { localStorage.setItem('ft_hdr', JSON.stringify(cfg)); } catch (e) {} hbApply(); draw(); }
+    function draw() {
+      const cfg = hbGet(); const order = cfg.order.concat(HB.map(x => x[0]).filter(id => !cfg.order.includes(id))); cfg.order = order;
+      w.innerHTML = '<div class="cvm-so-c"><div class="cvm-so-h"><h2 id="pro-hb-t">Organiser la barre du haut</h2><button type="button" data-hb="x" aria-label="Fermer">×</button></div>' +
+        '<p>Changez l’ordre des boutons avec les flèches et décochez ceux que vous ne voulez pas voir. Le bouton du compte reste tout à droite.</p><div class="pro-hb-l">' +
+        order.map((id, i) => { const n = (HB.find(x => x[0] === id) || [id, id])[1]; return '<div class="pro-hb-r"><label><input type="checkbox" data-id="' + id + '"' + (cfg.hide.includes(id) ? '' : ' checked') + '> ' + esc(n) + '</label><span><button type="button" data-mv="-1" data-i="' + i + '" aria-label="Monter ' + esc(n) + '"' + (i ? '' : ' disabled') + '>↑</button><button type="button" data-mv="1" data-i="' + i + '" aria-label="Descendre ' + esc(n) + '"' + (i < order.length - 1 ? '' : ' disabled') + '>↓</button></span></div>'; }).join('') +
+        '</div><div class="cvm-so-a"><button type="button" data-hb="reset">Ordre d’origine</button><button type="button" data-hb="x" class="pri">Terminé</button></div></div>';
+      w.hidden = false;
+    }
+    draw();
+  };
+  (window.FT_ACCT_ITEMS = window.FT_ACCT_ITEMS || []).push({ t: 'Organiser la barre du haut', anon: true, run: () => window.ftHeaderEdit() });
+  (window.FT_ACTIONS = window.FT_ACTIONS || []).push({ t: 'Organiser la barre du haut', s: 'Ordre et affichage des boutons', kw: 'barre haut boutons ordre deplacer organiser en-tete', run: () => window.ftHeaderEdit() });
   function mark() {
     const k = activeKey();
     document.querySelectorAll('#ft-ptabs [data-pt]').forEach(b => { const on = b.dataset.pt === k; b.classList.toggle('on', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
