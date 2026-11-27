@@ -2,6 +2,10 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.34', date: '27/11/2026', items: [
+      'Le style institutionnel devient le style de tous (on peut toujours revenir au thème classique dans Paramètres).',
+      'Téléphone et tablette : même présentation que sur ordinateur — barre de widgets à droite, recherche en haut, sous-onglets en ligne, grande horloge avec les secondes, sommaire des pages Règles.'
+    ] },
     { v: '2026-11-27.33', date: '27/11/2026', items: [
       'Accueil : les icônes de « Mes favoris » gardent la couleur de leur onglet, même après la synchronisation du compte.',
       'Mails : « Rejet affiliation et PND » mentionne le seuil des primo-entrants (108 jours ou 758 heures) ; « Explication nouveaux droits » a des champs à remplir pour les dates et l’employeur.',

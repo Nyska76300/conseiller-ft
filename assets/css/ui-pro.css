@@ -445,3 +445,45 @@ html.ui-pro:not(.theme-light) #view-home .home-hero{background-image:radial-grad
   html.ui-pro .rg-panel section,html.ui-pro .rg-panel .rg-s{break-inside:avoid-page}
   html.ui-pro .rg-panel h2,html.ui-pro .rg-panel h3{break-after:avoid-page}
 }
+
+/* ===== 2026-11-27.34 : le téléphone reprend la présentation de l'ordinateur ===== */
+@media (max-width:899px){
+  /* barre de widgets à droite, centrée, comme sur ordinateur (plus de bouton flottant ni de barre du bas) */
+  html.ui-pro .pro-wg-fab,html.ui-pro #ft-tabbar{display:none!important}
+  html.ui-pro .pro-wg,html.ui-pro.wg-m-open .pro-wg{display:flex!important;flex-direction:column;flex-wrap:nowrap;justify-content:flex-start;gap:6px;position:fixed;left:auto;right:5px;top:50%;bottom:auto;transform:translateY(-50%);z-index:60;padding:7px 5px;border-radius:17px;background:rgba(255,255,255,.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.95);box-shadow:0 10px 26px rgba(40,70,150,.2);max-height:78vh;overflow-y:auto;scrollbar-width:none}
+  html.ui-pro:not(.theme-light) .pro-wg,html.ui-pro.wg-m-open:not(.theme-light) .pro-wg{background:rgba(22,34,60,.86);border-color:rgba(140,170,255,.18)}
+  html.ui-pro .pro-wg button{padding:0;border:0;background:transparent;border-radius:10px;flex:none}
+  html.ui-pro .pro-wg .wg-ic,html.ui-pro.wg-m-open .pro-wg .wg-ic{width:32px!important;height:32px!important;border-radius:9px!important}
+  html.ui-pro .pro-wg .wg-ic svg,html.ui-pro.wg-m-open .pro-wg .wg-ic svg{width:17px!important;height:17px!important;color:#fff!important}
+  html.ui-pro .pro-wg-pan{left:10px!important;right:52px!important;top:50%!important;bottom:auto!important;width:auto!important;max-height:74vh!important;transform:translateY(-50%)!important}
+  html.ui-pro body>.ft-split-host,html.ui-pro #ft-foot{margin-right:46px!important}
+  html.ui-pro body{padding-bottom:0!important}
+  html.ui-pro #floating-calculator,html.ui-pro #datecalc-popover{right:50px!important}
+  /* recherche de l'en-tête visible, sur sa propre ligne */
+  html.ui-pro header:has(#ft-header-search){flex-wrap:wrap!important;height:auto!important;min-height:56px;row-gap:0!important}
+  html.ui-pro header:has(#ft-header-search)>div:first-child{min-height:56px}
+  html.ui-pro header>div:has(>.ft-hsearch){display:flex!important;order:99;flex:1 1 100%!important;padding:0 2px 8px!important}
+  html.ui-pro header .ft-hsearch{width:100%!important;max-width:none!important;height:40px!important;padding:0 12px!important;justify-content:flex-start!important}
+  html.ui-pro header .ft-hsearch input{position:static!important;width:auto!important;height:auto!important;opacity:1!important;pointer-events:auto!important;font-size:15px!important;background:transparent!important;border:0!important;box-shadow:none!important;min-height:0!important;padding:0!important}
+  html.ui-pro header .ft-hsearch kbd{display:none}
+  /* sous-onglets en ligne, défilables, comme sur ordinateur (plus de menu déroulant) */
+  html.ui-pro .hub-bar>.pro-hb-sel{display:none!important}
+  html.ui-pro .hub-bar>.hub-chips{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;scrollbar-width:none;flex:1 1 100%!important;padding:0 6px}
+  html.ui-pro .hub-bar>.hub-chips::-webkit-scrollbar{display:none}
+  html.ui-pro .hub-bar>.hub-chips .hub-tab{flex:none!important;white-space:nowrap}
+  html.ui-pro:is(.theme-light,:not(.theme-light)) .hub-bar .hub-sub{margin:4px 10px 8px!important;flex:1 1 100%!important}
+  /* accueil : grande horloge avec les secondes, à droite du titre */
+  html.ui-pro #view-home .home-hero-top{flex-direction:row!important;align-items:flex-start!important;justify-content:space-between!important}
+  html.ui-pro #view-home .home-clock{flex-direction:column!important;align-items:flex-end!important;gap:2px!important;text-align:right!important;flex:none}
+  html.ui-pro #view-home .home-time{font-size:30px!important;font-weight:800!important;letter-spacing:-.02em}
+  html.ui-pro #view-home .home-time small{display:inline!important;font-size:.45em}
+  html.ui-pro #view-home .home-date::before{display:none}
+  html.ui-pro #view-home .home-date{font-size:11px!important}
+  /* pages Règles : sommaire en ligne au-dessus du texte */
+  html.ui-pro .rg-panel.pro-rules{display:block}
+  html.ui-pro .pro-toc{display:flex!important;flex-direction:row!important;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:5;gap:6px;padding:8px 2px!important;margin-bottom:8px;border-right:0!important;border-bottom:1px solid var(--pro-line);background:var(--pro-bg,transparent);backdrop-filter:blur(10px)}
+  html.ui-pro .pro-toc>*{flex:none;white-space:nowrap}
+  html.ui-pro .pro-toc{background:transparent!important;backdrop-filter:none!important;margin-left:0!important;margin-right:0!important;padding:4px 0 10px!important}
+  html.ui-pro .pro-toc b{display:none}
+  html.ui-pro .pro-toc a{border:1px solid var(--pro-line)!important;border-radius:999px!important;margin:0!important;padding:5px 12px!important;background:var(--pro-card)!important;font-size:.8rem!important}
+}
