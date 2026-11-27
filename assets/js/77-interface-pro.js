@@ -79,9 +79,36 @@
     }
     return null;
   }
+  /* Icône d'un élément de menu : reprend celle du menu latéral, en carré coloré */
+  function toolIcon(tab) {
+    const b = document.querySelector('#burger-tabs-list button[onclick="switchNavTab(\'' + tab + '\')"] svg');
+    return b ? b.outerHTML.replace(/\sclass="[^"]*"/, '') : '';
+  }
+  function catIcon(name) {
+    const nav = document.getElementById('left-nav-menu'); if (!nav) return ['', ''];
+    const b = [...nav.querySelectorAll('button[onclick^="selectCategory("]')].find(x => (x.getAttribute('onclick') || '').indexOf("selectCategory('" + name.replace(/'/g, "\\'") + "')") === 0);
+    const sp = b && b.querySelector('span.rounded-md'); if (!sp) return ['', ''];
+    const m = /text-([a-z]+)-\d/.exec(sp.className); const svg = sp.querySelector('svg');
+    return [svg ? svg.outerHTML.replace(/\sclass="[^"]*"/, '') : '', m ? m[1] : 'blue'];
+  }
+  const IOSM = { blue: '#0a84ff', sky: '#32ade6', cyan: '#30b0c7', teal: '#00a6a6', emerald: '#34c759', green: '#30b84f', lime: '#7cc22e', amber: '#ff9f0a', yellow: '#f5b800', orange: '#ff9500', red: '#ff3b30', rose: '#ff375f', pink: '#ff2d55', purple: '#af52de', violet: '#8e5cf0', fuchsia: '#c644e0', indigo: '#5e5ce6', slate: '#8e8e93', gray: '#8e8e93' };
+  function decorate(G, id) {
+    const col = GC[id] || '#0a84ff';
+    G.forEach(g => (g.items || []).forEach(x => {
+      if (x.k === 'tab') { x.ic = toolIcon(x.v); x.c = col; }
+      else if (x.k === 'pin') { const it = (window.ftPinsList ? window.ftPinsList() : []).find(y => y.id === x.v); x.ic = it && it.icon ? it.icon.replace(/\sclass="[^"]*"/, '') : ''; x.c = String(x.v).indexOf('tpl:') === 0 ? '#0a84ff' : '#ff9f0a'; }
+      else if (x.k === 'cat') {
+        const fixed = { all: [G0.all, '#8e8e93'], favorites: [G.fav || G0.fav, '#ff9f0a'], __sae: [G0.sae, '#5e5ce6'], __top: [G0.top, '#34c759'] }[x.v];
+        if (fixed) { x.ic = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + fixed[0] + '</svg>'; x.c = fixed[1]; }
+        else { const ci = catIcon(x.v); x.ic = ci[0]; x.c = IOSM[ci[1]] || '#0a84ff'; }
+      }
+    }));
+    return G;
+  }
+  const G0 = { all: '<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>', fav: '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" fill="currentColor" stroke="none"/>', sae: '<path d="M4 20h16M5 10h14M12 4l8 5H4zM7 10v8M12 10v8M17 10v8"/>', top: '<path d="M4 19.5h16M7 16v-4M12 16V7M17 16v-6"/>' };
   function menuHtml(id) {
-    const G = menuItems(id); if (!G) return '';
-    const it = x => '<button type="button" role="menuitem" data-mk="' + x.k + '" data-mv="' + esc(x.v == null ? '' : x.v) + '"><span>' + esc(x.t) + '</span>' + (x.n != null && x.n !== '' ? '<small>' + x.n + '</small>' : '') + '</button>';
+    const G = menuItems(id); if (!G) return ''; decorate(G, id);
+    const it = x => '<button type="button" role="menuitem" data-mk="' + x.k + '" data-mv="' + esc(x.v == null ? '' : x.v) + '">' + (x.ic ? '<i class="ios-ic pt-ic" style="--ios:' + x.c + '">' + x.ic + '</i>' : '') + '<span>' + esc(x.t) + '</span>' + (x.n != null && x.n !== '' ? '<small>' + x.n + '</small>' : '') + '</button>';
     return G.map(g => g.empty ? '<p class="pt-empty">' + esc(g.empty) + '</p>' : g.foot ? '<div class="pt-foot">' + g.foot.map(it).join('') + '</div>' :
       '<div class="pt-grp">' + (g.h ? '<div class="pt-gh">' + esc(g.h) + '</div>' : '') + '<div class="pt-list' + (g.cols && g.items.length > 8 ? ' pt-cols' : '') + '">' + g.items.map(it).join('') + '</div></div>').join('');
   }

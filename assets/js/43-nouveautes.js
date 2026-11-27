@@ -2,6 +2,11 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.8', date: '27/11/2026', items: [
+      'Menus des onglets : chaque thème et chaque catégorie de mails a son icône colorée.',
+      'Sous-onglets d’une rubrique (Parcours dossier, Conditions et ARE…) plus gros, plus lisibles et plus espacés.',
+      'Icônes de l’en-tête en couleur : post-it en jaune, Repères en orange, lecture vocale en violet, dates en bleu, calculatrice en vert, thème en indigo (en jaune la nuit) ; elles se remplissent de leur couleur au survol.'
+    ] },
     { v: '2026-11-27.7', date: '27/11/2026', items: [
       'Style institutionnel plus vivant, en clair comme en sombre : fond en dégradé doux avec halo bleu, cartes légèrement dégradées et ombrées qui se soulèvent au survol, boutons principaux en dégradé bleu, icônes avec reflet façon iPhone, en-tête et onglets ombrés.'
     ] },
