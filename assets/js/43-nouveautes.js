@@ -2,6 +2,10 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.9', date: '27/11/2026', items: [
+      'Onglet « Autres » ajouté au bout de la ligne d’onglets : Ma journée, Questions fréquentes, Pièces justificatives, Pense-bête d’entretien, Mode formation.',
+      'Les menus des rubriques reprennent exactement les outils du menu latéral (par exemple Situations particulières : ASS et ATA, AREF et RFF, frontaliers, sanctions, ATI ; Références : calendrier, comparer, échéances, journal).'
+    ] },
     { v: '2026-11-27.8', date: '27/11/2026', items: [
       'Menus des onglets : chaque thème et chaque catégorie de mails a son icône colorée.',
       'Sous-onglets d’une rubrique (Parcours dossier, Conditions et ARE…) plus gros, plus lisibles et plus espacés.',

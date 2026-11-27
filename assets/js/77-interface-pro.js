@@ -14,7 +14,7 @@
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const TABS = () => {
     const hubs = window.FT_HUBS || [];
-    return [['fav', 'Favoris'], ['cvm', 'Mails']].concat(hubs.map(h => { const n = nameOf(h.id, h.name); return [h.id, n === h.name ? n.replace(/\s*:.*$/, '') : n]; })).concat([['jour', nameOf('jour', 'Ma journée')]]);
+    return [['fav', 'Favoris'], ['cvm', 'Mails']].concat(hubs.map(h => { const n = nameOf(h.id, h.name); return [h.id, n === h.name ? n.replace(/\s*:.*$/, '') : n]; })).concat([['autres', 'Autres']]);
   };
   /* Noms à jour (renommages de l'administrateur compris), comme dans le menu */
   function nameOf(id, fb) { try { const t = NAV_TABS_CONFIG.find(x => String(x.id) === String(id)); if (t && t.name) return t.name; } catch (e) {} return fb; }
@@ -27,7 +27,11 @@
   function activeKey() {
     const t = cur(); if (t.indexOf('hub:') === 0) return t;
     const h = window.ftHubOf ? window.ftHubOf(t) : null;
-    return h ? h.id : t;
+    if (h) return h.id;
+    const sec = [...document.querySelectorAll('#burger-tabs-list > .menu-sec')].find(x => x.querySelector('button[onclick="switchNavTab(\'' + t + '\')"]'));
+    if (sec) { const hh = (window.FT_HUBS || []).find(x => sec.querySelector('button[onclick="switchNavTab(\'' + x.members[0][0] + '\')"]')); if (hh) return hh.id; }
+    if (t !== 'home' && t !== 'cvm') return 'autres';
+    return t;
   }
   /* Icônes façon iOS : glyphe blanc sur carré arrondi coloré */
   const G = {
@@ -38,9 +42,10 @@
     'hub:fin': '<path d="M7 3.5h10M7 20.5h10M8 3.5c0 4 8 5 8 8.5s-8 4.5-8 8.5M16 3.5c0 4-8 5-8 8.5"/>',
     'hub:situations': '<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M15.5 14.2c2.8-.3 5 1.6 5 4.3"/>',
     'hub:calculs': '<path d="M5 4.5h4.5v15H5zM10.5 4.5H15v15h-4.5z"/><path d="m16 5.2 3.6-.9 3 14.6-3.6.8z" transform="translate(-2.5 0)"/>',
+    autres: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/>',
     jour: '<rect x="3.5" y="5" width="17" height="15" rx="2.2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><circle cx="12" cy="14.5" r="1.4" fill="currentColor" stroke="none"/>'
   };
-  const GC = { fav: '#ff9f0a', cvm: '#0a84ff', 'hub:ouverture': '#30b0c7', 'hub:ans': '#34c759', 'hub:fin': '#ff375f', 'hub:situations': '#ff9500', 'hub:calculs': '#5e5ce6', jour: '#8e8e93' };
+  const GC = { fav: '#ff9f0a', cvm: '#0a84ff', 'hub:ouverture': '#30b0c7', 'hub:ans': '#34c759', 'hub:fin': '#ff375f', 'hub:situations': '#ff9500', 'hub:calculs': '#5e5ce6', jour: '#8e8e93', autres: '#8e8e93' };
   const ios = id => G[id] ? '<span class="ios-ic" style="--ios:' + GC[id] + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + G[id] + '</svg></span>' : '';
   window.ftIosIcon = ios;
   const STAR = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
@@ -67,8 +72,22 @@
         { h: 'Catégories', cols: true, items: cats.map(c => ({ k: 'cat', v: c, t: c, n: n(c) })).filter(x => x.n) }
       ];
     }
+    const lbl = b => { const t = b.querySelector('.text-xs'); return ((t ? t.textContent : b.textContent) || '').replace(/\s*(Nouveau|Mis à jour)\s*$/, '').trim(); };
+    const tabOf = b => (/switchNavTab\('([^']+)'\)/.exec(b.getAttribute('onclick') || '') || [])[1];
+    if (id === 'autres') {
+      const list = document.getElementById('burger-tabs-list'); const out = [];
+      if (list) { let on = false; [...list.children].forEach(c => { if (c.classList.contains('menu-sec-h')) { on = /autres/i.test(c.textContent); return; } if (on && c.tagName === 'BUTTON') { const v = tabOf(c); if (v) out.push({ k: 'tab', v: v, t: lbl(c) }); } }); }
+      if (!out.some(x => x.v === 'jour')) out.unshift({ k: 'tab', v: 'jour', t: nameOf('jour', 'Ma journée') });
+      return [{ h: 'Autres outils', items: out }];
+    }
     const h = (window.FT_HUBS || []).find(x => x.id === id);
     if (h) {
+      /* mêmes outils que dans le menu latéral */
+      const sec = [...document.querySelectorAll('#burger-tabs-list > .menu-sec')].find(x => x.querySelector('button[onclick="switchNavTab(\'' + h.members[0][0] + '\')"]'));
+      if (sec) {
+        const its = [...sec.querySelectorAll('button[onclick^="switchNavTab"]')].map(b => ({ k: 'tab', v: tabOf(b), t: lbl(b) })).filter(x => x.v);
+        if (its.length) return [{ h: nameOf(h.id, h.name), items: its }];
+      }
       let LB = {}; try { LB = JSON.parse(localStorage.getItem('ft_labels') || '{}') || {}; } catch (e) {}
       const items = h.members.map(m => ({ k: 'tab', v: m[0], t: LB['t:' + m[0]] || m[1] }));
       /* onglets ajoutés après coup dans la barre de la rubrique (ex. Pension d'invalidité) */
@@ -160,13 +179,13 @@
     const hd = document.querySelector('header'); if (!hd) return;
     const n = document.createElement('nav'); n.id = 'ft-ptabs'; n.className = 'ft-ptabs'; n.setAttribute('aria-label', 'Rubriques');
     n.innerHTML = '<div class="ft-ptabs-in">' + TABS().map(([id, name]) => {
-      const hasMenu = id !== 'jour';
+      const hasMenu = true;
       return '<button type="button" data-pt="' + esc(id) + '"' + (hasMenu ? ' aria-haspopup="menu" aria-expanded="false"' : '') + '>' + ios(id) + '<span class="pt-l">' + esc(name) + '</span>' + (hasMenu ? CHEV : '') + '</button>';
     }).join('') + '</div>';
     n.addEventListener('click', e => {
       const b = e.target.closest('[data-pt]'); if (!b) return;
       const id = b.dataset.pt;
-      if (id === 'fav') { if (openId === 'fav') close(); else open('fav', !hoverable()); return; }
+      if (id === 'fav' || id === 'autres') { if (openId === id) close(); else open(id, !hoverable()); return; }
       close(); try { switchNavTab(id); } catch (er) {}
     });
     n.addEventListener('mouseover', e => {
