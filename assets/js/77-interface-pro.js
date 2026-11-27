@@ -53,6 +53,16 @@
   const CHEV = '<svg class="pt-chev" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
 
   /* Contenu du menu de chaque onglet */
+  /* Couleur propre à chaque outil, selon son sens (rouge pour démission et trop-perçu, etc.) */
+  const TOOLC = {
+    dossier: '#30b0c7', '1': '#0a84ff', '2': '#ff3b30', '9': '#ff9500', delais: '#5e5ce6', '5': '#34c759', '6': '#ff2d55', invalidite: '#af52de',
+    '3': '#34c759', cns: '#00a6a6',
+    cfd: '#ff9500', droits: '#0a84ff', '8': '#a2845e',
+    '4': '#5e5ce6', ass: '#f5b800', aref: '#af52de', casparts: '#32ade6', '7': '#ff9500', sanctions: '#ff3b30', ati: '#00a6a6',
+    bareme: '#0a84ff', calendrier: '#ff3b30', compare: '#af52de', echeances: '#ff9500', glossaire: '#a2845e', journal: '#8e8e93', schemas: '#5e5ce6', sjr: '#34c759', sources: '#64748b',
+    jour: '#0a84ff', faq: '#34c759', pieces: '#ff9500', pensebete: '#f5b800', formation: '#af52de', calc: '#30b84f'
+  };
+  window.FT_TOOLC = TOOLC;
   const alpha = (a, b) => String(a.t).localeCompare(String(b.t), 'fr', { sensitivity: 'base' });
   function menuItems(id) {
     if (id === 'fav') {
@@ -119,7 +129,7 @@
   function decorate(G, id) {
     const col = GC[id] || '#0a84ff';
     G.forEach(g => (g.items || []).forEach(x => {
-      if (x.k === 'tab') { x.ic = toolIcon(x.v); x.c = col; }
+      if (x.k === 'tab') { x.ic = toolIcon(x.v); x.c = TOOLC[x.v] || col; }
       else if (x.k === 'pin') { const it = (window.ftPinsList ? window.ftPinsList() : []).find(y => y.id === x.v); x.ic = it && it.icon ? it.icon.replace(/\sclass="[^"]*"/, '') : ''; x.c = String(x.v).indexOf('tpl:') === 0 ? '#0a84ff' : '#ff9f0a'; }
       else if (x.k === 'cat') {
         const fixed = { all: [G0.all, '#8e8e93'], favorites: [G.fav || G0.fav, '#ff9f0a'], __sae: [G0.sae, '#5e5ce6'], __top: [G0.top, '#34c759'] }[x.v];
@@ -132,7 +142,7 @@
   const G0 = { all: '<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>', fav: '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" fill="currentColor" stroke="none"/>', sae: '<path d="M4 20h16M5 10h14M12 4l8 5H4zM7 10v8M12 10v8M17 10v8"/>', top: '<path d="M4 19.5h16M7 16v-4M12 16V7M17 16v-6"/>' };
   function menuHtml(id) {
     const G = menuItems(id); if (!G) return ''; decorate(G, id);
-    const it = x => '<button type="button" role="menuitem" data-mk="' + x.k + '" data-mv="' + esc(x.v == null ? '' : x.v) + '">' + (x.ic ? '<i class="ios-ic pt-ic" style="--ios:' + x.c + '">' + x.ic + '</i>' : '') + '<span>' + esc(x.t) + '</span>' + (x.n != null && x.n !== '' ? '<small>' + x.n + '</small>' : '') + '</button>';
+    const it = x => '<button type="button" role="menuitem" data-mk="' + x.k + '" data-mv="' + esc(x.v == null ? '' : x.v) + '"' + (x.c ? ' style="--ios:' + x.c + '"' : '') + '>' + (x.ic ? '<i class="ios-ic pt-ic" style="--ios:' + x.c + '">' + x.ic + '</i>' : '') + '<span>' + esc(x.t) + '</span>' + (x.n != null && x.n !== '' ? '<small>' + x.n + '</small>' : '') + '</button>';
     return G.map(g => g.empty ? '<p class="pt-empty">' + esc(g.empty) + '</p>' : g.foot ? '<div class="pt-foot">' + g.foot.map(it).join('') + '</div>' :
       '<div class="pt-grp">' + (g.h ? '<div class="pt-gh">' + esc(g.h) + '</div>' : '') + '<div class="pt-list' + (g.cols && g.items.length > 8 ? ' pt-cols' : '') + '">' + g.items.map(it).join('') + '</div></div>').join('');
   }
@@ -323,6 +333,7 @@
       const h = window.ftHubOf ? window.ftHubOf(b.dataset.t) : null;
       let col = h ? GC[h.id] : null;
       if (!col) { const sec = [...document.querySelectorAll('#burger-tabs-list > .menu-sec')].find(x => x.querySelector('button[onclick="switchNavTab(\'' + b.dataset.t + '\')"]')); const hh = sec && (window.FT_HUBS || []).find(x => sec.querySelector('button[onclick="switchNavTab(\'' + x.members[0][0] + '\')"]')); col = hh ? GC[hh.id] : '#0a84ff'; }
+      col = TOOLC[b.dataset.t] || col; b.style.setProperty('--ios', col);
       const i = document.createElement('i'); i.className = 'ios-ic pt-ic'; i.style.setProperty('--ios', col); i.innerHTML = ic; i.setAttribute('aria-hidden', 'true');
       b.prepend(i);
     });

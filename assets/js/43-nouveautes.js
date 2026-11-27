@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.14', date: '27/11/2026', items: [
+      'Chaque outil a sa couleur selon son sens, dans les menus au survol et la ligne des sous-onglets : rouge pour Démission, Trop-perçu, Sanctions et Calendrier ; vert pour Complément ARE, ARCE et SJR ; orange pour Rupture conventionnelle, CFD, ICCP et Échéances ; violet pour Pension d’invalidité et Comparer… Le survol et l’onglet ouvert prennent la couleur de l’outil.'
+    ] },
     { v: '2026-11-27.13', date: '27/11/2026', items: [
       'Accueil : une seule barre de recherche (celle de l’en-tête s’efface sur l’accueil), plus grande et ombrée ; « Bonjour » en grand avec « Que cherchez-vous ? » en dessous ; heure sans les secondes et date dans un cadre discret.',
       'Onglets : thèmes rangés par ordre alphabétique, dans le menu au survol comme dans la ligne des sous-onglets.',

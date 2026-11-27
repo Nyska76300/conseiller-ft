@@ -343,3 +343,7 @@ html.ui-pro #view-home .home-clock{min-height:0!important;height:auto!important;
 html.ui-pro #view-home .home-clock{gap:0!important;padding:7px 14px!important}
 html.ui-pro #view-home .home-time,html.ui-pro #view-home .home-date{margin:0!important;line-height:1.25!important}
 html.ui-pro #view-home .home-date{text-transform:none!important}
+/* Couleur de chaque outil au survol, dans les menus et la ligne des sous-onglets */
+html.ui-pro .ft-ptmenu button[style*="--ios"]:hover,html.ui-pro .ft-ptmenu button[style*="--ios"]:focus-visible{background:linear-gradient(90deg,color-mix(in srgb,var(--ios) 16%,transparent),color-mix(in srgb,var(--ios) 5%,transparent))!important;color:color-mix(in srgb,var(--ios) 78%,var(--pro-text))!important}
+html.ui-pro:is(.theme-light,:not(.theme-light)) .hub-bar .hub-tab[style*="--ios"]:hover{color:color-mix(in srgb,var(--ios) 80%,var(--pro-text))!important;background:linear-gradient(180deg,transparent 30%,color-mix(in srgb,var(--ios) 10%,transparent))!important;border-bottom-color:color-mix(in srgb,var(--ios) 45%,transparent)!important}
+html.ui-pro:is(.theme-light,:not(.theme-light)) .hub-bar .hub-tab.is-on[style*="--ios"]{color:color-mix(in srgb,var(--ios) 82%,var(--pro-text))!important;border-bottom-color:var(--ios)!important;background:linear-gradient(180deg,transparent 30%,color-mix(in srgb,var(--ios) 9%,transparent))!important}
