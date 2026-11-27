@@ -2281,3 +2281,30 @@ html.theme-light .ft-vc-a button.pri{background:#0b5cd5;border-color:#0b5cd5;col
 html.theme-light .ft-vc-a button.ghost{color:#b91c1c;border-color:#f5c2c2}
 @media (max-width:640px){.ft-vc-lh{display:none}.ft-vc-r{grid-template-columns:1fr 1fr 30px 28px}}
 .cvm-copy-left{margin-right:6px}
+/* Cloche de notifications (administrateur) */
+.ft-bell{position:relative;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid rgba(110,150,240,.3);background:rgba(10,26,80,.55);color:#d6e4ff;cursor:pointer;order:998}
+.ft-bell[hidden]{display:none!important}
+html.theme-light .ft-bell{background:#fff;border-color:#cbd9ee;color:#25406b}
+html.ui-pro .ft-bell{--hc:#ff3b30;color:var(--hc)!important;background:linear-gradient(180deg,color-mix(in srgb,var(--hc) 14%,transparent),color-mix(in srgb,var(--hc) 5%,transparent))!important;border-color:color-mix(in srgb,var(--hc) 26%,transparent)!important}
+.ft-bell-n{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#ff3b30;color:#fff;font:800 10.5px/18px system-ui;text-align:center;box-shadow:0 0 0 2px #fff}
+.ft-bell-n[hidden]{display:none}
+.ft-bell.ring svg{animation:ftRing .9s ease}
+@keyframes ftRing{0%,100%{transform:rotate(0)}20%{transform:rotate(16deg)}40%{transform:rotate(-14deg)}60%{transform:rotate(9deg)}80%{transform:rotate(-5deg)}}
+@media (prefers-reduced-motion:reduce){.ft-bell.ring svg{animation:none}}
+.ft-bell-pop{position:fixed;z-index:90;width:380px;max-height:70vh;overflow:auto;padding:12px;border-radius:16px;background:#0a1640;border:1px solid rgba(110,150,240,.3);color:#eaf1ff;box-shadow:0 20px 46px rgba(0,0,0,.45);display:none}
+.ft-bell-pop.on{display:block}
+html.theme-light .ft-bell-pop{background:#fff;border-color:#d3e0f1;color:#14264d;box-shadow:0 20px 46px rgba(15,28,58,.18)}
+.ft-bell-pop header{display:flex;align-items:baseline;justify-content:space-between;padding:2px 6px 10px}
+.ft-bell-pop header small{font-size:12px;opacity:.7}
+.ft-bell-pop .fb-gh{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;opacity:.65;padding:8px 6px 4px}
+.ft-bell-pop .fb-gh span{margin-left:4px;padding:0 6px;border-radius:999px;background:rgba(110,150,240,.2)}
+.ft-bell-pop .fb-it{display:flex;align-items:flex-start;gap:10px;width:100%;padding:8px 6px;border:0;border-radius:10px;background:transparent;color:inherit;text-align:left;cursor:pointer}
+.ft-bell-pop .fb-it:hover{background:rgba(110,150,240,.12)}
+.ft-bell-pop .fb-it i{flex:none;width:9px;height:9px;margin-top:5px;border-radius:50%;background:var(--c)}
+.ft-bell-pop .fb-it span{flex:1;min-width:0;display:flex;flex-direction:column}
+.ft-bell-pop .fb-it b{font-size:13px}
+.ft-bell-pop .fb-it small{font-size:12px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ft-bell-pop .fb-it em{font-style:normal;font-size:11px;opacity:.6;white-space:nowrap}
+.ft-bell-pop .fb-more,.ft-bell-pop .fb-none{font-size:12.5px;opacity:.7;padding:6px}
+.ft-bell-pop .fb-all{width:100%;margin-top:8px;padding:9px;border-radius:10px;border:1px solid rgba(110,150,240,.3);background:transparent;color:#5b9bff;font-weight:700;cursor:pointer}
+html.theme-light .ft-bell-pop .fb-all{color:#0b5cd5;border-color:#d3e0f1}

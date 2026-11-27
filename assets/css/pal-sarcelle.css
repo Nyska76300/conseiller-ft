@@ -1941,4 +1941,14 @@ html.theme-light .ft-vc-r input[data-f]{background:#f6fbfb;border-color:#cbdbdc;
 html.theme-light .ft-vc-add{color:#0a5e62;border-color:#bbd3d5}
 html.theme-light .ft-vc-a button{border-color:#cbdbdc}
 html.theme-light .ft-vc-a button.pri{background:#0a5e62;border-color:#0a5e62}
+.ft-bell{border:1px solid rgba(28,168,179,.3);background:rgba(8,32,33,.55);color:#cee8ea}
+html.theme-light .ft-bell{border-color:#cbdbdc;color:#2b4446}
+html.ui-pro .ft-bell{color:var(--hc)!important;background:linear-gradient(180deg,color-mix(in srgb,var(--hc) 14%,transparent),color-mix(in srgb,var(--hc) 5%,transparent))!important;border-color:color-mix(in srgb,var(--hc) 26%,transparent)!important}
+.ft-bell-pop{background:#071a1b;border:1px solid rgba(28,168,179,.3);color:#e6f3f4}
+html.theme-light .ft-bell-pop{border-color:#d3e1e2;color:#0f2829;box-shadow:0 20px 46px rgba(11,29,30,.18)}
+.ft-bell-pop .fb-gh span{background:rgba(28,168,179,.2)}
+.ft-bell-pop .fb-it:hover{background:rgba(28,168,179,.12)}
+.ft-bell-pop .fb-it i{background:var(--c)}
+.ft-bell-pop .fb-all{border:1px solid rgba(28,168,179,.3);color:#09acb4}
+html.theme-light .ft-bell-pop .fb-all{color:#0a5e62;border-color:#d3e1e2}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(48,158,166,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(57,188,198,0.1),transparent 60%),linear-gradient(150deg,#03090a 0%,#071718 35%,#0b2628 70%,#123c3f 100%) fixed!important}

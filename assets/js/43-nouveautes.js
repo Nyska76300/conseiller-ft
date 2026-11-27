@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.25', date: '27/11/2026', items: [
+      'Administrateurs : cloche de notifications en haut à droite, avec le nombre d’éléments à traiter (questions, idées et erreurs signalées par les agents, propositions de modèles, mises à jour réglementaires en attente de validation). Mise à jour toutes les 30 secondes ; la cloche s’agite quand une nouvelle notification arrive.'
+    ] },
     { v: '2026-11-27.24', date: '27/11/2026', items: [
       'Nouvelle barre de widgets à droite de l’écran, sur toutes les pages : Mails favoris, Outils favoris et Plus utilisés s’ouvrent dans un petit panneau ; Calculatrice, Dates et Repères s’ouvrent directement.',
       'Accueil : le bandeau (Bonjour, heure, recherche, Nouveau dossier, Que faire si…, chiffres clés), puis vos Liens utiles et les Nouveautés (ancien « Quoi de neuf »).'
