@@ -2280,3 +2280,4 @@ html.theme-light .ft-vc-a button{border-color:#cbd9ee}
 html.theme-light .ft-vc-a button.pri{background:#0b5cd5;border-color:#0b5cd5;color:#fff}
 html.theme-light .ft-vc-a button.ghost{color:#b91c1c;border-color:#f5c2c2}
 @media (max-width:640px){.ft-vc-lh{display:none}.ft-vc-r{grid-template-columns:1fr 1fr 30px 28px}}
+.cvm-copy-left{margin-right:6px}

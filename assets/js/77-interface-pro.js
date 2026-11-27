@@ -245,6 +245,9 @@
   };
   const sv = (g, c) => '<span class="ios-ic" style="--ios:' + c + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + g + '</svg></span>';
   function home() {
+    /* icônes des outils de l'accueil : même couleur que dans les onglets */
+    document.querySelectorAll('#view-home .fh-chip').forEach(c => { const m = /switchNavTab\('([^']+)'\)/.exec(c.getAttribute('onclick') || ''); if (m && TOOLC[m[1]]) c.style.setProperty('--ios', TOOLC[m[1]]); });
+    document.querySelectorAll('#view-home .fh-grp').forEach(g => { const h = (window.FT_HUBS || []).find(x => g.querySelector('.fh-chip[onclick="switchNavTab(\'' + x.members[0][0] + '\')"]')); const gi = g.querySelector('.fh-gi'); if (h && gi && GC[h.id]) gi.style.setProperty('--ios', GC[h.id]); });
     const sum = document.querySelector('#view-home .fh-sum'), d1 = sum && sum.querySelector(':scope > .fh-grp.fh-c1'); if (d1 && sum.firstElementChild !== d1) sum.prepend(d1);
     const hero = document.querySelector('#view-home .home-hero'); if (!hero) return;
     if (!hero.querySelector('.pro-acts')) {

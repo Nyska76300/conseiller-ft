@@ -191,7 +191,14 @@
   }
 
   /* ---------- Branchements ---------- */
-  function after() { try { weak(); quickBar(); counts(); emptyCats(); soNote(); } catch (e) { console.warn(e); } }
+  /* bouton « Copier le texte » à gauche de la barre du message */
+  function copyLeft() {
+    const b = $('btn-copy-raw'); if (!b || b.dataset.left) return;
+    const row = b.closest('.ft-msg-actions') && b.closest('.ft-msg-actions').parentElement; if (!row) return;
+    const left = row.firstElementChild; if (!left || left.contains(b)) return;
+    b.dataset.left = '1'; b.classList.add('cvm-copy-left'); left.prepend(b);
+  }
+  function after() { try { copyLeft(); weak(); quickBar(); counts(); emptyCats(); soNote(); } catch (e) { console.warn(e); } }
   if (typeof renderTemplatesList === 'function') {
     const _r = renderTemplatesList;
     renderTemplatesList = function () { const r = _r.apply(this, arguments); setTimeout(after, 0); return r; };

@@ -1132,7 +1132,8 @@
       const terms = qTerms(searchQuery);
       const scores = new Map();
       const isCommon = t => !!(t && (t.isOfficial || t.shared));
-      let tplScope = 'all'; try { tplScope = localStorage.getItem('ft_tpl_scope') || 'all'; } catch (e) {}
+      /* une seule base de mails : plus de filtre Tous / Communs / Mes modèles */
+      const tplScope = 'all'; try { localStorage.removeItem('ft_tpl_scope'); } catch (e) {}
       const scopeBar = document.getElementById('tpl-scope');
       if (scopeBar) {
         const nC = templates.filter(isCommon).length, nP = templates.length - nC;
@@ -1160,7 +1161,7 @@
         filtered.sort((a, b) => scores.get(b.id) - scores.get(a.id));
       }
       if (currentCategory === '__top' && !terms.length) { const top = ftTopIds(10); filtered.sort((a, b) => top.indexOf(a.id) - top.indexOf(b.id)); }
-      const grouped = tplScope === 'all' && filtered.some(isCommon) && filtered.some(t => !isCommon(t));
+      const grouped = false;
       if (grouped) { const c = filtered.filter(isCommon), p = filtered.filter(t => !isCommon(t)); filtered.length = 0; filtered.push(...p, ...c); }
 
       const countBadge = document.getElementById('filtered-count-badge');

@@ -2,6 +2,11 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.15', date: '27/11/2026', items: [
+      'Accueil : les icônes des outils ont la même couleur que dans les onglets (rouge pour Démission et Trop-perçu, vert pour Complément ARE…).',
+      'En-tête : le lien « Changer d’outil » sous le titre est retiré (les onglets le remplacent).',
+      'CVM Direct : une seule base de mails, sans le filtre Tous / Communs / Mes modèles ni la séparation « Mes modèles » / « Modèles communs » ; le bouton « Copier le texte » passe à gauche de la barre du message.'
+    ] },
     { v: '2026-11-27.14', date: '27/11/2026', items: [
       'Chaque outil a sa couleur selon son sens, dans les menus au survol et la ligne des sous-onglets : rouge pour Démission, Trop-perçu, Sanctions et Calendrier ; vert pour Complément ARE, ARCE et SJR ; orange pour Rupture conventionnelle, CFD, ICCP et Échéances ; violet pour Pension d’invalidité et Comparer… Le survol et l’onglet ouvert prennent la couleur de l’outil.'
     ] },
