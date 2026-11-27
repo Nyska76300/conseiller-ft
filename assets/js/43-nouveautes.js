@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.30', date: '27/11/2026', items: [
+      'Style institutionnel : dégradés repassés dans les bleus (fond des pages et cadres), comme le thème classique ; le bandeau de l’horloge de l’accueil retrouve son dégradé bleu.'
+    ] },
     { v: '2026-11-27.29', date: '27/11/2026', items: [
       'Style institutionnel : chaque cadre de chaque page a un léger dégradé (blanc vers lavande en clair, bleu nuit vers indigo en sombre).',
       'Correction : le widget Post-it s’ouvre bien (même si le bouton Post-it du haut est masqué) ; idem pour l’Interprète vocal, l’Assistant et « Que faire si… ».',

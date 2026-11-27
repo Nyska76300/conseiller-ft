@@ -579,3 +579,20 @@ html.ui-pro [id^="view-"] :is(.rounded-xl,.rounded-2xl,.rounded-lg)[class*="bord
 html.ui-pro [id^="view-"] :is(.fh-card,.reg-card,.wiz-card,.ipr-card,.op-card,.dp-card,.home-hero),
 html.ui-pro #print-area,html.ui-pro .ft-ptmenu,html.ui-pro .pro-wg-pan,html.ui-pro .cvm-so-c{background-image:var(--pro-card-g)!important;background-color:transparent!important}
 html.ui-pro.theme-light #view-home .home-hero{background-image:radial-gradient(600px 220px at 0% 0%,rgba(64,140,255,.12),transparent 70%),var(--pro-card-g)!important}
+
+/* ===== 2026-11-27.30 : dégradés dans les bleus (comme le thème classique) ===== */
+html.ui-pro.ui-pro.ui-pro.theme-light,html.ui-pro.ui-pro.ui-pro.theme-light body{background:
+  radial-gradient(900px 620px at 0% 0%,rgba(80,140,255,.36),transparent 62%),
+  radial-gradient(850px 620px at 100% 8%,rgba(60,170,255,.26),transparent 60%),
+  radial-gradient(1000px 700px at 70% 110%,rgba(40,190,235,.24),transparent 60%),
+  linear-gradient(135deg,#dce8ff 0%,#e7f0ff 50%,#dcf1fb 100%) fixed!important}
+html.ui-pro.ui-pro.ui-pro:not(.theme-light),html.ui-pro.ui-pro.ui-pro:not(.theme-light) body{background:
+  radial-gradient(900px 620px at 0% 0%,rgba(59,130,246,.42),transparent 62%),
+  radial-gradient(850px 620px at 100% 8%,rgba(14,165,233,.28),transparent 60%),
+  radial-gradient(1000px 700px at 70% 110%,rgba(20,184,166,.22),transparent 60%),
+  linear-gradient(135deg,#0b1a3e 0%,#0c2350 50%,#0a2436 100%) fixed!important}
+html.ui-pro.theme-light{--pro-card-g:linear-gradient(160deg,#ffffff 0%,#f2f7ff 55%,#e9f2ff 100%)}
+html.ui-pro:not(.theme-light){--pro-card-g:linear-gradient(160deg,#1a2c55 0%,#152650 55%,#12294a 100%)}
+/* Accueil : bandeau de l'horloge en dégradé bleu */
+html.ui-pro.theme-light #view-home .home-hero{background-image:radial-gradient(520px 260px at 100% 0%,rgba(56,140,255,.28),transparent 70%),radial-gradient(520px 240px at 0% 100%,rgba(40,190,235,.18),transparent 70%),linear-gradient(135deg,#eaf2ff 0%,#f7faff 50%,#e4f3ff 100%)!important}
+html.ui-pro:not(.theme-light) #view-home .home-hero{background-image:radial-gradient(520px 260px at 100% 0%,rgba(59,130,246,.40),transparent 70%),radial-gradient(520px 240px at 0% 100%,rgba(14,165,233,.22),transparent 70%),linear-gradient(135deg,#17305f 0%,#122448 50%,#0f2c4c 100%)!important}
