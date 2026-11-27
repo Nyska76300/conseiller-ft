@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.7', date: '27/11/2026', items: [
+      'Style institutionnel plus vivant, en clair comme en sombre : fond en dégradé doux avec halo bleu, cartes légèrement dégradées et ombrées qui se soulèvent au survol, boutons principaux en dégradé bleu, icônes avec reflet façon iPhone, en-tête et onglets ombrés.'
+    ] },
     { v: '2026-11-27.6', date: '27/11/2026', items: [
       'Icônes façon iOS harmonisées dans tout le site : accueil (cartes, simulateurs, mails favoris, liens), titres des outils et volet Repères ; étoile sur « Mes favoris ».',
       'Menus des onglets de rubriques complets : « Pension d’invalidité » revient dans Droits (elle avait disparu de la barre après le changement de nom).',
