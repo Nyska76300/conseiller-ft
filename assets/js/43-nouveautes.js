@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.32', date: '27/11/2026', items: [
+      'CVM Direct : le filtre « À relire » n’est plus coupé (les filtres passent à la ligne) et il est en orange pour le repérer.'
+    ] },
     { v: '2026-11-27.31', date: '27/11/2026', items: [
       'Réglementation : plafond de la RFF corrigé à 769,49 € par mois dans le mail RFF (montant publié par France Travail) ; règle « fin du cumul ASS et AAH au 1er janvier 2027 » ajoutée dans « Rechargement, ASS et prestations ».',
       'Pages « Règles et calculs » : nouvelle partie « Démarches » (admission, démission, création d’entreprise, CSP, cumul, trop-perçu, rupture conventionnelle, rechargement et ASS, retraite).',

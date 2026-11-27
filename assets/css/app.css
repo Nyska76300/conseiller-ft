@@ -2375,3 +2375,8 @@ html:not(.theme-light) .ft-sugg.wa{background:rgba(255,179,64,.12);color:#ffd9a0
 .ft-bell-pop .fb-wrap{display:flex;flex-direction:column}
 .ft-bell-pop .fb-ans{align-self:flex-start;margin:0 0 6px 25px;padding:3px 9px;border-radius:8px;border:1px solid rgba(110,150,240,.35);background:transparent;color:#5b9bff;font-size:11.5px;font-weight:700;cursor:pointer}
 html.theme-light .ft-bell-pop .fb-ans{color:#0b5cd5;border-color:#cbd9ee}
+/* filtres rapides CVM : retour à la ligne plutôt que coupure */
+.cvm-qf{flex-wrap:wrap!important;overflow:visible!important;row-gap:6px!important}
+html .cvm-qf button[data-f="review"],html.theme-light .cvm-qf button[data-f="review"]{color:#7a3e00;background:#fff1dc;border-color:#f3cf93}
+html .cvm-qf button[data-f="review"].on,html.theme-light .cvm-qf button[data-f="review"].on{color:#4a2600;background:#ffc46b;border-color:#ffc46b}
+html:not(.theme-light) .cvm-qf button[data-f="review"]{color:#ffd9a0;background:rgba(255,179,64,.12);border-color:rgba(255,179,64,.4)}
