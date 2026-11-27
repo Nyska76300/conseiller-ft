@@ -397,6 +397,12 @@
         const tabs = [...host.querySelectorAll(':scope > .hub-tab[data-t]')];
         const sorted = tabs.slice().sort((a, b) => a.textContent.trim().localeCompare(b.textContent.trim(), 'fr', { sensitivity: 'base' }));
         if (sorted.some((t, i) => t !== tabs[i])) sorted.forEach(t => host.appendChild(t));
+        /* téléphone : un menu déroulant compact à la place des sous-onglets */
+        let sel = bar.querySelector(':scope > .pro-hb-sel');
+        if (!sel) { sel = document.createElement('select'); sel.className = 'pro-hb-sel'; sel.setAttribute('aria-label', 'Outil de la rubrique'); sel.addEventListener('change', () => { try { switchNavTab(sel.value); } catch (e) {} }); bar.insertBefore(sel, bar.firstChild); }
+        const opts = [...host.querySelectorAll(':scope > .hub-tab[data-t]')].map(t => '<option value="' + esc(t.dataset.t) + '">' + esc(t.textContent.trim()) + '</option>').join('');
+        if (sel.dataset.o !== opts) { sel.innerHTML = opts; sel.dataset.o = opts; }
+        sel.value = act;
       });
       /* outil du menu latéral sans barre de rubrique : on lui en donne une */
       if (want.some(w => w[0] === act) && bars.length) {
@@ -409,7 +415,14 @@
     });
     document.querySelectorAll('.hub-bar .hub-tab[data-t]').forEach(b => { const on = b.dataset.t === act; b.classList.toggle('is-on', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
   }
-  function after() { try { home(); simLayout(); rulesToc(); iosify(); syncHubBars(); hubIcons(); } catch (e) { console.warn(e); } }
+  function foot() {
+    const f = document.getElementById('ft-foot'); if (!f || f.dataset.pro) return;
+    f.dataset.pro = '1'; f.classList.add('pro-foot');
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'pro-foot-i'; b.setAttribute('aria-expanded', 'false'); b.setAttribute('aria-label', 'Sources et version'); b.textContent = 'i';
+    b.addEventListener('click', () => { const on = f.classList.toggle('open'); b.setAttribute('aria-expanded', String(on)); });
+    f.appendChild(b);
+  }
+  function after() { try { foot(); home(); simLayout(); rulesToc(); iosify(); syncHubBars(); hubIcons(); } catch (e) { console.warn(e); } }
   if (typeof switchNavTab === 'function') {
     const _s = switchNavTab;
     switchNavTab = function () { const r = _s.apply(this, arguments); try { mark(); close(); setTimeout(after, 250); } catch (e) {} return r; };

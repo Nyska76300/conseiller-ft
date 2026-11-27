@@ -366,3 +366,48 @@ html.theme-light .pro-hb-r{border-color:#d9e0ea;background:#f9fbfe}
 .pro-hb-r span{display:flex;gap:4px}
 .pro-hb-r span button{width:30px;height:30px;border-radius:8px;border:1px solid rgba(110,150,240,.3);background:transparent;color:inherit;font-weight:800;cursor:pointer}
 .pro-hb-r span button:disabled{opacity:.3;cursor:default}
+
+/* ===== 2026-11-27.19 : harmonisation générale ===== */
+/* 1. Boutons secondaires des outils : même style partout */
+html.ui-pro [id^="view-"] button:is([class*="bg-slate-"],[class*="bg-white"]):not(.hub-tab):not(.rg-tab):not(.fh-chip):not(.ios-ic):not([class*="bg-gradient-to"]):not([role="tab"]):not(.cvm-card){background:var(--pro-card-g)!important;border:1px solid var(--pro-line)!important;color:var(--pro-text)!important;border-radius:9px!important;box-shadow:0 1px 2px rgba(16,32,72,.05)!important}
+html.ui-pro [id^="view-"] button:is([class*="bg-slate-"],[class*="bg-white"]):not(.hub-tab):not(.rg-tab):not(.fh-chip):not([class*="bg-gradient-to"]):hover{border-color:var(--pro-blue)!important;color:var(--pro-blue)!important}
+/* badges : petites étiquettes arrondies, sans dégradé */
+html.ui-pro [id^="view-"] span:is([class*="text-[9px]"],[class*="text-[10px]"]):is([class*="rounded-full"],[class*="rounded-md"],[class*="rounded "]):not(.ios-ic){border-radius:999px!important;padding:2px 8px!important;font-weight:700!important;letter-spacing:.02em}
+html.ui-pro [id^="view-"] span[class*="bg-gradient-to"]{background:var(--pro-blue-l)!important;color:var(--pro-blue)!important;border:0!important;box-shadow:none!important}
+/* 2. « Simulateur / Règles et calculs » sur la même ligne que les sous-onglets, à droite */
+html.ui-pro .hub-bar{display:flex!important;flex-wrap:wrap;align-items:flex-end;column-gap:16px}
+html.ui-pro .hub-bar>.hub-chips{flex:1 1 520px;min-width:0}
+html.ui-pro:is(.theme-light,:not(.theme-light)) .hub-bar .hub-sub{flex:none;margin-left:auto!important;border-top:0!important;padding:0 0 8px!important}
+html.ui-pro:is(.theme-light,:not(.theme-light)) .hub-bar .hub-sub .rg-tabs{display:inline-flex!important;padding:3px!important;gap:2px!important;border-radius:10px!important;background:color-mix(in srgb,var(--pro-blue) 7%,transparent)!important;border:1px solid var(--pro-line)!important}
+html.ui-pro:is(.theme-light,:not(.theme-light)) .hub-bar .hub-sub .rg-tabs .rg-tab{border:0!important;border-radius:8px!important;padding:6px 12px!important;font-size:.8rem!important}
+html.ui-pro:is(.theme-light,:not(.theme-light)) .hub-bar .hub-sub .rg-tabs .rg-tab.is-on{background:var(--pro-card)!important;color:var(--pro-blue)!important;box-shadow:0 1px 3px rgba(16,32,72,.12)!important}
+/* 3. Champs de formulaire identiques */
+html.ui-pro [id^="view-"] :is(input:not([type]),input[type="text"],input[type="number"],input[type="date"],input[type="email"],input[type="search"],select):not(.pro-hb-sel),html.ui-pro [id^="view-"] textarea{border-radius:10px!important;border:1px solid var(--pro-line)!important;background:var(--pro-card)!important;color:var(--pro-text)!important;box-shadow:inset 0 1px 2px rgba(16,32,72,.04)!important;transition:border-color .12s,box-shadow .12s}
+html.ui-pro [id^="view-"] :is(input:not([type]),input[type="text"],input[type="number"],input[type="date"],input[type="email"],select):not(.pro-hb-sel){min-height:38px}
+html.ui-pro [id^="view-"] :is(input,select,textarea):focus{border-color:var(--pro-blue)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--pro-blue) 18%,transparent)!important;outline:none!important}
+html.ui-pro [id^="view-"] :is(input,select,textarea)[aria-invalid="true"]{border-color:var(--st-ko)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--st-ko) 14%,transparent)!important}
+html.ui-pro [id^="view-"] label:not(:has(input[type="checkbox"],input[type="radio"])){color:var(--pro-sub)}
+/* 4. Résultats : même présentation, chiffre clé en grand */
+html.ui-pro .pro-res :is(.text-2xl,.text-3xl,.text-4xl){font-weight:800!important;letter-spacing:-.02em}
+html.ui-pro .pro-res>*{border-radius:14px!important}
+/* 5. Téléphone : sous-onglets en menu déroulant */
+.pro-hb-sel{display:none}
+@media (max-width:640px){
+  html.ui-pro .hub-bar>.hub-chips{display:none!important}
+  html.ui-pro .hub-bar>.pro-hb-sel{display:block;flex:1 1 100%;margin:8px 10px;height:42px;padding:0 12px;border-radius:11px;border:1px solid var(--pro-line);background:var(--pro-card);color:var(--pro-text);font-size:.95rem;font-weight:650}
+  html.ui-pro:is(.theme-light,:not(.theme-light)) .hub-bar .hub-sub{margin:0 10px 8px!important;flex:1 1 100%}
+}
+/* 6. Pied de page : une ligne discrète, détails au clic sur « i » */
+html.ui-pro .pro-foot{display:flex;align-items:center;justify-content:center;gap:10px;min-height:26px;font-size:.68rem!important;opacity:.85}
+html.ui-pro .pro-foot>span:not(.ft-foot-v){display:none}
+html.ui-pro .pro-foot.open>span{display:inline!important}
+html.ui-pro .pro-foot-i{width:18px;height:18px;border-radius:50%;border:1px solid var(--pro-line);background:var(--pro-card);color:var(--pro-mute);font:italic 700 .66rem/1 Georgia,serif;cursor:pointer}
+html.ui-pro .pro-foot-i[aria-expanded="true"]{background:var(--pro-blue);color:#fff;border-color:var(--pro-blue)}
+/* 7. Mode sombre : plus de blocs blancs isolés */
+html.ui-pro:not(.theme-light) [id^="view-"] :is(.bg-white,[class*="bg-white/"]):not(button):not(.ios-ic){background:var(--pro-card-g)!important;color:var(--pro-text)}
+@media (min-width:641px){
+  html.ui-pro .hub-bar{flex-wrap:nowrap!important}
+  html.ui-pro .hub-bar>.hub-chips{flex:1 1 0!important;min-width:0!important;width:auto!important}
+  html.ui-pro:is(.theme-light,:not(.theme-light)) .hub-bar>.hub-sub{flex:0 0 auto!important;width:auto!important;align-self:flex-end}
+}
+html.ui-pro:is(.theme-light,:not(.theme-light)) .hub-bar .hub-tab{padding:11px 10px 9px!important;font-size:.9rem!important}

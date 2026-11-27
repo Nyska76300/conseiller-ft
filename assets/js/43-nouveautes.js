@@ -2,6 +2,14 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.19', date: '27/11/2026', items: [
+      'Style harmonisé dans tous les outils : boutons secondaires, petites étiquettes et champs de saisie identiques partout (coins arrondis, contour bleu quand on écrit, rouge en cas d’erreur).',
+      '« Simulateur / Règles et calculs » rejoint la ligne des sous-onglets, à droite, sous forme de sélecteur : une ligne de moins en haut de chaque outil.',
+      'Résultats : chiffres clés en grand et cadres identiques d’un simulateur à l’autre.',
+      'Téléphone : les sous-onglets d’une rubrique deviennent un menu déroulant compact.',
+      'Pied de page réduit à la version et un bouton « i » qui affiche les sources et la date de vérification.',
+      'Mode sombre : plus de bloc blanc isolé dans les outils.'
+    ] },
     { v: '2026-11-27.18', date: '27/11/2026', items: [
       'Barre du haut : le bouton du compte est tout à droite. Nouveau réglage « Organiser la barre du haut » (menu du compte ou recherche) : changez l’ordre des boutons avec les flèches et masquez ceux qui ne servent pas ; le choix suit votre compte.'
     ] },
