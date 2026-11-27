@@ -110,6 +110,12 @@
     };
   }
   window.ftOpenPins = openPins;
+  window.ftPinsList = () => { const tools = allTools(); return getPins().map(id => tools.find(t => t.id === id)).filter(Boolean); };
+  window.ftOpenPin = function (id) {
+    id = String(id);
+    if (id.indexOf('tpl:') === 0) { const tid = id.slice(4); switchNavTab('cvm'); setTimeout(() => { try { const t = templates.find(x => String(x.id) === tid); if (t) { try { if (typeof currentCategory !== 'undefined') currentCategory = 'all'; } catch (er) {} try { localStorage.setItem('ft_tpl_scope', 'all'); } catch (er) {} selectTemplate(t.id); } } catch (er) {} }, 60); }
+    else switchNavTab(id);
+  };
 
   /* ================= Notifications et pastille de l’icône ================= */
   const canNotif = 'Notification' in window && 'serviceWorker' in navigator;

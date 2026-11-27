@@ -2,6 +2,10 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.3', date: '27/11/2026', items: [
+      'Style institutionnel : l’onglet « Accueil » est remplacé par « Favoris », qui déroule vos outils et mails favoris (avec « Choisir mes favoris » et un accès à la page d’accueil). L’accueil reste aussi sur le bouton maison de l’en-tête.',
+      'Au survol d’une rubrique, un menu déroule ses thèmes : les catégories de mails pour « Mails » (avec Favoris, SAE et Plus utilisés), les onglets pour Ouverture de droits, ANS, Fin de droits, Situations particulières et Références. Clavier : flèche ↓ sur un onglet pour ouvrir le menu.'
+    ] },
     { v: '2026-11-27.2', date: '27/11/2026', items: [
       'Nouveau style d’interface « Institutionnel », en test : fond gris très clair, cartes blanches, un seul bleu, sans dégradés ni effets de verre.',
       'Les rubriques (Accueil, Mails, Ouverture de droits, ANS, Fin de droits, Situations particulières, Références, Ma journée) sont en onglets sous l’en-tête ; l’onglet ouvert est souligné en bleu. Les sous-onglets d’une rubrique sont soulignés de la même façon.',
