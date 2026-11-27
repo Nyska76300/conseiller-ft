@@ -233,7 +233,7 @@
     const rl = [...document.querySelectorAll('header button')].find(b => b.title === 'Recharger la page'); if (rl) rl.classList.add('pro-hide');
   }
   /* Barre du haut personnalisable : ordre et affichage des boutons ; le compte reste tout à droite */
-  const HB = [['ft-pi-btn', 'Post-it'], ['rp-btn', 'Repères'], ['ft-tts', 'Interprète vocal'], ['datecalc-toggle', 'Dates'], ['header-calc-btn', 'Calculatrice'], ['theme-toggle-btn', 'Clair / sombre']];
+  const HB = [['ft-pi-btn', 'Post-it'], ['ft-tts', 'Interprète vocal'], ['theme-toggle-btn', 'Clair / sombre']];
   const hbGet = () => { try { const v = JSON.parse(localStorage.getItem('ft_hdr') || 'null'); if (v && Array.isArray(v.order)) return v; } catch (e) {} return { order: HB.map(x => x[0]), hide: [] }; };
   function hbApply() {
     const cfg = hbGet(), order = cfg.order.concat(HB.map(x => x[0]).filter(id => !cfg.order.includes(id)));
@@ -280,6 +280,7 @@
   };
   const sv = (g, c) => '<span class="ios-ic" style="--ios:' + c + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + g + '</svg></span>';
   function home() {
+    const nh = document.querySelector('#view-home .fh-news h2'); if (nh && nh.textContent.trim() !== 'Nouveautés') nh.textContent = 'Nouveautés';
     /* icônes des outils de l'accueil : même couleur que dans les onglets */
     document.querySelectorAll('#view-home .fh-chip').forEach(c => { const m = /switchNavTab\('([^']+)'\)/.exec(c.getAttribute('onclick') || ''); if (m && TOOLC[m[1]]) c.style.setProperty('--ios', TOOLC[m[1]]); });
     document.querySelectorAll('#view-home .fh-grp').forEach(g => { const h = (window.FT_HUBS || []).find(x => g.querySelector('.fh-chip[onclick="switchNavTab(\'' + x.members[0][0] + '\')"]')); const gi = g.querySelector('.fh-gi'); if (h && gi && GC[h.id]) gi.style.setProperty('--ios', GC[h.id]); });
@@ -533,7 +534,7 @@
     bar.addEventListener('click', e => {
       const b = e.target.closest('[data-w]'); if (!b) return; const k = b.dataset.w;
       if (k === 'calc') { wgClose(); try { toggleCalculator(); } catch (er) {} return; }
-      if (k === 'dates') { wgClose(); const d = document.getElementById('datecalc-toggle'); if (d) d.click(); return; }
+      if (k === 'dates') { wgClose(); try { toggleDateCalc(); } catch (er) { const d = document.getElementById('datecalc-toggle'); if (d) d.click(); } return; }
       if (k === 'rep') { wgClose(); try { window.ftRpToggle(true); } catch (er) { const r = document.getElementById('rp-btn'); if (r) r.click(); } return; }
       if (wOpen === k) { wgClose(); return; }
       wgOpen(k, b);
@@ -561,7 +562,7 @@
   }
   function wgClose() { const p = document.getElementById('pro-wg-pan'); if (p) p.classList.remove('on'); document.querySelectorAll('#pro-wg [data-w]').forEach(b => b.classList.remove('on')); wOpen = null; }
   window.ftWidget = k => { wgBuild(); wgOpen(k); };
-  function after() { try { wgBuild(); proHome(); foot(); home(); simLayout(); rulesToc(); iosify(); syncHubBars(); hubIcons(); } catch (e) { console.warn(e); } }
+  function after() { try { wgBuild(); foot(); home(); simLayout(); rulesToc(); iosify(); syncHubBars(); hubIcons(); } catch (e) { console.warn(e); } }
   if (typeof switchNavTab === 'function') {
     const _s = switchNavTab;
     switchNavTab = function () { const r = _s.apply(this, arguments); try { mark(); close(); setTimeout(after, 250); } catch (e) {} return r; };

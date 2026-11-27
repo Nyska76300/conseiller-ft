@@ -2,6 +2,11 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.26', date: '27/11/2026', items: [
+      'Accueil : retour à la disposition d’origine (Dossier en cours, Liens utiles, Repères, recherche, simulateurs, favoris, Nouveautés), avec la barre de widgets à droite.',
+      'Dates, Calculatrice et Repères ne sont plus en haut : ils s’ouvrent depuis la barre de widgets.',
+      'Correction : la calculatrice s’ouvre à gauche de la barre de widgets, son bouton de fermeture n’est plus caché.'
+    ] },
     { v: '2026-11-27.25', date: '27/11/2026', items: [
       'Administrateurs : cloche de notifications en haut à droite, avec le nombre d’éléments à traiter (questions, idées et erreurs signalées par les agents, propositions de modèles, mises à jour réglementaires en attente de validation). Mise à jour toutes les 30 secondes ; la cloche s’agite quand une nouvelle notification arrive.'
     ] },

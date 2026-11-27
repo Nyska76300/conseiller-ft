@@ -530,3 +530,9 @@ html.ui-pro .pro-wg-pan .wg-ri svg{width:16px!important;height:16px!important;co
 .pro-wg-pan .wg-empty{font-size:13px;color:var(--pro-mute);padding:10px 6px}
 .pro-wg-pan .wg-foot{width:100%;margin-top:8px;padding:9px;border-radius:11px;border:1px solid var(--pro-line);background:var(--pro-card);color:var(--pro-blue);font-weight:700;font-size:13px;cursor:pointer}
 @media (min-width:900px){html.ui-pro body>.ft-split-host{margin-right:62px}html.ui-pro #ft-foot{margin-right:62px}}
+/* 2026-11-27.26 : accueil initial ; Dates, Calculatrice et Repères passent dans la barre de widgets */
+html.ui-pro #view-home>.home-wrap{display:flex!important}
+html.ui-pro #view-home .pro-home{display:none!important}
+html.ui-pro header :is(#datecalc-toggle,#header-calc-btn,#rp-btn){display:none!important}
+@media (min-width:900px){html.ui-pro #floating-calculator{right:76px!important}}
+@media (min-width:900px){html.ui-pro #datecalc-popover{right:76px!important}}
