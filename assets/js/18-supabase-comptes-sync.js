@@ -6,7 +6,7 @@
   if (!SB_URL || !SB_KEY || !window.fetch) return;
 
   // Données synchronisées (aucune donnée de dossier ou d'allocataire)
-  var SYNC = ['ft_prefs', 'ft_links', 'ft_deleted_tpl', 'ft_cat_over', 'ft_signoff', 'ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use', 'ft_bareme_ack', 'ft_pins', 'ft_menu_favs', 'ft_tour_done'];
+  var SYNC = ['ft_prefs', 'ft_links', 'ft_deleted_tpl', 'ft_cat_over', 'ft_deleted_cat', 'ft_signoff', 'ft_templates', 'ft_favorites', 'ft_categories_list', 'ft_recent_templates', 'ft_sort_mode', 'ft_cat_sort_mode', 'ft_theme', 'ft_settings', 'ft_a11y', 'ft_tool_use', 'ft_bareme_ack', 'ft_pins', 'ft_menu_favs', 'ft_tour_done'];
   var K_SESS = 'ft_sb_session', K_META = 'ft_sb_meta';
   var LSraw = {
     get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -98,6 +98,10 @@
       if (!Array.isArray(a) || !Array.isArray(b)) return;
       var u = a.slice(); b.forEach(function (x) { var js = JSON.stringify(x); if (!u.some(function (y) { return JSON.stringify(y) === js; })) u.push(x); });
       if (k === 'ft_favorites') u = u.filter(function (id) { return !dead[id]; });
+      if (k === 'ft_categories_list') {
+        var dc = {}; parse(localData.ft_deleted_cat, []).concat(parse(remoteData.ft_deleted_cat, [])).forEach(function (n) { dc[n] = 1; });
+        var sn = {}; u = u.filter(function (c) { var n = c && (c.name || c); if (!n || dc[n] || sn[n]) return false; sn[n] = 1; return true; });
+      }
       out[k] = JSON.stringify(u);
     });
     return out;

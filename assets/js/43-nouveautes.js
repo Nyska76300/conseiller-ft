@@ -2,6 +2,17 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.5', date: '27/11/2026', items: [
+      'La rubrique « Ouverture de droits » s’appelle désormais « Droits ».',
+      'En-tête : clair / sombre, calculatrice et dates reviennent en icônes, toutes de la même taille ; « Recharger la page » passe dans Paramètres ; le bouton Menu disparaît sur ordinateur (les onglets le remplacent).',
+      'Icônes façon iOS (carré arrondi coloré, dessin blanc) sur les onglets de rubriques et sur les catégories et modèles de mails.',
+      'Accueil : quatre actions rapides (Nouveau dossier, Mails favoris, Plus utilisés, Que faire si…), chiffres clés sur une ligne discrète, simulateurs en liste simple par rubrique.',
+      'Simulateurs : le bloc de résultats reste visible à droite en faisant défiler, avec un trait bleu ; couleurs d’état identiques partout (vert éligible, rouge non éligible, orange à vérifier) ; chiffres alignés.',
+      'Règles et calculs : même plan partout (Conditions et règles, Calcul, Sources) avec un sommaire collant à gauche.',
+      'Impression : en-tête sobre « France Travail · Espace Conseiller » avec la date, sans les menus.',
+      'Correction : la touche « / » ne lance plus la recherche quand la calculatrice est ouverte (elle sert à diviser).',
+      'Correction : une catégorie de mails supprimée ne revient plus à la synchronisation suivante.'
+    ] },
     { v: '2026-11-27.4', date: '27/11/2026', items: [
       'Style institutionnel : le mode sombre revient (bouton clair / sombre, Outils ou Paramètres), en version sobre : fond bleu nuit uni, cartes plates, sans dégradés ni lueurs.',
       'Les onglets de rubriques reprennent les mêmes noms que le menu, y compris les noms modifiés par l’administrateur.'

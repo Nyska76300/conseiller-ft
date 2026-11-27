@@ -514,7 +514,8 @@
   function themeHtml(t) {
     const rules = '<ul class="rg-rules">' + t.rules.map(r => '<li>' + escapeHtml(r) + '</li>').join('') + '</ul>';
     const calc = '<div class="rg-calc">' + t.calc.map(c => '<div class="rg-row"><div class="rg-k">' + escapeHtml(c[0]) + '</div><div class="rg-f">' + escapeHtml(c[1]) + '</div>' + (c[2] ? '<div class="rg-e">Exemple : ' + escapeHtml(c[2]) + '</div>' : '') + '</div>').join('') + '</div>';
-    return '<h4 class="wiz-h">Règles</h4>' + rules + '<h4 class="wiz-h">Règles de calcul</h4>' + calc;
+    const src = '<ul class="rg-src"><li><a href="https://www.unedic.org/" target="_blank" rel="noopener">Unédic : règlement d’assurance chômage et circulaires</a></li><li><a href="https://www.service-public.fr/particuliers/vosdroits/N549" target="_blank" rel="noopener">Service-public.fr : chômage et allocations</a></li><li><a href="https://www.francetravail.fr/" target="_blank" rel="noopener">France Travail</a></li></ul>';
+    return '<h4 class="wiz-h" id="rg-s-regles">Conditions et règles</h4>' + rules + '<h4 class="wiz-h" id="rg-s-calcul">Calcul</h4>' + calc + '<h4 class="wiz-h" id="rg-s-sources">Sources</h4>' + src;
   }
   const foot = () => '<p class="wiz-hint">Paramètres du barème vérifiés le ' + escapeHtml(BAREME.verifie) + '. Ces règles reprennent les formules de l’outil : à confirmer sur unedic.org avant toute décision.</p>';
 
@@ -801,7 +802,7 @@
   const VIEW = { '1': 'od', '2': 'demission', '3': 'ans', '4': 'csp', '5': 'complement-are', '6': 'indus', '7': 'iccp', '8': 'retraite', '9': 'rci', cfd: 'cfd', dossier: 'dossier', delais: 'delais', droits: 'droits', bareme: 'bareme', jour: 'jour', glossaire: 'glossaire', cns: 'cns', sources: 'sources', sjr: 'sjr', schemas: 'schemas' };
 
   const HUBS = [
-    { id: 'hub:ouverture', name: 'Ouverture de droits', desc: 'Dossier, conditions, démission, rupture conventionnelle, délais, complément ARE', icon: 'clipboard-check', color: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+    { id: 'hub:ouverture', name: 'Droits', desc: 'Dossier, conditions, démission, rupture conventionnelle, délais, complément ARE', icon: 'clipboard-check', color: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
       members: [['dossier', 'Parcours dossier'], ['1', 'Conditions et ARE'], ['2', 'Démission'], ['9', 'Rupture conventionnelle'], ['delais', 'Délais'], ['5', 'Complément ARE'], ['6', 'Trop-perçu']] },
     { id: 'hub:ans', name: 'ANS : création d’entreprise', desc: 'ARCE ou maintien de l’ARE, cumul CNS (activité non salariée)', icon: 'calculator', color: 'bg-teal-500/15 text-teal-400 border-teal-500/30',
       members: [['3', 'ARCE et maintien'], ['cns', 'Cumul CNS']] },

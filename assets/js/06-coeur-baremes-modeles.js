@@ -684,7 +684,8 @@
       categoryList.forEach(c => { const n = CAT_MAP[c.name] || c.name; if (n !== c.name) changed = true; if (seen.has(n)) return; seen.add(n); const d = DEFAULT_CATEGORIES.find(x => x.name === n); cats.push(n !== c.name && d ? { ...d } : (n !== c.name ? { ...c, name: n } : c)); });
       const used = new Set(templates.map(t => t.category));
       DEFAULT_CATEGORIES.forEach(d => { if (used.has(d.name) && !seen.has(d.name)) { cats.push({ ...d }); changed = true; } });
-      categoryList = cats;
+      let dcat = []; try { dcat = JSON.parse(safeLS.getItem('ft_deleted_cat') || '[]'); } catch (e) {}
+      categoryList = cats.filter(c => { if (dcat.includes(c.name) && !used.has(c.name)) { changed = true; return false; } return true; });
       if (changed) { try { saveState(); } catch (e) {} }
     }
 
@@ -1552,6 +1553,8 @@
       });
 
       categoryList = categoryList.filter(c => c.name !== categoryNameToDelete);
+      /* mémorise la suppression : la synchronisation ne doit pas la faire revenir */
+      try { const dc = JSON.parse(safeLS.getItem('ft_deleted_cat') || '[]'); if (!dc.includes(categoryNameToDelete)) dc.push(categoryNameToDelete); safeLS.setItem('ft_deleted_cat', JSON.stringify(dc)); } catch (e) {}
 
       if (currentCategory === categoryNameToDelete) {
         currentCategory = 'all';
@@ -1655,6 +1658,7 @@
         return;
       }
 
+      try { const dc = JSON.parse(safeLS.getItem('ft_deleted_cat') || '[]').filter(n => n.toLowerCase() !== name.toLowerCase()); safeLS.setItem('ft_deleted_cat', JSON.stringify(dc)); } catch (e) {}
       categoryList.push({
         name: name,
         icon: 'folder',
@@ -4140,7 +4144,7 @@
     ];
 
     window.addEventListener('keydown', (e) => {
-      if (e.key === '/' && String(activeNavTab) === 'home' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) {
+      if (e.key === '/' && !isCalculatorOpen && String(activeNavTab) === 'home' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) {
         e.preventDefault();
         document.getElementById('home-search')?.focus();
       }

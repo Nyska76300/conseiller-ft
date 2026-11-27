@@ -1,4 +1,5 @@
 (function () {
+  if (document.documentElement.classList.contains('ui-pro')) return; /* style institutionnel : icônes directement dans l'en-tête */
   /* Barre du haut allégée : Dates, Calculatrice, Thème et Recharger regroupés dans un bouton « Outils ». */
   const $ = id => document.getElementById(id);
   const ICO = {

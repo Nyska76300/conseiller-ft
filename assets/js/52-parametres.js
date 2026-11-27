@@ -84,6 +84,7 @@
       '<section><h3>Données et aide</h3>' +
         row('Derniers calculs', 'Historique gardé sur ce poste', '<button type="button" class="pm-btn" data-pm="hist">Effacer</button>') +
         row('Formule de fin des mails', (window.ftSignoffGet && window.ftSignoffGet().on) ? 'Ajoutée à chaque mail copié' : 'Désactivée', '<button type="button" class="pm-btn" data-pm="signoff">Régler</button>') +
+        row('Recharger la page', 'Récupérer la dernière version du site', '<button type="button" class="pm-btn" data-pm="reload">Recharger</button>') +
         row('Mes données', 'Sauvegarder ou restaurer vos modèles et réglages', '<button type="button" class="pm-btn" data-pm="data">Ouvrir</button>') +
         (window.ftLoggedIn && window.ftLoggedIn() ? row('Synchronisation', 'Modèles, favoris et réglages sur tous vos postes', '<button type="button" class="pm-btn" data-pm="sync">Synchroniser</button>') : '') +
         row('Visite guidée', '', '<button type="button" class="pm-btn" data-pm="tour">Revoir</button>') +
@@ -122,6 +123,7 @@
     else if (a === 'rem') { close(); window.ftReminders(); }
     else if (a === 'hist') { if (confirm('Effacer l’historique des derniers calculs de ce poste ?')) { try { localStorage.removeItem('ft_calc_hist'); localStorage.removeItem('ft_calc_vals'); } catch (er) {} toast('Historique effacé', 'success'); try { switchNavTab(tabNow() === 'home' ? 'home' : tabNow()); } catch (er) {} } }
     else if (a === 'data') { close(); const d = $('data-btn') || document.querySelector('[data-k="data"]'); if (d) d.click(); }
+    else if (a === 'reload') { close(); if (window.ftHardReload) window.ftHardReload(); else location.reload(); }
     else if (a === 'signoff') { close(); if (window.ftSignoff) window.ftSignoff(); }
     else if (a === 'sync') { if (window.ftSyncNow) window.ftSyncNow(); toast('Synchronisation lancée', 'info'); }
     else if (a === 'tour') { close(); if (window.ftTour) window.ftTour(); }

@@ -64,6 +64,8 @@
   /* ---------- 4. Raccourci « / » ---------- */
   document.addEventListener('keydown', e => {
     if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+    /* calculatrice ouverte : « / » sert à diviser */
+    try { if (isCalculatorOpen) return; } catch (er) {} const fc = $('floating-calculator'); if (fc && !fc.classList.contains('hidden') && fc.offsetParent) return;
     const a = document.activeElement; if (a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable)) return;
     const hs = document.querySelector('#view-home:not(.hidden) .home-hero input') || $('ft-header-search');
     if (hs) { e.preventDefault(); hs.focus(); }
