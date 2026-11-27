@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.17', date: '27/11/2026', items: [
+      'Accueil : sous la barre de recherche, seul « Que faire si… » reste (Nouveau dossier est dans la carte « Dossier en cours », les mails favoris et plus utilisés dans l’onglet Mails).'
+    ] },
     { v: '2026-11-27.16', date: '27/11/2026', items: [
       'CVM Direct, menus déroulants : les mois sont regroupés par année (année la plus récente en haut, mois de janvier à décembre) ; toutes les autres listes (motifs, type d’admission, événement, choix définis par l’administrateur…) sont par ordre alphabétique.'
     ] },

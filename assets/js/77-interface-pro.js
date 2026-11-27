@@ -255,7 +255,7 @@
       a.innerHTML = '<button type="button" data-a="dos" class="pri">' + sv(AI.dos, '#0a84ff') + '<span><b>Nouveau dossier</b><small>Droits, ARE, durée et mail</small></span></button>' +
         '<button type="button" data-a="fav">' + sv(AI.fav, '#ff9f0a') + '<span><b>Mails favoris</b><small>Vos modèles étoilés</small></span></button>' +
         '<button type="button" data-a="top">' + sv(AI.top, '#34c759') + '<span><b>Plus utilisés</b><small>Vos mails les plus copiés</small></span></button>' +
-        '<button type="button" data-a="sit">' + sv(AI.sit, '#5e5ce6') + '<span><b>Que faire si…</b><small>Une situation, le bon outil</small></span></button>';
+        '<button type="button" data-a="sit">' + sv(AI.sit, '#5e5ce6') + '<span><b>Que faire si…</b><small>Décrivez une situation : le site vous indique le bon outil et le bon mail</small></span></button>';
       a.addEventListener('click', e => {
         const b = e.target.closest('[data-a]'); if (!b) return;
         const k = b.dataset.a;

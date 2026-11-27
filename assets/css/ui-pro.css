@@ -351,3 +351,7 @@ html.ui-pro:is(.theme-light,:not(.theme-light)) .hub-bar .hub-tab.is-on[style*="
 html.ui-pro header button[onclick="toggleBurgerMenu()"]:has(#header-active-tab-name){display:none!important}
 #tpl-scope{display:none!important}
 html.ui-pro #view-home .fh-chip .fh-ci{background:linear-gradient(180deg,color-mix(in srgb,var(--ios,#0a84ff) 62%,#fff) 0%,var(--ios,#0a84ff) 52%,color-mix(in srgb,var(--ios,#0a84ff) 84%,#000) 100%)!important}
+/* 2026-11-27.17 : sous la recherche de l'accueil, seul « Que faire si… » reste */
+html.ui-pro #view-home .pro-acts button:not([data-a="sit"]){display:none!important}
+html.ui-pro #view-home .pro-acts{grid-template-columns:1fr!important}
+html.ui-pro #view-home .pro-acts button[data-a="sit"]{padding:10px 14px}
