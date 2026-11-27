@@ -2,6 +2,10 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.12', date: '27/11/2026', items: [
+      'Onglets « Autres » et « Favoris » : ils s’ouvrent au clic sur tous les écrans (sur un écran tactile ou un ordinateur avec écran tactile, le menu se refermait tout de suite).',
+      'Chaque rubrique reprend exactement les outils du menu latéral, dans la ligne des sous-onglets comme dans le menu au survol (Références : Calendrier des versements, Comparer deux scénarios, Échéances, Journal ; Situations : ASS et ATA, AREF et RFF, frontaliers, sanctions, ATI…). Tous les titres restent visibles, sur deux lignes si besoin.'
+    ] },
     { v: '2026-11-27.11', date: '27/11/2026', items: [
       'Onglet « Autres » complet : il reprend tous les outils qui ne sont rangés dans aucune rubrique (Ma journée, Questions fréquentes, Pièces justificatives, Pense-bête d’entretien, Mode formation…), même si le titre « Autres outils » du menu a été renommé.',
       'Sous-onglets d’une rubrique : une icône colorée devant chaque titre, sur une seule ligne.'

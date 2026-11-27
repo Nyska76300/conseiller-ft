@@ -135,13 +135,13 @@
     return G.map(g => g.empty ? '<p class="pt-empty">' + esc(g.empty) + '</p>' : g.foot ? '<div class="pt-foot">' + g.foot.map(it).join('') + '</div>' :
       '<div class="pt-grp">' + (g.h ? '<div class="pt-gh">' + esc(g.h) + '</div>' : '') + '<div class="pt-list' + (g.cols && g.items.length > 8 ? ' pt-cols' : '') + '">' + g.items.map(it).join('') + '</div></div>').join('');
   }
-  let openId = null, tOpen = 0, tClose = 0;
+  let openId = null, tOpen = 0, tClose = 0, pinned = false;
   function pop() {
     let m = document.getElementById('ft-ptmenu');
     if (!m) {
       m = document.createElement('div'); m.id = 'ft-ptmenu'; m.className = 'ft-ptmenu'; m.setAttribute('role', 'menu'); document.body.appendChild(m);
       m.addEventListener('mouseenter', () => clearTimeout(tClose));
-      m.addEventListener('mouseleave', () => { tClose = setTimeout(close, 180); });
+      m.addEventListener('mouseleave', () => { if (pinned || !hoverable()) return; tClose = setTimeout(close, 180); });
       m.addEventListener('click', e => {
         const b = e.target.closest('[data-mk]'); if (!b) return;
         const k = b.dataset.mk, v = b.dataset.mv; close();
@@ -175,7 +175,7 @@
   function close() {
     const m = document.getElementById('ft-ptmenu'); if (m) m.classList.remove('on');
     document.querySelectorAll('#ft-ptabs [aria-expanded="true"]').forEach(x => x.setAttribute('aria-expanded', 'false'));
-    openId = null;
+    openId = null; pinned = false;
   }
   const hoverable = () => window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   function build() {
@@ -189,7 +189,7 @@
     n.addEventListener('click', e => {
       const b = e.target.closest('[data-pt]'); if (!b) return;
       const id = b.dataset.pt;
-      if (id === 'fav' || id === 'autres') { if (openId === id && !hoverable()) close(); else open(id, !hoverable()); return; }
+      if (id === 'fav' || id === 'autres') { if (openId === id && pinned) { close(); return; } clearTimeout(tClose); open(id, !hoverable()); pinned = true; return; }
       close(); try { switchNavTab(id); } catch (er) {}
     });
     n.addEventListener('mouseover', e => {
@@ -199,14 +199,14 @@
       const id = b.dataset.pt; if (openId === id) return;
       tOpen = setTimeout(() => open(id), openId ? 0 : 140);
     });
-    n.addEventListener('mouseleave', () => { clearTimeout(tOpen); tClose = setTimeout(close, 220); });
+    n.addEventListener('mouseleave', () => { clearTimeout(tOpen); if (pinned || !hoverable()) return; tClose = setTimeout(close, 220); });
     n.addEventListener('keydown', e => {
       const b = e.target.closest('[data-pt]'); if (!b) return;
       if (e.key === 'ArrowDown') { e.preventDefault(); open(b.dataset.pt, true); }
       else if (e.key === 'Escape') close();
     });
-    n.querySelector('.ft-ptabs-in').addEventListener('scroll', close, { passive: true });
-    window.addEventListener('resize', close);
+    n.querySelector('.ft-ptabs-in').addEventListener('scroll', () => { if (!pinned) close(); }, { passive: true });
+    window.addEventListener('resize', () => { if (!pinned) close(); });
     document.addEventListener('click', e => { if (openId && !e.target.closest('#ft-ptmenu,#ft-ptabs')) close(); });
     hd.after(n);
     mark();
@@ -326,7 +326,36 @@
       b.prepend(i);
     });
   }
-  function after() { try { home(); simLayout(); rulesToc(); iosify(); hubIcons(); } catch (e) { console.warn(e); } }
+  /* Barres de rubrique alignées sur le menu latéral : mêmes outils, dans le même ordre */
+  function syncHubBars() {
+    const act = cur();
+    (window.FT_HUBS || []).forEach(h => {
+      const sec = [...document.querySelectorAll('#burger-tabs-list > .menu-sec')].find(x => x.querySelector('button[onclick="switchNavTab(\'' + h.members[0][0] + '\')"]'));
+      if (!sec) return;
+      const want = [...sec.querySelectorAll('button[onclick^="switchNavTab"]')].map(b => { const v = (/switchNavTab\('([^']+)'\)/.exec(b.getAttribute('onclick') || '') || [])[1]; const t = b.querySelector('.text-xs'); return v ? [v, ((t ? t.textContent : b.textContent) || '').replace(/\s*(Nouveau|Mis à jour)\s*$/, '').trim()] : null; }).filter(Boolean);
+      const bars = [...document.querySelectorAll('.hub-bar')].filter(b => b.querySelector('.hub-tab[data-t="' + CSS.escape(String(h.members[0][0])) + '"]'));
+      bars.forEach(bar => {
+        const host = bar.querySelector('.hub-chips') || bar;
+        bar.querySelectorAll(':scope > .hub-tab').forEach(t => { if (host !== bar) host.appendChild(t); });
+        const seen = new Set(); host.querySelectorAll('.hub-tab[data-t]').forEach(t => { if (seen.has(t.dataset.t)) t.remove(); else seen.add(t.dataset.t); });
+        want.forEach(([v, label]) => {
+          if (bar.querySelector('.hub-tab[data-t="' + CSS.escape(v) + '"]')) return;
+          const b = document.createElement('button'); b.type = 'button'; b.className = 'hub-tab'; b.dataset.t = v; b.setAttribute('onclick', "switchNavTab('" + v + "')"); b.textContent = label;
+          host.appendChild(b);
+        });
+      });
+      /* outil du menu latéral sans barre de rubrique : on lui en donne une */
+      if (want.some(w => w[0] === act) && bars.length) {
+        const v = [...document.querySelectorAll('[id^="view-"]')].find(x => x.offsetParent && !x.classList.contains('hidden'));
+        if (v && !v.querySelector(':scope > .hub-bar, :scope > * > .hub-bar')) {
+          const cl = bars[0].cloneNode(true); const sub = cl.querySelector('.hub-sub'); if (sub) sub.remove();
+          cl.classList.add('pro-hb-clone'); v.insertBefore(cl, v.firstChild);
+        }
+      }
+    });
+    document.querySelectorAll('.hub-bar .hub-tab[data-t]').forEach(b => { const on = b.dataset.t === act; b.classList.toggle('is-on', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+  }
+  function after() { try { home(); simLayout(); rulesToc(); iosify(); syncHubBars(); hubIcons(); } catch (e) { console.warn(e); } }
   if (typeof switchNavTab === 'function') {
     const _s = switchNavTab;
     switchNavTab = function () { const r = _s.apply(this, arguments); try { mark(); close(); setTimeout(after, 250); } catch (e) {} return r; };

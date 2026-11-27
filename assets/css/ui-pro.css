@@ -304,3 +304,5 @@ html.ui-pro .hub-bar .hub-tab:not(.is-on) .pt-ic{opacity:.85}
 html.ui-pro:is(.theme-light,:not(.theme-light)) .hub-bar .hub-tab{padding:12px 12px 10px!important;white-space:nowrap}
 html.ui-pro .hub-chips{gap:2px!important;flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none}
 html.ui-pro .hub-chips::-webkit-scrollbar{display:none}
+/* Barre de rubrique : tous les outils visibles (retour à la ligne plutôt que défilement caché) */
+html.ui-pro .hub-chips{flex-wrap:wrap!important;overflow:visible!important;row-gap:0!important}
