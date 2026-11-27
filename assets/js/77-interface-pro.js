@@ -53,6 +53,7 @@
   const CHEV = '<svg class="pt-chev" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
 
   /* Contenu du menu de chaque onglet */
+  const alpha = (a, b) => String(a.t).localeCompare(String(b.t), 'fr', { sensitivity: 'base' });
   function menuItems(id) {
     if (id === 'fav') {
       const L = window.ftPinsList ? window.ftPinsList() : [];
@@ -82,7 +83,7 @@
       const inSec = new Set([...document.querySelectorAll('#burger-tabs-list .menu-sec button[onclick^="switchNavTab"]')].map(tabOf));
       try { NAV_TABS_CONFIG.forEach(t => { const v = String(t.id); if (/^hub:|^home$|^cvm$/.test(v) || inSec.has(v) || out.some(x => x.v === v)) return; out.push({ k: 'tab', v: v, t: t.name }); }); } catch (e) {}
       if (!out.some(x => x.v === 'jour')) out.unshift({ k: 'tab', v: 'jour', t: nameOf('jour', 'Ma journée') });
-      return [{ h: 'Autres outils', items: out }];
+      return [{ h: 'Autres outils', items: out.sort(alpha) }];
     }
     const h = (window.FT_HUBS || []).find(x => x.id === id);
     if (h) {
@@ -90,7 +91,7 @@
       const sec = [...document.querySelectorAll('#burger-tabs-list > .menu-sec')].find(x => x.querySelector('button[onclick="switchNavTab(\'' + h.members[0][0] + '\')"]'));
       if (sec) {
         const its = [...sec.querySelectorAll('button[onclick^="switchNavTab"]')].map(b => ({ k: 'tab', v: tabOf(b), t: lbl(b) })).filter(x => x.v);
-        if (its.length) return [{ h: nameOf(h.id, h.name), items: its }];
+        if (its.length) return [{ h: nameOf(h.id, h.name), items: its.sort(alpha) }];
       }
       let LB = {}; try { LB = JSON.parse(localStorage.getItem('ft_labels') || '{}') || {}; } catch (e) {}
       const items = h.members.map(m => ({ k: 'tab', v: m[0], t: LB['t:' + m[0]] || m[1] }));
@@ -98,7 +99,7 @@
       const ids = new Set(items.map(x => String(x.v)));
       const bar = [...document.querySelectorAll('.hub-bar')].find(b => b.querySelector('.hub-tab[data-t="' + CSS.escape(String(h.members[0][0])) + '"]'));
       if (bar) bar.querySelectorAll('.hub-tab[data-t]').forEach(t => { const v = t.dataset.t; if (!ids.has(v)) { ids.add(v); items.push({ k: 'tab', v: v, t: t.textContent.trim() }); } });
-      return [{ h: nameOf(h.id, h.name), items: items }];
+      return [{ h: nameOf(h.id, h.name), items: items.sort(alpha) }];
     }
     return null;
   }
@@ -343,6 +344,10 @@
           const b = document.createElement('button'); b.type = 'button'; b.className = 'hub-tab'; b.dataset.t = v; b.setAttribute('onclick', "switchNavTab('" + v + "')"); b.textContent = label;
           host.appendChild(b);
         });
+        /* ordre alphabétique */
+        const tabs = [...host.querySelectorAll(':scope > .hub-tab[data-t]')];
+        const sorted = tabs.slice().sort((a, b) => a.textContent.trim().localeCompare(b.textContent.trim(), 'fr', { sensitivity: 'base' }));
+        if (sorted.some((t, i) => t !== tabs[i])) sorted.forEach(t => host.appendChild(t));
       });
       /* outil du menu latéral sans barre de rubrique : on lui en donne une */
       if (want.some(w => w[0] === act) && bars.length) {

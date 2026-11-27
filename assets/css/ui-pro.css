@@ -306,3 +306,40 @@ html.ui-pro .hub-chips{gap:2px!important;flex-wrap:nowrap!important;overflow-x:a
 html.ui-pro .hub-chips::-webkit-scrollbar{display:none}
 /* Barre de rubrique : tous les outils visibles (retour à la ligne plutôt que défilement caché) */
 html.ui-pro .hub-chips{flex-wrap:wrap!important;overflow:visible!important;row-gap:0!important}
+
+/* ===== 2026-11-27.13 : accueil plus soigné ===== */
+/* Une seule barre de recherche sur l'accueil : celle de l'en-tête s'efface */
+html.ui-pro[data-tab="home"] header .ft-hsearch{visibility:hidden}
+/* En-tête de l'accueil : salutation, date et heure sobres */
+html.ui-pro #view-home .home-hero{padding:26px 28px 22px!important;overflow:hidden;position:relative}
+html.ui-pro #view-home .home-hero::after{content:'';display:block!important;position:absolute;right:-80px;top:-90px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(64,140,255,.16),transparent 65%);pointer-events:none}
+html.ui-pro #view-home .home-hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;position:relative;z-index:1}
+html.ui-pro #view-home .home-title{display:flex;flex-direction:column;gap:4px;margin:0}
+html.ui-pro #view-home .home-title .ht-a{font-size:2rem;font-weight:800;letter-spacing:-.03em;line-height:1.1;background:linear-gradient(90deg,#0b5cd5,#4c8ffa 55%,#7a5cf0);-webkit-background-clip:text;background-clip:text;color:transparent}
+html.ui-pro:not(.theme-light) #view-home .home-title .ht-a{background:linear-gradient(90deg,#7fb2ff,#a99cff);-webkit-background-clip:text;background-clip:text}
+html.ui-pro #view-home .home-title .ht-c{display:none}
+html.ui-pro #view-home .home-title .ht-b{font-size:1.02rem;font-weight:500;letter-spacing:0;color:var(--pro-sub)}
+html.ui-pro #view-home .home-title .ht-b::first-letter{text-transform:uppercase}
+html.ui-pro #view-home .home-clock{transform:none!important;display:flex!important;flex-direction:column;align-items:flex-end;gap:2px;padding:8px 14px;border-radius:12px;background:color-mix(in srgb,var(--pro-blue) 7%,transparent);border:1px solid color-mix(in srgb,var(--pro-blue) 16%,transparent);flex:none}
+html.ui-pro #view-home .home-time{font-size:1.35rem!important;font-weight:750!important;letter-spacing:-.02em;line-height:1.1;color:var(--pro-text)!important;font-variant-numeric:tabular-nums}
+html.ui-pro #view-home .home-time small{display:none!important}
+html.ui-pro #view-home .home-date{font-size:.72rem!important;font-weight:600;color:var(--pro-mute)!important;text-transform:capitalize}
+/* Recherche : un seul grand champ, net et ombré */
+html.ui-pro #view-home .home-search{position:relative;z-index:1;display:flex!important;align-items:center;gap:10px;margin-top:20px!important;padding:0 14px!important;height:52px;border-radius:14px!important;background:var(--pro-card)!important;border:1px solid var(--pro-line)!important;box-shadow:0 2px 6px rgba(16,32,72,.06),0 10px 24px rgba(16,32,72,.06)!important;transition:border-color .15s,box-shadow .15s}
+html.ui-pro #view-home .home-search:focus-within{border-color:var(--pro-blue)!important;box-shadow:0 0 0 4px color-mix(in srgb,var(--pro-blue) 16%,transparent),0 10px 24px rgba(16,32,72,.08)!important}
+html.ui-pro #view-home .home-search svg{color:var(--pro-blue)!important;width:20px;height:20px;flex:none}
+html.ui-pro #view-home .home-search input{flex:1;min-width:0;border:0!important;background:transparent!important;font-size:.98rem!important;color:var(--pro-text)!important;outline:none!important;box-shadow:none!important;padding:0!important}
+html.ui-pro #view-home .home-search kbd{font-size:.7rem;padding:2px 7px;border-radius:6px;border:1px solid var(--pro-line);background:var(--pro-bg);color:var(--pro-mute)}
+html.ui-pro #view-home .pro-acts{position:relative;z-index:1;margin-top:16px}
+html.ui-pro #view-home .fh-ticker{position:relative;z-index:1;margin-top:14px!important}
+@media (max-width:640px){
+  html.ui-pro #view-home .home-hero{padding:18px 16px 16px!important}
+  html.ui-pro #view-home .home-title .ht-a{font-size:1.6rem}
+  html.ui-pro #view-home .home-hero-top{flex-direction:column-reverse;gap:8px}
+  html.ui-pro #view-home .home-clock{flex-direction:row;align-items:baseline;gap:8px;padding:5px 10px;border-radius:999px}
+  html.ui-pro #view-home .home-time{font-size:.95rem!important}
+}
+html.ui-pro #view-home .home-clock{min-height:0!important;height:auto!important;justify-content:center}
+html.ui-pro #view-home .home-clock{gap:0!important;padding:7px 14px!important}
+html.ui-pro #view-home .home-time,html.ui-pro #view-home .home-date{margin:0!important;line-height:1.25!important}
+html.ui-pro #view-home .home-date{text-transform:none!important}

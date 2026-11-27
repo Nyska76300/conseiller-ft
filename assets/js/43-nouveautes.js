@@ -2,6 +2,11 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.13', date: '27/11/2026', items: [
+      'Accueil : une seule barre de recherche (celle de l’en-tête s’efface sur l’accueil), plus grande et ombrée ; « Bonjour » en grand avec « Que cherchez-vous ? » en dessous ; heure sans les secondes et date dans un cadre discret.',
+      'Onglets : thèmes rangés par ordre alphabétique, dans le menu au survol comme dans la ligne des sous-onglets.',
+      'Repères : la rubrique « Ouverture de droits » s’appelle « Droits », comme l’onglet.'
+    ] },
     { v: '2026-11-27.12', date: '27/11/2026', items: [
       'Onglets « Autres » et « Favoris » : ils s’ouvrent au clic sur tous les écrans (sur un écran tactile ou un ordinateur avec écran tactile, le menu se refermait tout de suite).',
       'Chaque rubrique reprend exactement les outils du menu latéral, dans la ligne des sous-onglets comme dans le menu au survol (Références : Calendrier des versements, Comparer deux scénarios, Échéances, Journal ; Situations : ASS et ATA, AREF et RFF, frontaliers, sanctions, ATI…). Tous les titres restent visibles, sur deux lignes si besoin.'
