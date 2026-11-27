@@ -576,6 +576,18 @@
     const bar = document.createElement('nav'); bar.id = 'pro-wg'; bar.className = 'pro-wg'; bar.setAttribute('aria-label', 'Widgets');
     const pan = document.createElement('div'); pan.id = 'pro-wg-pan'; pan.className = 'pro-wg-pan'; pan.setAttribute('role', 'dialog');
     document.body.appendChild(bar); document.body.appendChild(pan); wgRender();
+    /* téléphone : un bouton rond ouvre la barre de widgets en bas de l'écran */
+    const fab = document.createElement('button'); fab.type = 'button'; fab.id = 'pro-wg-fab'; fab.className = 'pro-wg-fab'; fab.setAttribute('aria-label', 'Widgets'); fab.setAttribute('aria-expanded', 'false');
+    fab.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/></svg>';
+    fab.addEventListener('click', e => { e.stopPropagation(); const on = !document.documentElement.classList.contains('wg-m-open'); document.documentElement.classList.toggle('wg-m-open', on); fab.setAttribute('aria-expanded', String(on)); if (!on) wgClose(); });
+    document.body.appendChild(fab);
+    document.addEventListener('click', e => { if (document.documentElement.classList.contains('wg-m-open') && !e.target.closest('#pro-wg,#pro-wg-pan,#pro-wg-fab')) { document.documentElement.classList.remove('wg-m-open'); fab.setAttribute('aria-expanded', 'false'); } });
+    /* clavier : flèches haut / bas dans la barre */
+    bar.addEventListener('keydown', e => {
+      if (!/^Arrow(Up|Down|Left|Right)$/.test(e.key)) return;
+      const L = [...bar.querySelectorAll('button')], i = L.indexOf(document.activeElement); if (i < 0) return;
+      e.preventDefault(); const j = (i + (/Up|Left/.test(e.key) ? -1 : 1) + L.length) % L.length; L[j].focus();
+    });
     bar.addEventListener('click', e => {
       const b = e.target.closest('[data-w]'); if (!b) return; const k = b.dataset.w;
       if (k === '__edit') { wgClose(); wgEdit(); return; }
@@ -611,7 +623,7 @@
       (d.items.length ? '<div class="wg-list">' + d.items.map(x => '<button type="button" class="wg-row" data-go="' + x.go + '" data-v="' + esc(x.v) + '">' + ic(x.i || sg('star', 16), x.c, 'wg-ri') + '<span><b>' + esc(x.t) + '</b>' + (x.s ? '<small>' + esc(x.s) + '</small>' : '') + '</span></button>').join('') + '</div>' : '<p class="wg-empty">' + d.empty + '</p>') +
       (d.foot ? '<button type="button" class="wg-foot" data-go="' + d.foot[0] + '">' + d.foot[1] + '</button>' : '');
     document.querySelectorAll('#pro-wg [data-w]').forEach(b => b.classList.toggle('on', b.dataset.w === k));
-    pan.classList.add('on'); wOpen = k;
+    pan.classList.add('on'); wOpen = k; setTimeout(() => { const f = pan.querySelector('button'); if (f && document.activeElement && document.activeElement.closest('#pro-wg')) f.focus(); }, 30);
   }
   function wgClose() { const p = document.getElementById('pro-wg-pan'); if (p) p.classList.remove('on'); document.querySelectorAll('#pro-wg [data-w]').forEach(b => b.classList.remove('on')); wOpen = null; }
   window.ftWidget = k => { wgBuild(); wgOpen(k); };

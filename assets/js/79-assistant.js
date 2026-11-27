@@ -31,6 +31,7 @@
     if (!T.length) return out;
     /* mot à mot : égalité, ou même racine (6 lettres) pour les mots longs : « démissionné » ↔ « démission » */
     const hit = (txt) => { const W = N(txt).split(' '); return T.filter(t => W.some(w => w === t || (t.length >= 5 && w.length >= 5 && w.slice(0, 6) === t.slice(0, 6)))).length; };
+    const need = Math.max(1, Math.ceil(T.length * .6));
     /* 1. Chiffres du barème */
     FACTS.forEach(([re, f]) => { if (re.test(nq)) { try { out.lead.push({ k: 'Barème', t: f(b) }); } catch (e) {} } });
     /* 2. Glossaire / sigles */
@@ -39,14 +40,23 @@
     const faq = (window.ftFaqList ? window.ftFaqList() : []).map(f => ({ f, s: hit(f[0]) * 2 + hit(f[1]) })).filter(x => x.s >= Math.max(2, Math.ceil(T.length * .8))).sort((a, c) => c.s - a.s).slice(0, 1);
     faq.forEach(x => out.lead.push({ k: 'FAQ', t: x.f[0] + ' — ' + x.f[1] }));
     /* 4. Situations « Que faire si… » */
-    const need = Math.max(1, Math.ceil(T.length * .6));
-    const sits = (window.FT_SITUATIONS || []).map(x => ({ x, s: hit(x.t) * 2 + hit(x.kw), u: hit(x.t + ' ' + x.kw) })).filter(o => o.s >= 2 && o.u >= need).sort((a, c) => c.s - a.s).slice(0, 2);
+        const sits = (window.FT_SITUATIONS || []).map(x => ({ x, s: hit(x.t) * 2 + hit(x.kw), u: hit(x.t + ' ' + x.kw) })).filter(o => o.s >= 2 && o.u >= need).sort((a, c) => c.s - a.s).slice(0, 2);
     sits.forEach(o => {
       let c = ''; try { c = o.x.c; } catch (e) {}
       out.lead.push({ k: o.x.t, t: c });
       if (o.x.tool != null) out.tools.push(String(o.x.tool));
       if (o.x.mail) out.mails.push(o.x.mail);
     });
+    /* 4 bis. Règles et calculs des outils : la règle la plus proche de la question */
+    try {
+      const R = [];
+      (window.FT_RULES_THEMES ? window.FT_RULES_THEMES() : []).forEach(th => {
+        (th.rules || []).forEach(r => R.push({ th, t: r }));
+        (th.calc || []).forEach(c => R.push({ th, t: c[0] + ' : ' + c[1] }));
+      });
+      R.map(o => ({ o, u: hit(o.t), h: hit(o.th.title) })).filter(x => x.u >= need && x.u + x.h >= 2).sort((a, c) => (c.u * 2 + c.h) - (a.u * 2 + a.h)).slice(0, out.lead.length ? 1 : 2)
+        .forEach(x => { out.lead.push({ k: 'Règle · ' + x.o.th.title, t: x.o.t }); if (x.o.th.tab) out.tools.push(String(x.o.th.tab)); });
+    } catch (e) {}
     /* 5. Outils */
     try {
       NAV_TABS_CONFIG.filter(t => !/^(home|hub:)/.test(String(t.id))).map(t => ({ id: String(t.id), s: hit(t.name) * 3 + hit(t.desc || '') })).filter(o => o.s >= 2 && hit(NAV_TABS_CONFIG.find(t => String(t.id) === o.id).name + ' ' + (NAV_TABS_CONFIG.find(t => String(t.id) === o.id).desc || '')) >= need).sort((a, c) => c.s - a.s).slice(0, 4).forEach(o => { if (!out.tools.includes(o.id)) out.tools.push(o.id); });
@@ -67,7 +77,7 @@
   function render(q, a) {
     const has = a.lead.length || a.tools.length || a.mails.length;
     let h = '';
-    if (!has) h = '<p>Je n’ai rien trouvé dans le site pour « ' + esc(q) + ' ». Essayez avec d’autres mots (ex. « démission », « trop-perçu », « ARE minimale », « rechargement »), ou utilisez « Que faire si… ».</p>';
+    if (!has) h = '<p>Je n’ai rien trouvé dans le site pour « ' + esc(q) + ' ». Essayez avec d’autres mots (ex. « démission », « trop-perçu », « ARE minimale », « rechargement »), ou utilisez « Que faire si… ».</p><div class="as-acts"><button type="button" data-send="' + esc(q) + '">Envoyer la question à l’administrateur</button></div><p class="as-note">Sans nom ni donnée personnelle d’allocataire : la question est envoyée telle quelle.</p>';
     a.lead.slice(0, 4).forEach(l => { h += '<div class="as-fact"><b>' + esc(l.k) + '</b>' + (l.t ? '<span>' + esc(l.t) + '</span>' : '') + '</div>'; });
     if (a.tools.length) h += '<div class="as-h">Outils</div><div class="as-acts">' + a.tools.map(id => '<button type="button" data-tab="' + esc(id) + '">' + esc(toolName(id)) + '</button>').join('') + '</div>';
     if (a.mails.length) h += '<div class="as-h">Mails</div><div class="as-acts">' + a.mails.filter(mailName).map(id => '<button type="button" data-mail="' + esc(id) + '">✉ ' + esc(mailName(id)) + '</button>').join('') + '</div>';
@@ -96,6 +106,16 @@
       if (e.target.closest('.as-x')) { w.hidden = true; return; }
       const s = e.target.closest('[data-q]'); if (s) { ask(s.dataset.q); return; }
       const t = e.target.closest('[data-tab]'); if (t) { try { switchNavTab(t.dataset.tab); } catch (er) {} return; }
+      const sd = e.target.closest('[data-send]');
+      if (sd) {
+        const q = sd.dataset.send;
+        if (!window.__ftRest) { try { showToast('Connectez-vous à votre compte pour envoyer la question', 'info'); } catch (er) {} return; }
+        const u = window.__ftUser ? window.__ftUser() : null;
+        window.__ftRest('/rest/v1/site_feedback', { method: 'POST', prefer: 'return=minimal', body: { user_id: u && u.id, email: u && u.email, kind: 'question', message: 'Assistant — question sans réponse : ' + q.slice(0, 1000), page: 'assistant' } })
+          .then(() => { sd.disabled = true; sd.textContent = 'Question envoyée ✓'; try { showToast('Question envoyée à l’administrateur', 'success'); } catch (er) {} })
+          .catch(() => { try { showToast('Envoi impossible : connectez-vous à votre compte', 'error'); } catch (er) {} });
+        return;
+      }
       const m = e.target.closest('[data-mail]'); if (m) { try { if (window.ftOpenPin) window.ftOpenPin('tpl:' + m.dataset.mail); else { switchNavTab('cvm'); selectTemplate(m.dataset.mail); } } catch (er) {} }
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && !w.hidden && w.contains(document.activeElement)) w.hidden = true; });

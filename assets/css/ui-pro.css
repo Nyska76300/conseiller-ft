@@ -543,3 +543,31 @@ html.ui-pro #view-home:not(#x1):not(#x2) :is(.fh-ci,.fh-gi,.fh-dico,.lk-ico,.hom
 html.ui-pro #view-home .fh-dos{--ios:#0a84ff}html.ui-pro #view-home .fh-links{--ios:#32ade6}html.ui-pro #view-home .fh-rep{--ios:#ff9500}html.ui-pro #view-home .fh-news{--ios:#ff375f}
 html.ui-pro #view-home .fh-c1{--ios:#30b0c7}html.ui-pro #view-home .fh-c2{--ios:#34c759}html.ui-pro #view-home .fh-c3{--ios:#ff375f}html.ui-pro #view-home .fh-c4{--ios:#ff9500}html.ui-pro #view-home .fh-c5{--ios:#5e5ce6}html.ui-pro #view-home .fh-c6{--ios:#af52de}
 html.ui-pro #view-home .fh-pins{--ios:#ff9f0a}
+
+/* ===== 2026-11-27.28 : dégradé de couleurs bien visible sur toutes les pages (clair et sombre) ===== */
+html.ui-pro.ui-pro.ui-pro.theme-light,html.ui-pro.ui-pro.ui-pro.theme-light body{background:
+  radial-gradient(900px 620px at 0% 0%,rgba(96,150,255,.38),transparent 62%),
+  radial-gradient(850px 620px at 100% 8%,rgba(160,120,255,.30),transparent 60%),
+  radial-gradient(1000px 700px at 70% 110%,rgba(60,200,230,.28),transparent 60%),
+  linear-gradient(135deg,#dfe9ff 0%,#e9e4ff 45%,#dff3fb 100%) fixed!important}
+html.ui-pro.ui-pro.ui-pro:not(.theme-light),html.ui-pro.ui-pro.ui-pro:not(.theme-light) body{background:
+  radial-gradient(900px 620px at 0% 0%,rgba(59,130,246,.42),transparent 62%),
+  radial-gradient(850px 620px at 100% 8%,rgba(139,92,246,.36),transparent 60%),
+  radial-gradient(1000px 700px at 70% 110%,rgba(20,184,166,.26),transparent 60%),
+  linear-gradient(135deg,#0c1a3e 0%,#17133d 50%,#0a2233 100%) fixed!important}
+/* les grands fonds de page laissent voir le dégradé */
+html.ui-pro [id^="view-"]:not(#view-cvm),html.ui-pro .ft-split-host,html.ui-pro main{background-color:transparent!important;background-image:none!important}
+/* Widgets sur téléphone */
+.pro-wg-fab{display:none}
+@media (max-width:899px){
+  html.ui-pro .pro-wg-fab{display:flex;align-items:center;justify-content:center;position:fixed;right:14px;bottom:84px;z-index:62;width:50px;height:50px;border-radius:16px;border:0;color:#fff;background:linear-gradient(180deg,#8a88ff,#5e5ce6);box-shadow:0 8px 22px rgba(94,92,230,.45)}
+  html.ui-pro.wg-m-open .pro-wg{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;position:fixed;left:10px;right:10px;bottom:144px;z-index:62;padding:12px;border-radius:20px;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.95);box-shadow:0 14px 34px rgba(40,70,150,.25)}
+  html.ui-pro.wg-m-open:not(.theme-light) .pro-wg{background:rgba(22,34,60,.94);border-color:rgba(140,170,255,.18)}
+  html.ui-pro.wg-m-open .pro-wg button{padding:0;border:0;background:transparent}
+  html.ui-pro.wg-m-open .pro-wg .wg-ic{width:44px!important;height:44px!important}
+  html.ui-pro.wg-m-open .pro-wg .wg-ic svg{width:22px!important;height:22px!important;color:#fff!important}
+  html.ui-pro .pro-wg-pan{display:block;position:fixed;left:10px;right:10px;bottom:150px;z-index:63;max-height:60vh;overflow:auto;padding:14px;border-radius:20px;background:var(--pro-card-g);border:1px solid var(--pro-line);box-shadow:0 22px 50px rgba(20,40,100,.25);opacity:0;visibility:hidden}
+  html.ui-pro .pro-wg-pan.on{opacity:1;visibility:visible}
+}
+/* focus clavier visible */
+html.ui-pro .pro-wg button:focus-visible,html.ui-pro .pro-wg-pan button:focus-visible,html.ui-pro .ft-ptabs button:focus-visible,html.ui-pro .ft-ptmenu button:focus-visible,.ft-bell:focus-visible,.ft-asst button:focus-visible{outline:3px solid #0b5cd5!important;outline-offset:2px}

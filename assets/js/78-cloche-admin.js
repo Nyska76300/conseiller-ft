@@ -17,35 +17,73 @@
     if ($('ft-bell')) return;
     const acct = $('ft-acct'); if (!acct) return;
     const b = document.createElement('button'); b.type = 'button'; b.id = 'ft-bell'; b.className = 'ft-bell'; b.hidden = true;
-    b.setAttribute('aria-haspopup', 'true'); b.setAttribute('aria-expanded', 'false'); b.title = 'Notifications administrateur';
+    b.setAttribute('aria-haspopup', 'true'); b.setAttribute('aria-expanded', 'false'); b.title = 'Notifications';
     b.innerHTML = BELL + '<span class="ft-bell-n" hidden></span>';
     acct.parentNode.insertBefore(b, acct);
     const pop = document.createElement('div'); pop.id = 'ft-bell-pop'; pop.className = 'ft-bell-pop'; pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', 'Notifications');
     document.body.appendChild(pop);
     b.addEventListener('click', e => { e.stopPropagation(); const on = !pop.classList.contains('on'); if (on) { draw(); place(); refresh(); } pop.classList.toggle('on', on); b.setAttribute('aria-expanded', String(on)); });
-    pop.addEventListener('click', e => { const a = e.target.closest('[data-go]'); if (!a) return; pop.classList.remove('on'); try { switchNavTab('admin'); } catch (er) {} });
+    pop.addEventListener('click', e => {
+      const a = e.target.closest('[data-go]'); if (!a) return; const g = a.dataset.go;
+      if (g === 'read') { markAllRead(); return; }
+      pop.classList.remove('on');
+      try {
+        if (g === 'admin') switchNavTab('admin');
+        else if (g === 'news') { if (window.ftShowNews) window.ftShowNews(); }
+        else if (g === 'regs') switchNavTab('journal');
+        else if (g.indexOf('tpl:') === 0 && window.ftOpenPin) window.ftOpenPin(g);
+      } catch (er) {}
+      if (!isAdmin()) setTimeout(markAllRead, 300);
+    });
     document.addEventListener('click', e => { if (pop.classList.contains('on') && !e.target.closest('#ft-bell,#ft-bell-pop')) pop.classList.remove('on'); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') pop.classList.remove('on'); });
   }
   function place() { const b = $('ft-bell'), p = $('ft-bell-pop'); if (!b || !p) return; const r = b.getBoundingClientRect(); p.style.top = (r.bottom + 8) + 'px'; p.style.right = Math.max(8, window.innerWidth - r.right) + 'px'; }
   function draw() {
     const p = $('ft-bell-pop'); if (!p) return;
-    const groups = [['fb', 'Questions et suggestions des agents'], ['prop', 'Propositions de modèles'], ['reg', 'Veille réglementaire']];
-    p.innerHTML = '<header><b>Notifications</b><small>' + items.length + ' à traiter</small></header>' +
+    const adm = isAdmin();
+    const groups = adm ? [['fb', 'Questions et suggestions des agents'], ['prop', 'Propositions de modèles'], ['reg', 'Veille réglementaire']] : [['news', 'Nouveautés du site'], ['reg', 'Réglementation'], ['prop', 'Modèles communs']];
+    p.innerHTML = '<header><b>Notifications</b><small>' + items.length + (adm ? ' à traiter' : ' non lue(s)') + '</small></header>' +
       (items.length ? groups.map(g => { const L = items.filter(x => x.g === g[0]); return L.length ? '<div class="fb-g"><div class="fb-gh">' + g[1] + ' <span>' + L.length + '</span></div>' + L.slice(0, 6).map(x => '<button type="button" class="fb-it" data-go="1"><i style="--c:' + x.c + '"></i><span><b>' + esc(x.t) + '</b><small>' + esc(x.s) + '</small></span><em>' + esc(x.d) + '</em></button>').join('') + (L.length > 6 ? '<div class="fb-more">+ ' + (L.length - 6) + ' autre(s)</div>' : '') + '</div>' : ''; }).join('') : '<p class="fb-none">Rien à traiter pour le moment.</p>') +
-      '<button type="button" class="fb-all" data-go="1">Ouvrir l’espace administrateur</button>';
+      (adm ? '<button type="button" class="fb-all" data-go="admin">Ouvrir l’espace administrateur</button>' : (items.length ? '<button type="button" class="fb-all" data-go="read">Tout marquer comme lu</button>' : ''));
   }
   function badge() {
     const b = $('ft-bell'); if (!b) return;
-    const adm = isAdmin(); b.hidden = !adm;
+    const adm = isAdmin(); b.hidden = false;
     const n = b.querySelector('.ft-bell-n'); const c = items.length;
     n.hidden = !c; n.textContent = c > 99 ? '99+' : String(c);
     b.classList.toggle('has', !!c);
-    b.title = adm ? (c ? c + ' notification(s) à traiter' : 'Aucune notification') : '';
+    b.title = c ? c + ' notification(s)' + (adm ? ' à traiter' : ' non lue(s)') : 'Aucune notification';
   }
+  /* Conseillers (non administrateurs) : nouveautés du site, mises à jour réglementaires validées, nouveaux modèles communs */
+  const SEEN = 'ft_bell_seen';
+  const seenGet = () => { try { return JSON.parse(localStorage.getItem(SEEN) || 'null'); } catch (e) { return null; } };
+  const seenSet = v => { try { localStorage.setItem(SEEN, JSON.stringify(v)); } catch (e) {} };
+  const curVer = () => (document.querySelector('meta[name="ft-version"]') || {}).content || '';
+  const cmpV = (a, b) => { const pa = String(a).split('.'), pb = String(b).split('.'); if (pa[0] !== pb[0]) return pa[0] < pb[0] ? -1 : 1; return (+pa[1] || 0) - (+pb[1] || 0); };
+  function agentItems() {
+    let sn = seenGet();
+    const shared = (() => { try { return templates.filter(t => t.shared).map(t => String(t.id)); } catch (e) { return []; } })();
+    let dec = {}; try { dec = JSON.parse(localStorage.getItem('ft_regs_dec') || '{}') || {}; } catch (e) {}
+    const okRegs = Object.keys(dec).filter(k => dec[k] === 'ok');
+    if (!sn) { sn = { v: curVer(), regs: okRegs, tpl: shared }; seenSet(sn); }
+    const out = [];
+    (window.FT_NEWS || []).filter(e => cmpV(e.v, sn.v) > 0).slice(0, 5).forEach(e => out.push({ g: 'news', t: 'Nouveautés du ' + e.date, s: (e.items && e.items[0] || '').replace(/<[^>]+>/g, ''), d: '', c: '#ff375f', go: 'news' }));
+    okRegs.filter(id => !(sn.regs || []).includes(id)).forEach(id => out.push({ g: 'reg', t: 'Mise à jour réglementaire appliquée', s: id, d: '', c: '#ff9500', go: 'regs' }));
+    shared.filter(id => !(sn.tpl || []).includes(id)).forEach(id => { let t = null; try { t = templates.find(x => String(x.id) === id); } catch (e) {} out.push({ g: 'prop', t: 'Nouveau modèle commun', s: t ? t.title : id, d: '', c: '#0a84ff', go: 'tpl:' + id }); });
+    return out;
+  }
+  function markAllRead() {
+    let dec = {}; try { dec = JSON.parse(localStorage.getItem('ft_regs_dec') || '{}') || {}; } catch (e) {}
+    let shared = []; try { shared = templates.filter(t => t.shared).map(t => String(t.id)); } catch (e) {}
+    seenSet({ v: curVer(), regs: Object.keys(dec).filter(k => dec[k] === 'ok'), tpl: shared });
+    items = []; badge(); draw();
+  }
+  window.ftBellMarkRead = markAllRead;
   async function refresh() {
     build();
-    if (!isAdmin() || busy || !window.__ftRest) { badge(); return; }
+    if (!isAdmin()) { items = agentItems(); badge(); if ($('ft-bell-pop') && $('ft-bell-pop').classList.contains('on')) draw(); return; }
+    if (busy || !window.__ftRest) { badge(); return; }
     busy = true;
     const out = [];
     try {
@@ -64,6 +102,7 @@
   }
   window.ftBellRefresh = refresh;
   function start() { build(); refresh(); clearInterval(timer); timer = setInterval(() => { if (!document.hidden) refresh(); }, 30000); }
+  document.addEventListener('ft-varcfg', () => refresh());
   document.addEventListener('ft-admin', start);
   document.addEventListener('ft-props', () => refresh());
   document.addEventListener('ft-regs', () => refresh());

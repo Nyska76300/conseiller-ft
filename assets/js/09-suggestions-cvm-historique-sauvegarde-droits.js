@@ -511,6 +511,7 @@
     ];
   }
 
+  window.FT_RULES_THEMES = () => { try { return themes(); } catch (e) { return []; } };
   function themeHtml(t) {
     const rules = '<ul class="rg-rules">' + t.rules.map(r => '<li>' + escapeHtml(r) + '</li>').join('') + '</ul>';
     const calc = '<div class="rg-calc">' + t.calc.map(c => '<div class="rg-row"><div class="rg-k">' + escapeHtml(c[0]) + '</div><div class="rg-f">' + escapeHtml(c[1]) + '</div>' + (c[2] ? '<div class="rg-e">Exemple : ' + escapeHtml(c[2]) + '</div>' : '') + '</div>').join('') + '</div>';

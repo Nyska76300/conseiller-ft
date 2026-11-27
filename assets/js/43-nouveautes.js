@@ -2,6 +2,14 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.28', date: '27/11/2026', items: [
+      'Style institutionnel : dégradé de couleurs bleu, lavande et turquoise bien visible sur toutes les pages, en clair comme en sombre.',
+      'Cloche de notifications pour tous les conseillers : nouveautés du site, mises à jour réglementaires appliquées, nouveaux modèles communs (« Tout marquer comme lu »). Les administrateurs gardent leur cloche de suivi.',
+      'Assistant plus complet : il lit aussi les pages « Règles et calculs ». Si une question reste sans réponse, un bouton l’envoie à l’administrateur (sans donnée personnelle).',
+      'Téléphone : bouton rond « Widgets » au-dessus de la barre du bas pour ouvrir la barre de widgets.',
+      'Clavier : flèches dans la barre de widgets, contour bleu bien visible sur l’élément actif.',
+      'Vérifications automatiques étendues à chaque mise en ligne (onglets, widgets, assistant, cloche, passage Règles / Simulateur).'
+    ] },
     { v: '2026-11-27.27', date: '27/11/2026', items: [
       'Assistant (widget bulle violette, ou recherche « Assistant ») : posez une question avec vos mots, il répond avec le contenu du site (chiffres du barème, situations « Que faire si… », FAQ, glossaire) et propose les bons outils et mails. Aucune IA externe : rien ne quitte votre poste.',
       'Barre de widgets personnalisable (bouton de réglage en bas de la barre, ou menu du compte) : ajoutez, retirez et réordonnez les widgets, et épinglez n’importe quel outil. Le choix suit votre compte.',
