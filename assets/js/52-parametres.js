@@ -67,10 +67,9 @@
     const a = A(), notif = !!(window.ftNotifOn && window.ftNotifOn()), ver = (document.querySelector('meta[name="ft-version"]') || {}).content || '';
     return '<div class="pm-card"><div class="pm-h"><h2 id="pm-t">⚙️ Paramètres</h2><button type="button" class="pm-x" data-pm="x" aria-label="Fermer">×</button></div>' +
       '<section><h3>Affichage</h3>' +
-        row('Style d’interface', document.documentElement.classList.contains('ui-pro') ? 'Institutionnel : clair, sobre, rubriques en onglets (test)' : 'Classique : l’apparence d’avant, sombre ou claire', seg('ui', document.documentElement.classList.contains('ui-pro') ? 'pro' : 'classic', [['pro', 'Institutionnel'], ['classic', 'Thème classique']])) +
-        (document.documentElement.classList.contains('ui-pro') ? '' : row('Thème', P.themeMode === 'system' ? 'Suit le réglage de l’appareil' : P.themeMode === 'hours' ? 'Clair de 7 h à 19 h, sombre le soir' : '', seg('theme', P.themeMode || theme(), [['dark', 'Sombre'], ['light', 'Clair'], ['system', 'Auto'], ['hours', 'Horaire']])) +
+        row('Style d’interface', document.documentElement.classList.contains('ui-pro') ? 'Institutionnel : sobre, rubriques en onglets, clair ou sombre (test)' : 'Classique : l’apparence d’avant, sombre ou claire', seg('ui', document.documentElement.classList.contains('ui-pro') ? 'pro' : 'classic', [['pro', 'Institutionnel'], ['classic', 'Thème classique']])) +
+        row('Thème', P.themeMode === 'system' ? 'Suit le réglage de l’appareil' : P.themeMode === 'hours' ? 'Clair de 7 h à 19 h, sombre le soir' : '', seg('theme', P.themeMode || theme(), [['dark', 'Sombre'], ['light', 'Clair'], ['system', 'Auto'], ['hours', 'Horaire']])) +
         '<div class="pm-row pm-col"><div><b>Couleurs</b><span>S’appliquent au thème sombre comme au clair</span></div><div class="pm-pal" role="group" aria-label="Couleurs">' + PALS.map(([v, l, a, b]) => '<button type="button" data-k="pal" data-v="' + v + '" aria-pressed="' + ((P.pal || '') === v) + '" class="' + ((P.pal || '') === v ? 'on' : '') + '"><i style="background:linear-gradient(135deg,' + a + ',' + b + ')"></i>' + l + '</button>').join('') + '</div></div>' +
-        '') +
         row('Taille du texte', '', seg('ts', a.ts, [[0, 'Normal'], [1, 'Grand'], [2, 'Très grand']])) + '</section>' +
       '<section><h3>Accessibilité</h3>' +
         row('Contraste renforcé', 'Textes et bordures plus marqués', yn('hc', a.hc)) +

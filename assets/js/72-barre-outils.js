@@ -37,7 +37,7 @@
     const pop = $('ft-tools-pop'); if (!pop) return;
     const light = document.documentElement.classList.contains('theme-light');
     pop.innerHTML = ITEMS.map(it => {
-      const pro = document.documentElement.classList.contains('ui-pro');
+      const pro = false;
       const lab = it[0] === 'theme' ? (pro ? 'Thème classique' : light ? 'Mode sombre' : 'Mode clair') : it[1];
       const sub = it[0] === 'theme' ? (pro ? 'Revenir à l’apparence d’avant' : 'Changer l’apparence') : it[2];
       const ic = it[0] === 'theme' ? (light ? ICO.moon : ICO.sun) : it[3];
@@ -47,7 +47,6 @@
       e.stopPropagation();
       const it = ITEMS.find(i => i[0] === x.dataset.k); const o = it && it[4]();
       toggle(false);
-      if (x.dataset.k === 'theme' && document.documentElement.classList.contains('ui-pro') && window.ftSetUi) { window.ftSetUi('classic'); return; }
       if (o) setTimeout(() => o.click(), 0);
     }));
   }

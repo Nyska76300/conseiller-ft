@@ -14,8 +14,15 @@
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const TABS = () => {
     const hubs = window.FT_HUBS || [];
-    return [['fav', 'Favoris'], ['cvm', 'Mails']].concat(hubs.map(h => [h.id, h.name.replace(/\s*:.*$/, '')])).concat([['jour', 'Ma journée']]);
+    return [['fav', 'Favoris'], ['cvm', 'Mails']].concat(hubs.map(h => { const n = nameOf(h.id, h.name); return [h.id, n === h.name ? n.replace(/\s*:.*$/, '') : n]; })).concat([['jour', nameOf('jour', 'Ma journée')]]);
   };
+  /* Noms à jour (renommages de l'administrateur compris), comme dans le menu */
+  function nameOf(id, fb) { try { const t = NAV_TABS_CONFIG.find(x => String(x.id) === String(id)); if (t && t.name) return t.name; } catch (e) {} return fb; }
+  function relabel() {
+    const T = TABS();
+    document.querySelectorAll('#ft-ptabs [data-pt]').forEach(b => { const x = T.find(t => t[0] === b.dataset.pt); const sp = b.querySelector('span'); if (x && sp && sp.textContent !== x[1]) sp.textContent = x[1]; });
+  }
+  if (typeof window.ftApplyLabels === 'function') { const _l = window.ftApplyLabels; window.ftApplyLabels = function () { const r = _l.apply(this, arguments); try { relabel(); } catch (e) {} return r; }; }
   const cur = () => { try { return String(activeNavTab); } catch (e) { return 'home'; } };
   function activeKey() {
     const t = cur(); if (t.indexOf('hub:') === 0) return t;
@@ -47,7 +54,7 @@
       ];
     }
     const h = (window.FT_HUBS || []).find(x => x.id === id);
-    if (h) return [{ h: h.name, items: h.members.map(m => ({ k: 'tab', v: m[0], t: m[1] })) }];
+    if (h) return [{ h: nameOf(h.id, h.name), items: h.members.map(m => ({ k: 'tab', v: m[0], t: nameOf(m[0], m[1]) })) }];
     return null;
   }
   function menuHtml(id) {
@@ -103,11 +110,9 @@
     if (document.getElementById('ft-ptabs')) return;
     const hd = document.querySelector('header'); if (!hd) return;
     const n = document.createElement('nav'); n.id = 'ft-ptabs'; n.className = 'ft-ptabs'; n.setAttribute('aria-label', 'Rubriques');
-    let jourName = 'Ma journée';
-    try { const j = NAV_TABS_CONFIG.find(x => x.id === 'jour'); if (j && j.name) jourName = j.name; } catch (e) {}
     n.innerHTML = '<div class="ft-ptabs-in">' + TABS().map(([id, name]) => {
       const hasMenu = id !== 'jour';
-      return '<button type="button" data-pt="' + esc(id) + '"' + (hasMenu ? ' aria-haspopup="menu" aria-expanded="false"' : '') + '>' + (id === 'fav' ? STAR : '') + '<span>' + esc(id === 'jour' ? jourName : name) + '</span>' + (hasMenu ? CHEV : '') + '</button>';
+      return '<button type="button" data-pt="' + esc(id) + '"' + (hasMenu ? ' aria-haspopup="menu" aria-expanded="false"' : '') + '>' + (id === 'fav' ? STAR : '') + '<span>' + esc(name) + '</span>' + (hasMenu ? CHEV : '') + '</button>';
     }).join('') + '</div>';
     n.addEventListener('click', e => {
       const b = e.target.closest('[data-pt]'); if (!b) return;
@@ -146,5 +151,5 @@
   const pal = document.getElementById('ft-pal'); if (pal) pal.remove();
   H.removeAttribute('data-pal');
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build); else build();
-  setTimeout(build, 600); setTimeout(mark, 1200);
+  setTimeout(build, 600); setTimeout(() => { mark(); relabel(); }, 1200); setTimeout(relabel, 3000);
 })();

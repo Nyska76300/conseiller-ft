@@ -7,7 +7,7 @@
       } catch (err) {
         console.warn("Erreur sauvegarde thème:", err);
       }
-      const isLight = theme === 'light' || document.documentElement.classList.contains('ui-pro');
+      const isLight = theme === 'light';
       document.documentElement.classList.toggle('theme-light', isLight);
       
       const icon = document.getElementById('theme-icon');
