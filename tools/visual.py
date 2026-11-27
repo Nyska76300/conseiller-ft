@@ -21,7 +21,7 @@ OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'visual-out')
 REF = sys.argv[2] if len(sys.argv) > 2 else os.path.join(ROOT, 'visual-ref')
 # (onglet, éléments qui doivent être visibles)
 PAGES = [
-    ('home', ['#view-home .pl-search', '#view-home .pl-grid .pl-app', '#view-home .pl-dock']),
+    ('home', ['#view-home .home-hero', '#view-home .fh-tools']),
     ('cvm', ['#view-cvm']),
     (1, ['[id^="view-"]:not(.hidden)']),
     ('droits', ['#view-droits']),

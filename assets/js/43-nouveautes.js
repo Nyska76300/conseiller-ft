@@ -3,7 +3,6 @@
      (v = même valeur que la balise ft-version). */
   var NEWS = [
     { v: '2026-11-27.21', date: '27/11/2026', items: [
-      'Nouvel accueil façon iPad : grande horloge avec les secondes, recherche, chiffres clés, puis tous les outils en grandes icônes rangés par rubrique (vos favoris en premier, vos liens utiles à la fin). En bas, un dock : Nouveau dossier, Mails, Mails favoris, Ma journée, Post-it, Calculatrice, Dates, Que faire si…',
       'Fond pastel doux aux tons bleutés (bleu, lavande, bleu ciel) sur tout le site en mode clair, avec un en-tête légèrement transparent et des cartes plus arrondies.'
     ] },
     { v: '2026-11-27.20', date: '27/11/2026', items: [
