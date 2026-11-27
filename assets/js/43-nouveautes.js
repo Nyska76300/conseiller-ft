@@ -2,6 +2,15 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.31', date: '27/11/2026', items: [
+      'Réglementation : plafond de la RFF corrigé à 769,49 € par mois dans le mail RFF (montant publié par France Travail) ; règle « fin du cumul ASS et AAH au 1er janvier 2027 » ajoutée dans « Rechargement, ASS et prestations ».',
+      'Pages « Règles et calculs » : nouvelle partie « Démarches » (admission, démission, création d’entreprise, CSP, cumul, trop-perçu, rupture conventionnelle, rechargement et ASS, retraite).',
+      'CVM Direct : étiquette « À relire » et filtre dédié pour les mails contenant un montant ou une date écrits en dur, ou une règle d’affiliation sans le cas des primo-entrants ; bouton « Marquer comme relu ».',
+      'Simulateurs : en cas de résultat défavorable ou à vérifier, un bandeau propose directement les mails adaptés.',
+      'Synthèse d’entretien (widget, ou recherche « synthèse ») : les résultats des simulateurs utilisés pendant la session, sur une page à imprimer, sans aucun nom ; effacée à la fermeture de l’onglet.',
+      'Administrateurs : dans la cloche, « Répondre et ajouter à la FAQ » sur les questions des agents ; la réponse rejoint la FAQ de tous et la question est marquée traitée.',
+      'Visite guidée mise à jour (onglets, widgets, assistant, cloche) ; feuille de style allégée (règles des anciens essais d’accueil retirées).'
+    ] },
     { v: '2026-11-27.30', date: '27/11/2026', items: [
       'Style institutionnel : dégradés repassés dans les bleus (fond des pages et cadres), comme le thème classique ; le bandeau de l’horloge de l’accueil retrouve son dégradé bleu.'
     ] },

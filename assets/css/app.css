@@ -2347,3 +2347,31 @@ html.theme-light .ft-asst .as-in input{background:#f7faff;border-color:#cbd9ee}
 .wg-add select{width:100%;height:38px;border-radius:10px;border:1px solid rgba(110,150,240,.3);background:transparent;color:inherit;padding:0 10px}
 html.theme-light .wg-add select{border-color:#cbd9ee;background:#fff}
 .ip-tgo{flex:none;width:42px;border-radius:9px;border:0;background:#1d6ff2;color:#fff;font-size:16px;cursor:pointer}
+/* Mails à relire */
+.cvm-rv{display:inline-block;margin-left:6px;padding:0 7px;border-radius:999px;font-size:.6rem;font-weight:800;color:#7a3e00;background:#ffe2b8;vertical-align:middle;white-space:nowrap}
+html.cvm-f-review #templates-list [data-tpl-id]:not(.is-review),html.cvm-f-review #templates-list>.tpl-grp{display:none!important}
+.cvm-rv-bar{margin:0 1rem 12px;padding:10px 14px;border-radius:12px;background:#fff4e0;border:1px solid #f6d49a;color:#6b3a00;font-size:.8rem}
+.cvm-rv-bar b{display:block;margin-bottom:4px}
+.cvm-rv-bar ul{margin:0 0 8px 18px;list-style:disc}
+.cvm-rv-bar button{padding:5px 12px;border-radius:9px;border:1px solid #e6b35a;background:#fff;color:#6b3a00;font-weight:700;font-size:.76rem;cursor:pointer}
+html:not(.theme-light) .cvm-rv-bar{background:rgba(255,179,64,.12);border-color:rgba(255,179,64,.35);color:#ffd9a0}
+html:not(.theme-light) .cvm-rv-bar button{background:transparent;color:#ffd9a0;border-color:rgba(255,179,64,.5)}
+/* Mail conseillé selon le résultat */
+.ft-sugg{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 12px;padding:9px 12px;border-radius:12px;font-size:.8rem;font-weight:600}
+.ft-sugg.ko{background:#fdeeee;color:#8f1d1d;border:1px solid #f5c2c2}.ft-sugg.wa{background:#fff4e0;color:#7a3e00;border:1px solid #f6d49a}
+html:not(.theme-light) .ft-sugg.ko{background:rgba(255,107,107,.12);color:#ffb3b3;border-color:rgba(255,107,107,.35)}
+html:not(.theme-light) .ft-sugg.wa{background:rgba(255,179,64,.12);color:#ffd9a0;border-color:rgba(255,179,64,.35)}
+.ft-sugg button{padding:5px 12px;border-radius:9px;border:0;background:#1d6ff2;color:#fff;font-weight:700;font-size:.76rem;cursor:pointer}
+/* Synthèse d'entretien */
+.ft-synth-c{width:min(760px,100%)!important;max-height:90vh;overflow:auto}
+.ft-synth-print section{margin-top:12px;padding:10px 12px;border-radius:12px;border:1px solid rgba(110,150,240,.25)}
+.ft-synth-print h3{display:flex;align-items:center;gap:8px;font-size:.92rem;font-weight:800}
+.ft-synth-print h3 small{font-weight:500;opacity:.6;font-size:.75rem}
+.ft-synth-print h3 button{margin-left:auto;width:24px;height:24px;border-radius:6px;border:1px solid rgba(110,150,240,.3);background:transparent;color:inherit;cursor:pointer}
+.ft-synth-print pre{margin-top:6px;white-space:pre-wrap;font:inherit;font-size:.8rem;line-height:1.5}
+.fsy-h{display:flex;justify-content:space-between;gap:10px;padding-bottom:8px;border-bottom:2px solid #0b5cd5;font-size:.8rem}
+.fsy-n{margin-top:10px;font-size:.72rem;opacity:.7}
+@media print{html.ft-printing-synth body>*:not(#ft-synth){display:none!important}html.ft-printing-synth #ft-synth{position:static!important;background:#fff!important;padding:0!important}html.ft-printing-synth .ft-synth-c{box-shadow:none!important;border:0!important;max-height:none!important;color:#000!important;background:#fff!important}html.ft-printing-synth .cvm-so-h,html.ft-printing-synth .cvm-so-a,html.ft-printing-synth .ft-synth-c>p,html.ft-printing-synth [data-rm]{display:none!important}}
+.ft-bell-pop .fb-wrap{display:flex;flex-direction:column}
+.ft-bell-pop .fb-ans{align-self:flex-start;margin:0 0 6px 25px;padding:3px 9px;border-radius:8px;border:1px solid rgba(110,150,240,.35);background:transparent;color:#5b9bff;font-size:11.5px;font-weight:700;cursor:pointer}
+html.theme-light .ft-bell-pop .fb-ans{color:#0b5cd5;border-color:#cbd9ee}

@@ -511,12 +511,27 @@
     ];
   }
 
-  window.FT_RULES_THEMES = () => { try { return themes(); } catch (e) { return []; } };
+  /* Démarches par thème (procédure côté allocataire et conseiller) */
+  const DEM = {
+    admission: ['Inscription et demande d’allocation en ligne sur francetravail.fr, au plus tard 12 mois après la fin du contrat.', 'Attestation employeur transmise par l’employeur (à vérifier dans le dossier) ; à défaut, la réclamer.', 'Actualisation chaque mois, du 28 au 15 du mois suivant, en déclarant toute activité.'],
+    demission: ['Démission légitime : joindre le justificatif du motif (ex. attestation de déménagement du conjoint, plainte, jugement).', 'Démission non légitime : pas d’ARE immédiate ; après 121 jours de chômage, l’allocataire peut demander un réexamen à l’instance paritaire régionale (IPR).', 'Projet de reconversion : avis du conseil en évolution professionnelle, puis validation par la commission paritaire (Transitions Pro) avant la démission.'],
+    ans: ['ARCE : demande après la création ou la reprise, avec le justificatif d’immatriculation (extrait Kbis, inscription au registre ou à l’URSSAF).', 'Maintien de l’ARE : déclarer chaque mois le chiffre d’affaires ou les revenus lors de l’actualisation, puis transmettre les justificatifs annuels.'],
+    csp: ['Adhésion au CSP dans les 21 jours suivant la remise du document par l’employeur ; à défaut de réponse, refus.'],
+    cumul: ['Déclarer les heures et le salaire brut à chaque actualisation, puis transmettre le bulletin de salaire dès sa réception.'],
+    indus: ['Notification écrite du trop-perçu à l’allocataire ; possibilité de remboursement échelonné ou de demande de remise de dette motivée.'],
+    rci: ['Vérifier la date de fin de contrat sur l’attestation employeur : la durée maximale réduite s’applique aux fins de contrat à compter du 01/09/2026.'],
+    droits: ['Rechargement : examiné automatiquement à l’épuisement des droits si les conditions sont remplies.', 'ASS : demande à déposer en fin de droits ARE, avec les justificatifs de ressources du foyer.'],
+    retraite: ['Vérifier le relevé de carrière (info-retraite.fr) pour connaître l’âge du taux plein avant de maintenir l’ARE.']
+  };
+  const EXTRA_RULES = { droits: ['Fin du cumul ASS et AAH à partir du 1er janvier 2027 : en cas de droit AAH en cours, l’AAH devient prioritaire et l’ASS est interrompue.'] };
+  window.FT_RULES_THEMES = () => { try { return themes().map(t => Object.assign({}, t, { rules: (t.rules || []).concat(EXTRA_RULES[t.id] || []), dem: DEM[t.id] || [] })); } catch (e) { return []; } };
   function themeHtml(t) {
     const rules = '<ul class="rg-rules">' + t.rules.map(r => '<li>' + escapeHtml(r) + '</li>').join('') + '</ul>';
     const calc = '<div class="rg-calc">' + t.calc.map(c => '<div class="rg-row"><div class="rg-k">' + escapeHtml(c[0]) + '</div><div class="rg-f">' + escapeHtml(c[1]) + '</div>' + (c[2] ? '<div class="rg-e">Exemple : ' + escapeHtml(c[2]) + '</div>' : '') + '</div>').join('') + '</div>';
     const src = '<ul class="rg-src"><li><a href="https://www.unedic.org/" target="_blank" rel="noopener">Unédic : règlement d’assurance chômage et circulaires</a></li><li><a href="https://www.service-public.fr/particuliers/vosdroits/N549" target="_blank" rel="noopener">Service-public.fr : chômage et allocations</a></li><li><a href="https://www.francetravail.fr/" target="_blank" rel="noopener">France Travail</a></li></ul>';
-    return '<h4 class="wiz-h" id="rg-s-regles">Conditions et règles</h4>' + rules + '<h4 class="wiz-h" id="rg-s-calcul">Calcul</h4>' + calc + '<h4 class="wiz-h" id="rg-s-sources">Sources</h4>' + src;
+    const ex = (EXTRA_RULES[t.id] || []).map(r => '<li>' + escapeHtml(r) + '</li>').join('');
+    const dm = DEM[t.id] && DEM[t.id].length ? '<h4 class="wiz-h" id="rg-s-dem">Démarches</h4><ul class="rg-rules">' + DEM[t.id].map(r => '<li>' + escapeHtml(r) + '</li>').join('') + '</ul>' : '';
+    return '<h4 class="wiz-h" id="rg-s-regles">Conditions et règles</h4>' + rules.replace('</ul>', ex + '</ul>') + '<h4 class="wiz-h" id="rg-s-calcul">Calcul</h4>' + calc + dm + '<h4 class="wiz-h" id="rg-s-sources">Sources</h4>' + src;
   }
   const foot = () => '<p class="wiz-hint">Paramètres du barème vérifiés le ' + escapeHtml(BAREME.verifie) + '. Ces règles reprennent les formules de l’outil : à confirmer sur unedic.org avant toute décision.</p>';
 

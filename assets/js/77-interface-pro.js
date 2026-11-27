@@ -495,7 +495,7 @@
   setInterval(() => { if (cur() === 'home') phTick(); }, 1000);
   /* ---------- Barre de widgets à droite, centrée : favoris, plus utilisés, calculatrice, dates, repères ---------- */
   /* Catalogue des widgets ; chaque conseiller choisit les siens et leur ordre (clé ft_wg, synchronisée avec le compte) */
-  const WG = [['asst', 'Assistant', null, '#5e5ce6'], ['mf', 'Mails favoris', 'mail', '#0a84ff'], ['tf', 'Outils favoris', 'star', '#ff9f0a'], ['top', 'Plus utilisés', 'trend', '#34c759'], ['calc', 'Calculatrice', null, '#30b84f'], ['dates', 'Dates', null, '#5e5ce6'], ['rep', 'Repères', null, '#ff7a00'], ['postit', 'Post-it', null, '#f5b800'], ['jour', 'Ma journée', null, '#ff3b30'], ['sit', 'Que faire si…', null, '#af52de'], ['tts', 'Interprète vocal', null, '#af52de'], ['theme', 'Clair / sombre', null, '#5e5ce6']];
+  const WG = [['asst', 'Assistant', null, '#5e5ce6'], ['mf', 'Mails favoris', 'mail', '#0a84ff'], ['tf', 'Outils favoris', 'star', '#ff9f0a'], ['top', 'Plus utilisés', 'trend', '#34c759'], ['calc', 'Calculatrice', null, '#30b84f'], ['dates', 'Dates', null, '#5e5ce6'], ['rep', 'Repères', null, '#ff7a00'], ['postit', 'Post-it', null, '#f5b800'], ['jour', 'Ma journée', null, '#ff3b30'], ['sit', 'Que faire si…', null, '#af52de'], ['tts', 'Interprète vocal', null, '#af52de'], ['theme', 'Clair / sombre', null, '#5e5ce6'], ['synth', 'Synthèse d’entretien', null, '#30b0c7']];
   const WG_DEF = ['asst', 'mf', 'tf', 'top', 'calc', 'dates', 'rep'];
   const WGI = {
     calc: '<rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8 7h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 18h.01M12 18h4"/>',
@@ -507,6 +507,7 @@
     sit: '<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.5a2.5 2.5 0 0 1 4.8 1c0 1.7-2.4 2-2.4 3.5M12 17h.01"/>',
     tts: '<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>',
     theme: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+    synth: '<path d="M7 3.5h7l4 4V19a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5A1.5 1.5 0 0 1 7.5 3.5z"/><path d="M9 11h6M9 14.5h6M9 18h3"/>',
     gear: '<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>'
   };
   const wgCfg = () => { try { const v = JSON.parse(localStorage.getItem('ft_wg') || 'null'); if (Array.isArray(v)) return v; } catch (e) {} return WG_DEF.slice(); };
@@ -598,6 +599,7 @@
       if (k === 'sit') { wgClose(); setTimeout(() => { if (window.ftSituations) window.ftSituations(); }, 0); return; }
       if (k === 'tts') { wgClose(); setTimeout(() => { if (window.ftInterp) window.ftInterp(); else { const t = document.getElementById('ft-tts'); if (t) t.click(); } }, 0); return; }
       if (k === 'theme') { try { toggleTheme(); } catch (er) {} return; }
+      if (k === 'synth') { wgClose(); setTimeout(() => { if (window.ftSynthesis) window.ftSynthesis(); }, 0); return; }
       if (k === 'calc') { wgClose(); try { toggleCalculator(); } catch (er) {} return; }
       if (k === 'dates') { wgClose(); try { toggleDateCalc(); } catch (er) { const d = document.getElementById('datecalc-toggle'); if (d) d.click(); } return; }
       if (k === 'rep') { wgClose(); try { window.ftRpToggle(true); } catch (er) { const r = document.getElementById('rp-btn'); if (r) r.click(); } return; }

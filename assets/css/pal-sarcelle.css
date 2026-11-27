@@ -1973,4 +1973,10 @@ html.theme-light .ft-asst .as-in input{background:#f6fbfb;border-color:#cbdbdc}
 .wg-add select{border:1px solid rgba(28,168,179,.3)}
 html.theme-light .wg-add select{border-color:#cbdbdc}
 .ip-tgo{background:#0d7075}
+.ft-sugg button{background:#0d7075}
+.ft-synth-print section{border:1px solid rgba(28,168,179,.25)}
+.ft-synth-print h3 button{border:1px solid rgba(28,168,179,.3)}
+.fsy-h{border-bottom:2px solid #0a5e62}
+.ft-bell-pop .fb-ans{border:1px solid rgba(28,168,179,.35);color:#09acb4}
+html.theme-light .ft-bell-pop .fb-ans{color:#0a5e62;border-color:#cbdbdc}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(48,158,166,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(57,188,198,0.1),transparent 60%),linear-gradient(150deg,#03090a 0%,#071718 35%,#0b2628 70%,#123c3f 100%) fixed!important}

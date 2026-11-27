@@ -24,6 +24,7 @@
     document.body.appendChild(pop);
     b.addEventListener('click', e => { e.stopPropagation(); const on = !pop.classList.contains('on'); if (on) { draw(); place(); refresh(); } pop.classList.toggle('on', on); b.setAttribute('aria-expanded', String(on)); });
     pop.addEventListener('click', e => {
+      const an = e.target.closest('[data-ans]'); if (an) { e.stopPropagation(); answer(an.dataset.ans); return; }
       const a = e.target.closest('[data-go]'); if (!a) return; const g = a.dataset.go;
       if (g === 'read') { markAllRead(); return; }
       pop.classList.remove('on');
@@ -88,7 +89,7 @@
     const out = [];
     try {
       const fb = await window.__ftRest('/rest/v1/site_feedback?select=id,kind,message,email,created_at&done=is.false&order=created_at.desc&limit=50').catch(() => []);
-      (fb || []).forEach(r => { const k = KIND[r.kind] || ['Message', '#8e8e93']; out.push({ g: 'fb', t: k[0] + (r.email ? ' · ' + r.email.split('@')[0] : ''), s: String(r.message || '').slice(0, 90), d: ago(r.created_at), c: k[1] }); });
+      (fb || []).forEach(r => { const k = KIND[r.kind] || ['Message', '#8e8e93']; out.push({ g: 'fb', id: r.id, full: String(r.message || ''), q: r.kind === 'question', t: k[0] + (r.email ? ' · ' + r.email.split('@')[0] : ''), s: String(r.message || '').slice(0, 90), d: ago(r.created_at), c: k[1] }); });
       const pr = await window.__ftRest('/rest/v1/template_proposals?select=id,template,proposer_email,created_at&order=created_at.desc').catch(() => []);
       (pr || []).forEach(r => out.push({ g: 'prop', t: (r.template && r.template.title) || 'Modèle proposé', s: 'Proposé par ' + String(r.proposer_email || 'un agent').split('@')[0], d: ago(r.created_at), c: '#af52de' }));
       const mj = await fetch('reglementation/maj.json?t=' + Date.now(), { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null);
@@ -99,6 +100,18 @@
     badge(); if ($('ft-bell-pop') && $('ft-bell-pop').classList.contains('on')) draw();
     if (items.length > before && before >= 0 && refresh.done) { const b = $('ft-bell'); if (b) { b.classList.remove('ring'); void b.offsetWidth; b.classList.add('ring'); } }
     refresh.done = true;
+  }
+  /* Répondre à une question d'agent : la réponse rejoint la FAQ du site (visible par tous) et la question est marquée traitée */
+  function answer(id) {
+    const it = items.find(x => String(x.id) === String(id)); if (!it) return;
+    const q0 = it.full.replace(/^Assistant — question sans réponse : /, '');
+    const q = prompt('Question telle qu’elle apparaîtra dans la FAQ :', q0); if (!q) return;
+    const a = prompt('Votre réponse (visible par tous les conseillers) :', ''); if (!a) return;
+    const list = (window.ftFaqList ? window.ftFaqList() : []).slice(); list.unshift([q.trim(), a.trim()]);
+    const save = window.__ftSaveShared ? window.__ftSaveShared('__ft_faq', { items: list }) : Promise.reject(new Error('Connexion indisponible'));
+    save.then(() => { try { localStorage.setItem('ft_faq', JSON.stringify(list)); } catch (e) {} return window.__ftRest('/rest/v1/site_feedback?id=eq.' + encodeURIComponent(id), { method: 'PATCH', prefer: 'return=minimal', body: { done: true } }); })
+      .then(() => { try { showToast('Réponse ajoutée à la FAQ', 'success'); } catch (e) {} refresh(); })
+      .catch(e => { try { showToast('Enregistrement impossible : ' + ((e && e.message) || e), 'error'); } catch (er) {} });
   }
   window.ftBellRefresh = refresh;
   function start() { build(); refresh(); clearInterval(timer); timer = setInterval(() => { if (!document.hidden) refresh(); }, 30000); }

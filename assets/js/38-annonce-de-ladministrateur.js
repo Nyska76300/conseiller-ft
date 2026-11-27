@@ -75,6 +75,10 @@
     { k: 'Navigation', h: 'Le menu', p: 'Tous les outils, classés par thème. L’étoile à droite d’un outil le place en haut du menu, dans « Favoris du menu ».', el: () => pick(['#burger-menu-btn', '#ft-tabbar [data-t="tools"]']) },
     { k: 'Mails', h: 'Modèles de mails (CVM)', p: 'Choisissez un modèle, complétez les champs, copiez. Les simulateurs rédigent aussi le mail à l’allocataire automatiquement.', el: () => pick(['#ft-tabbar [data-t="cvm"]', '#burger-menu-btn']) },
     { k: 'Accueil du public', h: 'Interprète vocal', p: 'Pour un allocataire qui parle une autre langue : chacun parle à son tour, la phrase est traduite et lue à voix haute.', el: () => pick(['#ft-tts', '#ft-more-btn']) },
+    { k: 'Rubriques', h: 'La ligne d’onglets', p: 'Au survol d’une rubrique, ses outils s’affichent (Favoris, Mails, Droits…). Un clic ouvre la rubrique.', el: () => pick(['#ft-ptabs']) },
+    { k: 'Widgets', h: 'Votre barre de widgets', p: 'À droite : Assistant, mails et outils favoris, calculatrice, dates, repères… Le bouton de réglage en bas permet de la composer à votre goût.', el: () => pick(['#pro-wg', '#pro-wg-fab']) },
+    { k: 'Aide', h: 'L’assistant', p: 'Posez une question avec vos mots : il répond avec le contenu du site et propose l’outil et le mail adaptés. Rien ne quitte votre poste.', el: () => pick(['#pro-wg [data-w="asst"]', '#pro-wg-fab']) },
+    { k: 'Notifications', h: 'La cloche', p: 'Nouveautés du site, mises à jour réglementaires et nouveaux modèles communs.', el: () => pick(['#ft-bell']) },
     { k: 'Astuce', h: 'Rechercher partout', p: 'Ctrl+K (ou la loupe) : un outil, une règle, un modèle de mail… tapez quelques lettres.', el: () => pick(['.ft-hsearch', '#ft-tabbar [data-t="search"]', '#ft-header-search']) }
   ];
   let ti = 0;
