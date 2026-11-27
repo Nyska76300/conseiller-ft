@@ -2,6 +2,11 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.29', date: '27/11/2026', items: [
+      'Style institutionnel : chaque cadre de chaque page a un léger dégradé (blanc vers lavande en clair, bleu nuit vers indigo en sombre).',
+      'Correction : le widget Post-it s’ouvre bien (même si le bouton Post-it du haut est masqué) ; idem pour l’Interprète vocal, l’Assistant et « Que faire si… ».',
+      'Interprète vocal : la phrase que vous tapez est traduite puis lue à voix haute (correction pour Safari / iPhone, qui bloquait la voix) ; nouveau bouton 🔊 à côté du champ de saisie.'
+    ] },
     { v: '2026-11-27.28', date: '27/11/2026', items: [
       'Style institutionnel : dégradé de couleurs bleu, lavande et turquoise bien visible sur toutes les pages, en clair comme en sombre.',
       'Cloche de notifications pour tous les conseillers : nouveautés du site, mises à jour réglementaires appliquées, nouveaux modèles communs (« Tout marquer comme lu »). Les administrateurs gardent leur cloche de suivi.',

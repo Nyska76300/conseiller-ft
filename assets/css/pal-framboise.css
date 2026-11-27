@@ -1972,4 +1972,5 @@ html.theme-light .ft-asst .as-in input{background:#fcf9fb;border-color:#e2d4db}
 .wg-chips button{border:1px dashed rgba(229,113,170,.5)}
 .wg-add select{border:1px solid rgba(229,113,170,.3)}
 html.theme-light .wg-add select{border-color:#e2d4db}
+.ip-tgo{background:#bf1a70}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(166,48,107,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(198,57,128,0.1),transparent 60%),linear-gradient(150deg,#0a0306 0%,#18070f 35%,#280b1a 70%,#3f1229 100%) fixed!important}

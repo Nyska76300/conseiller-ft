@@ -571,3 +571,11 @@ html.ui-pro [id^="view-"]:not(#view-cvm),html.ui-pro .ft-split-host,html.ui-pro 
 }
 /* focus clavier visible */
 html.ui-pro .pro-wg button:focus-visible,html.ui-pro .pro-wg-pan button:focus-visible,html.ui-pro .ft-ptabs button:focus-visible,html.ui-pro .ft-ptmenu button:focus-visible,.ft-bell:focus-visible,.ft-asst button:focus-visible{outline:3px solid #0b5cd5!important;outline-offset:2px}
+
+/* ===== 2026-11-27.29 : dégradé dans chaque cadre (clair et sombre) ===== */
+html.ui-pro.theme-light{--pro-card-g:linear-gradient(160deg,#ffffff 0%,#f4f7ff 55%,#eff0ff 100%)}
+html.ui-pro:not(.theme-light){--pro-card-g:linear-gradient(160deg,#1a2a52 0%,#16204a 55%,#191a45 100%)}
+html.ui-pro [id^="view-"] :is(.rounded-xl,.rounded-2xl,.rounded-lg)[class*="border"]:not(button):not(input):not(select):not(textarea):not(label):not(.ios-ic):not(.cvm-card):not([data-tpl-id]):not(.hub-tab):not(.rg-tab),
+html.ui-pro [id^="view-"] :is(.fh-card,.reg-card,.wiz-card,.ipr-card,.op-card,.dp-card,.home-hero),
+html.ui-pro #print-area,html.ui-pro .ft-ptmenu,html.ui-pro .pro-wg-pan,html.ui-pro .cvm-so-c{background-image:var(--pro-card-g)!important;background-color:transparent!important}
+html.ui-pro.theme-light #view-home .home-hero{background-image:radial-gradient(600px 220px at 0% 0%,rgba(64,140,255,.12),transparent 70%),var(--pro-card-g)!important}

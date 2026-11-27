@@ -592,11 +592,11 @@
       const b = e.target.closest('[data-w]'); if (!b) return; const k = b.dataset.w;
       if (k === '__edit') { wgClose(); wgEdit(); return; }
       if (k.indexOf('tool:') === 0) { wgClose(); try { switchNavTab(k.slice(5)); } catch (er) {} return; }
-      if (k === 'asst') { wgClose(); if (window.ftAssistant) window.ftAssistant(); return; }
-      if (k === 'postit') { wgClose(); if (window.ftPostIt) window.ftPostIt(true); return; }
+      if (k === 'asst') { wgClose(); setTimeout(() => { if (window.ftAssistant) window.ftAssistant(); }, 0); return; }
+      if (k === 'postit') { wgClose(); setTimeout(() => { if (window.ftPostIt) window.ftPostIt(true); }, 0); return; }
       if (k === 'jour') { wgClose(); try { switchNavTab('jour'); } catch (er) {} return; }
-      if (k === 'sit') { wgClose(); if (window.ftSituations) window.ftSituations(); return; }
-      if (k === 'tts') { wgClose(); const t = document.getElementById('ft-tts'); if (t) t.click(); return; }
+      if (k === 'sit') { wgClose(); setTimeout(() => { if (window.ftSituations) window.ftSituations(); }, 0); return; }
+      if (k === 'tts') { wgClose(); setTimeout(() => { if (window.ftInterp) window.ftInterp(); else { const t = document.getElementById('ft-tts'); if (t) t.click(); } }, 0); return; }
       if (k === 'theme') { try { toggleTheme(); } catch (er) {} return; }
       if (k === 'calc') { wgClose(); try { toggleCalculator(); } catch (er) {} return; }
       if (k === 'dates') { wgClose(); try { toggleDateCalc(); } catch (er) { const d = document.getElementById('datecalc-toggle'); if (d) d.click(); } return; }

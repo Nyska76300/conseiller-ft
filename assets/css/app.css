@@ -2346,3 +2346,4 @@ html.theme-light .ft-asst .as-in input{background:#f7faff;border-color:#cbd9ee}
 .wg-chips button{padding:5px 10px;border-radius:999px;border:1px dashed rgba(110,150,240,.5);background:transparent;color:inherit;font-size:12.5px;font-weight:650;cursor:pointer}
 .wg-add select{width:100%;height:38px;border-radius:10px;border:1px solid rgba(110,150,240,.3);background:transparent;color:inherit;padding:0 10px}
 html.theme-light .wg-add select{border-color:#cbd9ee;background:#fff}
+.ip-tgo{flex:none;width:42px;border-radius:9px;border:0;background:#1d6ff2;color:#fff;font-size:16px;cursor:pointer}

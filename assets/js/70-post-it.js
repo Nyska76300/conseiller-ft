@@ -62,7 +62,7 @@
   function toggle(force) {
     const pop = $('ft-pi'), b = $('ft-pi-btn'); if (!pop || !b) return;
     const on = typeof force === 'boolean' ? force : !pop.classList.contains('on');
-    if (on) { const r = b.getBoundingClientRect(); pop.style.top = (r.bottom + 10) + 'px'; pop.style.left = Math.max(10, Math.min(window.innerWidth - 340, r.left + r.width / 2 - 165)) + 'px'; }
+    if (on) { const r = b.getBoundingClientRect(); if (r.width) { pop.style.top = (r.bottom + 10) + 'px'; pop.style.left = Math.max(10, Math.min(window.innerWidth - 340, r.left + r.width / 2 - 165)) + 'px'; } else { /* bouton du haut masqué (ouverture depuis un widget) : au centre */ pop.style.top = '90px'; pop.style.left = Math.max(10, (window.innerWidth - 330) / 2) + 'px'; } }
     if (on) document.querySelectorAll('.cvm-top-pop.on,.ft-tools-pop.on,.ft-pi.on').forEach(x => { if (x !== pop) x.classList.remove('on'); });
     pop.classList.toggle('on', on); b.setAttribute('aria-expanded', String(on)); b.classList.toggle('is-open', on);
     if (on) setTimeout(() => { show(); const ta = $('ft-pi-ta'); ta.setSelectionRange(ta.value.length, ta.value.length); }, 60);

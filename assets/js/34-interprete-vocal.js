@@ -27,9 +27,15 @@
     if (j2 && j2.responseData && j2.responseData.translatedText) return j2.responseData.translatedText;
     throw new Error('traduction indisponible');
   }
+  /* Safari (iPhone, iPad, Mac) n'accepte la voix qu'après un geste : on « déverrouille » la synthèse au clic / à Entrée */
+  function unlock() { try { if (!('speechSynthesis' in window) || unlock.done) return; const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); unlock.done = true; } catch (e) {} }
   function speak(text, code) {
     if (!('speechSynthesis' in window)) return;
     speechSynthesis.cancel();
+    setTimeout(() => speak2(text, code), 80);
+  }
+  function speak2(text, code) {
+    try { speechSynthesis.resume(); } catch (e) {}
     const loc = L(code)[1], vs = speechSynthesis.getVoices();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = loc; const v = vs.find(v => v.lang.replace('_', '-') === loc) || vs.find(v => v.lang.toLowerCase().startsWith(code.split('-')[0].toLowerCase()));
@@ -77,7 +83,7 @@
       '<div class="ip-side sb"><span class="ip-who">Usager</span><select id="ip-lb">' + opts(st.b) + '</select><button class="ip-mic b" id="ip-mic-b">' + MIC + '<span>Parler</span></button></div>' +
       '<div class="ip-log" id="ip-log"><div class="ip-empty">Chacun appuie sur <b>Parler</b> à son tour : la phrase est traduite à l’écran et lue à voix haute dans la langue de l’autre.<br><br>Évitez de dicter des données personnelles (n° de sécurité sociale, identifiant…) : la traduction passe par un service en ligne.</div></div>' +
       '<div class="ip-live" id="ip-live"></div>' +
-      '<div class="ip-type"><select id="ip-ts" style="flex:none;width:120px"><option value="a">Conseiller</option><option value="b">Usager</option></select><input id="ip-ti" placeholder="Ou tapez une phrase puis Entrée"></div>' +
+      '<div class="ip-type"><select id="ip-ts" style="flex:none;width:120px"><option value="a">Conseiller</option><option value="b">Usager</option></select><input id="ip-ti" placeholder="Ou tapez une phrase puis Entrée"><button type="button" id="ip-tgo" class="ip-tgo" aria-label="Traduire et lire à voix haute">🔊</button></div>' +
       '<div class="ip-side sa"><span class="ip-who">Conseiller</span><select id="ip-la">' + opts(st.a) + '</select><button class="ip-mic" id="ip-mic-a">' + MIC + '<span>Parler</span></button></div>' +
       '<div class="ip-note">Dictée et voix : Safari ou Chrome. La qualité dépend du micro et des voix installées sur l’appareil.</div></div>';
     document.body.appendChild(d);
@@ -87,9 +93,12 @@
     $('ip-face').onclick = () => { d.classList.toggle('face'); $('ip-face').classList.toggle('on', d.classList.contains('face')); };
     $('ip-la').onchange = e => { st.a = e.target.value; save(); };
     $('ip-lb').onchange = e => { st.b = e.target.value; save(); };
-    $('ip-mic-a').onclick = () => listen('a');
-    $('ip-mic-b').onclick = () => listen('b');
-    $('ip-ti').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.value.trim()) { handle($('ip-ts').value, e.target.value); e.target.value = ''; } });
+    $('ip-mic-a').onclick = () => { unlock(); listen('a'); };
+    $('ip-mic-b').onclick = () => { unlock(); listen('b'); };
+    const go = () => { const i = $('ip-ti'); if (!i.value.trim()) return; unlock(); handle($('ip-ts').value, i.value); i.value = ''; };
+    $('ip-ti').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go(); } });
+    $('ip-tgo').onclick = go;
+    d.addEventListener('pointerdown', unlock, { once: true });
   }
   function close() { stopRec(); try { speechSynthesis.cancel(); } catch (e) {} const d = $('ft-ip'); if (d) d.classList.remove('on'); }
   window.ftInterp = function () { build(); $('ft-ip').classList.add('on'); try { speechSynthesis.getVoices(); } catch (e) {} };
