@@ -26,7 +26,7 @@ FAUTES = {
 }
 REPEAT_OK = {'vous', 'nous', 'en', 'le', 'la'}  # « vous vous », « nous nous »… sont corrects
 DATE_OK = {'01/10/2021'}  # dates réglementaires
-MONTANT_OK = {'775,65 €'}  # plafonds réglementaires (RFF, depuis le 1er avril 2026)
+MONTANT_OK = {'769,49 €'}  # plafond RFF publié par France Travail (vérifié le 27/11/2026)
 
 
 def load():
@@ -108,6 +108,22 @@ def main():
             if key not in used_keys: warn.append(f"liste à choix « {key} » : aucun modèle ne l’utilise")
     except FileNotFoundError:
         pass
+    # Même contrôle « À relire » que dans CVM Direct : montants absents du barème, dates figées, affiliation sans primo-entrants
+    try:
+        core = open(os.path.join(ROOT, 'assets', 'js', '06-coeur-baremes-modeles.js'), encoding='utf-8').read()
+        bm = core[core.index('const BAREME'):core.index('const BAREME') + 20000]
+        nums = {('%.2f' % float(x)).replace('.', ',') for x in re.findall(r'(?<![\w.])(\d+\.\d+|\d+)(?![\w.])', bm)}
+        MOIS = 'janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre'
+        for t in T:
+            name = f"« {t['title']} »"; body = re.sub(r'\{\{[^}]*\}\}', ' ', t.get('body', '')); tt = t['title'] + ' ' + body
+            for m in re.findall(r'\b\d{1,3}(?:[\u202f\u00a0 ]?\d{3})*,\d{2}\s?€', body):
+                if re.sub(r'[\u202f\u00a0 €\s]', '', m) not in nums: warn.append(f"{name} : à relire, montant écrit en dur {m.strip()} (absent du barème)")
+            for m in re.finditer(r'\b\d{1,2}(?:er)? (?:' + MOIS + r') 20\d\d\b', body):
+                if not re.search(r'(depuis|à compter|avant|après|en vigueur|à partir)\s+(du|le)\s*$', body[:m.start()][-30:], re.I): warn.append(f"{name} : à relire, date figée « {m.group(0)} »")
+            if re.search(r'\b130 jours\b|\b910 heures\b', body) and not re.search(r'\b108 jours\b|\b758 heures\b|primo', body, re.I) and re.search(r'rejet|refus|ouverture de droits|admission', tt, re.I) and not re.search(r'rechargement|fin de droits|\bASS\b|marins|ARCE', tt, re.I):
+                warn.append(f"{name} : à relire, affiliation sans le cas des primo-entrants (108 j / 758 h)")
+    except Exception as e:
+        warn.append(f'contrôle « à relire » impossible : {e}')
     rep = ['## Relecture des modèles de mails', '', f'{len(T)} modèles, {len(cats)} catégories.']
     if err: rep += ['', '### ❌ À corriger'] + ['- ' + e for e in err]
     if warn: rep += ['', f'### ⚠️ À vérifier ({len(warn)})'] + ['- ' + w for w in warn[:120]]

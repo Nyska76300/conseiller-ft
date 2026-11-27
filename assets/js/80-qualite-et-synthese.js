@@ -27,8 +27,10 @@
     if (b.affiliation && /\b130 jours\b|\b910 heures\b/.test(body) && !/\b108 jours\b|\b758 heures\b|primo/i.test(body) && /rejet|refus|ouverture de droits|admission/i.test(tt) && !/rechargement|fin de droits|\bASS\b|marins|ARCE/i.test(tt)) out.push('Affiliation : ne mentionne pas les primo-entrants (' + b.affiliation.joursSais + ' jours ou ' + b.affiliation.heuresSais + ' heures depuis le 01/04/2026)');
     return [...new Set(out)];
   }
+  /* La relecture des mails est réservée à l'administrateur */
+  const isAdmin = () => { try { return !!(window.__ftIsAdmin && window.__ftIsAdmin()); } catch (e) { return false; } };
   function needsReview(t) {
-    if (!t) return false; const r = reviewed()[t.id]; if (r) return false;
+    if (!t || !isAdmin()) return false; const r = reviewed()[t.id]; if (r) return false;
     return issues(t).length > 0;
   }
   window.ftMailIssues = issues;
@@ -42,6 +44,7 @@
       if (!on && m) m.remove();
     });
     const q = $('cvm-qf');
+    if (!isAdmin()) { const ob = q && q.querySelector('[data-f="review"]'); if (ob) ob.remove(); document.documentElement.classList.remove('cvm-f-review'); return; }
     if (q && !q.querySelector('[data-f="review"]')) {
       const b = document.createElement('button'); b.type = 'button'; b.dataset.f = 'review'; b.innerHTML = 'À relire <b>0</b>';
       b.addEventListener('click', e => { e.stopPropagation(); const on = !document.documentElement.classList.contains('cvm-f-review'); document.documentElement.classList.toggle('cvm-f-review', on); b.classList.toggle('on', on); });
@@ -53,7 +56,7 @@
     const pb = $('preview-body'); if (!pb) return;
     let t = null; try { t = templates.find(x => x.id === activeTemplateId); } catch (e) {}
     let bar = $('cvm-rv-bar'); const is = t ? issues(t) : [], rv = t ? reviewed()[t.id] : null;
-    if (!t || !is.length || rv) { if (bar) bar.remove(); return; }
+    if (!t || !is.length || rv || !isAdmin()) { if (bar) bar.remove(); return; }
     if (!bar) { bar = document.createElement('div'); bar.id = 'cvm-rv-bar'; bar.className = 'cvm-rv-bar'; pb.parentNode.insertBefore(bar, pb); }
     bar.innerHTML = '<b>À relire</b><ul>' + is.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul><button type="button">Marquer comme relu</button>';
     bar.querySelector('button').onclick = () => { const r = reviewed(); r[t.id] = new Date().toISOString().slice(0, 10); try { (typeof safeLS !== 'undefined' ? safeLS : localStorage).setItem(RK, JSON.stringify(r)); } catch (e) {} bar.remove(); markCards(); toast('Mail marqué comme relu', 'success'); };
@@ -98,6 +101,23 @@
     const s = sget(); s[tab] = { n: name, t: txt, at: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) };
     try { sessionStorage.setItem(SK, JSON.stringify(s)); } catch (e) {}
   }
+  /* Points clés lus dans le résultat : éligibilité, montant, durée, premier jour, différés, points à vérifier */
+  function keyPoints(txt) {
+    const L = String(txt || '').split('\n'), out = [], seen = new Set();
+    const add = (cls, k, v) => { v = String(v || '').trim(); if (!v || seen.has(k)) return; seen.add(k); out.push([cls, k, v]); };
+    L.forEach(l => {
+      const v = l.split(' : ').slice(1).join(' : ') || l;
+      if (/non éligible|non eligible|refus/i.test(l)) add('ko', 'Éligibilité :', 'non éligible en l’état');
+      else if (/\béligible\b|droits ouverts|accord/i.test(l) && !/diagnostic/i.test(l)) add('ok', 'Éligibilité :', l.replace(/^.*?:\s*/, ''));
+      if (/(are|allocation|montant|asp|ass).*(jour|mois|mensuel)/i.test(l) && /\d/.test(v) && /€/.test(v)) add('', 'Montant :', l);
+      if (/durée/i.test(l) && /\d/.test(v)) add('', 'Durée :', v);
+      if (/premier jour|1er jour/i.test(l) && /\d/.test(v)) add('', 'Premier jour indemnisable :', v);
+      if (/total des différés|différés? avant/i.test(l) && /\d/.test(v)) add('', 'Différés :', v);
+      if (/à vérifier|attention/i.test(l)) add('wa', 'À vérifier :', l.replace(/^.*?:\s*/, ''));
+      if (/échéanc|mensualit/i.test(l) && /\d/.test(v)) add('', 'Échéancier :', l);
+    });
+    return out.slice(0, 7);
+  }
   window.ftSynthesis = function () {
     snapshot(cur());
     const s = sget(), keys = Object.keys(s);
@@ -116,7 +136,7 @@
     w.innerHTML = '<div class="cvm-so-c ft-synth-c"><div class="cvm-so-h"><h2>Synthèse d’entretien</h2><button type="button" data-s="x" aria-label="Fermer">×</button></div>' +
       '<p>Résultats des simulateurs utilisés pendant cette session (' + keys.length + '). Aucun nom n’est enregistré ; tout s’efface à la fermeture de l’onglet.</p>' +
       '<div class="ft-synth-print"><div class="fsy-h"><b>France Travail · Espace Conseiller</b><span>Synthèse établie le ' + d + '</span></div>' +
-      keys.map(k => '<section><h3>' + esc(s[k].n) + ' <small>' + esc(s[k].at) + '</small><button type="button" data-rm="' + esc(k) + '" aria-label="Retirer ' + esc(s[k].n) + '">✕</button></h3><pre>' + esc(s[k].t) + '</pre></section>').join('') +
+      keys.map(k => { const kp = keyPoints(s[k].t); return '<section><h3>' + esc(s[k].n) + ' <small>' + esc(s[k].at) + '</small><button type="button" data-rm="' + esc(k) + '" aria-label="Retirer ' + esc(s[k].n) + '">✕</button></h3>' + (kp.length ? '<ul class="fsy-kp">' + kp.map(x => '<li class="' + x[0] + '"><b>' + esc(x[1]) + '</b> ' + esc(x[2]) + '</li>').join('') + '</ul>' : '') + '<details' + (kp.length ? '' : ' open') + '><summary>Détail affiché par le simulateur</summary><pre>' + esc(s[k].t) + '</pre></details></section>'; }).join('') +
       '<p class="fsy-n">Simulation indicative : la décision notifiée par France Travail fait foi.</p></div>' +
       '<div class="cvm-so-a"><button type="button" data-s="clear">Effacer</button><button type="button" data-s="print" class="pri">Imprimer / PDF</button></div></div>';
     w.hidden = false;

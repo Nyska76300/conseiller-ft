@@ -52,3 +52,16 @@ Toute valeur réglementaire chiffrée utilisée par un simulateur est rangée da
 | `generations` | Âges et trimestres de retraite par génération | LFSS / réforme |
 
 Chaque section porte un champ `verifie` (JJ/MM/AAAA) à mettre à jour dans la même entrée de `maj.json` quand la section est modifiée (ex. `"ati.verifie": "02/04/2027"`).
+
+## Relecture des modèles de mails (à chaque passage de la veille)
+
+Lancer `python3 tools/mails.py`. Les lignes « à relire » signalent un mail qui ne colle plus au barème
+(montant absent de `BAREME`, date figée, condition d'affiliation sans le cas des primo-entrants).
+S'il y en a, ajouter une entrée dans `updates` **sans `bareme`**, pour prévenir l'administrateur (cloche, « Veille réglementaire ») :
+
+```json
+{ "id": "AAAA-MM-JJ-mails-a-relire", "date": "AAAA-MM-JJ", "titre": "Mails à relire après mise à jour du barème",
+  "resume": ["« Titre du mail » : montant écrit en dur 775,65 € (absent du barème)"], "sources": [], "code": "" }
+```
+
+Ne jamais modifier soi-même le texte d'un modèle officiel dans la veille : la correction se fait après validation de l'administrateur.

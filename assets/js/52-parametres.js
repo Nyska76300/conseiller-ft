@@ -68,6 +68,7 @@
     return '<div class="pm-card"><div class="pm-h"><h2 id="pm-t">⚙️ Paramètres</h2><button type="button" class="pm-x" data-pm="x" aria-label="Fermer">×</button></div>' +
       '<section><h3>Affichage</h3>' +
         row('Style d’interface', document.documentElement.classList.contains('ui-pro') ? 'Institutionnel : sobre, rubriques en onglets, clair ou sombre (test)' : 'Classique : l’apparence d’avant, sombre ou claire', seg('ui', document.documentElement.classList.contains('ui-pro') ? 'pro' : 'classic', [['pro', 'Institutionnel'], ['classic', 'Thème classique']])) +
+        row('Votre avis sur le style', 'Lequel préférez-vous ? Votre retour aide à choisir', '<button type="button" class="pm-btn" data-pm="uivote">Donner mon avis</button>') +
         row('Thème', P.themeMode === 'system' ? 'Suit le réglage de l’appareil' : P.themeMode === 'hours' ? 'Clair de 7 h à 19 h, sombre le soir' : '', seg('theme', P.themeMode || theme(), [['dark', 'Sombre'], ['light', 'Clair'], ['system', 'Auto'], ['hours', 'Horaire']])) +
         '<div class="pm-row pm-col"><div><b>Couleurs</b><span>S’appliquent au thème sombre comme au clair</span></div><div class="pm-pal" role="group" aria-label="Couleurs">' + PALS.map(([v, l, a, b]) => '<button type="button" data-k="pal" data-v="' + v + '" aria-pressed="' + ((P.pal || '') === v) + '" class="' + ((P.pal || '') === v ? 'on' : '') + '"><i style="background:linear-gradient(135deg,' + a + ',' + b + ')"></i>' + l + '</button>').join('') + '</div></div>' +
         row('Taille du texte', '', seg('ts', a.ts, [[0, 'Normal'], [1, 'Grand'], [2, 'Très grand']])) + '</section>' +
@@ -123,6 +124,7 @@
     else if (a === 'rem') { close(); window.ftReminders(); }
     else if (a === 'hist') { if (confirm('Effacer l’historique des derniers calculs de ce poste ?')) { try { localStorage.removeItem('ft_calc_hist'); localStorage.removeItem('ft_calc_vals'); } catch (er) {} toast('Historique effacé', 'success'); try { switchNavTab(tabNow() === 'home' ? 'home' : tabNow()); } catch (er) {} } }
     else if (a === 'data') { close(); const d = $('data-btn') || document.querySelector('[data-k="data"]'); if (d) d.click(); }
+    else if (a === 'uivote') { close(); if (window.ftFeedback) { window.ftFeedback(); setTimeout(() => { const k = document.getElementById('fb-k'), m = document.getElementById('fb-m'); if (k) k.value = 'idee'; if (m && !m.value) { m.value = 'Style d’interface : je préfère le style ' + (document.documentElement.classList.contains('ui-pro') ? 'institutionnel' : 'classique') + ', parce que… '; m.focus(); } }, 80); } }
     else if (a === 'reload') { close(); if (window.ftHardReload) window.ftHardReload(); else location.reload(); }
     else if (a === 'signoff') { close(); if (window.ftSignoff) window.ftSignoff(); }
     else if (a === 'sync') { if (window.ftSyncNow) window.ftSyncNow(); toast('Synchronisation lancée', 'info'); }

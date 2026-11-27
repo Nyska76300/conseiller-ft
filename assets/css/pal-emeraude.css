@@ -1979,4 +1979,5 @@ html.theme-light .wg-add select{border-color:#cadcd6}
 .fsy-h{border-bottom:2px solid #0d6142}
 .ft-bell-pop .fb-ans{border:1px solid rgba(32,172,127,.35);color:#0eb177}
 html.theme-light .ft-bell-pop .fb-ans{color:#0d6142;border-color:#cadcd6}
+.fsy-kp li{background:rgba(32,172,127,.08)}
 html:not(.theme-light){background:radial-gradient(1100px 760px at 92% 110%,rgba(48,166,127,0.26),transparent 62%),radial-gradient(900px 600px at 0% -10%,rgba(57,198,151,0.1),transparent 60%),linear-gradient(150deg,#030a08 0%,#071812 35%,#0b281e 70%,#123f30 100%) fixed!important}

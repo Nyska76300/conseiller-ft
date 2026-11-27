@@ -2380,3 +2380,8 @@ html.theme-light .ft-bell-pop .fb-ans{color:#0b5cd5;border-color:#cbd9ee}
 html .cvm-qf button[data-f="review"],html.theme-light .cvm-qf button[data-f="review"]{color:#7a3e00;background:#fff1dc;border-color:#f3cf93}
 html .cvm-qf button[data-f="review"].on,html.theme-light .cvm-qf button[data-f="review"].on{color:#4a2600;background:#ffc46b;border-color:#ffc46b}
 html:not(.theme-light) .cvm-qf button[data-f="review"]{color:#ffd9a0;background:rgba(255,179,64,.12);border-color:rgba(255,179,64,.4)}
+.fsy-kp{margin:8px 0 6px;padding:0;list-style:none;display:grid;gap:3px;font-size:.84rem}
+.fsy-kp li{padding:3px 8px;border-radius:7px;background:rgba(110,150,240,.08)}
+.fsy-kp li.ko{background:#fdeeee;color:#8f1d1d}.fsy-kp li.ok{background:#e9f6ee;color:#14532d}.fsy-kp li.wa{background:#fff4e0;color:#7a3e00}
+.ft-synth-print details summary{cursor:pointer;font-size:.74rem;opacity:.7;margin-top:4px}
+@media print{html.ft-printing-synth .ft-synth-print details{display:none!important}}

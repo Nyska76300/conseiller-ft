@@ -2,6 +2,14 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.33', date: '27/11/2026', items: [
+      'Accueil : les icônes de « Mes favoris » gardent la couleur de leur onglet, même après la synchronisation du compte.',
+      'Mails : « Rejet affiliation et PND » mentionne le seuil des primo-entrants (108 jours ou 758 heures) ; « Explication nouveaux droits » a des champs à remplir pour les dates et l’employeur.',
+      'Synthèse d’entretien : chaque simulateur affiche ses points clés (éligibilité, montant, durée, premier jour, différés, points à vérifier), le détail est replié.',
+      'Paramètres : bouton « Donner mon avis » sur le style d’interface.',
+      'Impression des pages Règles : sans le sommaire ni les barres latérales.',
+      'CVM Direct : la pastille et le filtre « À relire » ne s’affichent que pour l’administrateur.'
+    ] },
     { v: '2026-11-27.32', date: '27/11/2026', items: [
       'CVM Direct : le filtre « À relire » n’est plus coupé (les filtres passent à la ligne) et il est en orange pour le repérer.'
     ] },

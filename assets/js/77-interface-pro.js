@@ -60,9 +60,10 @@
     cfd: '#ff9500', droits: '#0a84ff', '8': '#a2845e',
     '4': '#5e5ce6', ass: '#f5b800', aref: '#af52de', casparts: '#32ade6', '7': '#ff9500', sanctions: '#ff3b30', ati: '#00a6a6',
     bareme: '#0a84ff', calendrier: '#ff3b30', compare: '#af52de', echeances: '#ff9500', glossaire: '#a2845e', journal: '#8e8e93', schemas: '#5e5ce6', sjr: '#34c759', sources: '#64748b',
-    jour: '#0a84ff', faq: '#34c759', pieces: '#ff9500', pensebete: '#f5b800', formation: '#af52de', calc: '#30b84f'
+    jour: '#0a84ff', faq: '#34c759', pieces: '#ff9500', pensebete: '#f5b800', formation: '#af52de', calc: '#30b84f', cvm: '#0a84ff', admin: '#af52de', home: '#0a84ff'
   };
   window.FT_TOOLC = TOOLC;
+  window.ftToolColor = id => { id = String(id || ''); if (id.indexOf('tpl:') === 0) return '#0a84ff'; if (TOOLC[id]) return TOOLC[id]; const hh = window.ftHubOf ? window.ftHubOf(id) : null; return (hh && GC[hh.id]) || ''; };
   const alpha = (a, b) => String(a.t).localeCompare(String(b.t), 'fr', { sensitivity: 'base' });
   function menuItems(id) {
     if (id === 'fav') {
@@ -493,6 +494,8 @@
     if (c) { const t = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); c.textContent = t.charAt(0).toUpperCase() + t.slice(1); }
   }
   setInterval(() => { if (cur() === 'home') phTick(); }, 1000);
+  /* les cartes de l'accueil se redessinent (synchronisation du compte…) : on réapplique les couleurs */
+  (function () { const vh = document.getElementById('view-home'); if (!vh || !window.MutationObserver) return; let t; new MutationObserver(() => { clearTimeout(t); t = setTimeout(() => { try { home(); } catch (e) {} }, 60); }).observe(vh, { childList: true, subtree: true }); })();
   /* ---------- Barre de widgets à droite, centrée : favoris, plus utilisés, calculatrice, dates, repères ---------- */
   /* Catalogue des widgets ; chaque conseiller choisit les siens et leur ordre (clé ft_wg, synchronisée avec le compte) */
   const WG = [['asst', 'Assistant', null, '#5e5ce6'], ['mf', 'Mails favoris', 'mail', '#0a84ff'], ['tf', 'Outils favoris', 'star', '#ff9f0a'], ['top', 'Plus utilisés', 'trend', '#34c759'], ['calc', 'Calculatrice', null, '#30b84f'], ['dates', 'Dates', null, '#5e5ce6'], ['rep', 'Repères', null, '#ff7a00'], ['postit', 'Post-it', null, '#f5b800'], ['jour', 'Ma journée', null, '#ff3b30'], ['sit', 'Que faire si…', null, '#af52de'], ['tts', 'Interprète vocal', null, '#af52de'], ['theme', 'Clair / sombre', null, '#5e5ce6'], ['synth', 'Synthèse d’entretien', null, '#30b0c7']];
