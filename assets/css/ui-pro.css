@@ -283,3 +283,16 @@ html.ui-pro header>div:last-child>button:not(#fp-pill):hover,html.ui-pro header 
 html.ui-pro header #ft-acct>button{color:var(--pro-text)!important}
 html.ui-pro header #ft-acct>button svg{color:var(--hc)!important}
 html.ui-pro #ft-pi-btn.has-note{background:color-mix(in srgb,var(--hc) 22%,transparent)!important}
+/* 2026-11-27.10 : roue et données dans le menu du compte ; onglets qui tiennent sur la ligne */
+html.ui-pro #ft-prefs-btn,html.ui-pro #data-btn{display:none!important}
+@media (max-width:1280px){html.ui-pro .ft-ptabs button{padding:11px 10px 9px;gap:5px;font-size:.8rem}html.ui-pro .ft-ptabs .pt-chev{display:none}}
+/* 2026-11-27.10 : icônes plus proches de l'iPhone — dégradé vertical riche, reflet, ombre douce */
+html.ui-pro .ios-ic,html.ui-pro body:not(#ftx):not(#fty) .ios-auto,html.ui-pro #view-home:not(#ftx):not(#fty) :is(.fh-dico,.fh-gi,.fh-ci,.lk-ico,.home-row-ico),html.ui-pro #left-nav-menu span.w-6.h-6.rounded-md,html.ui-pro #templates-list [data-tpl-id] .min-w-0>span.rounded-lg:first-child,html.ui-pro .ft-ptmenu .pt-ic{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--ios,#0a84ff) 62%,#fff) 0%,var(--ios,#0a84ff) 52%,color-mix(in srgb,var(--ios,#0a84ff) 84%,#000) 100%)!important;
+  border-radius:24%!important;
+  box-shadow:0 1px 1.5px rgba(0,0,0,.16),0 3px 8px color-mix(in srgb,var(--ios,#0a84ff) 30%,transparent),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(0,0,0,.08)!important}
+html.ui-pro :is(.ios-ic,.ios-auto,.fh-dico,.fh-gi,.fh-ci,.lk-ico,.home-row-ico,.pt-ic) svg,html.ui-pro #left-nav-menu span.w-6.h-6.rounded-md svg,html.ui-pro #templates-list [data-tpl-id] .min-w-0>span.rounded-lg:first-child svg{filter:drop-shadow(0 1px .5px rgba(0,0,0,.18))}
+/* boutons de l'en-tête : teinte en fondu */
+html.ui-pro header>div:last-child>button:not(#fp-pill),html.ui-pro header #ft-acct>button{background:linear-gradient(180deg,color-mix(in srgb,var(--hc) 17%,transparent),color-mix(in srgb,var(--hc) 6%,transparent))!important;box-shadow:0 1px 2px color-mix(in srgb,var(--hc) 18%,transparent),inset 0 1px 0 rgba(255,255,255,.5)!important}
+html.ui-pro:not(.theme-light) header>div:last-child>button:not(#fp-pill),html.ui-pro:not(.theme-light) header #ft-acct>button{box-shadow:0 1px 2px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.06)!important}
+html.ui-pro header>div:last-child>button:not(#fp-pill):hover,html.ui-pro header #ft-acct>button:hover{background:linear-gradient(180deg,color-mix(in srgb,var(--hc) 80%,#fff),var(--hc))!important}

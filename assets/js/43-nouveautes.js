@@ -2,6 +2,11 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.10', date: '27/11/2026', items: [
+      'En-tête : la roue des paramètres et « Mes données » passent dans le menu du compte (bouton « Se connecter » ou vos initiales), même sans être connecté.',
+      'Onglet « Autres » : un clic l’ouvre bien (il se refermait si le menu était déjà ouvert au survol). Les onglets tiennent sur une ligne même sur un écran plus étroit (noms courts : Fin de droits, Situations, Références).',
+      'Icônes plus proches de l’iPhone : dégradé vertical, reflet et ombre douce ; boutons de l’en-tête en couleur fondue.'
+    ] },
     { v: '2026-11-27.9', date: '27/11/2026', items: [
       'Onglet « Autres » ajouté au bout de la ligne d’onglets : Ma journée, Questions fréquentes, Pièces justificatives, Pense-bête d’entretien, Mode formation.',
       'Les menus des rubriques reprennent exactement les outils du menu latéral (par exemple Situations particulières : ASS et ATA, AREF et RFF, frontaliers, sanctions, ATI ; Références : calendrier, comparer, échéances, journal).'

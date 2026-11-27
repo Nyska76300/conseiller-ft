@@ -12,9 +12,10 @@
   if (!H.classList.contains('ui-pro')) return;
 
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const SHORT = { 'hub:fin': 'Fin de droits', 'hub:situations': 'Situations', 'hub:calculs': 'Références' };
   const TABS = () => {
     const hubs = window.FT_HUBS || [];
-    return [['fav', 'Favoris'], ['cvm', 'Mails']].concat(hubs.map(h => { const n = nameOf(h.id, h.name); return [h.id, n === h.name ? n.replace(/\s*:.*$/, '') : n]; })).concat([['autres', 'Autres']]);
+    return [['fav', 'Favoris'], ['cvm', 'Mails']].concat(hubs.map(h => { const n = nameOf(h.id, h.name); return [h.id, n === h.name ? (SHORT[h.id] || n.replace(/\s*:.*$/, '')) : n]; })).concat([['autres', 'Autres']]);
   };
   /* Noms à jour (renommages de l'administrateur compris), comme dans le menu */
   function nameOf(id, fb) { try { const t = NAV_TABS_CONFIG.find(x => String(x.id) === String(id)); if (t && t.name) return t.name; } catch (e) {} return fb; }
@@ -185,7 +186,7 @@
     n.addEventListener('click', e => {
       const b = e.target.closest('[data-pt]'); if (!b) return;
       const id = b.dataset.pt;
-      if (id === 'fav' || id === 'autres') { if (openId === id) close(); else open(id, !hoverable()); return; }
+      if (id === 'fav' || id === 'autres') { if (openId === id && !hoverable()) close(); else open(id, !hoverable()); return; }
       close(); try { switchNavTab(id); } catch (er) {}
     });
     n.addEventListener('mouseover', e => {

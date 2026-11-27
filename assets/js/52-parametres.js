@@ -132,7 +132,7 @@
   }
 
   /* Accès : menu du compte, menu « ⋯ », recherche */
-  (window.FT_ACCT_ITEMS = window.FT_ACCT_ITEMS || []).unshift({ t: 'Paramètres', run: () => window.ftOpenSettings() });
+  (window.FT_ACCT_ITEMS = window.FT_ACCT_ITEMS || []).unshift({ t: 'Paramètres', anon: true, run: () => window.ftOpenSettings() }, { t: 'Mes données (sauvegarde)', anon: true, run: () => { if (typeof openDataModal === 'function') openDataModal(); } });
   window.FT_ACTIONS = window.FT_ACTIONS || [];
   window.FT_ACTIONS.push({ t: 'Paramètres', s: 'Affichage, accessibilité, démarrage, notifications', kw: 'paramètres réglages préférences affichage accessibilité thème clair sombre texte taille contraste animations démarrage néon intensité couleurs', run: () => window.ftOpenSettings() });
   function moreItem() {
