@@ -37,8 +37,9 @@
     const pop = $('ft-tools-pop'); if (!pop) return;
     const light = document.documentElement.classList.contains('theme-light');
     pop.innerHTML = ITEMS.map(it => {
-      const lab = it[0] === 'theme' ? (light ? 'Mode sombre' : 'Mode clair') : it[1];
-      const sub = it[0] === 'theme' ? 'Changer l’apparence' : it[2];
+      const pro = document.documentElement.classList.contains('ui-pro');
+      const lab = it[0] === 'theme' ? (pro ? 'Thème classique' : light ? 'Mode sombre' : 'Mode clair') : it[1];
+      const sub = it[0] === 'theme' ? (pro ? 'Revenir à l’apparence d’avant' : 'Changer l’apparence') : it[2];
       const ic = it[0] === 'theme' ? (light ? ICO.moon : ICO.sun) : it[3];
       return '<button type="button" role="menuitem" data-k="' + it[0] + '">' + svg(ic) + '<span><b>' + lab + '</b><small>' + sub + '</small></span></button>';
     }).join('');
@@ -46,6 +47,7 @@
       e.stopPropagation();
       const it = ITEMS.find(i => i[0] === x.dataset.k); const o = it && it[4]();
       toggle(false);
+      if (x.dataset.k === 'theme' && document.documentElement.classList.contains('ui-pro') && window.ftSetUi) { window.ftSetUi('classic'); return; }
       if (o) setTimeout(() => o.click(), 0);
     }));
   }

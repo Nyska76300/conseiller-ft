@@ -814,6 +814,7 @@
   ];
   HUBS.forEach(h => { h.badge = h.members.length + ' onglets'; });
   const hubOf = tab => HUBS.find(h => h.members.some(m => m[0] === String(tab)));
+  window.FT_HUBS = HUBS; window.ftHubOf = hubOf;
 
   // Les rubriques deviennent des entrées de navigation (recherche : on garde les outils individuels)
   HUBS.forEach(h => NAV_TABS_CONFIG.push({ id: h.id, name: h.name, desc: h.desc, icon: h.icon, color: h.color, badge: h.badge }));

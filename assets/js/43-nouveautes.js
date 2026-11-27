@@ -2,6 +2,11 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.2', date: '27/11/2026', items: [
+      'Nouveau style d’interface « Institutionnel », en test : fond gris très clair, cartes blanches, un seul bleu, sans dégradés ni effets de verre.',
+      'Les rubriques (Accueil, Mails, Ouverture de droits, ANS, Fin de droits, Situations particulières, Références, Ma journée) sont en onglets sous l’en-tête ; l’onglet ouvert est souligné en bleu. Les sous-onglets d’une rubrique sont soulignés de la même façon.',
+      'Pour revenir à l’apparence d’avant : Paramètres › Style d’interface › « Thème classique », ou Outils › Thème classique.'
+    ] },
     { v: '2026-11-27.1', date: '27/11/2026', items: [
       'CVM Direct : liste des modèles plus compacte (deux fois plus de mails visibles sans faire défiler). Le titre, le début du mail et le nombre de champs tiennent sur deux lignes.',
       'Administrateurs : un bouton de réglage apparaît à côté de chaque champ d’un mail. Il permet de choisir « Texte libre » ou « Menu déroulant », de rédiger les choix (libellé affiché et texte inséré dans le mail), de fixer le choix par défaut et de garder ou non « Autre (texte libre) ». Le réglage vaut pour tous les modèles qui utilisent ce champ et pour tous les conseillers ; « Revenir au réglage du site » l’annule.'
