@@ -2,6 +2,9 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.16', date: '27/11/2026', items: [
+      'CVM Direct, menus déroulants : les mois sont regroupés par année (année la plus récente en haut, mois de janvier à décembre) ; toutes les autres listes (motifs, type d’admission, événement, choix définis par l’administrateur…) sont par ordre alphabétique.'
+    ] },
     { v: '2026-11-27.15', date: '27/11/2026', items: [
       'Accueil : les icônes des outils ont la même couleur que dans les onglets (rouge pour Démission et Trop-perçu, vert pour Complément ARE…).',
       'En-tête : le lien « Changer d’outil » sous le titre est retiré (les onglets le remplacent).',

@@ -70,6 +70,16 @@
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const OTHER = '__autre';
 
+  /* Menus : mois regroupés par année (janvier → décembre), les autres listes par ordre alphabétique */
+  function optionsHtml(key, list, hit) {
+    const opt = x => '<option value="' + esc(x[0]) + '"' + (hit && hit[0] === x[0] ? ' selected' : '') + '>' + esc(x[1]) + '</option>';
+    if (/^mois(_|$)/.test(key) && list.every(x => /^\S+ \d{4}$/.test(x[1]))) {
+      const by = {};
+      list.forEach(x => { const [m, y] = x[1].split(' '); (by[y] = by[y] || []).push([MOIS.indexOf(m), x]); });
+      return Object.keys(by).sort((a, b) => b - a).map(y => '<optgroup label="' + y + '">' + by[y].sort((a, b) => a[0] - b[0]).map(z => opt(z[1])).join('') + '</optgroup>').join('');
+    }
+    return list.slice().sort((a, b) => String(a[1]).localeCompare(String(b[1]), 'fr', { sensitivity: 'base' })).map(opt).join('');
+  }
   function enhance(tpl) {
     if (!tpl || !tpl.variables) return;
     const grid = document.getElementById('dynamic-inputs-grid'); if (!grid) return;
@@ -84,7 +94,7 @@
       const hit = list.find(x => x[2] === cur);
       const sel = document.createElement('select');
       sel.className = inp.className + ' cvm-choice'; sel.setAttribute('aria-label', v.label);
-      sel.innerHTML = '<option value="">' + (/^mois/.test(v.key) ? 'Choisir le mois…' : v.key === 'motif_trop_percu' ? 'Choisir le motif…' : 'Choisir…') + '</option>' + list.filter((x, i, a) => a.findIndex(y => y[1] === x[1]) === i).map(x => '<option value="' + esc(x[0]) + '"' + (hit && hit[0] === x[0] ? ' selected' : '') + '>' + esc(x[1]) + '</option>').join('') +
+      sel.innerHTML = '<option value="">' + (/^mois/.test(v.key) ? 'Choisir le mois…' : v.key === 'motif_trop_percu' ? 'Choisir le motif…' : 'Choisir…') + '</option>' + optionsHtml(v.key, list.filter((x, i, a) => a.findIndex(y => y[1] === x[1]) === i), hit) +
         ((varCfg()[v.key] || {}).other === false ? '' : '<option value="' + OTHER + '"' + (!hit && cur ? ' selected' : '') + '>' + (v.key === 'motif_trop_percu' ? 'Autre motif (texte libre)' : 'Autre (texte libre)') + '</option>');
       inp.dataset.choice = '1';
       if (v.key === 'motif_trop_percu') inp.placeholder = 'Rédigez le motif (ex. « une activité déclarée en retard »)';
