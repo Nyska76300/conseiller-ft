@@ -585,6 +585,12 @@
     fab.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/></svg>';
     fab.addEventListener('click', e => { e.stopPropagation(); const on = !document.documentElement.classList.contains('wg-m-open'); document.documentElement.classList.toggle('wg-m-open', on); fab.setAttribute('aria-expanded', String(on)); if (!on) wgClose(); });
     document.body.appendChild(fab);
+    /* téléphone et tablette : une flèche ouvre ou ferme la barre de widgets (choix mémorisé) */
+    const tog = document.createElement('button'); tog.type = 'button'; tog.id = 'pro-wg-tog'; tog.className = 'pro-wg-tog';
+    const togSet = h => { document.documentElement.classList.toggle('wg-m-hide', h); tog.setAttribute('aria-expanded', String(!h)); tog.setAttribute('aria-label', h ? 'Ouvrir les widgets' : 'Fermer les widgets'); tog.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + (h ? 'M15 6l-6 6 6 6' : 'M9 6l6 6-6 6') + '"/></svg>'; };
+    togSet((() => { try { return localStorage.getItem('ft_wg_m') === 'hide'; } catch (e) { return false; } })());
+    tog.addEventListener('click', e => { e.stopPropagation(); const h = !document.documentElement.classList.contains('wg-m-hide'); togSet(h); if (h) { const pp = document.getElementById('pro-wg-pan'); if (pp) pp.classList.remove('on'); } try { localStorage.setItem('ft_wg_m', h ? 'hide' : 'show'); } catch (er) {} });
+    document.body.appendChild(tog);
     document.addEventListener('click', e => { if (document.documentElement.classList.contains('wg-m-open') && !e.target.closest('#pro-wg,#pro-wg-pan,#pro-wg-fab')) { document.documentElement.classList.remove('wg-m-open'); fab.setAttribute('aria-expanded', 'false'); } });
     /* clavier : flèches haut / bas dans la barre */
     bar.addEventListener('keydown', e => {

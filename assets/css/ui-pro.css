@@ -487,3 +487,17 @@ html.ui-pro:not(.theme-light) #view-home .home-hero{background-image:radial-grad
   html.ui-pro .pro-toc b{display:none}
   html.ui-pro .pro-toc a{border:1px solid var(--pro-line)!important;border-radius:999px!important;margin:0!important;padding:5px 12px!important;background:var(--pro-card)!important;font-size:.8rem!important}
 }
+
+/* ===== 2026-11-27.35 : téléphone — flèche pour ouvrir / fermer les widgets, plus de bouton Menu ===== */
+.pro-wg-tog{display:none}
+@media (max-width:899px){
+  html.ui-pro #burger-menu-btn{display:none!important}
+  html.ui-pro .pro-wg-tog{display:flex;align-items:center;justify-content:center;position:fixed;top:50%;right:47px;transform:translateY(-50%);z-index:61;width:20px;height:52px;padding:0;border-radius:10px 0 0 10px;border:1px solid rgba(255,255,255,.95);border-right:0;background:rgba(255,255,255,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#0b5cd5;box-shadow:-4px 6px 16px rgba(40,70,150,.16);cursor:pointer;transition:right .22s}
+  html.ui-pro:not(.theme-light) .pro-wg-tog{background:rgba(22,34,60,.9);border-color:rgba(140,170,255,.2);color:#8fb4ff}
+  html.ui-pro .pro-wg{transition:transform .22s,opacity .22s}
+  html.ui-pro.wg-m-hide .pro-wg{transform:translate(70px,-50%)!important;opacity:0;pointer-events:none}
+  html.ui-pro.wg-m-hide .pro-wg-tog{right:0;border-radius:12px 0 0 12px}
+  html.ui-pro.wg-m-hide .pro-wg-pan{display:none!important}
+  html.ui-pro.wg-m-hide body>.ft-split-host,html.ui-pro.wg-m-hide #ft-foot{margin-right:14px!important}
+}
+@media print{.pro-wg-tog{display:none!important}}
