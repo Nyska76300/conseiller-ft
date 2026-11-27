@@ -476,28 +476,22 @@
     const row = (go, v, title, sub, icon, c) => '<button type="button" class="ph-row" data-go="' + go + '" data-v="' + esc(v) + '">' + ic(icon, c) + '<span class="ph-rt"><b>' + esc(title) + '</b>' + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</span>' + sg('chev', 15) + '</button>';
     const html =
       '<section class="ph-hero"><div class="ph-hd"><div><div class="ph-hello">' + ((h >= 18 || h < 4) ? 'Bonsoir' : 'Bonjour') + (me && me.name ? ' ' + esc(me.name) : '') + '</div><div class="ph-q">Que cherchez-vous ?</div></div>' +
-        '<div class="ph-right"><button type="button" class="ph-news" data-go="news">' + sg('bell', 14) + 'Nouveautés</button><div class="ph-clock"><div class="ph-time"><span id="ph-hm"></span><small id="ph-s"></small></div><div class="ph-date" id="ph-d"></div></div></div></div>' +
+        '<div class="ph-right"><div class="ph-clock"><div class="ph-time"><span id="ph-hm"></span><small id="ph-s"></small></div><div class="ph-date" id="ph-d"></div></div></div></div>' +
         '<button type="button" class="ph-search" data-go="search">' + sg('search', 20) + '<span>Un outil, une règle ou un modèle de mail</span><kbd>Ctrl K</kbd></button>' +
-        '<div class="ph-acts"><button type="button" class="ph-b pri" data-go="dossier">' + sg('plus', 16) + 'Nouveau dossier</button><button type="button" class="ph-b" data-go="sit">' + ic(sg('help', 14), '#af52de', 'ph-mi') + 'Que faire si…</button><span class="ph-sep"></span>' +
-          links.slice(0, 6).map(l => '<button type="button" class="ph-b" data-go="link" data-v="' + esc(l.u || l.url) + '">' + ic(sg('link', 14), '#32ade6', 'ph-mi') + esc(l.t || l.name || '') + '</button>').join('') + '<button type="button" class="ph-b ghost" data-go="links">' + sg('plus', 14) + 'Lien</button></div>' +
+        '<div class="ph-acts"><button type="button" class="ph-b pri" data-go="dossier">' + sg('plus', 16) + 'Nouveau dossier</button><button type="button" class="ph-b" data-go="sit">' + ic(sg('help', 14), '#af52de', 'ph-mi') + 'Que faire si…</button></div>' +
         '<div class="ph-kpi"><span class="ph-lab">Chiffres clés</span>' + [['ARE min.', fmtN(B.are && B.are.min) + ' €/j'], ['Partie fixe', fmtN(B.are && B.are.partieFixe) + ' €/j'], ['Allocation max.', fmtN(B.are && B.are.max) + ' €/j'], ['ASS', fmtN(B.solidarite && B.solidarite.ass) + ' €/j'], ['Affiliation', ((B.affiliation && B.affiliation.jours) || '') + ' j / ' + ((B.affiliation && B.affiliation.heures) || '') + ' h']].map(k => '<span>' + k[0] + ' <b>' + esc(k[1]) + '</b></span>').join('') + '</div></section>' +
-      '<div class="ph-grid"><div class="ph-main"><div class="ph-two">' +
-        '<section class="ph-card ph-tf"><header>' + ic(sg('star', 16), '#ff9f0a') + '<h2>Outils favoris</h2><small>' + ptools.length + '</small><button type="button" class="ph-b sm" data-go="pins">Choisir</button></header>' +
-          (ptools.length ? '<div class="ph-list">' + ptools.slice(0, 8).map(x => row('pin', x.id, x.label, x.group, (x.icon || '').replace(/\sclass="[^"]*"/, '') || sg('star'), colOf(String(x.id)))).join('') + '</div>' : '<p class="ph-empty">Cliquez sur « Choisir » pour épingler vos outils préférés.</p>') + '</section>' +
-        '<section class="ph-card ph-mf"><header>' + ic(sg('mail', 16), '#0a84ff') + '<h2>Mails favoris</h2><small>' + fm.length + '</small><button type="button" class="ph-b sm" data-go="mails">Ouvrir</button></header>' +
-          (fm.length ? '<div class="ph-list">' + fm.slice(0, 8).map(t => row('tpl', t.id, t.title, t.category, sg('mail', 16), '#0a84ff')).join('') + '</div>' : '<p class="ph-empty">Ajoutez l’étoile sur un mail dans l’onglet Mails pour le retrouver ici.</p>') + '</section>' +
-        '</div><section class="ph-card ph-top"><header>' + ic(sg('trend', 16), '#34c759') + '<h2>Outils les plus utilisés</h2></header><div class="ph-apps">' +
-          top.map(id => '<button type="button" class="ph-app" data-go="tab" data-v="' + esc(id) + '">' + ic(tIcon(id), colOf(id), 'ph-ai') + '<span>' + esc(tname(id)) + '</span></button>').join('') + '</div></section></div>' +
-        '<section class="ph-card ph-rp"><div id="ph-rep-slot"></div></section>' +
-      '</div>';
+      '<div class="ph-grid2"><section class="ph-slot" id="ph-links-slot"></section><section class="ph-slot" id="ph-news-slot"></section></div>';
     if (H.dataset.h !== html) {
-      const slot = document.getElementById('ph-rep-slot'), rep = slot && slot.firstElementChild;
+      const keep = [...H.querySelectorAll('.ph-slot > *')];
       H.innerHTML = html; H.dataset.h = html;
-      if (rep) document.getElementById('ph-rep-slot').appendChild(rep);
+      keep.forEach(k => { const sl = document.getElementById(k.classList.contains('fh-news') ? 'ph-news-slot' : 'ph-links-slot'); if (sl) sl.appendChild(k); });
     }
-    /* Repères : la carte existante (avec ses dépliants) est déplacée dans l'accueil allégé */
-    const fresh = vh.querySelector('.home-wrap .fh-rep'), slot = document.getElementById('ph-rep-slot');
-    if (fresh && slot) { slot.innerHTML = ''; slot.appendChild(fresh); }
+    /* Liens utiles et Nouveautés : les cartes existantes (avec leurs réglages) sont déplacées ici */
+    [['.fh-links', 'ph-links-slot'], ['.fh-news', 'ph-news-slot']].forEach(([sel, id]) => {
+      const fresh = vh.querySelector('.home-wrap ' + sel), sl = document.getElementById(id);
+      if (fresh && sl) { sl.innerHTML = ''; sl.appendChild(fresh); }
+    });
+    const nh = vh.querySelector('#ph-news-slot .fh-news h2'); if (nh && nh.textContent.trim() !== 'Nouveautés') nh.textContent = 'Nouveautés';
     phTick();
   }
   function phTick() {
@@ -508,7 +502,66 @@
     if (c) { const t = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); c.textContent = t.charAt(0).toUpperCase() + t.slice(1); }
   }
   setInterval(() => { if (cur() === 'home') phTick(); }, 1000);
-  function after() { try { proHome(); foot(); home(); simLayout(); rulesToc(); iosify(); syncHubBars(); hubIcons(); } catch (e) { console.warn(e); } }
+  /* ---------- Barre de widgets à droite, centrée : favoris, plus utilisés, calculatrice, dates, repères ---------- */
+  const WG = [['mf', 'Mails favoris', 'mail', '#0a84ff'], ['tf', 'Outils favoris', 'star', '#ff9f0a'], ['top', 'Plus utilisés', 'trend', '#34c759'], ['calc', 'Calculatrice', null, '#30b84f'], ['dates', 'Dates', null, '#5e5ce6'], ['rep', 'Repères', null, '#ff7a00']];
+  const WGI = {
+    calc: '<rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8 7h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 18h.01M12 18h4"/>',
+    dates: '<rect x="3.5" y="5" width="17" height="15" rx="2.2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/>',
+    rep: '<path d="M5 21V4.5M5 4.5h11l-2 3.5 2 3.5H5"/>'
+  };
+  let wOpen = null;
+  function wgData(k) {
+    const tname = id => { const b = document.querySelector('#burger-tabs-list button[onclick="switchNavTab(\'' + id + '\')"]'); if (b) { const t = b.querySelector('.text-xs'); const v = ((t ? t.textContent : b.textContent) || '').replace(/\s*(Nouveau|Mis à jour)\s*$/, '').trim(); if (v) return v; } return id; };
+    const colOf = id => { if (TOOLC[id]) return TOOLC[id]; const hh = window.ftHubOf ? window.ftHubOf(id) : null; return (hh && GC[hh.id]) || '#0a84ff'; };
+    const pins = window.ftPinsList ? window.ftPinsList() : [];
+    if (k === 'tf') return { items: pins.filter(x => String(x.id).indexOf('tpl:') !== 0).map(x => ({ go: 'pin', v: x.id, t: x.label, s: x.group, i: (x.icon || '').replace(/\sclass="[^"]*"/, ''), c: colOf(String(x.id)) })), empty: 'Aucun outil favori.', foot: ['pins', 'Choisir mes favoris'] };
+    if (k === 'mf') { let fm = []; try { fm = favorites.map(id => templates.find(t => t.id === id)).filter(Boolean); } catch (e) {} return { items: fm.map(t => ({ go: 'tpl', v: t.id, t: t.title, s: t.category, i: sg('mail', 16), c: '#0a84ff' })), empty: 'Mettez l’étoile sur un mail pour le retrouver ici.', foot: ['mails', 'Ouvrir les mails favoris'] }; }
+    if (k === 'top') {
+      let use = {}; try { use = JSON.parse(localStorage.getItem('ft_tool_use') || '{}') || {}; } catch (e) {}
+      const known = new Set(); try { NAV_TABS_CONFIG.forEach(t => known.add(String(t.id))); } catch (e) {}
+      let top = Object.keys(use).filter(x => known.has(x) && !/^(home|cvm|hub:)/.test(x)).sort((a, b) => use[b] - use[a]);
+      ['1', '2', '6', '5', '9', 'delais', '3', 'calendrier'].forEach(x => { if (!top.includes(x)) top.push(x); });
+      return { items: top.slice(0, 8).map(id => ({ go: 'tab', v: id, t: tname(id), s: use[id] ? use[id] + ' ouverture' + (use[id] > 1 ? 's' : '') : '', i: toolIcon(id), c: colOf(id) })) };
+    }
+  }
+  function wgBuild() {
+    if (document.getElementById('pro-wg')) return;
+    const bar = document.createElement('nav'); bar.id = 'pro-wg'; bar.className = 'pro-wg'; bar.setAttribute('aria-label', 'Widgets');
+    bar.innerHTML = WG.map(w => '<button type="button" data-w="' + w[0] + '" title="' + w[1] + '" aria-label="' + w[1] + '">' + ic(w[2] ? sg(w[2], 18) : '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + WGI[w[0]] + '</svg>', w[3], 'wg-ic') + '</button>').join('');
+    const pan = document.createElement('div'); pan.id = 'pro-wg-pan'; pan.className = 'pro-wg-pan'; pan.setAttribute('role', 'dialog');
+    document.body.appendChild(bar); document.body.appendChild(pan);
+    bar.addEventListener('click', e => {
+      const b = e.target.closest('[data-w]'); if (!b) return; const k = b.dataset.w;
+      if (k === 'calc') { wgClose(); try { toggleCalculator(); } catch (er) {} return; }
+      if (k === 'dates') { wgClose(); const d = document.getElementById('datecalc-toggle'); if (d) d.click(); return; }
+      if (k === 'rep') { wgClose(); try { window.ftRpToggle(true); } catch (er) { const r = document.getElementById('rp-btn'); if (r) r.click(); } return; }
+      if (wOpen === k) { wgClose(); return; }
+      wgOpen(k, b);
+    });
+    pan.addEventListener('click', e => {
+      const a = e.target.closest('[data-go]'); if (!a) return; const g = a.dataset.go, v = a.dataset.v; wgClose();
+      try {
+        if (g === 'tab') switchNavTab(v);
+        else if (g === 'pin') window.ftOpenPin(v);
+        else if (g === 'tpl') window.ftOpenPin('tpl:' + v);
+        else if (g === 'pins') { if (window.ftOpenPins) window.ftOpenPins(); }
+        else if (g === 'mails') { switchNavTab('cvm'); setTimeout(() => { try { selectCategory('favorites'); } catch (er) {} }, 40); }
+      } catch (er) {}
+    });
+    document.addEventListener('click', e => { if (wOpen && !e.target.closest('#pro-wg,#pro-wg-pan')) wgClose(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && wOpen) wgClose(); });
+  }
+  function wgOpen(k, btn) {
+    const pan = document.getElementById('pro-wg-pan'), d = wgData(k), w = WG.find(x => x[0] === k);
+    pan.innerHTML = '<header>' + ic(sg(w[2], 16), w[3], 'wg-hi') + '<h2>' + w[1] + '</h2><small>' + d.items.length + '</small></header>' +
+      (d.items.length ? '<div class="wg-list">' + d.items.map(x => '<button type="button" class="wg-row" data-go="' + x.go + '" data-v="' + esc(x.v) + '">' + ic(x.i || sg('star', 16), x.c, 'wg-ri') + '<span><b>' + esc(x.t) + '</b>' + (x.s ? '<small>' + esc(x.s) + '</small>' : '') + '</span></button>').join('') + '</div>' : '<p class="wg-empty">' + d.empty + '</p>') +
+      (d.foot ? '<button type="button" class="wg-foot" data-go="' + d.foot[0] + '">' + d.foot[1] + '</button>' : '');
+    document.querySelectorAll('#pro-wg [data-w]').forEach(b => b.classList.toggle('on', b.dataset.w === k));
+    pan.classList.add('on'); wOpen = k;
+  }
+  function wgClose() { const p = document.getElementById('pro-wg-pan'); if (p) p.classList.remove('on'); document.querySelectorAll('#pro-wg [data-w]').forEach(b => b.classList.remove('on')); wOpen = null; }
+  window.ftWidget = k => { wgBuild(); wgOpen(k); };
+  function after() { try { wgBuild(); proHome(); foot(); home(); simLayout(); rulesToc(); iosify(); syncHubBars(); hubIcons(); } catch (e) { console.warn(e); } }
   if (typeof switchNavTab === 'function') {
     const _s = switchNavTab;
     switchNavTab = function () { const r = _s.apply(this, arguments); try { mark(); close(); setTimeout(after, 250); } catch (e) {} return r; };

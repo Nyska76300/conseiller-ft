@@ -496,3 +496,37 @@ html.ui-pro .pro-home .ph-ai svg{width:28px!important;height:28px!important;colo
 .pro-home .ph-top{grid-column:auto!important}
 @media (max-width:1100px){.pro-home .ph-grid{grid-template-columns:1fr!important}}
 @media (max-width:640px){.pro-home .ph-two{grid-template-columns:1fr}.pro-home .ph-apps{grid-template-columns:repeat(4,1fr)}}
+
+/* ===== 2026-11-27.24 : accueil (liens + nouveautés) et barre de widgets à droite ===== */
+.pro-home .ph-grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;align-items:start}
+.pro-home .ph-slot>.fh-card{margin:0!important}
+@media (max-width:900px){.pro-home .ph-grid2{grid-template-columns:1fr}}
+.pro-wg,.pro-wg-pan{display:none}
+@media (min-width:900px){
+  html.ui-pro .pro-wg{position:fixed;right:10px;top:50%;transform:translateY(-50%);z-index:60;display:flex;flex-direction:column;gap:8px;padding:9px 7px;border-radius:20px;background:rgba(255,255,255,.78);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.95);box-shadow:0 12px 30px rgba(40,70,150,.18)}
+  html.ui-pro:not(.theme-light) .pro-wg{background:rgba(22,34,60,.82);border-color:rgba(140,170,255,.18);box-shadow:0 12px 30px rgba(0,0,0,.45)}
+  html.ui-pro .pro-wg button{position:relative;padding:0;border:0;background:transparent;cursor:pointer;border-radius:12px;transition:transform .14s}
+  html.ui-pro .pro-wg button:hover,html.ui-pro .pro-wg button.on{transform:scale(1.08)}
+  html.ui-pro .pro-wg button:nth-child(3)::after{content:'';position:absolute;left:6px;right:6px;bottom:-5px;height:1px;background:var(--pro-line)}
+  html.ui-pro .pro-wg .wg-ic{width:38px!important;height:38px!important}
+  html.ui-pro .pro-wg .wg-ic svg{width:19px!important;height:19px!important;color:#fff!important}
+  html.ui-pro .pro-wg button:hover::before{content:attr(title);position:absolute;right:calc(100% + 10px);top:50%;transform:translateY(-50%);white-space:nowrap;padding:4px 9px;border-radius:8px;background:#14264d;color:#fff;font-size:12px;font-weight:650;pointer-events:none}
+  html.ui-pro .pro-wg-pan{display:block;position:fixed;right:70px;top:50%;z-index:61;width:340px;max-height:72vh;overflow:auto;padding:14px;border-radius:20px;background:var(--pro-card-g);border:1px solid var(--pro-line);box-shadow:0 22px 50px rgba(20,40,100,.22);opacity:0;visibility:hidden;transform:translate(12px,-50%);transition:opacity .16s,transform .16s,visibility 0s linear .16s}
+  html.ui-pro .pro-wg-pan.on{opacity:1;visibility:visible;transform:translate(0,-50%);transition:opacity .16s,transform .16s,visibility 0s}
+}
+.pro-wg-pan header{display:flex;align-items:center;gap:10px;padding:2px 4px 10px;border-bottom:1px solid var(--pro-line2);margin-bottom:6px}
+.pro-wg-pan header h2{font-size:15px;font-weight:750;color:var(--pro-text)}
+.pro-wg-pan header small{margin-left:auto;font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--pro-bg);color:var(--pro-mute)}
+html.ui-pro .pro-wg-pan .wg-hi{width:28px;height:28px}
+html.ui-pro .pro-wg-pan .wg-hi svg{width:15px!important;height:15px!important;color:#fff!important}
+.pro-wg-pan .wg-list{display:flex;flex-direction:column}
+.pro-wg-pan .wg-row{display:flex;align-items:center;gap:11px;width:100%;padding:8px 6px;border:0;border-radius:10px;background:transparent;text-align:left;cursor:pointer;color:var(--pro-text)}
+.pro-wg-pan .wg-row:hover{background:var(--pro-blue-l)}
+html.ui-pro .pro-wg-pan .wg-ri{width:30px;height:30px}
+html.ui-pro .pro-wg-pan .wg-ri svg{width:16px!important;height:16px!important;color:#fff!important}
+.pro-wg-pan .wg-row span{display:flex;flex-direction:column;min-width:0}
+.pro-wg-pan .wg-row b{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pro-wg-pan .wg-row small{font-size:12px;color:var(--pro-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pro-wg-pan .wg-empty{font-size:13px;color:var(--pro-mute);padding:10px 6px}
+.pro-wg-pan .wg-foot{width:100%;margin-top:8px;padding:9px;border-radius:11px;border:1px solid var(--pro-line);background:var(--pro-card);color:var(--pro-blue);font-weight:700;font-size:13px;cursor:pointer}
+@media (min-width:900px){html.ui-pro body>.ft-split-host{margin-right:62px}html.ui-pro #ft-foot{margin-right:62px}}

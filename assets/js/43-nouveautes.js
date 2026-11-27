@@ -2,6 +2,10 @@
   /* Nouveautés : ajouter une entrée en haut de la liste à chaque mise à jour
      (v = même valeur que la balise ft-version). */
   var NEWS = [
+    { v: '2026-11-27.24', date: '27/11/2026', items: [
+      'Nouvelle barre de widgets à droite de l’écran, sur toutes les pages : Mails favoris, Outils favoris et Plus utilisés s’ouvrent dans un petit panneau ; Calculatrice, Dates et Repères s’ouvrent directement.',
+      'Accueil : le bandeau (Bonjour, heure, recherche, Nouveau dossier, Que faire si…, chiffres clés), puis vos Liens utiles et les Nouveautés (ancien « Quoi de neuf »).'
+    ] },
     { v: '2026-11-27.23', date: '27/11/2026', items: [
       'Accueil allégé : un bandeau (Bonjour, heure, recherche, Nouveau dossier, Que faire si…, vos liens utiles, chiffres clés), puis quatre cartes : Outils favoris, Mails favoris, Outils les plus utilisés et Repères. « Quoi de neuf » devient le bouton « Nouveautés ».'
     ] },
